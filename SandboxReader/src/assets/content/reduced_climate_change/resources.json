@@ -1,0 +1,147 @@
+{
+    "unitId": "reduced_climate_change",
+    "sections": [
+        {
+            "id": "section-1",
+            "title": "Introduction to Climate Change",
+            "pages": [
+                {
+                    "id": "introduction",
+                    "title": "Introduction to Climate Change",
+                    "type": "text"
+                },
+                {
+                    "id": "deforestation_and_vegetation",
+                    "title": "Deforestation & Vegetation",
+                    "type": "text"
+                },
+                {
+                    "id": "garbage_and_landfills",
+                    "title": "Garbage and Landfills",
+                    "type": "text"
+                },
+                {
+                    "id": "heat_energy_greenhouse_effect",
+                    "title": "Heat Energy & the Greenhouse Effect",
+                    "type": "text"
+                },
+                {
+                    "id": "global_temperature_sea_levels",
+                    "title": "Global Temperature & Sea Levels",
+                    "type": "text"
+                }
+            ]
+        },
+        {
+            "id": "section-2",
+            "title": "Dictionary",
+            "pages": [
+                {
+                    "id": "absorbed_heat_energy",
+                    "title": "Absorbed Heat Energy",
+                    "type": "text"
+                },
+                {
+                    "id": "absorbed_light_energy",
+                    "title": "Absorbed Light Energy",
+                    "type": "text"
+                },
+                {
+                    "id": "carbon_dioxide",
+                    "title": "Carbon Dioxide",
+                    "type": "text"
+                },
+                {
+                    "id": "carrying_capacity",
+                    "title": "Carrying Capacity",
+                    "type": "text"
+                },
+                {
+                    "id": "coastal_flooding",
+                    "title": "Coastal Flooding",
+                    "type": "text"
+                },
+                {
+                    "id": "condensation",
+                    "title": "Condensation",
+                    "type": "text"
+                },
+                {
+                    "id": "deforestation",
+                    "title": "Deforestation",
+                    "type": "text"
+                },
+                {
+                    "id": "drought",
+                    "title": "Drought",
+                    "type": "text"
+                },
+                {
+                    "id": "electricity",
+                    "title": "Electricity Generation",
+                    "type": "text"
+                },
+                {
+                    "id": "fossil_fuels",
+                    "title": "Fossil Fuel Use",
+                    "type": "text"
+                },
+                {
+                    "id": "garbage",
+                    "title": "Garbage and Landfills",
+                    "type": "text"
+                },
+                {
+                    "id": "globaltemp",
+                    "title": "Global Temperature",
+                    "type": "text"
+                },
+                {
+                    "id": "heat",
+                    "title": "Heat Reflected to the Earth",
+                    "type": "text"
+                },
+                {
+                    "id": "methane",
+                    "title": "Methane",
+                    "type": "text"
+                },
+                {
+                    "id": "ocean",
+                    "title": "Ocean Levels",
+                    "type": "text"
+                },
+                {
+                    "id": "precipitation",
+                    "title": "Precipitation",
+                    "type": "text"
+                },
+                {
+                    "id": "seaice",
+                    "title": "Sea Ice",
+                    "type": "text"
+                },
+                {
+                    "id": "solar_energy",
+                    "title": "Solar Energy",
+                    "type": "text"
+                },
+                {
+                    "id": "vegetation",
+                    "title": "Vegetation",
+                    "type": "text"
+                },
+                {
+                    "id": "vehicles",
+                    "title": "Vehicle Use",
+                    "type": "text"
+                },
+                {
+                    "id": "water_vapor",
+                    "title": "Water Vapor",
+                    "type": "text"
+                }
+            ]
+        }
+    ]
+}
