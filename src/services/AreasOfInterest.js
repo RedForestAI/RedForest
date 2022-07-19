@@ -1,5 +1,8 @@
-export default {
-    takeScreenshot() {
-        return null
+export const AreasOfInterest = {
+    warn(message, event) {
+        if (event) {
+            event.preventDefault();
+        }
+        alert(message);
     }
 }

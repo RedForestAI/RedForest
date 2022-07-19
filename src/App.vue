@@ -1,17 +1,26 @@
 <template>
+  <body>
   <AppHeader/>
   <router-view />
+  <button @click="(event) => screenshot('KEY', event)">TEST</button>
   <AppFooter/>
+  </body>
 </template>
 
 <script>
 import AppHeader from '@/components/AppHeader.vue'
 import AppFooter from '@/components/AppFooter.vue'
+import { AreasOfInterest } from '@/services/AreasOfInterest.js'
 
 export default {
   components: {
     AppHeader,
-    AppFooter
+    AppFooter,
+  },
+  methods: {
+    screenshot(message, event) {
+      AreasOfInterest.warn(message, event);
+    }
   }
 }
 </script>
