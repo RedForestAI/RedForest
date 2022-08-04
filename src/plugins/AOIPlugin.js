@@ -1,9 +1,18 @@
-// Following the follow structure
-// References: 
-// https://vuejs.org/guide/reusability/plugins.html
-// https://snipcart.com/blog/vue-js-plugin
-// https://github.com/snipcart/vue-comments-overlay
+/* 
+This plugin works in by obtaining all the Nodes.
 
+References: 
+https://vuejs.org/guide/reusability/plugins.html
+https://snipcart.com/blog/vue-js-plugin
+https://github.com/snipcart/vue-comments-overlay
+*/
+
+// Reference: https://stackoverflow.com/a/2117523/13231446
+// function uuidv4() {
+//   return ([1e7]+-1e3+-4e3+-8e3+-1e11).replace(/[018]/g, c =>
+//     (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16)
+//   );
+// }
 
 function getRandomInt(min, max) {
     min = Math.ceil(min);
@@ -45,6 +54,10 @@ export const AOIPlugin = {
         
         // Appending the canvas to the document
         document.body.appendChild(AOIPlugin.canvas);
+
+        // Creating highlighting dictionary
+        let highlightDict = {};
+        AOIPlugin.highlightDict = highlightDict;
     },
 
     takeAOIScreenshot: () => {
@@ -61,10 +74,10 @@ export const AOIPlugin = {
             NodeFilter.SHOW_ELEMENT
         );
 
-        // let nodeList = [];
-        let contextList = [];
+        // Get the first node and then walk the tree
         let currentNode = treeWalker.currentNode;
 
+        // Continue until no more nodes
         while(currentNode) {
 
             // Printing for debugging
@@ -78,10 +91,8 @@ export const AOIPlugin = {
             // Draw the bounding box on the html
             let context = AOIPlugin.canvas.getContext('2d');
             context.rect(rect.x, rect.y, rect.width, rect.height);
-            // context.fillStyle = 'rgba(255,0,0,0.1)';
             context.fillStyle = getRandomColor();
             context.fill();
-            contextList.push(context);
 
             // Updating to the next node
             currentNode = treeWalker.nextNode();
