@@ -8,7 +8,7 @@ import axios from 'axios'
 export default {
   data() {
     return {
-      pageFilepath: '/content/reduced_climate_change/pages/introduction.html',
+      pageFilepath: '/content/climate_change/pages/introduction.html',
       html: null
     }
   },

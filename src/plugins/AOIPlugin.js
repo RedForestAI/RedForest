@@ -14,18 +14,18 @@ https://github.com/snipcart/vue-comments-overlay
 //   );
 // }
 
-function getRandomInt(min, max) {
-    min = Math.ceil(min);
-    max = Math.floor(max);
-    return Math.floor(Math.random() * (max - min) + min);
-}
+// function getRandomInt(min, max) {
+//     min = Math.ceil(min);
+//     max = Math.floor(max);
+//     return Math.floor(Math.random() * (max - min) + min);
+// }
 
-function getRandomColor() {
-    let r = getRandomInt(0,255);
-    let g = getRandomInt(0,255);
-    let b = getRandomInt(0,255);
-    return "rgba("+r+","+g+","+b+",0.05)"
-}
+// function getRandomColor() {
+//     let r = getRandomInt(0,255);
+//     let g = getRandomInt(0,255);
+//     let b = getRandomInt(0,255);
+//     return "rgba("+r+","+g+","+b+",0.05)"
+// }
 
 export const AOIPlugin = {
     
@@ -89,10 +89,10 @@ export const AOIPlugin = {
             console.log(rect);
             
             // Draw the bounding box on the html
-            let context = AOIPlugin.canvas.getContext('2d');
-            context.rect(rect.x, rect.y, rect.width, rect.height);
-            context.fillStyle = getRandomColor();
-            context.fill();
+            // let context = AOIPlugin.canvas.getContext('2d');
+            // context.rect(rect.x, rect.y, rect.width, rect.height);
+            // context.fillStyle = getRandomColor();
+            // context.fill();
 
             // Updating to the next node
             currentNode = treeWalker.nextNode();
