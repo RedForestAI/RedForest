@@ -22,12 +22,12 @@
           {
             href: '/',
             title: 'Home',
-            icon: 'fa fa-user'
+            icon: 'fa fa-list-ul'
           },
           {
             href: '/notebook',
             title: 'Notebook',
-            icon: 'fa fa-notebook-area',
+            icon: 'fa-solid fa-book',
             child: [
               {
                 href: '/notebook',
@@ -38,7 +38,7 @@
           {
             href: '/about',
             title: 'About',
-            icon: 'fa fa-about-area'
+            icon: 'fa-solid fa-page'
           }
         ]
       }
