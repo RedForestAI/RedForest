@@ -80,6 +80,13 @@ export const AOIPlugin = {
         // Continue until no more nodes
         while(currentNode) {
 
+            // Filter data
+            if (![Node.TEXT_NODE, Node.ELEMENT_NODE].includes(currentNode.nodeType)){
+                console.log('Skip');
+                currentNode = treeWalker.nextNode();
+                continue;
+            }
+
             // Printing for debugging
             console.log(currentNode);
 

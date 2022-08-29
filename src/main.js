@@ -5,7 +5,7 @@ import App from '@/App.vue'
 // Plugins
 import router from '@/router'
 import { store } from '@/store'
-// import { AOIPlugin } from '@/plugins/AOIPlugin'
+import { AOIPlugin } from '@/plugins/AOIPlugin'
 import VueSidebarMenu from 'vue-sidebar-menu'
 import 'vue-sidebar-menu/dist/vue-sidebar-menu.css'
 
@@ -22,7 +22,7 @@ app.use(VueSidebarMenu)
 app.use(store)
 
 // Add plugins
-// app.use(AOIPlugin)
+app.use(AOIPlugin)
 
 // Then mount the app instance
 app.mount('#app')
