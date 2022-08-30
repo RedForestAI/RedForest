@@ -77,6 +77,70 @@ export const AOIPlugin = {
         context.fillRect(rect.x, rect.y, rect.width, rect.height);
     },
 
+    recursiveSearching: (node) => {
+
+        // Create Range object to find individual words
+        let range = new Range();
+
+        // Only interested in P and H1 Nodes
+        if (['P', 'A', 'H1'].includes(node.nodeName)){
+
+            // Obtain all the children nodes
+            let childNodes = node.childNodes;
+           
+            // Iterate through all children
+            for (let i = 0; i < childNodes.length; i++){
+                
+                // Compute the length of the range
+                let childNode = childNodes[i];
+                AOIPlugin.recursiveSearching(childNode);
+            
+            }
+        }
+
+        else if (node.nodeName == '#text'){
+            
+            // Determine if no text children
+            let nodeText = node.wholeText;
+            console.log(nodeText);
+            
+            // If empty, return immediately
+            if (nodeText == ''){
+                return [];
+            }
+
+            let words = nodeText.split(" ");
+            console.log(words);
+
+            // For all text within the node, construct a range
+            let textStartPointer = 0;
+            let textEndPointer = 0;
+            for (let j = 0; j < words.length; j++){
+
+                textEndPointer = textStartPointer + words[j].length;
+                
+                console.log(j, words[j], words[j].length, textStartPointer, textEndPointer);
+
+                range.setStart(node, textStartPointer);
+                range.setEnd(node, textEndPointer);
+
+                // console.log(range);
+                let rect = range.getBoundingClientRect();
+                // console.log(rect);
+
+                AOIPlugin.drawBoundingBox(rect);
+                textStartPointer = textEndPointer + 1;
+
+            }
+            
+            return [];
+        }
+
+        else {
+            return [];
+        }
+    },
+
     getTextNodes: () => {
 
         /* Reference: https://developer.mozilla.org/en-US/docs/Web/API/Document/createTreeWalker */
@@ -101,34 +165,8 @@ export const AOIPlugin = {
             // Printing for debugging
             console.log(currentNode, currentNode.nodeType);
 
-            let range = new Range();
-            if (currentNode.nodeName == 'P' || currentNode.nodeName == 'H1'){
-                // Compute the length of the range
-                let nodeText = currentNode.textContent;
-                console.log(nodeText);
-                let words = nodeText.split(" ");
-
-                // For all text within the node, construct a range
-                let textStartPointer = 0;
-                let textEndPointer = 0;
-                for (let i = 0; i < words.length; i++){
-
-                    textEndPointer = textStartPointer + words[i].length;
-                    
-                    // console.log(i, words[i], words[i].length, textStartPointer, textEndPointer);
-
-                    range.setStart(currentNode.firstChild, textStartPointer);
-                    range.setEnd(currentNode.firstChild, textEndPointer);
-
-                    // console.log(range);
-                    let rect = range.getBoundingClientRect();
-                    // console.log(rect);
-
-                    AOIPlugin.drawBoundingBox(rect);
-                    textStartPointer = textEndPointer + 1;
-
-                }
-            }
+            // Recursively searching the document
+            AOIPlugin.recursiveSearching(currentNode);
 
             // Get the bounding box of the node
             // Reference: https://developer.mozilla.org/en-US/docs/Web/API/Element/getBoundingClientRect
