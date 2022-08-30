@@ -20,12 +20,15 @@ https://github.com/snipcart/vue-comments-overlay
 //     return Math.floor(Math.random() * (max - min) + min);
 // }
 
-// function getRandomColor() {
-//     let r = getRandomInt(0,255);
-//     let g = getRandomInt(0,255);
-//     let b = getRandomInt(0,255);
-//     return "rgba("+r+","+g+","+b+",0.05)"
-// }
+function getRandomColor() {
+    // let r = getRandomInt(100,200);
+    // let g = getRandomInt(100,200);
+    // let b = getRandomInt(100,200);
+    let r = 255;
+    let g = 0;
+    let b = 0;
+    return "rgba("+r+","+g+","+b+",0.25)"
+}
 
 export const AOIPlugin = {
     
@@ -66,6 +69,14 @@ export const AOIPlugin = {
         AOIPlugin.getTextNodes();
     },
 
+    drawBoundingBox: (rect) => {
+
+        // Draw the bounding box on the html
+        let context = AOIPlugin.canvas.getContext('2d');
+        context.fillStyle = getRandomColor();
+        context.fillRect(rect.x, rect.y, rect.width, rect.height);
+    },
+
     getTextNodes: () => {
 
         /* Reference: https://developer.mozilla.org/en-US/docs/Web/API/Document/createTreeWalker */
@@ -81,26 +92,49 @@ export const AOIPlugin = {
         while(currentNode) {
 
             // Filter data
-            if (![Node.TEXT_NODE, Node.ELEMENT_NODE].includes(currentNode.nodeType)){
-                console.log('Skip');
+            let filterNames = ['H1', 'H2', 'H3', 'H4', 'P', 'A', 'IMG', 'FIGURE'];
+            if (!filterNames.includes(currentNode.nodeName)){
                 currentNode = treeWalker.nextNode();
                 continue;
             }
 
             // Printing for debugging
-            console.log(currentNode);
+            console.log(currentNode, currentNode.nodeType);
+
+            let range = new Range();
+            if (currentNode.nodeName == 'P' || currentNode.nodeName == 'H1'){
+                // Compute the length of the range
+                let nodeText = currentNode.textContent;
+                console.log(nodeText);
+                let words = nodeText.split(" ");
+
+                // For all text within the node, construct a range
+                let textStartPointer = 0;
+                let textEndPointer = 0;
+                for (let i = 0; i < words.length; i++){
+
+                    textEndPointer = textStartPointer + words[i].length;
+                    
+                    // console.log(i, words[i], words[i].length, textStartPointer, textEndPointer);
+
+                    range.setStart(currentNode.firstChild, textStartPointer);
+                    range.setEnd(currentNode.firstChild, textEndPointer);
+
+                    // console.log(range);
+                    let rect = range.getBoundingClientRect();
+                    // console.log(rect);
+
+                    AOIPlugin.drawBoundingBox(rect);
+                    textStartPointer = textEndPointer + 1;
+
+                }
+            }
 
             // Get the bounding box of the node
             // Reference: https://developer.mozilla.org/en-US/docs/Web/API/Element/getBoundingClientRect
-            let rect = currentNode.getBoundingClientRect();
-            console.log(rect);
+            // let rect = currentNode.getBoundingClientRect();
+            // console.log(rect);
             
-            // Draw the bounding box on the html
-            // let context = AOIPlugin.canvas.getContext('2d');
-            // context.rect(rect.x, rect.y, rect.width, rect.height);
-            // context.fillStyle = getRandomColor();
-            // context.fill();
-
             // Updating to the next node
             currentNode = treeWalker.nextNode();
         }
