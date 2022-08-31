@@ -32,11 +32,12 @@ function getRandomColor() {
 
 export const AOIPlugin = {
     
-    // In this function, we provide
+    // Install required for Vue Plugin
     install: () => {
 
         // Adding the event listener to trigger a screenshot
-        document.addEventListener("click", AOIPlugin.takeAOIScreenshot);
+        window.addEventListener("load", AOIPlugin.captureAOI);
+        // document.addEventListener("scroll", AOIPlugin.captureAOI);
     
         // Reference: https://stackoverflow.com/questions/19840907/draw-rectangle-over-html-with-javascript
         let canvas = document.createElement('canvas');
@@ -63,7 +64,7 @@ export const AOIPlugin = {
         AOIPlugin.highlightDict = highlightDict;
     },
 
-    takeAOIScreenshot: () => {
+    captureAOI: () => {
 
         // This requires getting all the text nodes
         AOIPlugin.getTextNodes();
