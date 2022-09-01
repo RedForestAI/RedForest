@@ -37,7 +37,9 @@ export const AOIPlugin = {
 
         // Adding the event listener to trigger a screenshot
         window.addEventListener("load", AOIPlugin.captureAOI);
-        // document.addEventListener("scroll", AOIPlugin.captureAOI);
+        window.addEventListener("resize", AOIPlugin.captureAOI);
+        document.addEventListener("scroll", AOIPlugin.captureAOI);
+        document.addEventListener("click", AOIPlugin.captureAOI);
     
         // Reference: https://stackoverflow.com/questions/19840907/draw-rectangle-over-html-with-javascript
         let canvas = document.createElement('canvas');
@@ -65,6 +67,12 @@ export const AOIPlugin = {
     },
 
     captureAOI: () => {
+
+        // Clear the canvas
+        let context = AOIPlugin.canvas.getContext('2d');
+        context.clearRect(0, 0, AOIPlugin.canvas.width, AOIPlugin.canvas.height);
+        AOIPlugin.canvas.width = window.innerWidth;
+        AOIPlugin.canvas.height = window.innerHeight;
 
         // This requires getting all the text nodes
         AOIPlugin.getTextNodes();
@@ -134,6 +142,10 @@ export const AOIPlugin = {
 
             }
             
+            return [];
+
+        }
+        else if (node.nodeName == 'IMG') {
             return [];
         }
 
