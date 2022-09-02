@@ -52,6 +52,8 @@ export const AOIPlugin = {
         canvas.style.position = 'fixed';
         canvas.style.left = 0;
         canvas.style.top = 0;
+        canvas.margin = 0;
+        canvas.padding = 0;
         canvas.style.zIndex=1000000;
         canvas.style.pointerEvents='none'
 
@@ -66,13 +68,34 @@ export const AOIPlugin = {
         AOIPlugin.highlightDict = highlightDict;
     },
 
-    captureAOI: () => {
-
+    configureCanvas: () => {
+        
         // Clear the canvas
         let context = AOIPlugin.canvas.getContext('2d');
         context.clearRect(0, 0, AOIPlugin.canvas.width, AOIPlugin.canvas.height);
-        AOIPlugin.canvas.width = window.innerWidth;
-        AOIPlugin.canvas.height = window.innerHeight;
+        
+        // If vertical scrollbar is visible
+        // Reference: https://stackoverflow.com/a/11226327/13231446
+        if (document.body.offsetHeight > window.innerHeight) {
+            AOIPlugin.canvas.width = window.innerWidth - 15;
+        }
+        else {
+            AOIPlugin.canvas.width = window.innerWidth;
+        }
+
+        if (document.body.scrollWidth > document.body.clientWidth) {
+            AOIPlugin.canvas.height = window.innerHeight - 15;
+        }
+        else {
+            AOIPlugin.canvas.height = window.innerHeight;
+        }
+
+    },
+
+    captureAOI: () => {
+
+        // Reconfigure the canvas as needed
+        AOIPlugin.configureCanvas();
 
         // This requires getting all the text nodes
         AOIPlugin.getTextNodes();
@@ -111,7 +134,6 @@ export const AOIPlugin = {
             
             // Determine if no text children
             let nodeText = node.wholeText;
-            console.log(nodeText);
             
             // If empty, return immediately
             if (nodeText == ''){
@@ -119,7 +141,6 @@ export const AOIPlugin = {
             }
 
             let words = nodeText.split(" ");
-            console.log(words);
 
             // For all text within the node, construct a range
             let textStartPointer = 0;
@@ -128,14 +149,10 @@ export const AOIPlugin = {
 
                 textEndPointer = textStartPointer + words[j].length;
                 
-                console.log(j, words[j], words[j].length, textStartPointer, textEndPointer);
-
                 range.setStart(node, textStartPointer);
                 range.setEnd(node, textEndPointer);
 
-                // console.log(range);
                 let rect = range.getBoundingClientRect();
-                // console.log(rect);
 
                 AOIPlugin.drawBoundingBox(rect);
                 textStartPointer = textEndPointer + 1;
@@ -175,17 +192,9 @@ export const AOIPlugin = {
                 continue;
             }
 
-            // Printing for debugging
-            console.log(currentNode, currentNode.nodeType);
-
             // Recursively searching the document
             AOIPlugin.recursiveSearching(currentNode);
 
-            // Get the bounding box of the node
-            // Reference: https://developer.mozilla.org/en-US/docs/Web/API/Element/getBoundingClientRect
-            // let rect = currentNode.getBoundingClientRect();
-            // console.log(rect);
-            
             // Updating to the next node
             currentNode = treeWalker.nextNode();
         }
