@@ -7,10 +7,15 @@ https://snipcart.com/blog/vue-js-plugin
 https://github.com/snipcart/vue-comments-overlay
 */
 
-import { AOIDatabase } from "./AOIDatabase.js"
+// import { AOIDatabase } from "./AOIDatabase.js"
 
 const defaultOptions = {
     drawCanvas: true,
+    tagColorMap: {
+        DEFAULT: "rgba(255,0,0,0.1)",
+        DIV: "rgba(0,255,0,0.1)",
+        IMG: "rgba(0,0,255,0.1)"
+    },
     toTrackElements: [
         {tag: 'div', class: 'v-sidebar-menu vsm_collapsed', recursive: false, wordLevel: false},
         {tag: 'div', id: 'router-view', recursive: true, wordLevel: true}
@@ -54,8 +59,13 @@ export const AOIPlugin = {
         // Appending the canvas to the document
         document.body.appendChild(AOIPlugin.canvas);
 
+        // List of tags to look and check for words
+        let tagWordCheck = ['P', 'A', 'H1', 'H2', 'H3', 'H4', 'H5'];
+        AOIPlugin.tagWordCheck = tagWordCheck;
+
         // Creating highlighting dictionary
-        const aoiDatabase = new AOIDatabase();
+        // const aoiDatabase = new AOIDatabase();
+        const aoiDatabase = [];
         AOIPlugin.aoiDatabase = aoiDatabase;
         
         // Track when capturing data
@@ -87,16 +97,34 @@ export const AOIPlugin = {
 
     },
     
-    drawBoundingBox: (rect) => {
+    drawBoundingBox: (rect, color) => {
 
         // Draw the bounding box on the html
         let context = AOIPlugin.canvas.getContext('2d');
-        context.fillStyle = "rgba(255,0,0,0.25)";
+        context.fillStyle = color;
         context.fillRect(rect.x, rect.y, rect.width, rect.height);
     },
 
-    drawElementsInCanvas: () => {
-        console.log("DRAWING");
+    drawCanvas: (elementsRectData) => {
+
+        for (let i = 0; i < elementsRectData.length; i++){
+            // Extract the current level element data
+            let elementRect = elementsRectData[i];
+
+            // Obtain the color from the tags
+            let color = AOIPlugin.options.tagColorMap.DEFAULT;
+            if (elementRect.tagName in AOIPlugin.options.tagColorMap) {
+                color = AOIPlugin.options.tagColorMap[elementRect.tagName];
+            }
+
+            // Draw the bounding box
+            AOIPlugin.drawBoundingBox(elementRect.elementRect, color);
+
+            // Draw children is available
+            if ("childrenRectData" in elementRect){
+                AOIPlugin.drawCanvas(elementRect.childrenRectData);
+            }
+        }
     },
 
     captureAOI: () => {
@@ -107,47 +135,65 @@ export const AOIPlugin = {
             // Prevent calling methods too fast (before the document is 
             // rendered correctly and fully)
             setTimeout(() => {
-
+                
                 // Track the desired elements
                 for (let i = 0; i < AOIPlugin.options.toTrackElements.length; i++) {
                     let toTrackElement = AOIPlugin.options.toTrackElements[i];
-                    AOIPlugin.trackElement(toTrackElement);
+                    AOIPlugin.aoiDatabase[i] = AOIPlugin.trackElement(toTrackElement);
                 }
                 
                 // Reconfigure the canvas as needed
                 if (AOIPlugin.options.drawCanvas) {
                     AOIPlugin.configureCanvas();
-                    AOIPlugin.drawElementsInCanvas();
+                    for (let i = 0; i < AOIPlugin.options.toTrackElements.length; i++) {
+                        AOIPlugin.drawCanvas(AOIPlugin.aoiDatabase[i]);
+                    }
                 }
-
+                
             }, 100);
             
             AOIPlugin.isTracking = false;
         }
-
     },
 
     trackElement: (elementConfiguration) => {
+        
+        let elementsRects = [];
 
         if ("class" in elementConfiguration) {
 
             let elements = document.getElementsByClassName(elementConfiguration.class);
 
             for (let i = 0; i < elements.length; i++) {
+                
                 let element = elements[i];
                 let rectInfo = AOIPlugin.getRectInfo(
                     element, 
                     elementConfiguration.recursive, 
                     elementConfiguration.wordLevel
                 );
-                console.log(rectInfo);
+                elementsRects.push(rectInfo);
+
             }
         }
+        else { // by "id"
+            let element = document.getElementById(elementConfiguration.id);
+            let rectInfo = AOIPlugin.getRectInfo(
+                element,
+                elementConfiguration.recursive,
+                elementConfiguration.wordLevel
+            );
+            elementsRects.push(rectInfo);
+
+        }
+
+        return elementsRects;
     },
 
     getRectInfo: (element, recursive, wordLevel) => {
 
         let responseRectData = {
+            tagName: element.tagName,
             elementRect: element.getBoundingClientRect()
         };
 
@@ -160,34 +206,25 @@ export const AOIPlugin = {
                 childrenRectData.push(childrenRect);
             }
 
+            if (AOIPlugin.tagWordCheck.includes(element.tagName)){
+                for (let j = 0; j < element.childNodes.length; j++) {
+                    let node = element.childNodes[j];
+                    AOIPlugin.wordSearching(node);
+                }
+            }
+
             responseRectData.childrenRectData = childrenRectData;
         }
 
         return responseRectData;
     },
 
-    recursiveSearching: (node) => {
+    wordSearching: (node) => {
 
         // Create Range object to find individual words
         let range = new Range();
 
-        // Only interested in P and H1 Nodes
-        if (['P', 'A', 'H1'].includes(node.nodeName)){
-
-            // Obtain all the children nodes
-            let childNodes = node.childNodes;
-           
-            // Iterate through all children
-            for (let i = 0; i < childNodes.length; i++){
-                
-                // Compute the length of the range
-                let childNode = childNodes[i];
-                AOIPlugin.recursiveSearching(childNode);
-            
-            }
-        }
-
-        else if (node.nodeName == '#text'){
+        if (node.nodeName == '#text'){
             
             // Determine if no text children
             let nodeText = node.wholeText;
@@ -219,41 +256,7 @@ export const AOIPlugin = {
             return [];
 
         }
-        else if (node.nodeName == 'IMG') {
-            return [];
-        }
 
-        else {
-            return [];
-        }
+        return [];
     },
-
-    getTextNodes: () => {
-
-        /* Reference: https://developer.mozilla.org/en-US/docs/Web/API/Document/createTreeWalker */
-        let treeWalker = document.createTreeWalker(
-            document.body,
-            NodeFilter.SHOW_ELEMENT
-        );
-
-        // Get the first node and then walk the tree
-        let currentNode = treeWalker.currentNode;
-
-        // Continue until no more nodes
-        while(currentNode) {
-
-            // Filter data
-            let filterNames = ['H1', 'H2', 'H3', 'H4', 'P', 'A', 'IMG', 'FIGURE'];
-            if (!filterNames.includes(currentNode.nodeName)){
-                currentNode = treeWalker.nextNode();
-                continue;
-            }
-
-            // Recursively searching the document
-            AOIPlugin.recursiveSearching(currentNode);
-
-            // Updating to the next node
-            currentNode = treeWalker.nextNode();
-        }
-    }
 }
