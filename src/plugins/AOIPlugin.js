@@ -14,7 +14,8 @@ const defaultOptions = {
     tagColorMap: {
         DEFAULT: "rgba(255,0,0,0.1)",
         DIV: "rgba(0,255,0,0.1)",
-        IMG: "rgba(0,0,255,0.1)"
+        IMG: "rgba(0,0,255,0.1)",
+        TEXT: "rgba(0,0,255,0.1)"
     },
     toTrackElements: [
         {tag: 'div', class: 'v-sidebar-menu vsm_collapsed', recursive: false, wordLevel: false},
@@ -120,9 +121,17 @@ export const AOIPlugin = {
             // Draw the bounding box
             AOIPlugin.drawBoundingBox(elementRect.elementRect, color);
 
-            // Draw children is available
+            // Draw children if available
             if ("childrenRectData" in elementRect){
                 AOIPlugin.drawCanvas(elementRect.childrenRectData);
+            }
+
+            // Draw words if available
+            if ("wordsRectData" in elementRect){
+                color = AOIPlugin.options.tagColorMap["TEXT"];
+                for (let j = 0; j < elementRect.wordsRectData.length; j++){
+                    AOIPlugin.drawBoundingBox(elementRect.wordsRectData[j].rectData, color);
+                }
             }
         }
     },
@@ -207,9 +216,17 @@ export const AOIPlugin = {
             }
 
             if (AOIPlugin.tagWordCheck.includes(element.tagName)){
+
+                // Look for word data
+                let wordsRectData = [];
                 for (let j = 0; j < element.childNodes.length; j++) {
                     let node = element.childNodes[j];
-                    AOIPlugin.wordSearching(node);
+                    wordsRectData = wordsRectData.concat(AOIPlugin.wordSearching(node));
+                }
+
+                // If we found data, store it
+                if (wordsRectData.length != 0) {
+                    responseRectData.wordsRectData = wordsRectData;
                 }
             }
 
@@ -223,6 +240,7 @@ export const AOIPlugin = {
 
         // Create Range object to find individual words
         let range = new Range();
+        let wordsRectData = [];
 
         if (node.nodeName == '#text'){
             
@@ -241,22 +259,25 @@ export const AOIPlugin = {
             let textEndPointer = 0;
             for (let j = 0; j < words.length; j++){
 
+                // Storage container for per-word data
+                let wordRectData = {};
+
+                // Select the word's range
                 textEndPointer = textStartPointer + words[j].length;
-                
                 range.setStart(node, textStartPointer);
                 range.setEnd(node, textEndPointer);
 
+                // Get word data and store
                 let rect = range.getBoundingClientRect();
+                wordRectData.rectData = rect;
+                wordRectData.text = words[j];
+                wordsRectData.push(wordRectData);
 
-                AOIPlugin.drawBoundingBox(rect);
                 textStartPointer = textEndPointer + 1;
 
             }
-            
-            return [];
-
         }
 
-        return [];
+        return wordsRectData;
     },
 }
