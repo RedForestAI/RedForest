@@ -7,33 +7,24 @@ https://snipcart.com/blog/vue-js-plugin
 https://github.com/snipcart/vue-comments-overlay
 */
 
-// Reference: https://stackoverflow.com/a/2117523/13231446
-// function uuidv4() {
-//   return ([1e7]+-1e3+-4e3+-8e3+-1e11).replace(/[018]/g, c =>
-//     (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16)
-//   );
-// }
+import { AOIDatabase } from "./AOIDatabase.js"
 
-// function getRandomInt(min, max) {
-//     min = Math.ceil(min);
-//     max = Math.floor(max);
-//     return Math.floor(Math.random() * (max - min) + min);
-// }
-
-function getRandomColor() {
-    // let r = getRandomInt(100,200);
-    // let g = getRandomInt(100,200);
-    // let b = getRandomInt(100,200);
-    let r = 255;
-    let g = 0;
-    let b = 0;
-    return "rgba("+r+","+g+","+b+",0.25)"
+const defaultOptions = {
+    drawCanvas: true,
+    toTrackElements: [
+        {tag: 'div', class: 'v-sidebar-menu vsm_collapsed', recursive: false, wordLevel: false},
+        {tag: 'div', id: 'router-view', recursive: true, wordLevel: true}
+    ]
 }
 
 export const AOIPlugin = {
     
     // Install required for Vue Plugin
-    install: () => {
+    install: (Vue, options) => {
+
+        // Saving input parameters
+        AOIPlugin.Vue = Vue;
+        AOIPlugin.options = {...defaultOptions, ...options};
 
         // Adding the event listener to trigger a screenshot
         window.addEventListener("load", AOIPlugin.captureAOI);
@@ -64,8 +55,12 @@ export const AOIPlugin = {
         document.body.appendChild(AOIPlugin.canvas);
 
         // Creating highlighting dictionary
-        let highlightDict = {};
-        AOIPlugin.highlightDict = highlightDict;
+        const aoiDatabase = new AOIDatabase();
+        AOIPlugin.aoiDatabase = aoiDatabase;
+        
+        // Track when capturing data
+        let isTracking = false;
+        AOIPlugin.isTracking = isTracking;
     },
 
     configureCanvas: () => {
@@ -74,10 +69,10 @@ export const AOIPlugin = {
         let context = AOIPlugin.canvas.getContext('2d');
         context.clearRect(0, 0, AOIPlugin.canvas.width, AOIPlugin.canvas.height);
         
-        // If vertical scrollbar is visible
+        // If vertical scrollbar is visible, shift the canvas' width and height
         // Reference: https://stackoverflow.com/a/11226327/13231446
         if (document.body.offsetHeight > window.innerHeight) {
-            AOIPlugin.canvas.width = window.innerWidth - 15;
+            AOIPlugin.canvas.width = window.innerWidth - 13;
         }
         else {
             AOIPlugin.canvas.width = window.innerWidth;
@@ -91,22 +86,84 @@ export const AOIPlugin = {
         }
 
     },
-
-    captureAOI: () => {
-
-        // Reconfigure the canvas as needed
-        AOIPlugin.configureCanvas();
-
-        // This requires getting all the text nodes
-        AOIPlugin.getTextNodes();
-    },
-
+    
     drawBoundingBox: (rect) => {
 
         // Draw the bounding box on the html
         let context = AOIPlugin.canvas.getContext('2d');
-        context.fillStyle = getRandomColor();
+        context.fillStyle = "rgba(255,0,0,0.25)";
         context.fillRect(rect.x, rect.y, rect.width, rect.height);
+    },
+
+    drawElementsInCanvas: () => {
+        console.log("DRAWING");
+    },
+
+    captureAOI: () => {
+
+        if (!AOIPlugin.isTracking) {
+            AOIPlugin.isTracking = true;
+            
+            // Prevent calling methods too fast (before the document is 
+            // rendered correctly and fully)
+            setTimeout(() => {
+
+                // Track the desired elements
+                for (let i = 0; i < AOIPlugin.options.toTrackElements.length; i++) {
+                    let toTrackElement = AOIPlugin.options.toTrackElements[i];
+                    AOIPlugin.trackElement(toTrackElement);
+                }
+                
+                // Reconfigure the canvas as needed
+                if (AOIPlugin.options.drawCanvas) {
+                    AOIPlugin.configureCanvas();
+                    AOIPlugin.drawElementsInCanvas();
+                }
+
+            }, 100);
+            
+            AOIPlugin.isTracking = false;
+        }
+
+    },
+
+    trackElement: (elementConfiguration) => {
+
+        if ("class" in elementConfiguration) {
+
+            let elements = document.getElementsByClassName(elementConfiguration.class);
+
+            for (let i = 0; i < elements.length; i++) {
+                let element = elements[i];
+                let rectInfo = AOIPlugin.getRectInfo(
+                    element, 
+                    elementConfiguration.recursive, 
+                    elementConfiguration.wordLevel
+                );
+                console.log(rectInfo);
+            }
+        }
+    },
+
+    getRectInfo: (element, recursive, wordLevel) => {
+
+        let responseRectData = {
+            elementRect: element.getBoundingClientRect()
+        };
+
+        if (recursive) {
+
+            let childrenRectData = [];
+            
+            for (let i = 0; i < element.childElementCount; i++) {
+                let childrenRect = AOIPlugin.getRectInfo(element.children[i], recursive, wordLevel);
+                childrenRectData.push(childrenRect);
+            }
+
+            responseRectData.childrenRectData = childrenRectData;
+        }
+
+        return responseRectData;
     },
 
     recursiveSearching: (node) => {
@@ -198,6 +255,5 @@ export const AOIPlugin = {
             // Updating to the next node
             currentNode = treeWalker.nextNode();
         }
-
     }
 }
