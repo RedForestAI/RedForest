@@ -10,10 +10,10 @@
         <td><p class="question-text">{{ question.message }}</p></td>
       </tr>
     </table>
-  </div>
-  <div id="quiz-buttons">
-    <button class="prev-button">Previous</button>
-    <button class="next-button">Next</button>
+    <div id="quiz-buttons">
+      <button class="prev-button">Previous</button>
+      <button class="next-button">Next</button>
+    </div>
   </div>
 </template>
 
@@ -30,6 +30,9 @@ export default {
 </script>
 
 <style>
+#quiz-container {
+  padding: 1em;
+}
 #question-title {
   text-align: left;
 }

@@ -1,8 +1,10 @@
 <template>
-  <div v-html="html"></div>
-  <div id="page-buttons">
-    <button class="prev-button">Previous</button>
-    <button class="next-button">Next</button>
+  <div id="page-container">
+    <div v-html="html" class="load-html"></div>
+    <div id="page-buttons">
+      <button class="prev-button">Previous</button>
+      <button class="next-button">Next</button>
+    </div>
   </div>
 </template>
 
@@ -25,14 +27,25 @@ export default {
 </script>
 
 <style>
+img {
+  max-width: 100%;
+  max-height: 100%;
+}
 #page-buttons {
   margin-top: 5em;
+}
+#page-container {
+  padding: 1em;
+}
+
+.load-html {
+  overflow: auto;
 }
 
 .prev-button {
   float: left;
 }
 .next-button {
-  float: right
+  float: right;
 }
 </style>

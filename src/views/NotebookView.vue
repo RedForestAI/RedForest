@@ -1,10 +1,12 @@
 <template>
   <main>
-    <div class="column border-right">
-      <PageContent/>
-    </div>
-    <div class="column">
-      <QuizContent/>
+    <div class="container">
+      <div class="column border-place">
+        <PageContent/>
+      </div>
+      <div class="column">
+        <QuizContent/>
+      </div>
     </div>
   </main>
 </template>
@@ -22,20 +24,29 @@ export default {
 
 <style>
 main {
-  content: "";
-  display: table;
-  clear: both;
 }
 
-.border-right {
-  border-right: 1px solid black;
+@media (min-width: 48em ) {
+  .border-place {
+    border-right: 1px solid black;
+  }
+  .column {
+    flex: 48%;
+  }
+  .container {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    width: 100%;
+  }
+}
+@media (max-width: 48em ) {
+  .border-place {
+    border-bottom: 1px solid black;
+    padding-bottom: 1em;
+  }
 }
 
-.column {
-  float: left;
-  width: 47%;
-  padding: 1em;
-}
 </style>
 
 
