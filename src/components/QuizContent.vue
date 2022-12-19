@@ -42,7 +42,6 @@ export default {
 #quiz-buttons {
   margin-top: 5em;
 }
-
 li {
   list-style: none;
 }
@@ -52,7 +51,7 @@ li {
 }
 .question-radio {
   float: left;
-  width: 100%;
+  width: 200%;
 }
 .question-text {
   padding-left: 20px;

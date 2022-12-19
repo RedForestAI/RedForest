@@ -1,8 +1,8 @@
 <template>
   <body>
-  <div id='header'><AppHeader/></div>
-  <div id='router-view'><router-view /></div>
-  <div id='footer'><AppFooter/></div>
+    <div id='header'><AppHeader/></div>
+    <div id='router-view'><router-view /></div>
+    <div id='footer'><AppFooter/></div>
   </body>
 </template>
 
@@ -36,8 +36,10 @@ export default {
 }
 
 body {
+  margin: 0px;
   display: flex;
   min-height: 100vh;
+  width: 100%;
   flex-direction: column;
   justify-content: flex-start;
 }
