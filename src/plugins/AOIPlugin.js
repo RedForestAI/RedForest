@@ -10,12 +10,12 @@ https://github.com/snipcart/vue-comments-overlay
 // import { AOIDatabase } from "./AOIDatabase.js"
 
 const defaultOptions = {
-    drawCanvas: true,
+    drawCanvas: false,
     tagColorMap: {
-        DEFAULT: "rgba(255,0,0,0.1)",
-        DIV: "rgba(0,255,0,0.1)",
-        IMG: "rgba(0,0,255,0.1)",
-        TEXT: "rgba(0,0,255,0.1)"
+        DEFAULT: "rgba(255,0,0,1)",
+        DIV: "rgba(0,255,0,1)",
+        IMG: "rgba(0,0,255,1)",
+        TEXT: "rgba(0,0,255,1)"
     },
     toTrackElements: [
         {tag: 'div', class: 'v-sidebar-menu vsm_collapsed', recursive: false, wordLevel: false},

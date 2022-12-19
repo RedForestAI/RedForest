@@ -1,12 +1,16 @@
 <template>
-
   <header>
-    <div>
+    <div id="left_nav">
       <nav>
         <ul>
-          <li><router-link to="/">Home</router-link></li>
-          <li><router-link to="/notebook">Notebook</router-link></li>
-          <li><router-link to="/about">About</router-link></li>
+          <li><router-link to="/">Sandbox Reader</router-link></li>
+        </ul>
+      </nav>
+    </div>
+    <div id="right_nav">
+      <nav>
+        <ul>
+          <li><router-link to="/">Settings</router-link></li>
         </ul>
       </nav>
     </div>
@@ -16,13 +20,17 @@
 
 <style>
 header {
-  display: flex;
+  /* display: flex; */
   border-bottom: 1px solid #ccc;
   padding: .5rem 1rem;
+  padding-bottom: 30px;
 }
 
-nav {
-  margin-left: auto;
+#left_nav {
+  float: left;
+}
+#right_nav {
+  float: right;
 }
 
 nav ul {
