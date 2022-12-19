@@ -2,18 +2,35 @@
   <div id="login_box">
     <h1>Login</h1> 
     <div id="inputs">
-      <input name="username" placeholder="Username">
-      <input name="password" placeholder="Password" type="password">
+      <input v-model="username" id="username" name="username" placeholder="Username">
+      <input v-model="password" id="password" name="password" placeholder="Password" type="password">
     </div>
     <div id="options">
       <router-link to="/">Or register!</router-link>
-      <button>Next</button>
+      <button @click="submitLogin">Next</button>
     </div>
   </div>
 </template>
 
 <script>
   export default {
+    data () {
+      return {
+        username: "",
+        password: ""
+      }
+    },
+    methods: {
+      submitLogin() {
+        if (this.username == "" || this.password == ""){
+          alert("Missing Username or Password!")
+        }
+        else {
+          this.$store.dispatch("user/username", this.username)
+          this.$router.push("/notebook")
+        }
+      }
+    }
   }
 </script>
 

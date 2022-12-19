@@ -2,8 +2,10 @@ import { mount } from '@vue/test-utils'
 import App from '../src/App.vue'
 
 describe('Login', () => {
-    it('accepts login', () => {
+    test('Successful login', async () => {
         const wrapper = mount(App)
-        await wrapper.find("#username").setValue("test_username")
+        const username_input = wrapper.get("#username")
+        await username_input.setValue("test_username")
     })
 })
+
