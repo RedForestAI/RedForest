@@ -20,7 +20,7 @@
 
 <style>
 header {
-  border-bottom: 1px solid #ccc;
+  border-bottom: 1px solid;
   padding: .5rem 1rem;
   padding-bottom: 30px;
 }

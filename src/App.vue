@@ -35,5 +35,11 @@ export default {
   color: #2c3e50;
 }
 
+body {
+  display: flex;
+  min-height: 100vh;
+  flex-direction: column;
+  justify-content: flex-start;
+}
 
 </style>

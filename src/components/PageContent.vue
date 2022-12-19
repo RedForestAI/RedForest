@@ -1,5 +1,9 @@
 <template>
   <div v-html="html"></div>
+  <div id="page-buttons">
+    <button class="prev-button">Previous</button>
+    <button class="next-button">Next</button>
+  </div>
 </template>
 
 <script>
@@ -19,3 +23,16 @@ export default {
   }
 }
 </script>
+
+<style>
+#page-buttons {
+  margin-top: 5em;
+}
+
+.prev-button {
+  float: left;
+}
+.next-button {
+  float: right
+}
+</style>

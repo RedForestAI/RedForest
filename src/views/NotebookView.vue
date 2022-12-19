@@ -1,9 +1,9 @@
 <template>
   <main>
-    <div id="pageContent">
+    <div class="column border-right">
       <PageContent/>
     </div>
-    <div id="QuizContent">
+    <div class="column">
       <QuizContent/>
     </div>
   </main>
@@ -22,16 +22,20 @@ export default {
 
 <style>
 main {
-  display: flex;
-  flex-flow: row wrap;
+  content: "";
+  display: table;
+  clear: both;
 }
-#pageContent {
-  width: 49%;
-  height: calc(100vh - 100px);
-  border: 1px solid #ccc;
+
+.border-right {
+  border-right: 1px solid black;
 }
-#quizContent {
-  width: 49%;
-  border: 1px solid #ccc;
+
+.column {
+  float: left;
+  width: 47%;
+  padding: 1em;
 }
 </style>
+
+
