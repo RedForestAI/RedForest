@@ -7,6 +7,7 @@
 </template>
 
 <script>
+// Then visual stuff
 import AppFooter from '@/components/AppFooter.vue'
 import AppHeader from '@/components/AppHeader.vue'
 
@@ -14,12 +15,11 @@ export default {
   name: "App",
   data() {
     return {
-      sidebar_collapsed: true,
     }
   },
   components: {
     AppFooter,
-    AppHeader
+    AppHeader,
   },
   methods: {
   }
