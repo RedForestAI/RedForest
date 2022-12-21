@@ -1,16 +1,16 @@
 {
-    "pages": [
+    "content": [
         {
             "title": "Introduction to Climate Change", 
-            "path": "./pages/introduction.html"
+            "path": "content/climate_change/pages/introduction.html"
         },
         {
             "title": "Global Temperature",
-            "path": "./pages/globaltemp.html"
+            "path": "content/climate_change/pages/globaltemp.html"
         },
         {
             "title": "Global Temperature and Sea Levels",
-            "path": "./pages/global_temperature_sea_levels.html"
+            "path": "content/climate_change/pages/global_temperature_sea_levels.html"
         }
     ]
 }

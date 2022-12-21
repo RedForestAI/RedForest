@@ -28,7 +28,7 @@ import axios from 'axios'
 export default {
   data() {
     return {
-      pageFilepath: this.$store.state.currentPageFilepath,
+      pageFilepath: this.$store.getters['contentStore/getCurrentPageFilepath'],
       pageList: [{title: "Page 1"}, {title: "Page 2"}, {title: "Page 3"}],
       html: null,
       display_sidebar: false

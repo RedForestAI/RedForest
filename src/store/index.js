@@ -1,13 +1,12 @@
 import { createStore } from 'vuex'
+import { contentStore } from './contentStore.js'
 
 export const store = createStore({
-    state: {
-
-        pageList: [],
-        currentPageId: null,
-        currentPageFilepath: '/content/climate_change/pages/introduction.html'
-    },
+    modules: {
+        contentStore
+    }
 })
 
-// Load content
-// store.dispatch('loadContent', '/content/climate_change/meta.json')
+// Load content (thereby selecting which one it is
+// store.dispatch('contentStore/loadContent', '/content/sandbox_content/meta.json')
+store.dispatch('contentStore/loadContent', '/content/climate_change/meta.json')
