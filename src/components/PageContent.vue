@@ -28,8 +28,7 @@ import axios from 'axios'
 export default {
   data() {
     return {
-      pageFilepath: this.$store.getters['contentStore/getCurrentPageFilepath'],
-      pageList: [{title: "Page 1"}, {title: "Page 2"}, {title: "Page 3"}],
+      /* pageList: [{title: "Page 1"}, {title: "Page 2"}, {title: "Page 3"}], */
       html: null,
       display_sidebar: false
     }
@@ -39,9 +38,14 @@ export default {
       this.display_sidebar = !this.display_sidebar
     }
   },
+  computed: {
+    currentPageFilepath () {
+      return this.$store.getters['contentStore/getCurrentPageFilepath']
+    }
+  },
   mounted () {
     axios
-      .get(this.pageFilepath)
+      .get(this.currentPageFilepath)
       .then(response => (this.html = response.data))
   }
 }

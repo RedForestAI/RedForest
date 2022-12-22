@@ -1,4 +1,5 @@
-import LoginView from '../views/LoginView.vue'
+import LoginView from '@/views/LoginView.vue'
+import NotebookView from '@/views/NotebookView.vue'
 import { createRouter, createWebHistory } from "vue-router"
 
 const router = createRouter({
@@ -12,7 +13,7 @@ const router = createRouter({
     {
       path: '/notebook',
       name: 'notebook',
-      component: () => import('../views/NotebookView.vue')
+      component: NotebookView
     }
   ]
 })

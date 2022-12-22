@@ -23,9 +23,6 @@ export default {
 </script>
 
 <style>
-main {
-}
-
 @media (min-width: 48em ) {
   .border-place {
     border-right: 1px solid black;
