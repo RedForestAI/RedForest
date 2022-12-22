@@ -22,15 +22,16 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import axios from 'axios'
+import { defineComponent } from "vue"
 
-export default {
+export default defineComponent({
   data() {
     return {
-      /* pageList: [{title: "Page 1"}, {title: "Page 2"}, {title: "Page 3"}], */
+      pageList: [{title: "Page 1"}, {title: "Page 2"}, {title: "Page 3"}],
       html: null,
-      display_sidebar: false
+      display_sidebar: false as boolean
     }
   },
   methods: {
@@ -40,7 +41,7 @@ export default {
   },
   computed: {
     currentPageFilepath () {
-      return this.$store.getters['contentStore/getCurrentPageFilepath']
+      return "content/climate_change/pages/introduction.html"
     }
   },
   mounted () {
@@ -48,7 +49,7 @@ export default {
       .get(this.currentPageFilepath)
       .then(response => (this.html = response.data))
   }
-}
+})
 </script>
 
 <style>

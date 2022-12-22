@@ -13,25 +13,27 @@
 </template>
 
 <script>
-  export default {
-    data () {
-      return {
-        username: "",
-        password: ""
+import { defineComponent } from 'vue'
+
+export default defineComponent({
+  data () {
+    return {
+      username: "", // type: string
+      password: "" // type: string
+    }
+  },
+  methods: {
+    submitLogin() {
+      if (this.username == "" || this.password == ""){
+        alert("Missing Username or Password!")
       }
-    },
-    methods: {
-      submitLogin() {
-        if (this.username == "" || this.password == ""){
-          alert("Missing Username or Password!")
-        }
-        else {
-          this.$store.dispatch("user/username", this.username)
-          this.$router.push("/notebook")
-        }
+      else {
+        // this.$store.dispatch("user/username", this.username)
+        this.$router.push("/notebook")
       }
     }
   }
+})
 </script>
 
 <style>

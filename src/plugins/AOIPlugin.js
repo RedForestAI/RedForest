@@ -39,7 +39,7 @@ export const AOIPlugin = {
         document.addEventListener("click", AOIPlugin.captureAOI);
     
         // Reference: https://stackoverflow.com/questions/19840907/draw-rectangle-over-html-with-javascript
-        let canvas = document.createElement('canvas');
+        const canvas = document.createElement('canvas');
 
         // Set that the canvas covers the entire page so we can draw anywhere
         canvas.style.width = '100%';
@@ -61,7 +61,7 @@ export const AOIPlugin = {
         document.body.appendChild(AOIPlugin.canvas);
 
         // List of tags to look and check for words
-        let tagWordCheck = ['P', 'A', 'H1', 'H2', 'H3', 'H4', 'H5'];
+        const tagWordCheck = ['P', 'A', 'H1', 'H2', 'H3', 'H4', 'H5'];
         AOIPlugin.tagWordCheck = tagWordCheck;
 
         // Creating highlighting dictionary
@@ -70,14 +70,14 @@ export const AOIPlugin = {
         AOIPlugin.aoiDatabase = aoiDatabase;
         
         // Track when capturing data
-        let isTracking = false;
+        const isTracking = false;
         AOIPlugin.isTracking = isTracking;
     },
 
     configureCanvas: () => {
         
         // Clear the canvas
-        let context = AOIPlugin.canvas.getContext('2d');
+        const context = AOIPlugin.canvas.getContext('2d');
         context.clearRect(0, 0, AOIPlugin.canvas.width, AOIPlugin.canvas.height);
         
         // If vertical scrollbar is visible, shift the canvas' width and height
@@ -101,7 +101,7 @@ export const AOIPlugin = {
     drawBoundingBox: (rect, color) => {
 
         // Draw the bounding box on the html
-        let context = AOIPlugin.canvas.getContext('2d');
+        const context = AOIPlugin.canvas.getContext('2d');
         context.fillStyle = color;
         context.fillRect(rect.x, rect.y, rect.width, rect.height);
     },
@@ -110,7 +110,7 @@ export const AOIPlugin = {
 
         for (let i = 0; i < elementsRectData.length; i++){
             // Extract the current level element data
-            let elementRect = elementsRectData[i];
+            const elementRect = elementsRectData[i];
 
             // Obtain the color from the tags
             let color = AOIPlugin.options.tagColorMap.DEFAULT;
@@ -147,7 +147,7 @@ export const AOIPlugin = {
                 
                 // Track the desired elements
                 for (let i = 0; i < AOIPlugin.options.toTrackElements.length; i++) {
-                    let toTrackElement = AOIPlugin.options.toTrackElements[i];
+                    const toTrackElement = AOIPlugin.options.toTrackElements[i];
                     AOIPlugin.aoiDatabase[i] = AOIPlugin.trackElement(toTrackElement);
                 }
                 
@@ -167,16 +167,16 @@ export const AOIPlugin = {
 
     trackElement: (elementConfiguration) => {
         
-        let elementsRects = [];
+        const elementsRects = [];
 
         if ("class" in elementConfiguration) {
 
-            let elements = document.getElementsByClassName(elementConfiguration.class);
+            const elements = document.getElementsByClassName(elementConfiguration.class);
 
             for (let i = 0; i < elements.length; i++) {
                 
-                let element = elements[i];
-                let rectInfo = AOIPlugin.getRectInfo(
+                const element = elements[i];
+                const rectInfo = AOIPlugin.getRectInfo(
                     element, 
                     elementConfiguration.recursive, 
                     elementConfiguration.wordLevel
@@ -186,8 +186,8 @@ export const AOIPlugin = {
             }
         }
         else { // by "id"
-            let element = document.getElementById(elementConfiguration.id);
-            let rectInfo = AOIPlugin.getRectInfo(
+            const element = document.getElementById(elementConfiguration.id);
+            const rectInfo = AOIPlugin.getRectInfo(
                 element,
                 elementConfiguration.recursive,
                 elementConfiguration.wordLevel
@@ -201,17 +201,17 @@ export const AOIPlugin = {
 
     getRectInfo: (element, recursive, wordLevel) => {
 
-        let responseRectData = {
+        const responseRectData = {
             tagName: element.tagName,
             elementRect: element.getBoundingClientRect()
         };
 
         if (recursive) {
 
-            let childrenRectData = [];
+            const childrenRectData = [];
             
             for (let i = 0; i < element.childElementCount; i++) {
-                let childrenRect = AOIPlugin.getRectInfo(element.children[i], recursive, wordLevel);
+                const childrenRect = AOIPlugin.getRectInfo(element.children[i], recursive, wordLevel);
                 childrenRectData.push(childrenRect);
             }
 
@@ -220,7 +220,7 @@ export const AOIPlugin = {
                 // Look for word data
                 let wordsRectData = [];
                 for (let j = 0; j < element.childNodes.length; j++) {
-                    let node = element.childNodes[j];
+                    const node = element.childNodes[j];
                     wordsRectData = wordsRectData.concat(AOIPlugin.wordSearching(node));
                 }
 
@@ -239,20 +239,20 @@ export const AOIPlugin = {
     wordSearching: (node) => {
 
         // Create Range object to find individual words
-        let range = new Range();
-        let wordsRectData = [];
+        const range = new Range();
+        const wordsRectData = [];
 
         if (node.nodeName == '#text'){
             
             // Determine if no text children
-            let nodeText = node.wholeText;
+            const nodeText = node.wholeText;
             
             // If empty, return immediately
             if (nodeText == ''){
                 return [];
             }
 
-            let words = nodeText.split(" ");
+            const words = nodeText.split(" ");
 
             // For all text within the node, construct a range
             let textStartPointer = 0;
@@ -260,7 +260,7 @@ export const AOIPlugin = {
             for (let j = 0; j < words.length; j++){
 
                 // Storage container for per-word data
-                let wordRectData = {};
+                const wordRectData = {};
 
                 // Select the word's range
                 textEndPointer = textStartPointer + words[j].length;
@@ -268,7 +268,7 @@ export const AOIPlugin = {
                 range.setEnd(node, textEndPointer);
 
                 // Get word data and store
-                let rect = range.getBoundingClientRect();
+                const rect = range.getBoundingClientRect();
                 wordRectData.rectData = rect;
                 wordRectData.text = words[j];
                 wordsRectData.push(wordRectData);

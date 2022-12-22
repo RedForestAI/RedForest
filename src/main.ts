@@ -6,7 +6,6 @@ import App from '@/App.vue'
 import router from '@/views/router'
 import { createPinia } from 'pinia'
 import { AOIPlugin } from '@/plugins/AOIPlugin'
-import 'vue-sidebar-menu/dist/vue-sidebar-menu.css'
 
 // Create pinia
 const pinia = createPinia()
