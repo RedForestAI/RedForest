@@ -13,7 +13,7 @@
       <button class="sidebar-button" :class="{ expanded_button: display_sidebar }" v-if="display_sidebar == true" v-on:click="toggleSidebar()"> &lt; </button>
     </div>
     <div id="html-container">
-      <div v-html="html" class="load-html"></div>
+      <div v-html="contentStore.currentPageHtml" class="load-html"></div>
       <div id="page-buttons">
         <button class="prev-button">Previous</button>
         <button class="next-button">Next</button>
@@ -23,7 +23,6 @@
 </template>
 
 <script lang="ts">
-import axios from 'axios'
 import { defineComponent } from "vue"
 import { usePageContentStore } from '@/store/PageContentStore'
 import { mapStores } from 'pinia'
@@ -32,23 +31,17 @@ export default defineComponent({
   data() {
     return {
       pageList: [{title: "Page 1"}, {title: "Page 2"}, {title: "Page 3"}],
-      html: null,
       display_sidebar: false as boolean
     }
   },
   methods: {
     toggleSidebar: function() {
       this.display_sidebar = !this.display_sidebar
-    }
+    },
   },
   computed: {
-    ...mapStores(usePageContentStore)
+    ...mapStores(usePageContentStore),
   },
-  mounted () {
-    axios
-      .get(this.contentStore.currentPageFilepath)
-      .then(response => (this.html = response.data))
-  }
 })
 </script>
 

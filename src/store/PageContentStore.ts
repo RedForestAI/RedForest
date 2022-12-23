@@ -1,27 +1,37 @@
 import { defineStore } from 'pinia'
+import axios from 'axios'
 
 type PageContent = {
-  title: String 
-  path: String
+  title: string 
+  path: string
 }
 
 type ContentDetails = {
-  currentPageFilepath: string
-  currentPageID: number
   contentPages: PageContent[]
+  currentPageID: number
+  currentPageFilepath: string
+  currentPageHtml: string
 }
 
 export const usePageContentStore = defineStore('content', {
   state: () => {
     return {
-      currentPageFilepath: 'content/climate_change/pages/introduction.html',
+      contentPages: [],
       currentPageID: 0,
-      contentPages: []
+      currentPageFilepath: '',
+      currentPageHtml: ''
     } as ContentDetails
   },
   getters: {
-    getCurrentPageFilepath(state) {
+    getCurrentPageFilepath(state): string {
+      console.log(state.contentPages)
       return state.contentPages[state.currentPageID].path
+    },
+    getCurrentPageHtml(state): string {
+      axios
+        .get(this.currentPageFilepath)
+        .then((response) => (this.currentPageHtml = response.data))
+      return this.currentPageHtml
     }
   },
   actions: {
@@ -31,8 +41,11 @@ export const usePageContentStore = defineStore('content', {
       fetch(contentPath)
         .then((res) => res.json())
         .then((data) => {
-            this.contentPages = data.content
-            this.currentPageID = 0
+          console.log(data)
+          this.contentPages = data.content
+          this.currentPageID = 0
+          this.currentPageFilepath = this.getCurrentPageFilepath
+          this.currentPageHtml = this.getCurrentPageHtml
         }); 
     }
   }

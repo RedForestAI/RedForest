@@ -10,6 +10,7 @@ export const useMainStore = defineStore('main', {
       console.log("Initialization is occurring!")
       const pageContent = usePageContentStore()
       pageContent.loadContent("/content/climate_change/meta.json")
+      console.log("Initialization finished!")
     }
   }
 })

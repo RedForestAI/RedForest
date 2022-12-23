@@ -19,7 +19,9 @@ export default {
   setup() {
     const mainStore = useMainStore()
     mainStore.initialize()
-    return mainStore
+    return {
+      mainStore
+    }
   },
   data() {
     return {
