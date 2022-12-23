@@ -4,7 +4,7 @@
       <div id="sidebar" v-if="display_sidebar == true" :class="{ expanded: display_sidebar }">
         <h1>Table of Contents</h1>
         <table id="page-table">
-          <tr v-for="page in pageList" :key="page.id">
+          <tr v-for="page in pageList" :key="page.title">
             <td class="page-entry">{{ page.title }}</td>
           </tr>
         </table>
@@ -25,7 +25,8 @@
 <script lang="ts">
 import axios from 'axios'
 import { defineComponent } from "vue"
-import { pageContentStore } from '@/store/PageContentStore'
+import { usePageContentStore } from '@/store/PageContentStore'
+import { mapStores } from 'pinia'
 
 export default defineComponent({
   data() {
@@ -41,13 +42,11 @@ export default defineComponent({
     }
   },
   computed: {
-    currentPageFilepath () {
-      return "content/climate_change/pages/introduction.html"
-    }
+    ...mapStores(usePageContentStore)
   },
   mounted () {
     axios
-      .get(this.currentPageFilepath)
+      .get(this.contentStore.currentPageFilepath)
       .then(response => (this.html = response.data))
   }
 })

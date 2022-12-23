@@ -6,7 +6,7 @@ module.exports = {
     "vue"
   ],
   roots: [
-    "<rootDir>/__test__"
+    "<rootDir>/test"
   ],
   testEnvironment: "jest-environment-jsdom",
   testMatch: [

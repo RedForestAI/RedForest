@@ -2,22 +2,30 @@ import { defineStore } from 'pinia'
 
 type PageContent = {
   title: String 
+  path: String
 }
 
 type ContentDetails = {
-  currentPageID: number | undefined
+  currentPageFilepath: string
+  currentPageID: number
   contentPages: PageContent[]
 }
 
-export const pageContentStore = defineStore('pageContent', {
+export const usePageContentStore = defineStore('content', {
   state: () => {
     return {
-      currentPageID: undefined,
+      currentPageFilepath: 'content/climate_change/pages/introduction.html',
+      currentPageID: 0,
       contentPages: []
     } as ContentDetails
   },
+  getters: {
+    getCurrentPageFilepath(state) {
+      return state.contentPages[state.currentPageID].path
+    }
+  },
   actions: {
-    loadContent (contentPath: URL) {
+    loadContent (contentPath: string) {
       
       // Load the meta JSON
       fetch(contentPath)
