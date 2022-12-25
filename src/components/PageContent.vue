@@ -4,7 +4,7 @@
       <div id="sidebar" v-if="display_sidebar == true" :class="{ expanded: display_sidebar }">
         <h1>Table of Contents</h1>
         <table id="page-table">
-          <tr v-for="page in pageList" :key="page.title">
+          <tr v-for="page in contentStore.contentPages" :key="page.title">
             <td class="page-entry">{{ page.title }}</td>
           </tr>
         </table>
@@ -15,8 +15,8 @@
     <div id="html-container">
       <div v-html="contentStore.currentPageHtml" class="load-html"></div>
       <div id="page-buttons">
-        <button class="prev-button">Previous</button>
-        <button class="next-button">Next</button>
+        <button class="prev-button" @click="contentStore.prev()">Previous</button>
+        <button class="next-button" @click="contentStore.next()">Next</button>
       </div>
     </div>
   </div>
@@ -30,7 +30,6 @@ import { mapStores } from 'pinia'
 export default defineComponent({
   data() {
     return {
-      pageList: [{title: "Page 1"}, {title: "Page 2"}, {title: "Page 3"}],
       display_sidebar: false as boolean
     }
   },

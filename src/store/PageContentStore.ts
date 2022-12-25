@@ -35,6 +35,10 @@ export const usePageContentStore = defineStore('content', {
     }
   },
   actions: {
+    loadPage () {
+      this.currentPageFilepath = this.getCurrentPageFilepath
+      this.currentPageHtml = this.getCurrentPageHtml
+    },
     loadContent (contentPath: string) {
       
       // Load the meta JSON
@@ -44,9 +48,20 @@ export const usePageContentStore = defineStore('content', {
           console.log(data)
           this.contentPages = data.content
           this.currentPageID = 0
-          this.currentPageFilepath = this.getCurrentPageFilepath
-          this.currentPageHtml = this.getCurrentPageHtml
+          this.loadPage()
         }); 
+    },
+    prev () {
+      if (this.currentPageID > 0) {
+        this.currentPageID -= this.currentPageID
+        this.loadPage()
+      }
+    },
+    next () {
+      if (this.currentPageID < this.contentPages.length - 1){
+        this.currentPageID += this.currentPageID
+        this.loadPage()
+      }
     }
   }
 })
