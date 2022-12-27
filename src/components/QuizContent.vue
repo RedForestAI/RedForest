@@ -1,13 +1,13 @@
 <template>
   <div id="quiz-container">
-    <h1 id="question-title">Question {{ quizQuestionNumber }}</h1>
+    <h1 id="question-title">Question {{ quizContentStore.currentQuestionID + 1}}</h1>
     <p id="quiz-prompt">
-    {{ quizPrompt }}
+    {{ quizContentStore.currentQuestionPrompt}}
     </p>
     <table>
-      <tr v-for="question in questions" :key="question.id">
-        <td><input type="radio" class="question-radio"></td>
-        <td><p class="question-text">{{ question.message }}</p></td>
+      <tr v-for="answer in quizContentStore.currentQuestionAnswers" :key="answer.id">
+        <td><input type="radio" class="answer-radio"></td>
+        <td><p class="answer-text">{{ answer }}</p></td>
       </tr>
     </table>
     <div id="quiz-buttons">
@@ -17,16 +17,21 @@
   </div>
 </template>
 
-<script>
-export default {
+<script lang="ts">
+import { defineComponent } from "vue"
+import { useQuizContentStore } from '@/store/QuizContentStore'
+import { mapStores } from 'pinia'
+
+export default defineComponent({
   data() {
     return {
-      quizQuestionNumber: 1,
-      quizPrompt: "Question prompt!",
       questions: [{message: "Integer pellentesque, dolor id tincidunt pharetra, eros risus ornare erat, auctor feugiat elit odio eu lorem. Nam ullamcorper rutrum laoreet."}, {message: "Integer pellentesque, dolor id tincidunt pharetra, eros risus ornare erat, auctor feugiat elit odio eu lorem. Nam ullamcorper rutrum laoreet."}, {message: "Integer pellentesque, dolor id tincidunt pharetra, eros risus ornare erat, auctor feugiat elit odio eu lorem. Nam ullamcorper rutrum laoreet."}, {message: "Integer pellentesque, dolor id tincidunt pharetra, eros risus ornare erat, auctor feugiat elit odio eu lorem. Nam ullamcorper rutrum laoreet."}]
     }
+  },
+  computed: {
+    ...mapStores(useQuizContentStore) // reference: pageContentStore
   }
-}
+})
 </script>
 
 <style>
@@ -49,11 +54,11 @@ li {
   text-align: left;
   width: 100%;
 }
-.question-radio {
+.answer-radio {
   float: left;
   width: 200%;
 }
-.question-text {
+.answer-text {
   padding-left: 20px;
   display: inline-block;
 }

@@ -1,22 +1,22 @@
 <template>
   <div id="page-container">
     <div id="sidebar-container">
-      <div id="sidebar" v-if="display_sidebar == true" :class="{ expanded: display_sidebar }">
+      <div id="sidebar" v-if="displaySidebar == true" :class="{ expanded: displaySidebar }">
         <h1>Table of Contents</h1>
         <table id="page-table">
-          <tr v-for="page in contentStore.contentPages" :key="page.title">
+          <tr v-for="page in pageContentStore.contentPages" :key="page.title">
             <td class="page-entry">{{ page.title }}</td>
           </tr>
         </table>
       </div>
-      <button class="sidebar-button" v-if="display_sidebar == false" v-on:click="toggleSidebar()"> > </button>
-      <button class="sidebar-button" :class="{ expanded_button: display_sidebar }" v-if="display_sidebar == true" v-on:click="toggleSidebar()"> &lt; </button>
+      <button class="sidebar-button" v-if="displaySidebar == false" v-on:click="toggleSidebar()"> > </button>
+      <button class="sidebar-button" :class="{ expanded_button: displaySidebar }" v-if="displaySidebar == true" v-on:click="toggleSidebar()"> &lt; </button>
     </div>
     <div id="html-container">
-      <div v-html="contentStore.currentPageHtml" class="load-html"></div>
+      <div v-html="pageContentStore.currentPageHtml" class="load-html"></div>
       <div id="page-buttons">
-        <button class="prev-button" @click="contentStore.prev()">Previous</button>
-        <button class="next-button" @click="contentStore.next()">Next</button>
+        <button class="prev-button" v-on:click="pageContentStore.prevPage()">Previous</button>
+        <button class="next-button" v-on:click="pageContentStore.nextPage()">Next</button>
       </div>
     </div>
   </div>
@@ -30,17 +30,17 @@ import { mapStores } from 'pinia'
 export default defineComponent({
   data() {
     return {
-      display_sidebar: false as boolean
+      displaySidebar: false as boolean
     }
   },
   methods: {
     toggleSidebar: function() {
-      this.display_sidebar = !this.display_sidebar
+      this.displaySidebar = !this.displaySidebar
     },
   },
   computed: {
-    ...mapStores(usePageContentStore),
-  },
+    ...mapStores(usePageContentStore) // reference: pageContentStore
+  }
 })
 </script>
 
@@ -69,7 +69,7 @@ img {
   padding-left: 2em;
 }
 #page-buttons {
-  margin-top: 5em;
+  bottom: 0px;
 }
 #page-table {
   margin: 1em;

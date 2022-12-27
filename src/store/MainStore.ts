@@ -2,15 +2,19 @@ import { defineStore } from 'pinia'
 
 // Load other stores
 import { usePageContentStore } from './PageContentStore'
-      
+import { useQuizContentStore } from './QuizContentStore'
 
 export const useMainStore = defineStore('main', {
   actions: {
     initialize() {
-      console.log("Initialization is occurring!")
+    
+      // Initialize the page content store
       const pageContent = usePageContentStore()
       pageContent.loadContent("/content/climate_change/meta.json")
-      console.log("Initialization finished!")
+
+      // Initialize the quiz content store
+      const quizContent = useQuizContentStore()
+      quizContent.loadQuizContent("/content/climate_change/questions.json")
     }
   }
 })

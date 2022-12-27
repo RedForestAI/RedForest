@@ -13,7 +13,7 @@ type ContentDetails = {
   currentPageHtml: string
 }
 
-export const usePageContentStore = defineStore('content', {
+export const usePageContentStore = defineStore('pageContent', {
   state: () => {
     return {
       contentPages: [],
@@ -24,7 +24,7 @@ export const usePageContentStore = defineStore('content', {
   },
   getters: {
     getCurrentPageFilepath(state): string {
-      console.log(state.contentPages)
+      // console.log(state.contentPages)
       return state.contentPages[state.currentPageID].path
     },
     getCurrentPageHtml(state): string {
@@ -45,21 +45,23 @@ export const usePageContentStore = defineStore('content', {
       fetch(contentPath)
         .then((res) => res.json())
         .then((data) => {
-          console.log(data)
+          // console.log(data)
           this.contentPages = data.content
           this.currentPageID = 0
           this.loadPage()
         }); 
     },
-    prev () {
+    prevPage () {
+      // console.log("prev")
       if (this.currentPageID > 0) {
-        this.currentPageID -= this.currentPageID
+        this.currentPageID -= 1
         this.loadPage()
       }
     },
-    next () {
+    nextPage () {
+      // console.log("next, len => " + this.contentPages.length)
       if (this.currentPageID < this.contentPages.length - 1){
-        this.currentPageID += this.currentPageID
+        this.currentPageID += 1
         this.loadPage()
       }
     }
