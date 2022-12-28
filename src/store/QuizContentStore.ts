@@ -37,14 +37,26 @@ export const useQuizContentStore = defineStore('quizContent', {
             fetch(quizContentPath)
                 .then((res) => res.json())
                 .then((data) => {
-                    this.questions = data
+                    this.questions = data.questions
+                    this.loadQuizQuestion()
                 })
-            
-            console.log("Loaded questions: " + this.questions)
+
         },
         loadQuizQuestion () {
             this.currentQuestionPrompt = this.getCurrentQuestionPrompt
             this.currentQuestionAnswers = this.getCurrentQuestionAnswers
+        },
+        prevQuestion() {
+            if (this.currentQuestionID > 0) {
+                this.currentQuestionID -= 1
+                this.loadQuizQuestion()
+            }
+        },
+        nextQuestion() {
+            if (this.currentQuestionID < this.questions.length - 1) {
+                this.currentQuestionID += 1
+                this.loadQuizQuestion()
+            }
         }
     }
 })

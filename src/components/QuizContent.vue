@@ -11,8 +11,8 @@
       </tr>
     </table>
     <div id="quiz-buttons">
-      <button class="prev-button">Previous</button>
-      <button class="next-button">Next</button>
+      <button class="prev-button" v-on:click="quizContentStore.prevQuestion()">Previous</button>
+      <button class="next-button" v-on:click="quizContentStore.nextQuestion()">Next</button>
     </div>
   </div>
 </template>
