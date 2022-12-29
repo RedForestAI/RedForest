@@ -1,10 +1,10 @@
 <template>
   <main>
     <div class="container">
-      <div class="column border-place">
+      <div>
         <PageContent/>
       </div>
-      <div class="column">
+      <div :class="[configurationStore.quizHidden ? 'hidden-quiz' : 'right-side-panel']">
         <QuizContent/>
       </div>
     </div>
@@ -14,34 +14,30 @@
 <script>
 import PageContent from '@/components/PageContent.vue'
 import QuizContent from '@/components/QuizContent.vue'
+import { useConfigurationStore } from '@/store/ConfigurationStore'
+import { mapStores } from 'pinia'
+
 export default {
   components: {
     PageContent,
     QuizContent
+  },
+  computed: {
+    ...mapStores(useConfigurationStore) // reference: configurationStore
   }
 }
 </script>
 
 <style>
-@media (min-width: 48em ) {
-  .border-place {
-    border-right: 1px solid black;
-  }
-  .column {
-    flex: 48%;
-  }
-  .container {
-    display: flex;
-    flex-direction: row;
-    flex-wrap: wrap;
-    width: 100%;
-  }
+.container {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  width: 100%;
 }
-@media (max-width: 48em ) {
-  .border-place {
-    border-bottom: 1px solid black;
-    padding-bottom: 1em;
-  }
+
+.hidden-quiz {
+  display: none;
 }
 
 </style>

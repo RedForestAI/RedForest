@@ -10,7 +10,7 @@
     <div id="right_nav">
       <nav>
         <ul>
-          <li><button>Quiz</button></li>
+          <li><button v-on:click="configurationStore.toggleQuiz()">Quiz</button></li>
           <li><router-link to="/">Tutorial</router-link></li>
           <li><router-link to="/">Settings</router-link></li>
           <li><router-link to="/">Log Out</router-link></li>
@@ -21,11 +21,26 @@
 
 </template>
 
+<script lang="ts">
+import { defineComponent } from 'vue'
+import { useConfigurationStore } from '@/store/ConfigurationStore'
+import { mapStores } from 'pinia'
+
+export default defineComponent({
+  computed: {
+    ...mapStores(useConfigurationStore)
+  }
+})
+</script>
+
 <style>
 header {
-  border-bottom: 1px solid;
-  padding: .5rem 1rem;
-  padding-bottom: 30px;
+  position: absolute;
+  padding-top: 1em;
+  padding-bottom: 1em;
+  background-color: #FFFFFF;
+  width: 100%;
+  z-index: 30;
 }
 
 #left_nav {

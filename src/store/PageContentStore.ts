@@ -24,7 +24,6 @@ export const usePageContentStore = defineStore('pageContent', {
   },
   getters: {
     getCurrentPageFilepath(state): string {
-      // console.log(state.contentPages)
       return state.contentPages[state.currentPageID].path
     },
     getCurrentPageHtml(state): string {
@@ -45,21 +44,18 @@ export const usePageContentStore = defineStore('pageContent', {
       fetch(contentPath)
         .then((res) => res.json())
         .then((data) => {
-          // console.log(data)
           this.contentPages = data.content
           this.currentPageID = 0
           this.loadPage()
         }); 
     },
     prevPage () {
-      // console.log("prev")
       if (this.currentPageID > 0) {
         this.currentPageID -= 1
         this.loadPage()
       }
     },
     nextPage () {
-      // console.log("next, len => " + this.contentPages.length)
       if (this.currentPageID < this.contentPages.length - 1){
         this.currentPageID += 1
         this.loadPage()

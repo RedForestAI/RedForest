@@ -23,13 +23,8 @@ import { useQuizContentStore } from '@/store/QuizContentStore'
 import { mapStores } from 'pinia'
 
 export default defineComponent({
-  data() {
-    return {
-      questions: [{message: "Integer pellentesque, dolor id tincidunt pharetra, eros risus ornare erat, auctor feugiat elit odio eu lorem. Nam ullamcorper rutrum laoreet."}, {message: "Integer pellentesque, dolor id tincidunt pharetra, eros risus ornare erat, auctor feugiat elit odio eu lorem. Nam ullamcorper rutrum laoreet."}, {message: "Integer pellentesque, dolor id tincidunt pharetra, eros risus ornare erat, auctor feugiat elit odio eu lorem. Nam ullamcorper rutrum laoreet."}, {message: "Integer pellentesque, dolor id tincidunt pharetra, eros risus ornare erat, auctor feugiat elit odio eu lorem. Nam ullamcorper rutrum laoreet."}]
-    }
-  },
   computed: {
-    ...mapStores(useQuizContentStore) // reference: pageContentStore
+    ...mapStores(useQuizContentStore) // reference: quizContentStore 
   }
 })
 </script>

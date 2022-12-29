@@ -42,8 +42,8 @@ export const AOIPlugin = {
         const canvas = document.createElement('canvas');
 
         // Set that the canvas covers the entire page so we can draw anywhere
-        canvas.style.width = '100%';
-        canvas.style.height = '100%';
+        canvas.style.width = '100vw';
+        canvas.style.height = '100vh';
         canvas.width = window.innerWidth;
         canvas.height = window.innerHeight;
         canvas.style.position = 'fixed';

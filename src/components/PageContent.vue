@@ -1,7 +1,7 @@
 <template>
-  <div id="page-container">
+  <div id="sandcastle-page-container">
     <div id="sidebar-container">
-      <div id="sidebar" v-if="displaySidebar == true" :class="{ expanded: displaySidebar }">
+      <div id="reader-sidebar" v-if="displaySidebar == true" :class="{ expanded: displaySidebar }">
         <h1>Table of Contents</h1>
         <table id="page-table">
           <tr v-for="page in pageContentStore.contentPages" :key="page.title">
@@ -50,23 +50,40 @@ img {
   max-height: 100%;
 }
 
-#page-container{
+#sandcastle-page-container{
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
   width: 100%;
 }
+
 #sidebar-container {
   align-items: stretch;
+  z-index: 15;
 }
-#sidebar {
+#reader-sidebar {
+  position: absolute;
+}
+.expanded {
+  width: 400px;
+  height: 100%;
+  background-color: #FFFFFF;
+}
+
+.expanded_button {
+  left: 400px;
+}
+.sidebar-button {
+  height: 100%;
   position: absolute;
   z-index: 15;
 }
+
 #html-container {
   flex: 80%;
   padding: 1em;
   padding-left: 2em;
+  z-index: 0;
 }
 #page-buttons {
   bottom: 0px;
@@ -87,20 +104,6 @@ img {
   padding-bottom: 0.5em;
 }
 
-.expanded {
-  background: none no-repeat scroll 0 0 #fff;
-  width: 400px;
-  height: 100%;
-}
-.expanded_button {
-  left: 400px;
-}
-
-.sidebar-button {
-  height: 100%;
-  position: absolute;
-  z-index: 15;
-}
 .load-html {
   overflow: auto;
 }
