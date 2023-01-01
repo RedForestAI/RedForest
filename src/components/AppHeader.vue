@@ -3,7 +3,7 @@
     <div id="left_nav">
       <nav>
         <ul>
-          <li><router-link to="/">Sandbox Reader</router-link></li>
+          <li><router-link to="/">SandCastle Reader</router-link></li>
         </ul>
       </nav>
     </div>
@@ -35,7 +35,7 @@ export default defineComponent({
 
 <style>
 header {
-  position: absolute;
+  position: fixed;
   padding-top: 1em;
   padding-bottom: 1em;
   background-color: #FFFFFF;

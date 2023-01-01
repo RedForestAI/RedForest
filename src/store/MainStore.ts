@@ -9,9 +9,9 @@ export const useMainStore = defineStore('main', {
     initialize() {
     
       // Initialize the page content store
-      const pageContent = usePageContentStore()
+      // const pageContent = usePageContentStore()
       // pageContent.loadContent("/content/climate_change/meta.json")
-      pageContent.loadContent("/content/sandbox_content/meta.json")
+      // pageContent.loadContent("/content/sandcastle_content/meta.json")
 
       // Initialize the quiz content store
       const quizContent = useQuizContentStore()

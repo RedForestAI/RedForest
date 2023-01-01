@@ -1,7 +1,7 @@
 <template>
   <main>
-    <div class="container">
-      <div>
+    <div id="scr-main-container">
+      <div id="scr-page-container">
         <PageContent/>
       </div>
       <div :class="[configurationStore.quizHidden ? 'hidden-quiz' : 'right-side-panel']">
@@ -29,10 +29,14 @@ export default {
 </script>
 
 <style>
-.container {
+#src-main-container {
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
+  width: 100%;
+}
+
+#src-page-container {
   width: 100%;
 }
 

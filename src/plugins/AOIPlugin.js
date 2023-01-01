@@ -10,7 +10,7 @@ https://github.com/snipcart/vue-comments-overlay
 // import { AOIDatabase } from "./AOIDatabase.js"
 
 const defaultOptions = {
-    drawCanvas: false,
+    drawCanvas: true,
     tagColorMap: {
         DEFAULT: "rgba(255,0,0,1)",
         DIV: "rgba(0,255,0,1)",
@@ -18,8 +18,9 @@ const defaultOptions = {
         TEXT: "rgba(0,0,255,1)"
     },
     toTrackElements: [
-        {tag: 'div', class: 'v-sidebar-menu vsm_collapsed', recursive: false, wordLevel: false},
-        {tag: 'div', id: 'router-view', recursive: true, wordLevel: true}
+        // {tag: 'div', class: 'v-sidebar-menu vsm_collapsed', recursive: false, wordLevel: false},
+        // {tag: 'div', id: 'router-view', recursive: true, wordLevel: true}
+        {tag: 'span', recursive: true, wordLevel: true}
     ]
 }
 
@@ -61,7 +62,7 @@ export const AOIPlugin = {
         document.body.appendChild(AOIPlugin.canvas);
 
         // List of tags to look and check for words
-        const tagWordCheck = ['P', 'A', 'H1', 'H2', 'H3', 'H4', 'H5'];
+        const tagWordCheck = ['P', 'A', 'H1', 'H2', 'H3', 'H4', 'H5', 'SPAN'];
         AOIPlugin.tagWordCheck = tagWordCheck;
 
         // Creating highlighting dictionary
@@ -136,6 +137,7 @@ export const AOIPlugin = {
         }
     },
 
+
     captureAOI: () => {
 
         if (!AOIPlugin.isTracking) {
@@ -165,6 +167,7 @@ export const AOIPlugin = {
         }
     },
 
+
     trackElement: (elementConfiguration) => {
         
         const elementsRects = [];
@@ -185,7 +188,7 @@ export const AOIPlugin = {
 
             }
         }
-        else { // by "id"
+        else if ("id" in elementConfiguration ) { // by "id"
             const element = document.getElementById(elementConfiguration.id);
             const rectInfo = AOIPlugin.getRectInfo(
                 element,
@@ -194,10 +197,37 @@ export const AOIPlugin = {
             );
             elementsRects.push(rectInfo);
 
+        } 
+        else { // by just the tag
+            const elements = document.getElementsByTagName(elementConfiguration.tag);
+
+            for (let i = 0; i < elements.length; i++) {
+                
+                const element = elements[i];
+                const rectInfo = AOIPlugin.getRectInfo(
+                    element, 
+                    elementConfiguration.recursive, 
+                    elementConfiguration.wordLevel
+                );
+                elementsRects.push(rectInfo);
+
+            }
+
         }
 
         return elementsRects;
     },
+
+
+    isInViewPort: (rect) => {
+        return (
+            rect.top >= 0 &&
+            rect.left >= 0 &&
+            rect.bottom <= (window.innerHeight || document.documentElement.clientHeight) &&
+            rect.right <= (window.innerWidth || document.documentElement.clientWidth)
+        );
+    },
+
 
     getRectInfo: (element, recursive, wordLevel) => {
 
@@ -206,7 +236,7 @@ export const AOIPlugin = {
             elementRect: element.getBoundingClientRect()
         };
 
-        if (recursive) {
+        if (recursive && AOIPlugin.isInViewPort(responseRectData.elementRect)) {
 
             const childrenRectData = [];
             
@@ -236,22 +266,26 @@ export const AOIPlugin = {
         return responseRectData;
     },
 
+
     wordSearching: (node) => {
 
         // Create Range object to find individual words
         const range = new Range();
         const wordsRectData = [];
+        let nodeText = '';
 
-        if (node.nodeName == '#text'){
+        // Extract the text
+        if (node.nodeName == "#text"){
+            nodeText = node.wholeText;
+        }
             
-            // Determine if no text children
-            const nodeText = node.wholeText;
-            
-            // If empty, return immediately
-            if (nodeText == ''){
-                return [];
-            }
+        // If empty, return immediately
+        if (nodeText == ''){
+            return [];
+        }
 
+        if (node.nodeName == '#text'){     
+         
             const words = nodeText.split(" ");
 
             // For all text within the node, construct a range

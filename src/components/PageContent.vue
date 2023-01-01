@@ -1,47 +1,33 @@
 <template>
-  <div id="sandcastle-page-container">
-    <div id="sidebar-container">
-      <div id="reader-sidebar" v-if="displaySidebar == true" :class="{ expanded: displaySidebar }">
-        <h1>Table of Contents</h1>
-        <table id="page-table">
-          <tr v-for="page in pageContentStore.contentPages" :key="page.title">
-            <td class="page-entry">{{ page.title }}</td>
-          </tr>
-        </table>
-      </div>
-      <button class="sidebar-button" v-if="displaySidebar == false" v-on:click="toggleSidebar()"> > </button>
-      <button class="sidebar-button" :class="{ expanded_button: displaySidebar }" v-if="displaySidebar == true" v-on:click="toggleSidebar()"> &lt; </button>
-    </div>
-    <div id="html-container">
-      <div v-html="pageContentStore.currentPageHtml" class="load-html"></div>
-      <div id="page-buttons">
-        <button class="prev-button" v-on:click="pageContentStore.prevPage()">Previous</button>
-        <button class="next-button" v-on:click="pageContentStore.nextPage()">Next</button>
-      </div>
-    </div>
-  </div>
+  <VuePdf v-for="page in numOfPages" :key="page" :src="pdfSrc" :page="page" />
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue"
-import { usePageContentStore } from '@/store/PageContentStore'
-import { mapStores } from 'pinia'
+import { defineComponent, onMounted, ref } from 'vue';
+import { VuePdf, createLoadingTask } from 'vue3-pdfjs/esm';
+import { VuePdfPropsType } from 'vue3-pdfjs/components/vue-pdf/vue-pdf-props'; // Prop type definitions can also be imported
+import { PDFDocumentProxy } from 'pdfjs-dist/types/src/display/api';
+
 
 export default defineComponent({
-  data() {
+  name: 'PageContent',
+  components: { VuePdf },
+  setup() {
+    const pdfSrc = ref<VuePdfPropsType['src']>('https://raw.githubusercontent.com/mozilla/pdf.js/ba2edeae/web/compressed.tracemonkey-pldi-09.pdf')
+    const numOfPages = ref(0)
+
+    onMounted(() => {
+      const loadingTask = createLoadingTask(pdfSrc.value)
+      loadingTask.promise.then((pdf: PDFDocumentProxy) => {
+        numOfPages.value = pdf.numPages
+      })
+    })
     return {
-      displaySidebar: false as boolean
+      pdfSrc,
+      numOfPages
     }
-  },
-  methods: {
-    toggleSidebar: function() {
-      this.displaySidebar = !this.displaySidebar
-    },
-  },
-  computed: {
-    ...mapStores(usePageContentStore) // reference: pageContentStore
   }
-})
+});
 </script>
 
 <style>
