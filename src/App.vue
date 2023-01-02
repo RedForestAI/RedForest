@@ -1,9 +1,11 @@
 <template>
   <body>
-    <div id='src-header'><AppHeader/></div>
-    <div id='src-main-div'>
-      <router-view />
-      <div id='src-footer'><AppFooter/></div>
+    <div id='scr-header'><AppHeader/></div>
+    <div id='scr-main-div'>
+      <div id="scr-view">
+        <router-view />
+      </div>
+      <div id='scr-footer'><AppFooter/></div>
     </div>
   </body>
 </template>
@@ -40,7 +42,7 @@ export default defineComponent({
   color: #2c3e50;
 }
 
-#src-header {
+#scr-header {
   margin-top: 0em;
   position: fixed;
   padding-top: 1em;
@@ -51,13 +53,17 @@ export default defineComponent({
   color: #FFFFFF;
 }
 
-#src-main-div {
+#scr-main-div {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
 }
 
-#src-footer {
+#scr-view {
+  overflow: auto;
+}
+
+#scr-footer {
   bottom: 0;
   display: flex;
   flex-direction: column;
