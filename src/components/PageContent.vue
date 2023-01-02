@@ -7,13 +7,16 @@ import { defineComponent, onMounted, ref } from 'vue';
 import { VuePdf, createLoadingTask } from 'vue3-pdfjs/esm';
 import { VuePdfPropsType } from 'vue3-pdfjs/components/vue-pdf/vue-pdf-props'; // Prop type definitions can also be imported
 import { PDFDocumentProxy } from 'pdfjs-dist/types/src/display/api';
+import { usePageContentStore } from '@/store/PageContentStore'
+import { mapStores } from 'pinia'
 
 
 export default defineComponent({
   name: 'PageContent',
   components: { VuePdf },
   setup() {
-    const pdfSrc = ref<VuePdfPropsType['src']>('https://raw.githubusercontent.com/mozilla/pdf.js/ba2edeae/web/compressed.tracemonkey-pldi-09.pdf')
+    // const pdfSrc = ref<VuePdfPropsType['src']>('https://raw.githubusercontent.com/mozilla/pdf.js/ba2edeae/web/compressed.tracemonkey-pldi-09.pdf')
+    const pdfSrc = ref<VuePdfPropsType['src']>('content/sandcastle_content/suffrage.pdf')
     const numOfPages = ref(0)
 
     onMounted(() => {
@@ -26,6 +29,9 @@ export default defineComponent({
       pdfSrc,
       numOfPages
     }
+  },
+  computed: {
+    ...mapStores(usePageContentStore)
   }
 });
 </script>

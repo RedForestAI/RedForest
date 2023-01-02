@@ -38,9 +38,10 @@ header {
   position: fixed;
   padding-top: 1em;
   padding-bottom: 1em;
-  background-color: #FFFFFF;
+  background-color: #000000;
   width: 100%;
   z-index: 30;
+  color: #FFFFFF;
 }
 
 #left_nav {
@@ -63,7 +64,7 @@ nav ul li {
 
 li a {
   text-decoration: none;
-  color: #000000;
+  color: #FFFFFF;
 }
 
 li button {
@@ -71,7 +72,7 @@ li button {
   border: none;
   padding: 0!important;
   font-family: Avenir, Helvetica, Arial, sans-serif;
-  color: #000000;
+  color: #FFFFFF;
   cursor: pointer;
   font-size: 1em;
 }

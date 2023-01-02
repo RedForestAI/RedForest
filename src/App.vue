@@ -11,22 +11,8 @@
 import AppFooter from '@/components/AppFooter.vue'
 import AppHeader from '@/components/AppHeader.vue'
 
-// Initialized the store and perform any startup routines
-import { useMainStore } from '@/store/MainStore'
-
 export default {
   name: "App",
-  setup() {
-    const mainStore = useMainStore()
-    mainStore.initialize()
-    return {
-      mainStore
-    }
-  },
-  data() {
-    return {
-    }
-  },
   components: {
     AppFooter,
     AppHeader,
