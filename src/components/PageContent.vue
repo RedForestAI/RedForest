@@ -5,15 +5,23 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
-import { VuePdf } from 'vue3-pdfjs/esm';
-import { usePageContentStore } from '@/store/PageContentStore'
+import { defineComponent } from 'vue'
+
+import { VuePdf } from 'vue3-pdfjs/esm'
 import { mapStores } from 'pinia'
+
+import { usePageContentStore } from '@/store/PageContentStore'
 
 
 export default defineComponent({
   name: 'PageContent',
   components: { VuePdf },
+  mounted() {
+    document.addEventListener("keyup", this.onKeyUp)
+  },
+  unmounted() {
+    document.addEventListener("keyup", this.onKeyUp)
+  },
   data() {
     return {
       scale: 1
@@ -21,6 +29,16 @@ export default defineComponent({
   },
   computed: {
     ...mapStores(usePageContentStore)
+  },
+  methods: {
+    onKeyUp(event) {
+      if (event.key == '+' && event.ctrlKey) {
+        console.log("zoom!")
+      }
+      if (event.key == '-' && event.ctrlKey) {
+        console.log("zoom!")
+      }
+    }
   }
 });
 </script>

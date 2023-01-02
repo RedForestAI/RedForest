@@ -1,12 +1,22 @@
 <template>
-    <div id="left_nav">
+  <div id="src-nav">
+    <div id="scr-left-nav" class="scr-nav-column">
       <nav>
         <ul>
           <li><router-link to="/">SandCastle Reader</router-link></li>
         </ul>
       </nav>
     </div>
-    <div id="right_nav">
+    <div id="scr-center-nav" class="scr-nav-column">
+      <nav>
+        <ul>
+          <li><button>+</button></li>
+          <span> 100%</span>
+          <li><button>-</button></li>
+        </ul>
+      </nav>
+    </div>
+    <div id="scr-right-nav" class="scr-nav-column">
       <nav>
         <ul>
           <li><button v-on:click="configurationStore.toggleQuiz()">Quiz</button></li>
@@ -16,7 +26,7 @@
         </ul>
       </nav>
     </div>
-
+  </div>
 </template>
 
 <script lang="ts">
@@ -32,11 +42,24 @@ export default defineComponent({
 </script>
 
 <style>
-#left_nav {
-  float: left;
+#scr-nav {
+  content: "";
+  display: table;
+  clear: both;
 }
-#right_nav {
-  float: right;
+.scr-nav-column {
+  float: left;
+  width: 33.3333%;
+}
+
+#scr-left-nav {
+  text-align: left;
+}
+#scr-center-nav {
+  text-align: center;
+}
+#scr-right-nav {
+  text-align: right;
 }
 
 nav ul {
