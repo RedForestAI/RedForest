@@ -10,9 +10,9 @@
     <div id="scr-center-nav" class="scr-nav-column">
       <nav>
         <ul>
-          <li><button>+</button></li>
-          <span> 100%</span>
-          <li><button>-</button></li>
+          <li><button v-on:click="configurationStore.zoomIn()">+</button></li>
+          <span> {{ (configurationStore.zoom * 100).toFixed(0) }}</span>
+          <li><button v-on:click="configurationStore.zoomOut()">-</button></li>
         </ul>
       </nav>
     </div>
