@@ -12,7 +12,7 @@ export const useConfigurationStore = defineStore('configuration', {
     },
     actions: {
         toggleQuiz() {
-            this.quizHidden = !this.quizHidden 
+            this.quizHidden = !this.quizHidden
             console.log("QuizHidden: " + this.quizHidden)
         },
     }
