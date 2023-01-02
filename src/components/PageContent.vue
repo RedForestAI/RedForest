@@ -33,6 +33,7 @@ img {
 .scr-pdf-page {
   display: flex;
   justify-content: center;
+  background-color: #999999;
 }
 
 </style>

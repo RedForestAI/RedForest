@@ -9,7 +9,7 @@ export const useConfigurationStore = defineStore('configuration', {
     state: () => {
         return {
             quizHidden: true,
-            zoom: 1
+            zoom: 0.9
         } as ConfigurationDetails
     },
     actions: {
@@ -18,7 +18,7 @@ export const useConfigurationStore = defineStore('configuration', {
             console.log("QuizHidden: " + this.quizHidden)
         },
         zoomIn() {
-            if (this.zoom < 3) {
+            if (this.zoom < 2) {
                 this.zoom += 0.1
             }
         },

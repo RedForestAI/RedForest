@@ -32,6 +32,7 @@ export default defineComponent({
 <style>
 #quiz-container {
   padding: 1em;
+  min-height: 100vh;
 }
 #question-title {
   text-align: left;
@@ -50,8 +51,9 @@ li {
   width: 100%;
 }
 .answer-radio {
-  float: left;
-  width: 200%;
+  height: 15px;
+  width: 15px;
+  vertical-align: middle;
 }
 .answer-text {
   padding-left: 20px;

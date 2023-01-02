@@ -62,7 +62,7 @@ export default defineComponent({
   display: flex;
   flex-direction: column;
   width: 100%;
-  padding-top: 0.25em;
+  // padding-top: 0.25em;
 }
 
 body {
