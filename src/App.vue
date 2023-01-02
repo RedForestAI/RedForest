@@ -2,9 +2,7 @@
   <body>
     <div id='scr-header'><AppHeader/></div>
     <div id='scr-main-div'>
-      <div id="scr-view">
-        <router-view />
-      </div>
+      <router-view />
       <div id='scr-footer'><AppFooter/></div>
     </div>
   </body>
@@ -57,10 +55,6 @@ export default defineComponent({
   display: flex;
   flex-direction: column;
   min-height: 100vh;
-}
-
-#scr-view {
-  overflow: auto;
 }
 
 #scr-footer {

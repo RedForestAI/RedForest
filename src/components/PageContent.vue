@@ -1,5 +1,7 @@
 <template>
-  <VuePdf v-for="page in pageContentStore.numOfPages" :key="page" :src="pageContentStore.pdfSrc" :page="page" />
+  <div v-for="page in pageContentStore.numOfPages" :key="page" class="scr-pdf-page">
+    <VuePdf :src="pageContentStore.pdfSrc" :page="page" :scale="scale"/>
+  </div>
 </template>
 
 <script lang="ts">
@@ -12,6 +14,11 @@ import { mapStores } from 'pinia'
 export default defineComponent({
   name: 'PageContent',
   components: { VuePdf },
+  data() {
+    return {
+      scale: 1
+    }
+  },
   computed: {
     ...mapStores(usePageContentStore)
   }
@@ -22,6 +29,11 @@ export default defineComponent({
 img {
   max-width: 100%;
   max-height: 100%;
+}
+
+.scr-pdf-page {
+  display: flex;
+  justify-content: center;
 }
 
 </style>
