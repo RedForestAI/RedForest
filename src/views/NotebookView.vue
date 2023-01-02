@@ -4,9 +4,11 @@
       <div id="scr-page-container">
         <PageContent/>
       </div>
-      <div :class="[configurationStore.quizHidden ? 'hidden-quiz' : 'right-side-panel']">
-        <QuizContent/>
-      </div>
+      <Transition name="slide-fade">
+        <div id="src-quiz-container" v-if="configurationStore.quizHidden">
+          <QuizContent/>
+        </div>
+      </Transition>
     </div>
   </main>
 </template>
@@ -31,17 +33,32 @@ export default {
 <style>
 #src-main-container {
   display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
-  width: 100%;
 }
 
 #src-page-container {
-  width: 100%;
+  flex: 50%;
 }
 
-.hidden-quiz {
-  display: none;
+#src-quiz-container {
+  flex: 50%;
+}
+
+/*
+  Enter and leave animations can use different
+  durations and timing functions.
+*/
+.slide-fade-enter-active {
+  transition: all 0.3s ease-out;
+}
+
+.slide-fade-leave-active {
+  transition: all 0.8s cubic-bezier(1, 0.5, 0.8, 1);
+}
+
+.slide-fade-enter-from,
+.slide-fade-leave-to {
+  transform: translateX(20px);
+  opacity: 0;
 }
 
 </style>

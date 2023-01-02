@@ -16,8 +16,13 @@ export default {
 
 <style>
 footer {
-  margin-top: auto;
+  position: relative;
+  bottom: 0;
+  padding-top: 0.25em;
+  padding-bottom: 0.25em;
+  width: 100%;
+  background-color: #000000;
+  color: #FFFFFF;
   text-align: center;
-  width: 100%
 }
 </style>

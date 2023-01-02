@@ -1,5 +1,4 @@
 <template>
-  <header>
     <div id="left_nav">
       <nav>
         <ul>
@@ -17,7 +16,6 @@
         </ul>
       </nav>
     </div>
-  </header>
 
 </template>
 
@@ -34,16 +32,6 @@ export default defineComponent({
 </script>
 
 <style>
-header {
-  position: fixed;
-  padding-top: 1em;
-  padding-bottom: 1em;
-  background-color: #000000;
-  width: 100%;
-  z-index: 30;
-  color: #FFFFFF;
-}
-
 #left_nav {
   float: left;
 }

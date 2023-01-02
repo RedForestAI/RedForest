@@ -1,8 +1,10 @@
 <template>
   <body>
-    <div id='header'><AppHeader/></div>
-    <div id='router-view'><router-view /></div>
-    <div id='footer'><AppFooter/></div>
+    <div id='src-header'><AppHeader/></div>
+    <div id='src-main-div'>
+      <router-view />
+      <div id='src-footer'><AppFooter/></div>
+    </div>
   </body>
 </template>
 
@@ -38,13 +40,33 @@ export default defineComponent({
   color: #2c3e50;
 }
 
+#src-header {
+  margin-top: 0em;
+  position: fixed;
+  padding-top: 1em;
+  padding-bottom: 1em;
+  background-color: #000000;
+  width: 100%;
+  z-index: 30;
+  color: #FFFFFF;
+}
+
+#src-main-div {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+#src-footer {
+  bottom: 0;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  padding-top: 0.25em;
+}
+
 body {
   margin: 0px;
-  display: flex;
-  min-height: 100vh;
-  width: 100%;
-  flex-direction: column;
-  justify-content: flex-start;
 }
 
 </style>
