@@ -1,5 +1,5 @@
 <template>
-  <div id="login_box">
+  <div id="login-box">
     <h1>Login</h1> 
     <div id="inputs">
       <input v-model="username" id="username" name="username" placeholder="Username">
@@ -12,7 +12,7 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import { defineComponent } from 'vue'
 import { mapStores } from 'pinia'
 
@@ -43,7 +43,7 @@ export default defineComponent({
 </script>
 
 <style>
-#login_box {
+#login-box {
   width:300px;
   height:400px;
   border:1px solid #000;

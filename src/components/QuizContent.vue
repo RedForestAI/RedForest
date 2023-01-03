@@ -6,13 +6,14 @@
     </p>
     <table>
       <tr v-for="answer in quizContentStore.currentQuestionAnswers" :key="answer.id">
-        <td><input type="radio" class="answer-radio"></td>
+        <td><input type="radio" name="question" class="answer-radio" v-model="currentQuestionSelectedAnswer" value="quizContentStore.currentQuestionAnswers.indexOf(answer)"></td>
         <td><p class="answer-text">{{ answer }}</p></td>
       </tr>
     </table>
     <div id="quiz-buttons">
-      <button class="prev-button" v-on:click="quizContentStore.prevQuestion()">Previous</button>
-      <button class="next-button" v-on:click="quizContentStore.nextQuestion()">Next</button>
+      <button class="prev-button" v-on:click="quizContentStore.prevQuestion(currentQuestionSelectedAnswer)">Previous</button>
+      <button v-if="!quizContentStore.getNextOrSubmit" class="next-button" v-on:click="quizContentStore.nextQuestion(currentQuestionSelectedAnswer)">Next</button>
+      <button v-if="quizContentStore.getNextOrSubmit" class="next-button" v-on:click="submitQuestions()">Submit</button>
     </div>
   </div>
 </template>
@@ -23,6 +24,17 @@ import { useQuizContentStore } from '@/store/QuizContentStore'
 import { mapStores } from 'pinia'
 
 export default defineComponent({
+  data() {
+    return {
+      currentQuestionSelectedAnswer: -1,
+    }
+  },
+  methods: {
+    submitQuestions () {
+      // this.quizContentStore.updateQuestionAnswer(this.currentQuestionSelectedAnswer)
+      this.$router.push('completion')
+    }
+  },
   computed: {
     ...mapStores(useQuizContentStore) // reference: quizContentStore 
   }

@@ -6,7 +6,9 @@ type Question = {
 }
 
 type QuizDetails = {
-    questions: Question[]
+    questions: Question[],
+    correctAnswers: number[],
+    selectedAnswers: number[],
     currentQuestionID: number,
     currentQuestionPrompt: string
     currentQuestionAnswers: string[]
@@ -16,6 +18,8 @@ export const useQuizContentStore = defineStore('quizContent', {
     state: () => {
         return {
             questions: [],
+            correctAnswers: [],
+            selectedAnswers: [],
             currentQuestionID: 0,
             currentQuestionPrompt: '',
             currentQuestionAnswers: []
@@ -27,6 +31,12 @@ export const useQuizContentStore = defineStore('quizContent', {
         },
         getCurrentQuestionAnswers(state): string[] {
             return this.questions[this.currentQuestionID].answers
+        },
+        getNextOrSubmit(state): boolean {
+            return this.questions.length <= this.currentQuestionID + 1
+        },
+        getCorrectQuestionsCount(state): number {
+            return 0
         }
     },
     actions: {
@@ -37,6 +47,8 @@ export const useQuizContentStore = defineStore('quizContent', {
                 .then((res) => res.json())
                 .then((data) => {
                     this.questions = data.questions
+                    this.correctAnswers = data.answers
+                    this.selectedAnswers = Array(this.questions.length).fill(-1)
                     this.loadQuizQuestion()
                 })
 
@@ -45,13 +57,18 @@ export const useQuizContentStore = defineStore('quizContent', {
             this.currentQuestionPrompt = this.getCurrentQuestionPrompt
             this.currentQuestionAnswers = this.getCurrentQuestionAnswers
         },
-        prevQuestion() {
+        updateQuestionAnswer (selection: number) {
+            this.selectedAnswers[this.currentQuestionID] = selection
+        },
+        prevQuestion(currentQuestionSelectedAnswer: number) {
+            this.updateQuestionAnswer(currentQuestionSelectedAnswer)
             if (this.currentQuestionID > 0) {
                 this.currentQuestionID -= 1
                 this.loadQuizQuestion()
             }
         },
-        nextQuestion() {
+        nextQuestion(currentQuestionSelectedAnswer: number) {
+            this.updateQuestionAnswer(currentQuestionSelectedAnswer)
             if (this.currentQuestionID < this.questions.length - 1) {
                 this.currentQuestionID += 1
                 this.loadQuizQuestion()
