@@ -14,6 +14,9 @@
 
 <script>
 import { defineComponent } from 'vue'
+import { mapStores } from 'pinia'
+
+import { useConfigurationStore } from '@/store/ConfigurationStore'
 
 export default defineComponent({
   data () {
@@ -28,10 +31,13 @@ export default defineComponent({
         alert("Missing Username or Password!")
       }
       else {
-        // this.$store.dispatch("user/username", this.username)
+        this.configurationStore.logIn(this.username, this.password)
         this.$router.push("/notebook")
       }
     }
+  },
+  computed: {
+    ...mapStores(useConfigurationStore)
   }
 })
 </script>

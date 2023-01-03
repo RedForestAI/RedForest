@@ -3,26 +3,27 @@
     <div id="scr-left-nav" class="scr-nav-column">
       <nav>
         <ul>
-          <li><router-link to="/">SandCastle Reader</router-link></li>
+          <li>SandCastle Reader</li>
         </ul>
       </nav>
     </div>
     <div id="scr-center-nav" class="scr-nav-column">
       <nav>
         <ul>
-          <li><button v-on:click="configurationStore.zoomIn()">+</button></li>
-          <span> {{ (configurationStore.zoom * 100).toFixed(0) }}</span>
-          <li><button v-on:click="configurationStore.zoomOut()">-</button></li>
+          <div :class="{ hidden: !inNotebook }">
+            <li><button v-on:click="configurationStore.zoomIn()">+</button></li>
+            <span> {{ (configurationStore.zoom * 100).toFixed(0) }}</span>
+            <li><button v-on:click="configurationStore.zoomOut()">-</button></li>
+          </div>
         </ul>
       </nav>
     </div>
     <div id="scr-right-nav" class="scr-nav-column">
       <nav>
         <ul>
-          <li><button v-on:click="configurationStore.toggleQuiz()">Quiz</button></li>
-          <li><router-link to="/">Tutorial</router-link></li>
-          <li><router-link to="/">Settings</router-link></li>
-          <li><router-link to="/">Log Out</router-link></li>
+          <li v-if="inNotebook"><button v-on:click="configurationStore.toggleQuiz()">Quiz</button></li>
+          <li v-if="inNotebook"><router-link to="/">Tutorial</router-link></li>
+          <li v-if="configurationStore.loggedIn"><button v-on:click="logOut"> {{ configurationStore.username + ", Log Out" }}</button></li>
         </ul>
       </nav>
     </div>
@@ -35,8 +36,17 @@ import { useConfigurationStore } from '@/store/ConfigurationStore'
 import { mapStores } from 'pinia'
 
 export default defineComponent({
+  methods: {
+    logOut () {
+      this.configurationStore.logOut()
+      this.$router.push("/")
+    }
+  },
   computed: {
-    ...mapStores(useConfigurationStore)
+    ...mapStores(useConfigurationStore),
+    inNotebook(): boolean {
+      return ("notebook" == this.$route.name)
+    }
   }
 })
 </script>
@@ -60,6 +70,10 @@ export default defineComponent({
 }
 #scr-right-nav {
   text-align: right;
+}
+
+.hidden {
+  visibility: hidden;
 }
 
 nav ul {

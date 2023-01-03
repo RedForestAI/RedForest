@@ -1,6 +1,10 @@
 import { defineStore } from 'pinia'
 
 type ConfigurationDetails = {
+    username: string
+    password: string
+    loggedIn: boolean
+    inNotebook: boolean
     quizHidden: boolean
     zoom: number
 }
@@ -8,11 +12,25 @@ type ConfigurationDetails = {
 export const useConfigurationStore = defineStore('configuration', {
     state: () => {
         return {
+            username: '',
+            password: '',
+            loggedIn: false,
+            inNotebook: false,
             quizHidden: true,
             zoom: 0.9
         } as ConfigurationDetails
     },
     actions: {
+        logIn(username: string, password: string) {
+            this.loggedIn = true // Later need to check with database
+            this.username = username
+            this.password = password
+        },
+        logOut() {
+            this.loggedIn = false
+            this.username = ''
+            this.password = ''
+        },
         toggleQuiz() {
             this.quizHidden = !this.quizHidden
             console.log("QuizHidden: " + this.quizHidden)
