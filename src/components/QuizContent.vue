@@ -5,14 +5,14 @@
     {{ quizContentStore.currentQuestionPrompt}}
     </p>
     <table>
-      <tr v-for="answer in quizContentStore.currentQuestionAnswers" :key="answer.id">
-        <td><input type="radio" name="question" class="answer-radio" v-model="currentQuestionSelectedAnswer" value="quizContentStore.currentQuestionAnswers.indexOf(answer)"></td>
+      <tr v-for="(answer, index) in quizContentStore.currentQuestionAnswers" :key="answer">
+        <td><input type="radio" name="question" class="answer-radio" v-model="currentQuestionSelectedAnswer" :value="index"></td>
         <td><p class="answer-text">{{ answer }}</p></td>
       </tr>
     </table>
     <div id="quiz-buttons">
-      <button class="prev-button" v-on:click="quizContentStore.prevQuestion(currentQuestionSelectedAnswer)">Previous</button>
-      <button v-if="!quizContentStore.getNextOrSubmit" class="next-button" v-on:click="quizContentStore.nextQuestion(currentQuestionSelectedAnswer)">Next</button>
+      <button class="prev-button" v-on:click="prevQuestion">Previous</button>
+      <button v-if="!quizContentStore.getNextOrSubmit" class="next-button" v-on:click="nextQuestion">Next</button>
       <button v-if="quizContentStore.getNextOrSubmit" class="next-button" v-on:click="submitQuestions()">Submit</button>
     </div>
   </div>
@@ -30,8 +30,22 @@ export default defineComponent({
     }
   },
   methods: {
+    prevQuestion () {
+      // Updating answer
+      this.quizContentStore.prevQuestion(this.currentQuestionSelectedAnswer)
+     
+      // Reset
+      this.currentQuestionSelectedAnswer = this.quizContentStore.getCurrentQuestionSelectedAnswer
+    },
+    nextQuestion () {
+      // Updating answer
+      this.quizContentStore.nextQuestion(this.currentQuestionSelectedAnswer)
+      
+      // Reset
+      this.currentQuestionSelectedAnswer = this.quizContentStore.getCurrentQuestionSelectedAnswer
+    },
     submitQuestions () {
-      // this.quizContentStore.updateQuestionAnswer(this.currentQuestionSelectedAnswer)
+      this.quizContentStore.updateQuestionAnswer(this.currentQuestionSelectedAnswer)
       this.$router.push('completion')
     }
   },

@@ -19,7 +19,7 @@ const defaultOptions = {
     },
     toTrackElements: [
         // {tag: 'div', class: 'v-sidebar-menu vsm_collapsed', recursive: false, wordLevel: false},
-        // {tag: 'div', id: 'router-view', recursive: true, wordLevel: true}
+        // {tag: 'div', id: 'scr-main-div', recursive: true, wordLevel: true},
         {tag: 'span', recursive: true, wordLevel: true}
     ]
 }

@@ -35,8 +35,18 @@ export const useQuizContentStore = defineStore('quizContent', {
         getNextOrSubmit(state): boolean {
             return this.questions.length <= this.currentQuestionID + 1
         },
+        getCurrentQuestionSelectedAnswer(state): number {
+            return this.selectedAnswers[this.currentQuestionID]
+        },
         getCorrectQuestionsCount(state): number {
-            return 0
+            let correctCounter = 0
+            console.log(this.correctAnswers, this.selectedAnswers)
+            for (let i = 0; i < this.correctAnswers.length; i++) {
+                if (this.correctAnswers[i] == this.selectedAnswers[i]) {
+                    correctCounter++;
+                }
+            }
+            return correctCounter
         }
     },
     actions: {
