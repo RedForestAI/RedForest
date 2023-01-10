@@ -21,6 +21,7 @@
 <script lang="ts">
 import { defineComponent } from "vue"
 import { useQuizContentStore } from '@/store/QuizContentStore'
+import { useModuleStore } from '@/store/ModuleStore'
 import { mapStores } from 'pinia'
 
 export default defineComponent({
@@ -46,11 +47,18 @@ export default defineComponent({
     },
     submitQuestions () {
       this.quizContentStore.updateQuestionAnswer(this.currentQuestionSelectedAnswer)
-      this.$router.push('completion')
+      if (this.moduleStore.lastPassage){
+        this.$router.push('completion')
+      }
+      else {
+        this.moduleStore.nextPassage()
+        this.$router.push('break')
+      }
     }
   },
   computed: {
-    ...mapStores(useQuizContentStore) // reference: quizContentStore 
+    ...mapStores(useQuizContentStore), // reference: quizContentStore 
+    ...mapStores(useModuleStore) // reference: moduleStore
   }
 })
 </script>

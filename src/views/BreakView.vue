@@ -1,9 +1,10 @@
+
 <template>
-  <div id="completion-box">
-    <h1>Completion!</h1>
+  <div id="break-box">
+    <h1>Doing Great!</h1>
     <h3>{{ configurationStore.username }}</h3>
-    <p>Thank you for participating in our study!</p>
-    <button id="exit-button" @click="returnToLogin">Exit</button>
+    <p>Take a break and come back when you are ready to continue</p>
+    <button id="continue-button" @click="continueModule">Continue</button>
   </div>
 </template>
 
@@ -12,27 +13,24 @@ import { defineComponent } from 'vue'
 
 import { mapStores } from 'pinia'
 
-import { useMainStore } from '@/store/MainStore'
 import { useConfigurationStore } from '@/store/ConfigurationStore'
-import { useQuizContentStore } from '@/store/QuizContentStore'
+import { useModuleStore } from '@/store/ModuleStore'
 
 export default defineComponent({
   methods: {
-    returnToLogin() {
-      this.mainStore.exit()
-      this.$router.push('/') 
+    continueModule() {
+      this.$router.push('notebook')
     }
   },
   computed: {
     ...mapStores(useConfigurationStore),
-    ...mapStores(useQuizContentStore),
-    ...mapStores(useMainStore)
+    ...mapStores(useModuleStore),
   }
 })
 </script>
 
 <style scoped>
-#completion-box {
+#break-box {
   width:300px;
   height:400px;
   border:1px solid #000;
@@ -40,13 +38,13 @@ export default defineComponent({
   margin-top: 10em;
 }
 
-#exit-button {
+#continue-button {
   float: right;
   margin-right: 2em;
   margin-top: 6em;
 }
 h1 {
-  text-align: center;
+  text-align:center;
 }
 h3 {
   text-align:center;

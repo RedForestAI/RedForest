@@ -10,7 +10,7 @@ https://github.com/snipcart/vue-comments-overlay
 // import { AOIDatabase } from "./AOIDatabase.js"
 
 const defaultOptions = {
-    drawCanvas: false,
+    drawCanvas: true,
     tagColorMap: {
         DEFAULT: "rgba(255,0,0,1)",
         DIV: "rgba(0,255,0,1)",

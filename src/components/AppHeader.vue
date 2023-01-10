@@ -33,17 +33,19 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import { useConfigurationStore } from '@/store/ConfigurationStore'
+import { useMainStore } from '@/store/MainStore'
 import { mapStores } from 'pinia'
 
 export default defineComponent({
   methods: {
     logOut () {
-      this.configurationStore.logOut()
+      this.mainStore.exit()
       this.$router.push("/")
     }
   },
   computed: {
     ...mapStores(useConfigurationStore),
+    ...mapStores(useMainStore),
     inNotebook(): boolean {
       return ("notebook" == this.$route.name)
     }

@@ -42,7 +42,7 @@ export default defineComponent({
 })
 </script>
 
-<style>
+<style scoped>
 #login-box {
   width:300px;
   height:400px;

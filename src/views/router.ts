@@ -1,6 +1,7 @@
 import LoginView from '@/views/LoginView.vue'
 import NotebookView from '@/views/NotebookView.vue'
 import CompletionView from '@/views/CompletionView.vue'
+import BreakView from '@/views/BreakView.vue'
 import { createRouter, createWebHistory } from "vue-router"
 
 const router = createRouter({
@@ -15,6 +16,11 @@ const router = createRouter({
       path: '/notebook',
       name: 'notebook',
       component: NotebookView
+    },
+    {
+      path: '/break',
+      name: 'break',
+      component: BreakView
     },
     {
       path: '/completion',

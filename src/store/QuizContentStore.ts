@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 
-type Question = {
+export type Question = {
     prompt: string
     answers: string[]
 }
@@ -50,19 +50,6 @@ export const useQuizContentStore = defineStore('quizContent', {
         }
     },
     actions: {
-        loadQuizContent (quizContentPath: string) {
-
-            // Load the question JSON
-            fetch(quizContentPath)
-                .then((res) => res.json())
-                .then((data) => {
-                    this.questions = data.questions
-                    this.correctAnswers = data.answers
-                    this.selectedAnswers = Array(this.questions.length).fill(-1)
-                    this.loadQuizQuestion()
-                })
-
-        },
         loadQuizQuestion () {
             this.currentQuestionPrompt = this.getCurrentQuestionPrompt
             this.currentQuestionAnswers = this.getCurrentQuestionAnswers

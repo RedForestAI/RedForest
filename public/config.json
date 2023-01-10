@@ -1,4 +1,3 @@
 {
-    "pdfPath": "content/sandcastle_content/suffrage.pdf",
-    "questionPath": "test/data/questions.json"
+    "modulePath": "content/sandcastle_content/module.json"
 }
