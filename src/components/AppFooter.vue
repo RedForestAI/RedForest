@@ -20,5 +20,6 @@ footer {
   background-color: #000000;
   color: #FFFFFF;
   text-align: center;
+  z-index: 30;
 }
 </style>

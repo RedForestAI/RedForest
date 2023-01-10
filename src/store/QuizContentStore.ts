@@ -53,11 +53,16 @@ export const useQuizContentStore = defineStore('quizContent', {
         loadQuizQuestion () {
             this.currentQuestionPrompt = this.getCurrentQuestionPrompt
             this.currentQuestionAnswers = this.getCurrentQuestionAnswers
+            this.selectedAnswers = Array(this.getCurrentQuestionAnswers.length).fill(-1)
         },
         updateQuestionAnswer (selection: number) {
-            this.selectedAnswers[this.currentQuestionID] = selection
+            console.log("Updating ID = " + this.currentQuestionID + " with value = " + selection)
+            this.selectedAnswers[this.currentQuestionID] = selection.valueOf()
+            console.log(this.selectedAnswers)
         },
         prevQuestion(currentQuestionSelectedAnswer: number) {
+            console.log('prevQuestion: ID = ' + this.currentQuestionID + " selected= " + currentQuestionSelectedAnswer)
+            console.log(this.selectedAnswers)
             this.updateQuestionAnswer(currentQuestionSelectedAnswer)
             if (this.currentQuestionID > 0) {
                 this.currentQuestionID -= 1
@@ -65,6 +70,7 @@ export const useQuizContentStore = defineStore('quizContent', {
             }
         },
         nextQuestion(currentQuestionSelectedAnswer: number) {
+            console.log('nextQuestion: ID = ' + this.currentQuestionID + " selected= " + currentQuestionSelectedAnswer)
             this.updateQuestionAnswer(currentQuestionSelectedAnswer)
             if (this.currentQuestionID < this.questions.length - 1) {
                 this.currentQuestionID += 1

@@ -1,6 +1,6 @@
 <template>
   <div v-for="page in pageContentStore.numOfPages" :key="page" class="scr-pdf-page">
-    <VuePdf :src="pageContentStore.pdfSrc" :key="configurationStore.zoom" :page="page" :scale="configurationStore.zoom * 2"/>
+    <VuePdf :src="pageContentStore.pdfSrc" :key="configurationStore.zoom" :page="page" :scale="configurationStore.zoom * 1.5"/>
   </div>
 </template>
 

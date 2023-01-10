@@ -10,17 +10,17 @@ https://github.com/snipcart/vue-comments-overlay
 // import { AOIDatabase } from "./AOIDatabase.js"
 
 const defaultOptions = {
-    drawCanvas: true,
+    drawCanvas: false,
     tagColorMap: {
-        DEFAULT: "rgba(255,0,0,1)",
-        DIV: "rgba(0,255,0,1)",
-        IMG: "rgba(0,0,255,1)",
-        TEXT: "rgba(0,0,255,1)"
+        DEFAULT: "rgba(255,0,0,0.25)",
+        DIV: "rgba(0,255,0,0.25)",
+        IMG: "rgba(0,0,255,0.25)",
+        TEXT: "rgba(0,0,255,0.25)"
     },
     toTrackElements: [
         // {tag: 'div', class: 'v-sidebar-menu vsm_collapsed', recursive: false, wordLevel: false},
         // {tag: 'div', id: 'scr-main-div', recursive: true, wordLevel: true},
-        {tag: 'span', recursive: true, wordLevel: true}
+        // {tag: 'span', recursive: true, wordLevel: true}
     ]
 }
 
@@ -43,7 +43,7 @@ export const AOIPlugin = {
         const canvas = document.createElement('canvas');
 
         // Set that the canvas covers the entire page so we can draw anywhere
-        canvas.style.width = '100vw';
+        canvas.style.width = '99.45vw';
         canvas.style.height = '100vh';
         canvas.width = window.innerWidth;
         canvas.height = window.innerHeight;
@@ -189,7 +189,12 @@ export const AOIPlugin = {
             }
         }
         else if ("id" in elementConfiguration ) { // by "id"
+            
             const element = document.getElementById(elementConfiguration.id);
+            if (element == null) {
+                return elementsRects
+            }
+
             const rectInfo = AOIPlugin.getRectInfo(
                 element,
                 elementConfiguration.recursive,
@@ -199,6 +204,7 @@ export const AOIPlugin = {
 
         } 
         else { // by just the tag
+
             const elements = document.getElementsByTagName(elementConfiguration.tag);
 
             for (let i = 0; i < elements.length; i++) {
@@ -221,11 +227,13 @@ export const AOIPlugin = {
 
     isInViewPort: (rect) => {
         return (
-            rect.top >= 0 &&
-            rect.left >= 0 &&
-            rect.bottom <= (window.innerHeight || document.documentElement.clientHeight) &&
+            rect.top >= 0 ||
+            rect.left >= 0 ||
+            rect.bottom <= (window.innerHeight || document.documentElement.clientHeight) ||
             rect.right <= (window.innerWidth || document.documentElement.clientWidth)
         );
+        // console.log(rect)
+        // return true
     },
 
 

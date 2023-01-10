@@ -17,6 +17,13 @@ const app = createApp(App)
 // Create the app instance
 app.use(router)
     .use(pinia)
-    .use(AOIPlugin)
+    .use(AOIPlugin, { 
+        drawCanvas: false,
+        toTrackElements: [
+            {tag: 'div', id: 'scr-page-container', recursive: true, wordLevel: true},
+            {tag: 'div', id: 'scr-quiz-container', recursive: true, wordLevel: true},
+            {tag: 'div', id: 'scr-nav', recursive: true, wordLevel: true}
+        ]
+    })
     .use(VuePdf)
     .mount('#app')

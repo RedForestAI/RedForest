@@ -12,8 +12,8 @@
     </table>
     <div id="quiz-buttons">
       <button class="prev-button" v-on:click="prevQuestion">Previous</button>
-      <button v-if="!quizContentStore.getNextOrSubmit" class="next-button" v-on:click="nextQuestion">Next</button>
-      <button v-if="quizContentStore.getNextOrSubmit" class="next-button" v-on:click="submitQuestions()">Submit</button>
+      <button v-if="!quizContentStore.getNextOrSubmit" class="next-button" v-on:click="nextQuestion" :disabled="currentQuestionSelectedAnswer == -1">Next</button>
+      <button v-if="quizContentStore.getNextOrSubmit" class="next-button" v-on:click="submitQuestions" :disabled="currentQuestionSelectedAnswer == -1">Submit</button>
     </div>
   </div>
 </template>
@@ -24,11 +24,16 @@ import { useQuizContentStore } from '@/store/QuizContentStore'
 import { useModuleStore } from '@/store/ModuleStore'
 import { mapStores } from 'pinia'
 
+type QuizContentDetails = {
+  currentQuestionSelectedAnswer: number,
+  buttonDisabled: boolean
+}
+
 export default defineComponent({
   data() {
     return {
       currentQuestionSelectedAnswer: -1,
-    }
+    } as QuizContentDetails
   },
   methods: {
     prevQuestion () {
@@ -37,6 +42,7 @@ export default defineComponent({
      
       // Reset
       this.currentQuestionSelectedAnswer = this.quizContentStore.getCurrentQuestionSelectedAnswer
+      console.log(this.currentQuestionSelectedAnswer)
     },
     nextQuestion () {
       // Updating answer
@@ -44,6 +50,7 @@ export default defineComponent({
       
       // Reset
       this.currentQuestionSelectedAnswer = this.quizContentStore.getCurrentQuestionSelectedAnswer
+      console.log(this.currentQuestionSelectedAnswer)
     },
     submitQuestions () {
       this.quizContentStore.updateQuestionAnswer(this.currentQuestionSelectedAnswer)

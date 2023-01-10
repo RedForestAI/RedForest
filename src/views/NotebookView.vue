@@ -1,10 +1,10 @@
 <template>
   <main>
     <div id="scr-main-container">
-      <div id="scr-page-container">
+      <div id="scr-page-container" :class="[configurationStore.quizHidden ? all : left ]">
         <PageContent/>
       </div>
-      <div id="scr-quiz-container" v-if="configurationStore.quizHidden">
+      <div id="scr-quiz-container" v-if="!configurationStore.quizHidden">
         <QuizContent/>
       </div>
     </div>
@@ -19,6 +19,12 @@ import QuizContent from '@/components/QuizContent.vue'
 import { useConfigurationStore } from '@/store/ConfigurationStore'
 
 export default {
+  data() {
+    return {
+      all: 'scr-all',
+      left: 'scr-left'
+    }
+  },
   components: {
     PageContent,
     QuizContent
@@ -30,22 +36,28 @@ export default {
 </script>
 
 <style scoped>
-#scr-main-container {
-  display: flex;
-}
-
-#scr-page-container {
-  flex: 70%;
-}
 
 #scr-quiz-container {
+  position: fixed;
   padding-top: 5em;
   padding-left: 1em;
   padding-right: 1em;
-  flex: 30%;
-  float: left;
+  width: 30%;
+  top: 1em;
+  right: 0;
+  float: right;
   background-color: #444444;
   color: #FFFFFF;
+  z-index: 15;
+}
+
+.scr-left {
+  width: 70%;
+}
+
+.scr-all {
+  float: left;
+  width: 100%;
 }
 
 </style>

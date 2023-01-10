@@ -1,5 +1,5 @@
 <template>
-  <div id="src-nav">
+  <div id="scr-nav">
     <div id="scr-left-nav" class="scr-nav-column">
       <nav>
         <ul>
@@ -55,9 +55,7 @@ export default defineComponent({
 
 <style>
 #scr-nav {
-  content: "";
-  display: table;
-  clear: both;
+  z-index: 30;
 }
 .scr-nav-column {
   float: left;
