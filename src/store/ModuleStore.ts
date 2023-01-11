@@ -37,8 +37,7 @@ export const useModuleStore = defineStore('module', {
             quizContentStore.$reset()
 
             // Then setting new quiz content
-            quizContentStore.questions = this.moduleData[this.contentID].questions
-            quizContentStore.correctAnswers = this.moduleData[this.contentID].answers
+            quizContentStore.setQuizContent(this.moduleData[this.contentID].questions, this.moduleData[this.contentID].answers)
             quizContentStore.loadQuizQuestion()
         },
         setPageContent () {
