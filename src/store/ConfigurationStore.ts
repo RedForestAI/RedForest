@@ -17,7 +17,8 @@ export const useConfigurationStore = defineStore('configuration', {
             loggedIn: false,
             inNotebook: false,
             quizHidden: true,
-            zoom: 1
+            zoom: 1,
+            quizButtonEnabled: false
         } as ConfigurationDetails
     },
     actions: {
