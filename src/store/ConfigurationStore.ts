@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia'
 
 type ConfigurationDetails = {
+    serverLocation: string
     username: string
     password: string
     loggedIn: boolean
@@ -12,6 +13,7 @@ type ConfigurationDetails = {
 export const useConfigurationStore = defineStore('configuration', {
     state: () => {
         return {
+            serverLocation: '',
             username: '',
             password: '',
             loggedIn: false,
@@ -22,6 +24,9 @@ export const useConfigurationStore = defineStore('configuration', {
         } as ConfigurationDetails
     },
     actions: {
+        recordServer(serverLocation: string){ 
+            this.serverLocation = serverLocation
+        },
         logIn(username: string, password: string) {
             this.loggedIn = true // Later need to check with database
             this.username = username

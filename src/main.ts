@@ -14,9 +14,11 @@ const pinia = createPinia()
 // Create application
 const app = createApp(App)
 
-// Create the app instance
+// Install store first (as others depend on it)
+app.use(pinia)
+
+// Then install others
 app.use(router)
-    .use(pinia)
     .use(AOIWebTracker, { 
         drawCanvas: false,
         toTrackElements: [

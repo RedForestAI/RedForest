@@ -1,3 +1,4 @@
 {
-    "modulePath": "content/sandcastle_content/module.json"
+    "modulePath": "content/sandcastle_content/module.json",
+    "serverLocation": "http://127.0.0.1:5000"
 }

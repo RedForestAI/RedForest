@@ -32,6 +32,10 @@ export const useMainStore = defineStore('main', {
           // Load module
           const moduleStore = useModuleStore()
           moduleStore.loadModule(this.config['modulePath'])
+
+          // Configure the Server site
+          const configurationStore = useConfigurationStore()
+          configurationStore.recordServer(this.config['serverLocation'])
       }) 
     },
     exit() {
@@ -48,6 +52,7 @@ export const useMainStore = defineStore('main', {
 
       // Reload module
       moduleStore.loadModule(this.config['modulePath'])
+      configurationStore.recordServer(this.config['serverLocation'])
     }
   }
 })

@@ -31,6 +31,7 @@
 </template>
 
 <script lang="ts">
+import axios from 'axios'
 import { defineComponent } from 'vue'
 import { useConfigurationStore } from '@/store/ConfigurationStore'
 import { useMainStore } from '@/store/MainStore'
@@ -39,6 +40,26 @@ import { mapStores } from 'pinia'
 export default defineComponent({
   methods: {
     logOut () {
+
+      // Inform the Server of logout
+      let formData = new FormData()
+      formData.append('username', this.configurationStore.username)
+      axios({
+        method: 'post',
+        url: this.configurationStore.serverLocation + '/logout',
+        data: formData
+      }).then((res) => {
+        if (res.data.success){
+          console.log("Successful logout")
+        } 
+        else {
+          alert("Logout failed: " + res.data)
+        }
+      }).catch((error) => {
+        alert("Server Failure (Logout failed): " + error.data)
+      })
+
+      // Then reset everything else
       this.mainStore.exit()
       this.$router.push("/")
     }
