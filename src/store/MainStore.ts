@@ -17,26 +17,34 @@ export const useMainStore = defineStore('main', {
     } as MainStoreTypes
   },
   actions: {
-    initialize() {
+    initialize(): Promise<string> {
 
-      // Load configuration
-      fetch(process.env.BASE_URL + "config.json")
-        .then((res) => res.json())
-        .then((config) => {
-          this.config = config
+      // Create a promise
+      const initPromise = new Promise<string>((resolve, reject) => {
+        // Load configuration
+        fetch(process.env.BASE_URL + "config.json")
+          .then((res) => res.json())
+          .then((config) => {
+            this.config = config
 
-          // Logging information
-          console.log("Configuration: ")
-          console.log(this.config)
-      
-          // Load module
-          const moduleStore = useModuleStore()
-          moduleStore.loadModule(this.config['modulePath'])
+            // Logging information
+            console.log("Configuration: ")
+            console.log(this.config)
+        
+            // Load module
+            const moduleStore = useModuleStore()
+            moduleStore.loadModule(this.config['modulePath'])
 
-          // Configure the Server site
-          const configurationStore = useConfigurationStore()
-          configurationStore.recordServer(this.config['serverLocation'])
-      }) 
+            // Configure the Server site
+            const configurationStore = useConfigurationStore()
+            configurationStore.recordServer(this.config['serverLocation'])
+
+            // Mark complete
+            resolve("success")
+        }) 
+      })
+
+      return initPromise
     },
     exit() {
       // Reset all stores and reload content

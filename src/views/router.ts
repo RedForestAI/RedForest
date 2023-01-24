@@ -9,6 +9,7 @@ import BreakView from '@/views/BreakView.vue'
 
 // Store Imports
 import { useConfigurationStore } from '@/store/ConfigurationStore'
+import emitter from "@/emitter"
 
 const router = createRouter({
   history: createWebHistory(),
@@ -39,10 +40,12 @@ const router = createRouter({
   ]
 })
 
+// Preventing users to visiting routes that need AUTH
 router.beforeEach((to, from, next) => {
   // Get reference to the configurationStore to get the login
   const configurationStore = useConfigurationStore()
 
+  // Validate route with AUTH
   if (to.meta.requiresAuth) {
     if (configurationStore.loggedIn) {
       next()
@@ -56,4 +59,14 @@ router.beforeEach((to, from, next) => {
   }
 })
 
-export default router;
+// Recording the changes in views after they finished loading
+router.afterEach((to, from, failure) => {
+
+  // Making sure there is a route
+  if (router.currentRoute.value.name != null){
+    emitter.emit('router_viewChange', router.currentRoute.value.name.toString())
+  }
+})
+
+
+export default router
