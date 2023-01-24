@@ -1,4 +1,5 @@
 import { defineStore } from 'pinia'
+import emitter from '@/emitter'
 
 type ConfigurationDetails = {
     serverLocation: string
@@ -31,6 +32,9 @@ export const useConfigurationStore = defineStore('configuration', {
             this.loggedIn = true // Later need to check with database
             this.username = username
             this.password = password
+
+            // Emit the initial state of everything
+            emitter.emit('init_storeSnapshot', JSON.stringify(this.$state))
         },
         logOut() {
             this.loggedIn = false
@@ -40,6 +44,8 @@ export const useConfigurationStore = defineStore('configuration', {
         toggleQuiz() {
             this.quizHidden = !this.quizHidden
             console.log("QuizHidden: " + this.quizHidden)
+            // Emit the initial state of everything
+            emitter.emit('config_quizHidden', JSON.stringify(this.quizHidden))
         },
         zoomIn() {
             if (this.zoom < 2) {

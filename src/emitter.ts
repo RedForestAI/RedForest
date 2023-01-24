@@ -6,7 +6,11 @@ import mitt from 'mitt'
 import { useConfigurationStore } from '@/store/ConfigurationStore'
 
 type Events = {
+    // Meta
     router_viewChange: string;
+    init_storeSnapshot: string
+    // ConfigurationStore
+    config_quizHidden: string
 }
 
 // Create a new emitter
