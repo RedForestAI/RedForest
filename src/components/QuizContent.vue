@@ -1,8 +1,6 @@
 <template>
   <div id="quiz-container">
-    <HighlightTool>
       <h1 id="question-title">Question {{ quizContentStore.currentQuestionID + 1}}</h1>
-    </HighlightTool>
     <p id="quiz-prompt">
     {{ quizContentStore.currentQuestionPrompt}}
     </p>
@@ -25,7 +23,6 @@ import { defineComponent } from "vue"
 import { useQuizContentStore } from '@/store/QuizContentStore'
 import { useModuleStore } from '@/store/ModuleStore'
 import { mapStores } from 'pinia'
-import  HighlightTool from '@/components/HighlightTool.vue'
 
 type QuizContentDetails = {
   currentQuestionSelectedAnswer: number,
@@ -37,9 +34,6 @@ export default defineComponent({
     return {
       currentQuestionSelectedAnswer: -1,
     } as QuizContentDetails
-  },
-  components: {
-    HighlightTool
   },
   methods: {
     prevQuestion () {
