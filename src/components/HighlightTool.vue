@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="scr-highlighter-tool">
     <div
       v-show="showTools"
       class="tools"
@@ -215,6 +215,10 @@ export default defineComponent({
 </script>
 
 <style>
+
+.scr-highlighter-tool {
+  z-index: 100000000000
+}
 
 .tools {
   height: 30px;

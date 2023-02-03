@@ -1,20 +1,15 @@
 <template>
   <footer>
-    <HighlightTool>
-    <p><span id="w0" class="hl">Test</span> Copyright &copy; 2022 - Vanderbilt OELE Group</p>
-    </HighlightTool>
+    <p><span id="w0" class="hl">Test</span> Copyright &copy; {{ year }} - Vanderbilt OELE Group</p>
   </footer>
 </template>
 
 <script lang="ts">
-import HighlightTool from '@/components/HighlightTool.vue'
 export default {
-  components: {
-    HighlightTool
-  },
   computed: {
     year() {
-      return Date().getFullYear()
+      let date = new Date().getFullYear()
+      return date
     }
   }
 }
