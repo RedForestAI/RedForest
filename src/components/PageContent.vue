@@ -102,68 +102,48 @@ export default defineComponent({
       if (element.tagName == "span" && element.id[0] == 'w'){
         return 
       }
-     
-      // Create range to find BB
-      const range = new Range();
 
       // If we find text, replace it with a new span
       if (node.nodeName == "#text" && node.nodeValue != null){
             
         const words = node.nodeValue.split(" ");
 
-        let textStartPointer = 0
-        let textEndPointer = 0
-        
-        // Set the Elements RECT based on the text Node
-        /* const parentRect = element.getBoundingClientRect() */
-        const parentStyle = window.getComputedStyle(element)
-        const transformXValue = Number(parentStyle.getPropertyValue('transform').split(",")[0].split("(")[1])
+        // Create new Container element
+        const newElement = document.createElement('div')
+        newElement.style['float'] = 'left'
+        newElement.style['display'] = 'flex'
           
         // Create container for adding new span Nodes
         const toBeAddedElements: Element[] = []
         for (let j = 0; j < words.length; j++){
                 
-          // Select the word's range
-          textEndPointer = textStartPointer + words[j].length
-          range.setStart(node, textStartPointer)
-          range.setEnd(node, textEndPointer)
-
-          // Get word data and store
-          const rect = range.getBoundingClientRect()
-
           // Create new span for each Word
-          const newSpan = document.createElement('span')
-          newSpan.appendChild(document.createTextNode(words[j]))
+          const newSpan = document.createElement('p')
+          newSpan.appendChild(document.createTextNode(words[j] + " "))
           newSpan.setAttribute("id", "w" + this.i)
+          newSpan.setAttribute("class", "hl")
+          newSpan.style.display = 'inblock-block'
+          newSpan.style.margin = '0 0 0 0'
           this.i += 1
 
-          /* newSpan.style.left = ((rect.left - totalRect.left) / transformXValue) + 'px' */
-          /* newSpan.style.top = rect.top + 'px' */
-          /* newSpan.style.height = rect.height + 'px' */
-          newSpan.style.width = (rect.width / transformXValue) + 'px'
-          /* newSpan.style.height = rect.height + 'px' */
+          // Add font information
+          newSpan.style['font-family'] = element.style['font-family']
+          newSpan.style['font-size'] = element.style['font-size']
          
           // Store  the new element, to be added later
           toBeAddedElements.push(newSpan)
-          textStartPointer = textEndPointer + 1
 
         }
 
+        // Adding the new elements into a DIV container
         for (let j = 0; j < toBeAddedElements.length; j++ ) {
-          element.appendChild(toBeAddedElements[j])
+          newElement.appendChild(toBeAddedElements[j])
         }
         
-        // Replace and move to the next element
+        // Replace
         element.removeChild(node)
-
-        // Adding styling to avoid overlap
-        element.style.cssText += 'display:flex;flex-direction:column'
+        element.appendChild(newElement)
        
-        // Setting Element Rect info
-        /* element.style.left = oldNodeRect.left + 'px' */
-        /* element.style.top = oldNodeRect.top + 'px' */
-        /* element.style.width = parentRect.width + 'px' */
-        /* element.style.height = oldNodeRect.height + 'px' */
       }
     }
   }

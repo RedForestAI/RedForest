@@ -39,6 +39,9 @@ export const useMainStore = defineStore('main', {
             const configurationStore = useConfigurationStore()
             configurationStore.recordServer(this.config['serverLocation'])
 
+            // For debugging, you can automatically login as someone
+            // configurationStore.logIn('test_user', '123456789')
+
             // Mark complete
             resolve("success")
         }) 

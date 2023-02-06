@@ -46,6 +46,6 @@ initPromise.then(
             .use(VuePdf)
 
         // Finish mounting the application
-        app.mount('#app')
+        app.mount('#app') 
     }
 )

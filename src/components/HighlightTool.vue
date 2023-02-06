@@ -98,25 +98,25 @@ export default defineComponent({
   
     methods: {
       onShare (text) {
-        console.log('share:', text);
-        document.getElementById("dictio").innerHTML='hello world';
+        console.log('share:', text)
+        document.getElementById("dictio").innerHTML='hello world'
       },
   
       onHighlight (words_selected) {
-        console.log('highlight:', words_selected);
+        console.log('highlight:', words_selected)
         
         for (let w of words_selected) {
-          document.getElementById(w).style='background-color:#FF3100';
+          document.getElementById(w).style['background-color'] = '#FF3100'
         }
         
       },
   
       onUnHighlight (words_selected) {
-        console.log('remove highlight:');
-        console.log('unhighlight:', words_selected);
+        console.log('remove highlight:')
+        console.log('unhighlight:', words_selected)
         
         for (let w of words_selected) {
-          document.getElementById(w).style='background-color:#FFFFFF';
+          document.getElementById(w).style['background-color'] = '#FFFFFF'
         }
         
       },
@@ -134,7 +134,7 @@ export default defineComponent({
           this.showTools = false
           return
         }
-        console.log('width', width, x,y, nrange);
+        console.log('width', width, x,y, nrange)
         
         this.x = x + (width / 2)
         this.y = y + window.scrollY - 10
@@ -142,42 +142,42 @@ export default defineComponent({
         this.selectedText = selection.toString()
         
   
-        const isSame=selection.anchorNode.isSameNode(selection.focusNode);
-        console.log('same node',  isSame );
+        const isSame=selection.anchorNode.isSameNode(selection.focusNode)
+        console.log('same node',  isSame )
         
-        const arr_words=[];
-        let wc=0;
+        const arr_words=[]
+        let wc=0
 
         for(let i = 0; i < selection.rangeCount; i++) {
             
            
-          let clo=selection.getRangeAt(i).cloneContents();
-          let query_found = clo.querySelectorAll('span.hl');
+          let clo=selection.getRangeAt(i).cloneContents()
+          let query_found = clo.querySelectorAll('p.hl')
              
           if ( query_found.length >0 ){
             
             for (let word of query_found) {
                    
-              console.log('logger ',word);
+              console.log('logger ',word)
            
-              arr_words[wc]=word.id ;
-              wc=wc+1;          
+              arr_words[wc]=word.id 
+              wc=wc+1          
                
             }
           } else {
-            let word= single_word_scenario(selection.getRangeAt(i));
+            let word= single_word_scenario(selection.getRangeAt(i))
             if (word.length >0) {
                    
-              arr_words[wc]=word;
-              wc=wc+1;  
-              console.log('lone', word);
+              arr_words[wc]=word
+              wc=wc+1  
+              console.log('lone', word)
             }
           }
         }
         
-        this.word_count=wc;
-        this.words_sel=arr_words;
-        console.log('array', arr_words);
+        this.word_count=wc
+        this.words_sel=arr_words
+        console.log('array', arr_words)
       },
       
       handleAction (action) {
@@ -195,21 +195,21 @@ export default defineComponent({
   })
   
   function single_word_scenario(selec_range){
-    const regex = /w(\d+)/;
-    const com_anc=selec_range.commonAncestorContainer;
+    const regex = /w(\d+)/
+    const com_anc=selec_range.commonAncestorContainer
     let id_str=''
 
-    if (com_anc.parentNode.nodeName!="SPAN"){
+    if (com_anc.parentNode.nodeName!="P"){
       return ''
     }
-    id_str=com_anc.parentNode.id;
-    let rgx =id_str.match(regex);
+    id_str=com_anc.parentNode.id
+    let rgx =id_str.match(regex)
     if ( rgx.length <2 ){
       
       return ''
     }
       
-    return id_str;
+    return id_str
   }
   
 </script>

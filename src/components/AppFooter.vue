@@ -18,8 +18,8 @@ export default {
 <style>
 footer {
   width: 100%;
-  background-color: #FFFF;
-  color: #000000;
+  background-color: #000000;
+  color: #FFFF;
   text-align: center;
   z-index: 30;
 }
