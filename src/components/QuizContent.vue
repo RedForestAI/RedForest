@@ -1,6 +1,6 @@
 <template>
   <div id="quiz-container">
-    <h1 id="question-title">Question {{ quizContentStore.currentQuestionID + 1}}</h1>
+      <h1 id="question-title">Question {{ quizContentStore.currentQuestionID + 1}}</h1>
     <p id="quiz-prompt">
     {{ quizContentStore.currentQuestionPrompt}}
     </p>

@@ -1,14 +1,15 @@
 <template>
   <footer>
-    <p>Copyright &copy; 2022 - Vanderbilt OELE Group</p>
+    <p><span id="w0" class="hl">Test</span> Copyright &copy; {{ year }} - Vanderbilt OELE Group</p>
   </footer>
 </template>
 
-<script>
+<script lang="ts">
 export default {
   computed: {
     year() {
-      return Date().getFullYear()
+      let date = new Date().getFullYear()
+      return date
     }
   }
 }
@@ -18,7 +19,7 @@ export default {
 footer {
   width: 100%;
   background-color: #000000;
-  color: #FFFFFF;
+  color: #FFFF;
   text-align: center;
   z-index: 30;
 }
