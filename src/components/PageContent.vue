@@ -30,7 +30,6 @@ export default defineComponent({
   },
   mounted() {
     const targetNode = document.getElementById('page-content-view')
-    console.log(targetNode)
 
     if (targetNode instanceof HTMLElement) {
       const observer = new MutationObserver(() => {
@@ -41,7 +40,7 @@ export default defineComponent({
           this.modifyingPdf = true
 
           setTimeout(() => {
-            /* this.wrapWordsForHighlighting() */
+            this.wrapWordsForHighlighting()
             /* this.modifyingPdf = false */
           }, 1000)
         }
@@ -94,6 +93,11 @@ export default defineComponent({
 
     wordSearch (element: Element, node: Node) {
 
+      // Only applicable if element is HTMLElement
+      if (!(element instanceof HTMLElement)) {
+        return
+      }
+
       // Avoid doing it twice
       if (element.tagName == "span" && element.id[0] == 'w'){
         return 
@@ -107,35 +111,59 @@ export default defineComponent({
             
         const words = node.nodeValue.split(" ");
 
-        let textStartPointer = 0;
-        let textEndPointer = 0;
-
+        let textStartPointer = 0
+        let textEndPointer = 0
+        
+        // Set the Elements RECT based on the text Node
+        /* const parentRect = element.getBoundingClientRect() */
+        const parentStyle = window.getComputedStyle(element)
+        const transformXValue = Number(parentStyle.getPropertyValue('transform').split(",")[0].split("(")[1])
+          
+        // Create container for adding new span Nodes
+        const toBeAddedElements: Element[] = []
         for (let j = 0; j < words.length; j++){
                 
           // Select the word's range
-          textEndPointer = textStartPointer + words[j].length;
-          range.setStart(node, textStartPointer);
-          range.setEnd(node, textEndPointer);
+          textEndPointer = textStartPointer + words[j].length
+          range.setStart(node, textStartPointer)
+          range.setEnd(node, textEndPointer)
 
           // Get word data and store
-          const rect = range.getBoundingClientRect();
+          const rect = range.getBoundingClientRect()
 
           // Create new span for each Word
           const newSpan = document.createElement('span')
           newSpan.appendChild(document.createTextNode(words[j]))
           newSpan.setAttribute("id", "w" + this.i)
-          newSpan.style.left = (rect.left + window.scrollX) + "px"
-          /* newSpan.setAttribute('x', rect.x) */
-          /* newSpan.setAttribute('y', rect.y) */
-          /* newSpan.setAttribute('width', rect.width) */
-          /* newSpan.setAttribute('height', rect.height) */
-          element.appendChild(newSpan)
+          this.i += 1
+
+          /* newSpan.style.left = ((rect.left - totalRect.left) / transformXValue) + 'px' */
+          /* newSpan.style.top = rect.top + 'px' */
+          /* newSpan.style.height = rect.height + 'px' */
+          newSpan.style.width = (rect.width / transformXValue) + 'px'
+          /* newSpan.style.height = rect.height + 'px' */
+         
+          // Store  the new element, to be added later
+          toBeAddedElements.push(newSpan)
+          textStartPointer = textEndPointer + 1
 
         }
 
+        for (let j = 0; j < toBeAddedElements.length; j++ ) {
+          element.appendChild(toBeAddedElements[j])
+        }
+        
         // Replace and move to the next element
         element.removeChild(node)
-        this.i += 1
+
+        // Adding styling to avoid overlap
+        element.style.cssText += 'display:flex;flex-direction:column'
+       
+        // Setting Element Rect info
+        /* element.style.left = oldNodeRect.left + 'px' */
+        /* element.style.top = oldNodeRect.top + 'px' */
+        /* element.style.width = parentRect.width + 'px' */
+        /* element.style.height = oldNodeRect.height + 'px' */
       }
     }
   }

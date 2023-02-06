@@ -5,7 +5,7 @@
       class="tools"
       :style="{
         left: `${x}px`,
-        top: `${y}px`
+        top: `${y}px`,
       }"
       @mousedown.prevent=""
     >
@@ -216,10 +216,6 @@ export default defineComponent({
 
 <style>
 
-.scr-highlighter-tool {
-  z-index: 100000000000
-}
-
 .tools {
   height: 30px;
   padding: 5px 10px;
@@ -233,6 +229,8 @@ export default defineComponent({
   display: flex;
   justify-content: center;
   align-items: center;
+  z-index: 10000;
+  background-color: #111111;
 }
 
 .tools:after {
