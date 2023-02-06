@@ -6,6 +6,7 @@ import App from '@/App.vue'
 import router from '@/views/router' // Views
 import { createPinia } from 'pinia' // State management
 import { AOIWebTracker } from 'aoiwebtracker' // AOI tracker
+import ChimeraJSIntegrator from 'chimera-js-integrator' // ChimeraPy integrator
 import VuePdf from 'vue3-pdfjs' // PDF
 import emitter from './emitter'
 
@@ -15,6 +16,16 @@ import { useMainStore } from '@/store/MainStore'
 // Create pinia
 const pinia = createPinia()
 const store = useMainStore(pinia)
+    
+// Install ChimeraPy integration
+const chimerajs = new ChimeraJSIntegrator()
+chimerajs.install({
+  emitter: emitter,
+  eventArray: [],
+  subPort: 7777,
+  subIP: '127.0.0.1',
+  repPort: 6767
+})
 
 // Initialized store
 const initPromise = store.initialize()
