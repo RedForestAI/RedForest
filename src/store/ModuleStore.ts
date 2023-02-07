@@ -35,15 +35,15 @@ export const useModuleStore = defineStore('module', {
             const configurationStore = useConfigurationStore()
             configurationStore.quizHidden = true
 
-            const quizContentStore = useQuizContentStore()
             // Before setting quiz, make sure to record if data was record
-            this.selectedAnswers = this.selectedAnswers.concat(quizContentStore.selectedAnswers)
+            const quizContentStore = useQuizContentStore()
+            // this.selectedAnswers = this.selectedAnswers.concat(quizContentStore.selectedAnswers)
 
             // Clearing out previous quiz data
             quizContentStore.$reset()
 
             // Then setting new quiz content
-            quizContentStore.setQuizContent(this.moduleData[this.contentID].questions, this.moduleData[this.contentID].answers)
+            quizContentStore.setQuizContent(this.moduleData[this.contentID].questions)
             quizContentStore.loadQuizQuestion()
         },
         setPageContent () {
