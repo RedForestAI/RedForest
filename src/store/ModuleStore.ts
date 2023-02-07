@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia'
 import { usePageContentStore } from '@/store/PageContentStore'
 import { useQuizContentStore, Question } from '@/store/QuizContentStore'
+import { useConfigurationStore } from '@/store/ConfigurationStore'
 
 type PassageData = {
     pdfPath: string,
@@ -29,6 +30,11 @@ export const useModuleStore = defineStore('module', {
     },
     actions: {
         setQuizContent () {
+
+            // New Quiz should be hidden
+            const configurationStore = useConfigurationStore()
+            configurationStore.quizHidden = true
+
             const quizContentStore = useQuizContentStore()
             // Before setting quiz, make sure to record if data was record
             this.selectedAnswers = this.selectedAnswers.concat(quizContentStore.selectedAnswers)
