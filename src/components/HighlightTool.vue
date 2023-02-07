@@ -204,8 +204,7 @@ export default defineComponent({
     }
     id_str=com_anc.parentNode.id
     let rgx =id_str.match(regex)
-    if ( rgx.length <2 ){
-      
+    if ( rgx == null || rgx.length <2 ){
       return ''
     }
       
