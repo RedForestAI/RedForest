@@ -2,18 +2,24 @@
   <div id="quiz-container">
       <h1 id="question-title">Question {{ quizContentStore.currentQuestionID + 1}}</h1>
     <p id="quiz-prompt">
-    {{ quizContentStore.currentQuestionPrompt}}
+    {{ quizContentStore.currentQuestion.prompt }}
     </p>
-    <table>
-      <tr v-for="(answer, index) in quizContentStore.currentQuestionAnswers" :key="answer">
-        <td><input type="radio" name="question" class="answer-radio" v-model="currentQuestionSelectedAnswer" :value="index"></td>
-        <td><p class="answer-text">{{ answer }}</p></td>
-      </tr>
-    </table>
+      <div v-if="quizContentStore.currentQuestion.type == 'open'">
+        <textarea class="answer-textarea" name="question" rows="10" v-model="currentQuestionSelectedAnswer">
+        </textarea>
+      </div>
+      <div v-else>
+        <table>
+          <tr v-for="(answer, index) in quizContentStore.currentQuestion.answers" :key="answer">
+            <td><input type="radio" name="question" class="answer-radio" v-model="currentQuestionSelectedAnswer" :value="index"></td>
+            <td><p class="answer-text">{{ answer }}</p></td>
+          </tr>
+        </table>
+      </div>
     <div id="quiz-buttons">
       <button class="prev-button" v-on:click="prevQuestion">Previous</button>
-      <button v-if="!quizContentStore.getNextOrSubmit" class="next-button" v-on:click="nextQuestion" :disabled="currentQuestionSelectedAnswer == -1">Next</button>
-      <button v-if="quizContentStore.getNextOrSubmit" class="next-button" v-on:click="submitQuestions" :disabled="currentQuestionSelectedAnswer == -1">Submit</button>
+      <button v-if="!quizContentStore.getNextOrSubmit" class="next-button" v-on:click="nextQuestion" :disabled="(currentQuestionSelectedAnswer == -1) || (currentQuestionSelectedAnswer.toString() == '')">Next</button>
+      <button v-if="quizContentStore.getNextOrSubmit" class="next-button" v-on:click="submitQuestions" :disabled="(currentQuestionSelectedAnswer == -1) || (currentQuestionSelectedAnswer.toString() == '')">Submit</button>
     </div>
   </div>
 </template>
@@ -25,14 +31,14 @@ import { useModuleStore } from '@/store/ModuleStore'
 import { mapStores } from 'pinia'
 
 type QuizContentDetails = {
-  currentQuestionSelectedAnswer: number,
+  currentQuestionSelectedAnswer: number | string,
   buttonDisabled: boolean
 }
 
 export default defineComponent({
   data() {
     return {
-      currentQuestionSelectedAnswer: -1,
+      currentQuestionSelectedAnswer: '',
     } as QuizContentDetails
   },
   methods: {
@@ -41,7 +47,7 @@ export default defineComponent({
       this.quizContentStore.prevQuestion(this.currentQuestionSelectedAnswer)
      
       // Reset
-      this.currentQuestionSelectedAnswer = this.quizContentStore.getCurrentQuestionSelectedAnswer
+      this.currentQuestionSelectedAnswer = this.quizContentStore.getCurrentQuestionSelectedAnswer()
       console.log(this.currentQuestionSelectedAnswer)
     },
     nextQuestion () {
@@ -49,7 +55,7 @@ export default defineComponent({
       this.quizContentStore.nextQuestion(this.currentQuestionSelectedAnswer)
       
       // Reset
-      this.currentQuestionSelectedAnswer = this.quizContentStore.getCurrentQuestionSelectedAnswer
+      this.currentQuestionSelectedAnswer = this.quizContentStore.getCurrentQuestionSelectedAnswer()
       console.log(this.currentQuestionSelectedAnswer)
     },
     submitQuestions () {
@@ -70,7 +76,8 @@ export default defineComponent({
 })
 </script>
 
-<style>
+<style scoped
+>
 #quiz-container {
   padding: 1em;
   min-height: 100vh;
@@ -99,6 +106,10 @@ li {
 .answer-text {
   padding-left: 20px;
   display: inline-block;
+}
+.answer-textarea {
+  display: block;
+  width: 100%;
 }
 .prev-button {
   float: left;

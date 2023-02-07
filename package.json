@@ -13,7 +13,7 @@
     "@vue/vue3-jest": "^27.0.0",
     "aoiwebtracker": "^0.0.1",
     "axios": "^0.27.2",
-    "chimera-js-integrator": "^0.0.2",
+    "chimera-js-integrator": "file:../ChimeraJS",
     "core-js": "^3.8.3",
     "jest": "^27.5.1",
     "js-logger": "^1.6.1",
