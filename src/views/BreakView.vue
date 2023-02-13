@@ -36,6 +36,8 @@ export default defineComponent({
   border:1px solid #000;
   margin: auto;
   margin-top: 10em;
+  background-color: #AAAA;
+  color: #FFFF
 }
 
 #continue-button {

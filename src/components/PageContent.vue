@@ -10,12 +10,14 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
+import axios from 'axios'
 
 import { VuePdf } from 'vue3-pdfjs/esm'
 import { mapStores } from 'pinia'
 
 import { usePageContentStore } from '@/store/PageContentStore'
 import { useConfigurationStore } from '@/store/ConfigurationStore'
+import { useModuleStore } from '@/store/ModuleStore'
 import HighlightTool from '@/components/HighlightTool.vue'
 
 
@@ -25,7 +27,6 @@ export default defineComponent({
     return {
       i: 0,
       tagWordCheck: ['P', 'A', 'H1', 'H2', 'H3', 'H4', 'H5', 'SPAN'],
-      modifyingPdf: false
     }
   },
   mounted() {
@@ -36,12 +37,13 @@ export default defineComponent({
 
         // Required to make modifying pdf only happen, as the observer 
         // is triggered 5 times everytime it changes.
-        if (!this.modifyingPdf){
-          this.modifyingPdf = true
+        if (!this.pageContentStore.wordsWrapped){
+          this.pageContentStore.wordsWrapped = true
 
+          // Wait until the PDF fully loads 
           setTimeout(() => {
             this.wrapWordsForHighlighting()
-            /* this.modifyingPdf = false */
+            this.glossaryPreprocessing()
           }, 1000)
         }
       })
@@ -56,17 +58,17 @@ export default defineComponent({
   },
   computed: {
     ...mapStores(usePageContentStore),
-    ...mapStores(useConfigurationStore)
+    ...mapStores(useConfigurationStore),
+    ...mapStores(useModuleStore)
   },
   methods: {
     wrapWordsForHighlighting () {
-      console.log('Wrapping Words')
+      /* console.log('Wrapping Words') */
       const elements: HTMLCollection = document.getElementsByClassName('scr-pdf-page')
 
       for (let i = 0; i < elements.length; i++) {
 
         const element = elements[i]
-        /* console.log('WrapWordsForHighlighting: ', element) */
         this.wrapWords(element)
       }
     },
@@ -99,7 +101,7 @@ export default defineComponent({
       }
 
       // Avoid doing it twice
-      if (element.tagName == "span" && element.id[0] == 'w'){
+      if (element.tagName == "p" && element.id[0] == 'w'){
         return 
       }
 
@@ -118,20 +120,20 @@ export default defineComponent({
         for (let j = 0; j < words.length; j++){
                 
           // Create new span for each Word
-          const newSpan = document.createElement('p')
-          newSpan.appendChild(document.createTextNode(words[j] + " "))
-          newSpan.setAttribute("id", "w" + this.i)
-          newSpan.setAttribute("class", "hl")
-          newSpan.style.display = 'inblock-block'
-          newSpan.style.margin = '0 0 0 0'
+          const newChild = document.createElement('p')
+          newChild.appendChild(document.createTextNode(words[j] + " "))
+          newChild.setAttribute("id", "p" + this.moduleStore.contentID + "w" + this.i)
+          newChild.setAttribute("class", "hl")
+          newChild.style.display = 'inblock-block'
+          newChild.style.margin = '0 0 0 0'
           this.i += 1
 
           // Add font information
-          newSpan.style['font-family'] = element.style['font-family']
-          newSpan.style['font-size'] = element.style['font-size']
+          newChild.style['font-family'] = element.style['font-family']
+          newChild.style['font-size'] = element.style['font-size']
          
           // Store  the new element, to be added later
-          toBeAddedElements.push(newSpan)
+          toBeAddedElements.push(newChild)
 
         }
 
@@ -143,11 +145,59 @@ export default defineComponent({
         // Replace
         element.removeChild(node)
         element.appendChild(newElement)
+        /* console.log("Word Wrapping: removed and appended new children") */
        
       }
+    },
+
+    glossaryFormatting() {
+
+      console.log("Glossary Formatting")
+    
+      for (let i = 0; i < this.pageContentStore.glossaryWordIds.length; i++) {
+        const elementID = this.pageContentStore.glossaryWordIds[i]
+        console.log("Formatting: " + elementID)
+        const element = document.getElementById(elementID)
+
+        if (element instanceof HTMLElement) {
+          element.style['color'] = "red"
+          element.style['background-color'] = "rgb(255,255,255)"
+          element.style['text-decoration-line'] = 'underline'
+          element.style['text-decoration-color'] = "red"
+
+          /* element.style['z-index'] = '1000' */
+        }
+      }
+    },
+
+    glossaryPreprocessing() {
+
+      // Create form data to send request
+      axios({
+        method: 'get',
+        url: this.configurationStore.serverLocation + '/glossary', 
+      }).then((res) => {
+
+        // If login success, save username and password and move on
+        if (res.data.success) {
+          console.log("Successful Glossary Fetch")
+          console.log(res.data.glossary)
+          this.pageContentStore.glossaryWordIds = res.data.glossary
+          this.glossaryFormatting()
+        }
+
+        // Else, inform of failure
+        else {
+          alert("Failed Glossary fetch")
+        }
+
+      // Error Handling
+      }).catch((error) => {
+          alert("No Login Server Response - " + error.data)
+      })
     }
   }
-});
+})
 </script>
 
 <style>
@@ -159,7 +209,7 @@ img {
 .scr-pdf-page {
   display: flex;
   justify-content: center;
-  background-color: #3333;
+  background-color: #5555;
 }
 
 </style>

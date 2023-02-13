@@ -32,7 +32,6 @@ emitter.on('*', (type, e) => {
     formData.append('timestamp', d.toISOString())
     formData.append('topic', type.toString())
     formData.append('information', e)
-    console.log(configurationStore.serverLocation)
 
     // Send payload
     axios({

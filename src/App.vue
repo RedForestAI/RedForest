@@ -29,9 +29,13 @@ html {
   scrollbar-width: none;
 }
 
-html::-webkit-scrollbar {
-  display: none;
+:root {
+  color-scheme: dark;
 }
+
+/* html::-webkit-scrollbar { */
+/*   display: none; */
+/* } */
 
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
@@ -63,7 +67,6 @@ html::-webkit-scrollbar {
   display: flex;
   flex-direction: column;
   width: 100%;
-  // padding-top: 0.25em;
 }
 
 body {

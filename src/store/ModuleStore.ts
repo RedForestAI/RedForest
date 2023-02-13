@@ -37,7 +37,6 @@ export const useModuleStore = defineStore('module', {
 
             // Before setting quiz, make sure to record if data was record
             const quizContentStore = useQuizContentStore()
-            // this.selectedAnswers = this.selectedAnswers.concat(quizContentStore.selectedAnswers)
 
             // Clearing out previous quiz data
             quizContentStore.$reset()
