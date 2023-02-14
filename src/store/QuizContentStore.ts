@@ -1,4 +1,5 @@
 import { defineStore } from 'pinia'
+import emitter from '@/emitter'
 
 // Abstract Class
 export class Question {
@@ -94,6 +95,9 @@ export const useQuizContentStore = defineStore('quizContent', {
     },
     updateQuestionAnswer (selection: number | string) {
       this.questions[this.currentQuestionID].updateStudentSolution(selection.valueOf())
+
+      // Emit the initial state of everything
+      emitter.emit('updateQuestionAnswer', {"currentQuestionID": this.currentQuestionID, 'newValue': selection.valueOf()})
     },
     getCurrentQuestionSelectedAnswer() {
       if (this.currentQuestion instanceof Question){
@@ -108,6 +112,9 @@ export const useQuizContentStore = defineStore('quizContent', {
       if (this.currentQuestionID > 0) {
         this.currentQuestionID -= 1
         this.loadQuizQuestion()
+        
+        // Emit the initial state of everything
+        emitter.emit('prevQuestion', {"currentQuestionID": this.currentQuestionID})
       }
     },
     nextQuestion(currentQuestionSelectedAnswer: number | string) {
@@ -115,6 +122,9 @@ export const useQuizContentStore = defineStore('quizContent', {
       if (this.currentQuestionID < this.questions.length - 1) {
         this.currentQuestionID += 1
         this.loadQuizQuestion()
+        
+        // Emit the initial state of everything
+        emitter.emit('nextQuestion', {"currentQuestionID": this.currentQuestionID})
       }
     }
   }

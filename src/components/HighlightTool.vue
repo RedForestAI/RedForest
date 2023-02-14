@@ -110,7 +110,7 @@ export default defineComponent({
   
     methods: {
       onGlossaryRequest (words_selected) {
-        console.log('glossary request:', words_selected)
+        /* console.log('glossary request:', words_selected) */
         // Get the first word of the selection
         let firstWordId = null
         for (let w of words_selected) {
@@ -141,6 +141,7 @@ export default defineComponent({
               this.pageContentStore.glossaryWord = res.data.word
               this.pageContentStore.glossaryDefinition = res.data.definition
               this.pageContentStore.glossaryShow = true
+              this.$mitt.emit('glossarySuccess', res.data)
             }
 
             // Else, inform of failure
@@ -155,7 +156,7 @@ export default defineComponent({
       },
   
       onHighlight (words_selected) {
-        console.log('highlight:', words_selected)
+        /* console.log('highlight:', words_selected) */
         
         for (let w of words_selected) {
           document.getElementById(w).style['background-color'] = 'rgba(255,49,0,0.2)'
@@ -164,8 +165,8 @@ export default defineComponent({
       },
   
       onUnHighlight (words_selected) {
-        console.log('remove highlight:')
-        console.log('unhighlight:', words_selected)
+        /* console.log('remove highlight:') */
+        /* console.log('unhighlight:', words_selected) */
         
         for (let w of words_selected) {
           document.getElementById(w).style['background-color'] = 'rgba(255,255,255,0)'
@@ -186,7 +187,7 @@ export default defineComponent({
           this.showTools = false
           return
         }
-        console.log('width', width, x,y, nrange)
+        /* console.log('width', width, x,y, nrange) */
         
         this.x = x + (width / 2)
         this.y = y + window.scrollY - 10
@@ -194,8 +195,8 @@ export default defineComponent({
         this.selectedText = selection.toString()
         
   
-        const isSame=selection.anchorNode.isSameNode(selection.focusNode)
-        console.log('same node',  isSame )
+        /* const isSame=selection.anchorNode.isSameNode(selection.focusNode) */
+        /* console.log('same node',  isSame ) */
         
         const arr_words=[]
         let wc=0
@@ -210,7 +211,7 @@ export default defineComponent({
             
             for (let word of query_found) {
                    
-              console.log('logger ',word)
+              /* console.log('logger ',word) */
            
               arr_words[wc]=word.id 
               wc=wc+1          
@@ -222,14 +223,17 @@ export default defineComponent({
                    
               arr_words[wc]=word
               wc=wc+1  
-              console.log('lone', word)
+              /* console.log('lone', word) */
             }
           }
         }
         
         this.word_count=wc
         this.words_sel=arr_words
-        console.log('array', arr_words)
+        /* console.log('array', arr_words) */
+        if (arr_words.length != 0) {
+          this.$mitt.emit("textSelected", {"words": this.words_sel})
+        }
       },
       
       handleAction (action) {
@@ -237,13 +241,16 @@ export default defineComponent({
         // Changed this make it easier to know what is being called
         if (action == 'highlight') {
           this.onHighlight(this.words_sel)
-        } else if (action == 'unhighlight') {
+          this.$mitt.emit('highlight', this.words_sel)
+        } 
+        else if (action == 'unhighlight') {
           this.onUnHighlight(this.words_sel)
-        } else if (action == 'glossary') {
+          this.$mitt.emit('unhighlight', this.words_sel)
+        } 
+        else if (action == 'glossary') {
           this.onGlossaryRequest(this.words_sel)
-        } else {
-          console.log('Error: ' + action + ' event without handler.')
-        }
+          this.$mitt.emit('glossaryRequest', this.words_sel)
+        } 
       }
     }
   })

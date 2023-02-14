@@ -43,7 +43,6 @@ export const useConfigurationStore = defineStore('configuration', {
         },
         toggleQuiz() {
             this.quizHidden = !this.quizHidden
-            console.log("QuizHidden: " + this.quizHidden)
             // Emit the initial state of everything
             emitter.emit('config_quizHidden', JSON.stringify(this.quizHidden))
         },

@@ -48,7 +48,6 @@ export default defineComponent({
      
       // Reset
       this.currentQuestionSelectedAnswer = this.quizContentStore.getCurrentQuestionSelectedAnswer()
-      console.log(this.currentQuestionSelectedAnswer)
     },
     nextQuestion () {
       // Updating answer
@@ -56,7 +55,6 @@ export default defineComponent({
       
       // Reset
       this.currentQuestionSelectedAnswer = this.quizContentStore.getCurrentQuestionSelectedAnswer()
-      console.log(this.currentQuestionSelectedAnswer)
     },
     submitQuestions () {
       this.quizContentStore.updateQuestionAnswer(this.currentQuestionSelectedAnswer)

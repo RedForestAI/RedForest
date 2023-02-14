@@ -17,6 +17,7 @@ export default defineComponent({
   methods: {
 
     closeGlossary () {
+      this.$mitt.emit("glossaryClose", {"closing": true})
       this.pageContentStore.glossaryShow = false  
     }
 

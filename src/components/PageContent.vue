@@ -180,11 +180,11 @@ export default defineComponent({
 
       // After changing the opacity, that made the selection tool too intense
       document.styleSheets[0].addRule('*::selection', 'color: white; background: #cc0000;');
-      console.log("Glossary Formatting")
+      /* console.log("Glossary Formatting") */
     
       for (let i = 0; i < this.pageContentStore.glossaryWordIds.length; i++) {
         const elementID = this.pageContentStore.glossaryWordIds[i]
-        console.log("Formatting: " + elementID)
+        /* console.log("Formatting: " + elementID) */
         const element = document.getElementById(elementID)
 
         if (element instanceof HTMLElement && element.parentNode != null) {
