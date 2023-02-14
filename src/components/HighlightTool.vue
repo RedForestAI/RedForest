@@ -11,7 +11,7 @@
     >
       <span
         class="item"
-        @mousedown.prevent="handleAction('share')"
+        @mousedown.prevent="handleAction('glossary')"
       >
         <svg style="width:24px;height:24px" 
           viewBox="0 0 256.000000 256.000000"
@@ -71,11 +71,17 @@
 
     </div>
     <slot/>
+
+  <!-- Only visible when the user request a definition -->
   </div>
 </template>
 
 <script>
 import { defineComponent } from 'vue'
+import axios from 'axios'
+import { mapStores } from 'pinia'
+
+import { useConfigurationStore } from '@/store/ConfigurationStore'
 
 export default defineComponent({
     name: 'HiglightTool',
@@ -84,7 +90,8 @@ export default defineComponent({
         x: 0,
         y: 0,
         showTools: false,
-        selectedText: ''
+        selectedText: '',
+        showGlossary: true
       }
     },
   
@@ -95,11 +102,47 @@ export default defineComponent({
     beforeUnmount() {
       window.removeEventListener('mouseup', this.onMouseup)
     },
+
+    computed: {
+      ...mapStores(useConfigurationStore)
+    },
   
     methods: {
-      onShare (text) {
-        console.log('share:', text)
-        document.getElementById("dictio").innerHTML='hello world'
+      onGlossaryRequest (words_selected) {
+        console.log('glossary request:', words_selected)
+        // Get the first word of the selection
+        let firstWordId = null
+        for (let w of words_selected) {
+          if (w.includes('w')) {
+            firstWordId = w
+            break
+          }
+        }
+        
+        // Create form data to send request
+        let formData = new FormData()
+        formData.append('pdf_word_id', firstWordId)
+        axios({
+          method: 'post',
+          url: this.configurationStore.serverLocation + '/glossary', 
+          data: formData
+        }
+        ).then((res) => {
+
+            // If login success, save username and password and move on
+            if (res.data.success){
+              console.log(res)
+            }
+
+            // Else, inform of failure
+            else {
+              console.log("Glossary request failed")
+            }
+
+        // Error Handling
+        }).catch((error) => {
+            alert("No Login Server Response - " + error.data)
+        })
       },
   
       onHighlight (words_selected) {
@@ -187,6 +230,8 @@ export default defineComponent({
           this.onHighlight(this.words_sel)
         } else if (action == 'unhighlight') {
           this.onUnHighlight(this.words_sel)
+        } else if (action == 'glossary') {
+          this.onGlossaryRequest(this.words_sel)
         } else {
           console.log('Error: ' + action + ' event without handler.')
         }

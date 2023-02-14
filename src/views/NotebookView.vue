@@ -8,6 +8,9 @@
         <QuizContent/>
       </div>
     </div>
+    <div id="scr-glossary-tool">
+      <GlossaryTool/>
+    </div>
   </main>
 </template>
 
@@ -16,6 +19,7 @@ import { mapStores } from 'pinia'
 
 import PageContent from '@/components/PageContent.vue'
 import QuizContent from '@/components/QuizContent.vue'
+import GlossaryTool from '@/components/GlossaryTool.vue'
 import { useConfigurationStore } from '@/store/ConfigurationStore'
 
 export default {
@@ -27,7 +31,8 @@ export default {
   },
   components: {
     PageContent,
-    QuizContent
+    QuizContent,
+    GlossaryTool
   },
   computed: {
     ...mapStores(useConfigurationStore) // reference: configurationStore
@@ -58,6 +63,17 @@ export default {
 .scr-all {
   float: left;
   width: 100%;
+}
+
+#scr-glossary-tool {
+  position: fixed;
+  bottom: 1em;
+  width: 25%;
+  right: 0;
+  height: 15%;
+  float: right;
+  background-color: rgba(197, 196, 242, 0.95);
+  z-index: 50;
 }
 
 </style>

@@ -76,8 +76,7 @@ export default defineComponent({
 })
 </script>
 
-<style scoped
->
+<style scoped>
 #quiz-container {
   padding: 1em;
   min-height: 100vh;
