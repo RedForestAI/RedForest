@@ -26,6 +26,7 @@ export default defineComponent({
   data() {
     return {
       i: 0,
+      si: 0,
       tagWordCheck: ['P', 'A', 'H1', 'H2', 'H3', 'H4', 'H5', 'SPAN'],
     }
   },
@@ -119,10 +120,24 @@ export default defineComponent({
         // Create container for adding new span Nodes
         const toBeAddedElements: Element[] = []
         for (let j = 0; j < words.length; j++){
+          
+          // Add a text node if j != 0
+          if (j != 0){
+            const newChildWhiteSpace = document.createElement("p")
+            newChildWhiteSpace.appendChild(document.createTextNode(" "))
+            newChildWhiteSpace.style.display = "inblock-block"
+            newChildWhiteSpace.style.margin= "0 0 0 0"
+            newChildWhiteSpace.style['font-family'] = element.style['font-family']
+            newChildWhiteSpace.style['font-size'] = element.style['font-size']
+            newChildWhiteSpace.setAttribute("class", "hl")
+            newChildWhiteSpace.setAttribute("id", "p" + this.moduleStore.contentID + "s" + this.si)
+            this.si += 1
+            toBeAddedElements.push(newChildWhiteSpace)
+          }
                 
           // Create new span for each Word
           const newChild = document.createElement('p')
-          newChild.appendChild(document.createTextNode(words[j] + " "))
+          newChild.appendChild(document.createTextNode(words[j]))
           newChild.setAttribute("id", "p" + this.moduleStore.contentID + "w" + this.i)
           newChild.setAttribute("class", "hl")
           newChild.style.display = 'inblock-block'
