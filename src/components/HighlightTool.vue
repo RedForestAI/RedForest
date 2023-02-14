@@ -106,7 +106,7 @@ export default defineComponent({
         console.log('highlight:', words_selected)
         
         for (let w of words_selected) {
-          document.getElementById(w).style['background-color'] = '#FF3100'
+          document.getElementById(w).style['background-color'] = 'rgba(255,49,0,0.2)'
         }
         
       },
@@ -116,7 +116,7 @@ export default defineComponent({
         console.log('unhighlight:', words_selected)
         
         for (let w of words_selected) {
-          document.getElementById(w).style['background-color'] = '#FFFFFF'
+          document.getElementById(w).style['background-color'] = 'rgba(255,255,255,0)'
         }
         
       },

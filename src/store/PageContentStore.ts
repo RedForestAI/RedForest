@@ -32,6 +32,7 @@ export const usePageContentStore = defineStore('pageContent', {
       const loadingTask = createLoadingTask(this.pdfSrc)
       loadingTask.promise.then((pdf: PDFDocumentProxy) => {
         this.numOfPages = pdf.numPages
+        this.wordsWrapped = false
       })
     }
   }

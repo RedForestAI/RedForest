@@ -114,6 +114,7 @@ export default defineComponent({
         const newElement = document.createElement('div')
         newElement.style['float'] = 'left'
         newElement.style['display'] = 'flex'
+        /* newElement.style['opacity'] = '1' */
           
         // Create container for adding new span Nodes
         const toBeAddedElements: Element[] = []
@@ -152,6 +153,18 @@ export default defineComponent({
 
     glossaryFormatting() {
 
+      // First, we need to make the parent div's opacity 1 as to not 
+      // affect the children elements
+      const pdfElements = document.getElementsByClassName("textLayer vue-pdf__wrapper-text-layer")
+      for (let i = 0; i < pdfElements.length; i++) {
+        const element = pdfElements[i]
+        if (element instanceof HTMLElement) {
+          element.style['opacity'] = '1'
+        }
+      }
+
+      // After changing the opacity, that made the selection tool too intense
+      document.styleSheets[0].addRule('*::selection', 'color: white; background: #cc0000;');
       console.log("Glossary Formatting")
     
       for (let i = 0; i < this.pageContentStore.glossaryWordIds.length; i++) {
@@ -159,13 +172,16 @@ export default defineComponent({
         console.log("Formatting: " + elementID)
         const element = document.getElementById(elementID)
 
-        if (element instanceof HTMLElement) {
+        if (element instanceof HTMLElement && element.parentNode != null) {
+          const wrapperDiv = document.createElement("div")
+          
+          wrapperDiv.style['background-color'] = "rgb(255,255,255)"
           element.style['color'] = "red"
-          element.style['background-color'] = "rgb(255,255,255)"
           element.style['text-decoration-line'] = 'underline'
           element.style['text-decoration-color'] = "red"
 
-          /* element.style['z-index'] = '1000' */
+          element.parentNode.replaceChild(wrapperDiv, element)
+          wrapperDiv.appendChild(element)
         }
       }
     },
@@ -200,7 +216,7 @@ export default defineComponent({
 })
 </script>
 
-<style>
+<style scoped>
 img {
   max-width: 100%;
   max-height: 100%;
@@ -210,6 +226,10 @@ img {
   display: flex;
   justify-content: center;
   background-color: #5555;
+}
+
+::selection {
+  background: "blue";
 }
 
 </style>
