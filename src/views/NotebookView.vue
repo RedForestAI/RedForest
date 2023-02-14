@@ -8,7 +8,7 @@
         <QuizContent/>
       </div>
     </div>
-    <div id="scr-glossary-tool">
+    <div id="scr-glossary-tool" v-if="pageContentStore.glossaryShow">
       <GlossaryTool/>
     </div>
   </main>
@@ -21,6 +21,7 @@ import PageContent from '@/components/PageContent.vue'
 import QuizContent from '@/components/QuizContent.vue'
 import GlossaryTool from '@/components/GlossaryTool.vue'
 import { useConfigurationStore } from '@/store/ConfigurationStore'
+import { usePageContentStore } from '@/store/PageContentStore'
 
 export default {
   data() {
@@ -35,7 +36,8 @@ export default {
     GlossaryTool
   },
   computed: {
-    ...mapStores(useConfigurationStore) // reference: configurationStore
+    ...mapStores(useConfigurationStore),
+    ...mapStores(usePageContentStore) 
   }
 }
 </script>

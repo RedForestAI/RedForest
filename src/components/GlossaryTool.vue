@@ -1,22 +1,29 @@
 <template>
   <div class="scr-glossary-container">
-    <button id="scr-glossary-close"></button>
-    <h1 class="scr-glossary-child"> {{ word }} </h1>
-    <p class="scr-glossary-child"> {{ definition }} </p>
+    <button id="scr-glossary-close" @click="closeGlossary"></button>
+    <h1 class="scr-glossary-child"> {{ pageContentStore.glossaryWord }} </h1>
+    <p class="scr-glossary-child"> {{ pageContentStore.glossaryDefinition }} </p>
   </div>
 </template>
 
 <script>
 import { defineComponent } from 'vue'
+import { mapStores } from 'pinia'
+
+import { usePageContentStore } from '@/store/PageContentStore'
 
 export default defineComponent({
-    name: 'GlossaryTool',
-    data () {
-      return {
-        word: 'Test Word',
-        definition: 'North American professional baseball organization that was formed in 1903 with the merger of the two U.S. professional baseball leagues—the National League (NL) and the American League (AL).'
-      }
-    },
+  name: 'GlossaryTool',
+  methods: {
+
+    closeGlossary () {
+      this.pageContentStore.glossaryShow = false  
+    }
+
+  },
+  computed: {
+    ...mapStores(usePageContentStore)
+  }
 })
 </script>
 

@@ -15,7 +15,10 @@ export const usePageContentStore = defineStore('pageContent', {
       wordsWrapped: false,
       pdfSrc: '',
       numOfPages: 0,
-      glossaryWordIds: []
+      glossaryWordIds: [],
+      glossaryShow: false,
+      glossaryWord: '',
+      glsosaryDefinition: '',
     } as ContentDetails
   },
   actions: {

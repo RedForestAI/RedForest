@@ -82,6 +82,7 @@ import axios from 'axios'
 import { mapStores } from 'pinia'
 
 import { useConfigurationStore } from '@/store/ConfigurationStore'
+import { usePageContentStore } from '@/store/PageContentStore'
 
 export default defineComponent({
     name: 'HiglightTool',
@@ -90,8 +91,7 @@ export default defineComponent({
         x: 0,
         y: 0,
         showTools: false,
-        selectedText: '',
-        showGlossary: true
+        selectedText: ''
       }
     },
   
@@ -104,7 +104,8 @@ export default defineComponent({
     },
 
     computed: {
-      ...mapStores(useConfigurationStore)
+      ...mapStores(useConfigurationStore),
+      ...mapStores(usePageContentStore)
     },
   
     methods: {
@@ -117,6 +118,12 @@ export default defineComponent({
             firstWordId = w
             break
           }
+        }
+
+        // First, check if the word belows in the glossary
+        console.log(this.pageContentStore.glossaryWordIds)
+        if (!this.pageContentStore.glossaryWordIds.includes(firstWordId)) {
+          return
         }
         
         // Create form data to send request
@@ -131,7 +138,9 @@ export default defineComponent({
 
             // If login success, save username and password and move on
             if (res.data.success){
-              console.log(res)
+              this.pageContentStore.glossaryWord = res.data.word
+              this.pageContentStore.glossaryDefinition = res.data.definition
+              this.pageContentStore.glossaryShow = true
             }
 
             // Else, inform of failure
