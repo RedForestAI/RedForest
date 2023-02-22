@@ -5,7 +5,7 @@ import App from '@/App.vue'
 // Plugins
 import router from '@/views/router' // Views
 import { createPinia } from 'pinia' // State management
-// import AOIWebTracker from 'aoiwebtracker' // AOI tracker
+import AOIWebTracker from 'aoiwebtracker' // AOI tracker
 // import ChimeraJSIntegrator from 'chimera-js-integrator' // ChimeraPy integrator
 import VuePdf from 'vue3-pdfjs' // PDF
 import emitter from './emitter'
@@ -28,23 +28,23 @@ const store = useMainStore(pinia)
 // })
         
 // Install AOIWebTracker
-// const tracker = new AOIWebTracker()
-// tracker.install({ 
-//   emitter: emitter,
-//   drawCanvas: false,
-//   toTrackElements: [
-//     {searchBy: 'id', searchName: 'scr-page-container', recursive: true, wordLevel: true},
-//     {searchBy: 'id', searchName: 'scr-quiz-container', recursive: true, wordLevel: true},
-//     {searchBy: 'id', searchName: 'scr-nav', recursive: true, wordLevel: true}
-//   ],
-//   tagColorMap: {
-//     DEFAULT: "rgba(255,0,0,0.1)",
-//     DIV: "rgba(0,255,0,0.1)",
-//     IMG: "rgba(0,0,255,0.1)",
-//     TEXT: "rgba(0,0,255,0.5)"
-//   },
-//   timeSpacing: 100
-// })
+const tracker = new AOIWebTracker()
+tracker.install({ 
+  emitter: emitter,
+  drawCanvas: false,
+  toTrackElements: [
+    {searchBy: 'id', searchName: 'scr-page-container', recursive: true, wordLevel: true},
+    {searchBy: 'id', searchName: 'scr-quiz-container', recursive: true, wordLevel: true},
+    {searchBy: 'id', searchName: 'scr-nav', recursive: true, wordLevel: true}
+  ],
+  tagColorMap: {
+    DEFAULT: "rgba(255,0,0,0.1)",
+    DIV: "rgba(0,255,0,0.1)",
+    IMG: "rgba(0,0,255,0.1)",
+    TEXT: "rgba(0,0,255,0.5)"
+  },
+  timeSpacing: 100
+})
 
 // Initialized store
 const initPromise = store.initialize()
