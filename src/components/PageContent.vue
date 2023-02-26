@@ -31,26 +31,18 @@ export default defineComponent({
     }
   },
   mounted() {
+
+    // Making sure that initialization is correct 
+    this.pageContentStore.wrappingWords = false
+    this.pageContentStore.wordsWrapped = false
+
     const targetNode = document.getElementById('page-content-view')
 
     if (targetNode instanceof HTMLElement) {
       const observer = new MutationObserver(() => {
-
-        // Required to make modifying pdf only happen, as the observer 
-        // is triggered 5 times everytime it changes.
-        if (!this.pageContentStore.wordsWrapped){
-          this.pageContentStore.wordsWrapped = true
-
-          // Wait until the PDF fully loads 
-          setTimeout(() => {
-            this.wrapWordsForHighlighting()
-            this.glossaryPreprocessing()
-          }, 1000)
-        }
+        this.wrapOnce()
       })
-
       observer.observe(targetNode, {attributes: false, childList: true, subtree: true})
-
     }
   },
   components: { 
@@ -63,6 +55,34 @@ export default defineComponent({
     ...mapStores(useModuleStore)
   },
   methods: {
+    wrapOnce () {
+
+      // Get the elements in the HTML that match the PDF
+      /* const collection: HTMLCollection = document.getElementsByClassName("vue-pdf__wrapper") */
+      const collection: HTMLCollection = document.getElementsByClassName("textLayer vue-pdf__wrapper-text-layer")
+      console.log(collection)
+      console.log(this.pageContentStore.wordsWrapped)
+
+      // Required to make modifying pdf only happen, as the observer 
+      // is triggered 5 times everytime it changes.
+      if (!this.pageContentStore.wordsWrapped){
+        if (collection.length > 0) {
+          if (!this.pageContentStore.wrappingWords) {
+            this.pageContentStore.wrappingWords = true
+            setTimeout(() => {
+              this.wrapWordsForHighlighting()
+              this.glossaryPreprocessing()
+            }, 1000)
+          }
+        }
+        else {
+          // Wait until the PDF fully loads 
+          setTimeout(() => {
+            this.wrapOnce()
+          }, 1000)
+        }
+      }
+    },
     wrapWordsForHighlighting () {
       /* console.log('Wrapping Words') */
       const elements: HTMLCollection = document.getElementsByClassName('scr-pdf-page')
@@ -111,11 +131,13 @@ export default defineComponent({
             
         const words = node.nodeValue.split(" ");
 
+        // Mark that we have successfuly found words to highlight
+        this.pageContentStore.wordsWrapped = true
+
         // Create new Container element
         const newElement = document.createElement('div')
         newElement.style['float'] = 'left'
         newElement.style['display'] = 'flex'
-        /* newElement.style['opacity'] = '1' */
           
         // Create container for adding new span Nodes
         const toBeAddedElements: Element[] = []

@@ -4,6 +4,7 @@ import { createLoadingTask } from 'vue3-pdfjs/esm';
 
 type ContentDetails = {
   wordsWrapped: boolean
+  wrappingWords: boolean
   pdfSrc: string
   numOfPages: number
   glossaryWordIds: Array<string>
@@ -13,6 +14,7 @@ export const usePageContentStore = defineStore('pageContent', {
   state: () => {
     return {
       wordsWrapped: false,
+      wrappingWords: false,
       pdfSrc: '',
       numOfPages: 0,
       glossaryWordIds: [],
@@ -28,6 +30,7 @@ export const usePageContentStore = defineStore('pageContent', {
       loadingTask.promise.then((pdf: PDFDocumentProxy) => {
         this.numOfPages = pdf.numPages
         this.wordsWrapped = false
+        this.wrappingWords = false
         this.glossaryWordIds = []
       })
     },
@@ -36,6 +39,7 @@ export const usePageContentStore = defineStore('pageContent', {
       loadingTask.promise.then((pdf: PDFDocumentProxy) => {
         this.numOfPages = pdf.numPages
         this.wordsWrapped = false
+        this.wrappingWords = false
       })
     }
   }
