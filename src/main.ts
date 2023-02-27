@@ -31,7 +31,7 @@ const store = useMainStore(pinia)
 const tracker = new AOIWebTracker()
 tracker.install({ 
   emitter: emitter,
-  drawCanvas: true,
+  drawCanvas: false,
   toTrackElements: [
     // Start with the highlevel information
     {searchBy: 'id', searchName: 'scr-page-container'},
