@@ -136,6 +136,7 @@ export default defineComponent({
 
         // Create new Container element
         const newElement = document.createElement('div')
+        newElement.setAttribute('class', 'scr-text-line')
         newElement.style['float'] = 'left'
         newElement.style['display'] = 'flex'
           

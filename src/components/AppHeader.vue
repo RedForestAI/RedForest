@@ -77,6 +77,7 @@ export default defineComponent({
 <style>
 #scr-nav {
   z-index: 30;
+  height: 20px;
 }
 .scr-nav-column {
   float: left;

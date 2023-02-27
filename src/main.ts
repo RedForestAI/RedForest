@@ -31,11 +31,21 @@ const store = useMainStore(pinia)
 const tracker = new AOIWebTracker()
 tracker.install({ 
   emitter: emitter,
-  drawCanvas: false,
+  drawCanvas: true,
   toTrackElements: [
-    {searchBy: 'id', searchName: 'scr-page-container', recursive: true, wordLevel: true},
-    {searchBy: 'id', searchName: 'scr-quiz-container', recursive: true, wordLevel: true},
-    {searchBy: 'id', searchName: 'scr-nav', recursive: true, wordLevel: true}
+    // Start with the highlevel information
+    {searchBy: 'id', searchName: 'scr-page-container'},
+    {searchBy: 'id', searchName: 'scr-quiz-container'},
+    // Quiz
+    {searchBy: 'id', searchName: 'quiz-container'},
+    {searchBy: 'id', searchName: 'question-title'},
+    {searchBy: 'id', searchName: 'quiz-prompt'},
+    {searchBy: 'class', searchName: 'answer-textarea'},
+    {searchBy: 'id', searchName: 'quiz-buttons', recursiveSearch: true, saveChildren: true},
+    {searchBy: 'id', searchName: 'scr-nav', recursiveSearch: true, saveWordContainers: true},
+    {searchBy: 'class', searchName: 'scr-answers'},
+    // Page
+    {searchBy: 'class', searchName: 'scr-text-line'}
   ],
   tagColorMap: {
     DEFAULT: "rgba(255,0,0,0.1)",
@@ -43,7 +53,7 @@ tracker.install({
     IMG: "rgba(0,0,255,0.1)",
     TEXT: "rgba(0,0,255,0.5)"
   },
-  timeSpacing: 100
+  timeSpacing: 200
 })
 
 // Initialized store

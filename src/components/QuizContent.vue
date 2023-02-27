@@ -10,7 +10,7 @@
       </div>
       <div v-else>
         <table>
-          <tr v-for="(answer, index) in quizContentStore.currentQuestion.answers" :key="answer">
+          <tr v-for="(answer, index) in quizContentStore.currentQuestion.answers" :key="answer" class="scr-answers">
             <td><input type="radio" name="question" class="answer-radio" v-model="currentQuestionSelectedAnswer" :value="index"></td>
             <td><p class="answer-text">{{ answer }}</p></td>
           </tr>
