@@ -16,6 +16,7 @@
     "noImplicitAny": false,
     "baseUrl": ".",
     "types": [
+      "node",
       "webpack-env",
       "jest"
     ],
@@ -36,9 +37,7 @@
     "src/**/*.tsx",
     "src/**/*.vue",
     "tests/**/*.ts",
-    "tests/**/*.tsx", 
-    "src/plugins/AOIPlugin.js", 
-    "src/plugins/AOIPlugin.js"
+    "tests/**/*.tsx"
   ],
   "exclude": [
     "node_modules"
