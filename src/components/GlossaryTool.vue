@@ -1,8 +1,10 @@
 <template>
   <div class="scr-glossary-container">
     <button id="scr-glossary-close" @click="closeGlossary"></button>
-    <h1 class="scr-glossary-child"> {{ pageContentStore.glossaryWord }} </h1>
-    <p class="scr-glossary-child"> {{ pageContentStore.glossaryDefinition }} </p>
+    <div class="scr-text-container">
+      <h1 class="scr-glossary-child"> {{ pageContentStore.glossaryWord }} </h1>
+      <p class="scr-glossary-child"> {{ pageContentStore.glossaryDefinition }} </p>
+    </div>
   </div>
 </template>
 
@@ -34,12 +36,14 @@ export default defineComponent({
 }
 
 .scr-glossary-container {
-  position: relative;
   width: 100%;
   height: 100%;
+}
+
+.scr-text-container {
   padding-top: 0.1em;
   padding-left: 1em;
-  padding-right: 0.1em;
+  padding-right: 1em;
   flex-direction: column;
   overflow: auto;
 }
@@ -53,11 +57,11 @@ export default defineComponent({
   font-size: 1.5em;
   /* border: none; */
   /* background: none; */
-  background-color: rgba(200,200,200,1);
+  background-color: rgba(200,200,200,0.5);
   color: white;
   position: absolute;
   top: 0;
-  right: 1.5em;
+  right: 0em;
   width: 40px;
   height: 40px;
 }

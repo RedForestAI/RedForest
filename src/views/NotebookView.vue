@@ -70,9 +70,9 @@ export default {
 #scr-glossary-tool {
   position: fixed;
   bottom: 1em;
-  width: 25%;
+  width: 35%;
   right: 0;
-  height: 15%;
+  height: 20%;
   float: right;
   background-color: rgba(197, 196, 242, 0.95);
   z-index: 50;
