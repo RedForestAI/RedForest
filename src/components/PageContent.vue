@@ -25,7 +25,6 @@ export default defineComponent({
   name: 'PageContent',
   data() {
     return {
-      i: 0,
       si: 0,
       tagWordCheck: ['P', 'A', 'H1', 'H2', 'H3', 'H4', 'H5', 'SPAN'],
     }
@@ -59,9 +58,10 @@ export default defineComponent({
 
       // Get the elements in the HTML that match the PDF
       /* const collection: HTMLCollection = document.getElementsByClassName("vue-pdf__wrapper") */
-      const collection: HTMLCollection = document.getElementsByClassName("textLayer vue-pdf__wrapper-text-layer")
-      console.log(collection)
-      console.log(this.pageContentStore.wordsWrapped)
+      /* const collection: HTMLCollection = document.getElementsByClassName("textLayer vue-pdf__wrapper-text-layer") */
+      const collection: NodeList = document.querySelectorAll('[role="presentation"]')
+      /* console.log(collection) */
+      /* console.log(this.pageContentStore.wordsWrapped) */
 
       // Required to make modifying pdf only happen, as the observer 
       // is triggered 5 times everytime it changes.
@@ -72,6 +72,7 @@ export default defineComponent({
             setTimeout(() => {
               this.wrapWordsForHighlighting()
               this.glossaryPreprocessing()
+              this.pageContentStore.wrappingWords = false
             }, 1000)
           }
         }
@@ -161,11 +162,11 @@ export default defineComponent({
           // Create new span for each Word
           const newChild = document.createElement('p')
           newChild.appendChild(document.createTextNode(words[j]))
-          newChild.setAttribute("id", "p" + this.moduleStore.contentID + "w" + this.i)
+          newChild.setAttribute("id", "p" + this.moduleStore.contentID + "w" + this.pageContentStore.wordCounter)
           newChild.setAttribute("class", "hl")
           newChild.style.display = 'inblock-block'
           newChild.style.margin = '0 0 0 0'
-          this.i += 1
+          this.pageContentStore.wordCounter += 1
 
           // Add font information
           newChild.style['font-family'] = element.style['font-family']
@@ -191,6 +192,8 @@ export default defineComponent({
 
     glossaryFormatting() {
 
+      /* console.log("Formatting glossary: " + this.pageContentStore.glossaryWordIds) */
+
       // First, we need to make the parent div's opacity 1 as to not 
       // affect the children elements
       const pdfElements = document.getElementsByClassName("textLayer vue-pdf__wrapper-text-layer")
@@ -207,8 +210,8 @@ export default defineComponent({
     
       for (let i = 0; i < this.pageContentStore.glossaryWordIds.length; i++) {
         const elementID = this.pageContentStore.glossaryWordIds[i]
-        /* console.log("Formatting: " + elementID) */
         const element = document.getElementById(elementID)
+        /* console.log("Formatting: " + elementID + ", " + element) */
 
         if (element instanceof HTMLElement && element.parentNode != null) {
           const wrapperDiv = document.createElement("div")
@@ -231,6 +234,13 @@ export default defineComponent({
         method: 'get',
         url: this.configurationStore.serverLocation + '/glossary', 
       }).then((res) => {
+
+        if (this.pageContentStore.glossaryWordIds.length > 0) {
+          setTimeout(() => {
+            this.glossaryFormatting()
+          }, 1000)
+          return
+        }
 
         // If login success, save username and password and move on
         if (res.data.success) {

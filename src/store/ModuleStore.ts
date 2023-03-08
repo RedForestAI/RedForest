@@ -48,6 +48,7 @@ export const useModuleStore = defineStore('module', {
         setPageContent () {
             const pageContentStore = usePageContentStore()
             pageContentStore.loadPdf(this.moduleData[this.contentID].pdfPath)
+            pageContentStore.restart()
         },
         setPassage () {
             this.setPageContent()

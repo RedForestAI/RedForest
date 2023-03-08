@@ -3,6 +3,7 @@ import { PDFDocumentProxy } from 'pdfjs-dist/types/src/display/api';
 import { createLoadingTask } from 'vue3-pdfjs/esm';
 
 type ContentDetails = {
+  wordCounter: number
   wordsWrapped: boolean
   wrappingWords: boolean
   pdfSrc: string
@@ -13,6 +14,7 @@ type ContentDetails = {
 export const usePageContentStore = defineStore('pageContent', {
   state: () => {
     return {
+      wordCounter: 0,
       wordsWrapped: false,
       wrappingWords: false,
       pdfSrc: '',
@@ -24,22 +26,28 @@ export const usePageContentStore = defineStore('pageContent', {
     } as ContentDetails
   },
   actions: {
+    restart() {
+      this.reset()
+      this.glossaryWordIds = []
+    },
+    reset () {
+      this.wordCounter = 0
+      this.wordsWrapped = false
+      this.wrappingWords = false
+    },
     loadPdf (pdfPath: string) {
       this.pdfSrc = pdfPath;
       const loadingTask = createLoadingTask(this.pdfSrc)
       loadingTask.promise.then((pdf: PDFDocumentProxy) => {
         this.numOfPages = pdf.numPages
-        this.wordsWrapped = false
-        this.wrappingWords = false
-        this.glossaryWordIds = []
+        this.restart()
       })
     },
     reloadPdf () {
       const loadingTask = createLoadingTask(this.pdfSrc)
       loadingTask.promise.then((pdf: PDFDocumentProxy) => {
         this.numOfPages = pdf.numPages
-        this.wordsWrapped = false
-        this.wrappingWords = false
+        this.reset()
       })
     }
   }

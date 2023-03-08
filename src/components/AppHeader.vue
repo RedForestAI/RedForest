@@ -22,8 +22,10 @@
       <nav>
         <ul>
           <li v-if="inNotebook"><button v-on:click="configurationStore.toggleQuiz()">Quiz</button></li>
-          <li v-if="inNotebook"><router-link to="/">Tutorial</router-link></li>
+          <!-- 
+          <li v-if="inNotebook"><router-link to="/notebook">Tutorial</router-link></li> 
           <li v-if="configurationStore.loggedIn"><button v-on:click="logOut"> {{ configurationStore.username + ", Log Out" }}</button></li>
+          -->
         </ul>
       </nav>
     </div>

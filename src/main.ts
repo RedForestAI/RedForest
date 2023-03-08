@@ -38,13 +38,13 @@ tracker.install({
     {searchBy: 'id', searchName: 'scr-nav', recursiveSearch: true, saveWordContainers: true},
     {searchBy: 'class', searchName: 'scr-answers'},
     // Page
-    {searchBy: 'class', searchName: 'scr-text-line'}
+    {searchBy: 'class', searchName: 'hl'}
   ],
   tagColorMap: {
     DEFAULT: "rgba(255,0,0,0.1)",
     DIV: "rgba(0,255,0,0.1)",
     IMG: "rgba(0,0,255,0.1)",
-    TEXT: "rgba(0,0,255,0.5)"
+    TEXT: "rgba(0,0,255,0.5)",
   },
   timeSpacing: 200
 })

@@ -1,6 +1,8 @@
 import { defineStore } from 'pinia'
 import emitter from '@/emitter'
 
+import { usePageContentStore } from './PageContentStore'
+
 type ConfigurationDetails = {
     serverLocation: string
     username: string
@@ -48,11 +50,15 @@ export const useConfigurationStore = defineStore('configuration', {
         },
         zoomIn() {
             if (this.zoom < 2) {
+                const pageContentStore = usePageContentStore()
+                pageContentStore.reset()
                 this.zoom += 0.1
             }
         },
         zoomOut() {
             if (this.zoom > 0.1){
+                const pageContentStore = usePageContentStore()
+                pageContentStore.reset()
                 this.zoom -= 0.1
             }
         }
