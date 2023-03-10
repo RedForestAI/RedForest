@@ -17,7 +17,7 @@
         </table>
       </div>
     <div id="quiz-buttons">
-      <button class="prev-button" v-on:click="prevQuestion">Previous</button>
+      <!-- <button class="prev-button" v-on:click="prevQuestion">Previous</button> -->
       <button v-if="!quizContentStore.getNextOrSubmit" class="next-button" v-on:click="nextQuestion" :disabled="(currentQuestionSelectedAnswer == -1) || (currentQuestionSelectedAnswer.toString() == '')">Next</button>
       <button v-if="quizContentStore.getNextOrSubmit" class="next-button" v-on:click="submitQuestions" :disabled="(currentQuestionSelectedAnswer == -1) || (currentQuestionSelectedAnswer.toString() == '')">Submit</button>
     </div>
