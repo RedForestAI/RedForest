@@ -2,7 +2,7 @@
   <HighlightTool>
     <div id="page-content-view">
       <div v-for="page in pageContentStore.numOfPages" :key="page" class="scr-pdf-page">
-        <VuePdf :src="pageContentStore.pdfSrc" :key="configurationStore.zoom" :page="page" :scale="configurationStore.zoom * 1.5"/>
+        <VuePdf :src="pageContentStore.pdfSrc" :key="configurationStore.zoom" :page="page" :scale="configurationStore.zoom * 2.1"/>
       </div>
     </div>
   </HighlightTool>

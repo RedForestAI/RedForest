@@ -11,6 +11,7 @@ type ConfigurationDetails = {
     inNotebook: boolean
     quizHidden: boolean
     zoom: number
+    readingMode: "digital" | "paper"
 }
 
 export const useConfigurationStore = defineStore('configuration', {
@@ -23,7 +24,8 @@ export const useConfigurationStore = defineStore('configuration', {
             inNotebook: false,
             quizHidden: true,
             zoom: 1,
-            quizButtonEnabled: false
+            quizButtonEnabled: false,
+            readingMode: "digital"
         } as ConfigurationDetails
     },
     actions: {

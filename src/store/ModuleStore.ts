@@ -4,14 +4,15 @@ import { useQuizContentStore, Question } from '@/store/QuizContentStore'
 import { useConfigurationStore } from '@/store/ConfigurationStore'
 
 type PassageData = {
-    pdfPath: string,
+    type: string
+    pdfPath: string
     questions: Question[]
     answers: number[]
 }
 
 type ModuleDetails = {
-    moduleData: PassageData[],
-    selectedAnswers: number[],
+    moduleData: PassageData[]
+    selectedAnswers: number[]
     contentID: number
 }
 
@@ -51,8 +52,18 @@ export const useModuleStore = defineStore('module', {
             pageContentStore.restart()
         },
         setPassage () {
-            this.setPageContent()
-            this.setQuizContent()
+            const configurationStore = useConfigurationStore()
+
+            if (this.moduleData[this.contentID].type == 'digital') {
+              configurationStore.readingMode = "digital" 
+
+              this.setPageContent()
+              this.setQuizContent()
+            }
+            else { // paper
+              configurationStore.readingMode = "paper" 
+              this.setQuizContent()
+            }
         },
         nextPassage() {
             this.contentID += 1

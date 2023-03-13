@@ -10,7 +10,7 @@
     <div id="scr-center-nav" class="scr-nav-column">
       <nav>
         <ul>
-          <div :class="{ hidden: !inNotebook }">
+          <div :class="{ hidden: (!inNotebook || configurationStore.readingMode == 'paper') }">
             <li><button v-on:click="configurationStore.zoomIn()">+</button></li>
             <span> {{ (configurationStore.zoom * 100).toFixed(0) }}</span>
             <li><button v-on:click="configurationStore.zoomOut()">-</button></li>
@@ -21,7 +21,7 @@
     <div id="scr-right-nav" class="scr-nav-column">
       <nav>
         <ul>
-          <li v-if="inNotebook"><button v-on:click="configurationStore.toggleQuiz()">Quiz</button></li>
+          <li v-if="inNotebook && configurationStore.readingMode == 'digital'"><button v-on:click="configurationStore.toggleQuiz()">Quiz</button></li>
           <!-- 
           <li v-if="inNotebook"><router-link to="/notebook">Tutorial</router-link></li> 
           <li v-if="configurationStore.loggedIn"><button v-on:click="logOut"> {{ configurationStore.username + ", Log Out" }}</button></li>

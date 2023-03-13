@@ -1,11 +1,22 @@
 <template>
   <main>
     <div id="scr-main-container">
-      <div id="scr-page-container" :class="[configurationStore.quizHidden ? all : left ]">
-        <PageContent/>
+      <div v-if="configurationStore.readingMode == 'digital'">
+        <div id="scr-page-container" :class="[configurationStore.quizHidden ? all : left ]">
+          <PageContent/>
+        </div>
+        <div id="scr-quiz-container" v-if="!configurationStore.quizHidden">
+          <QuizContent/>
+        </div>
       </div>
-      <div id="scr-quiz-container" v-if="!configurationStore.quizHidden">
-        <QuizContent/>
+      <div v-if="configurationStore.readingMode == 'paper'">
+        <div id="scr-total-quiz-container">
+          <div id="scr-total-quiz-color-container">
+            <div id="scr-total-quiz-wrapper">
+              <QuizContent/>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
     <div id="scr-glossary-tool" v-if="pageContentStore.glossaryShow">
@@ -43,6 +54,25 @@ export default {
 </script>
 
 <style scoped>
+
+#scr-total-quiz-container {
+  width: 70%;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+#scr-total-quiz-color-container {
+  padding-top: 5em;
+  float: left;
+  width: 100%;
+  background-color: #444444;
+  color: #FFFFFF;
+}
+
+#scr-total-quiz-wrapper {
+  margin-left: 2em;
+  margin-right: 2em;
+}
 
 #scr-quiz-container {
   position: fixed;

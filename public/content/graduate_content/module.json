@@ -1,0 +1,548 @@
+{
+    "passages": [
+        {
+            "type": "paper",
+            "pdfPath": "",
+            "questions": [
+                {
+                    "type": "open",
+                    "prompt": "Write a brief summary of the reading. Include A) the main idea of the passage, B) a list of key points, and C) any other relevant information you might remember. You may list your thoughts in phrases or sentences. There is no need to write a paragraph."
+                },
+                {
+                    "type": "multi",
+                    "prompt": "What is this article mainly about?",
+                    "answers": [
+                        "Why the ancient Egyptians made mummies",
+                        "What the study of mummies can teach us",
+                        "Where an ancient Egyptian mummy was found",
+                        "How researchers unwrap mummies"
+                    ],
+                    "solution": [0]
+                },
+                {
+                    "type": "multi",
+                    "prompt": "According to the text, why do experts study mummies with the help of high-tech tools?",
+                    "answers": [
+                        "They know Ancient Egyptian civilization was an important time in history.",
+                        "There are millions of mummies to learn from.",
+                        "Mummies have been puzzles and these tools help them solve the puzzles.",
+                        "They can learn more information about the past and solve modern medical mysteries."
+                    ],
+                    "solution": [0]
+                },
+                {
+                    "type": "multi",
+                    "prompt": "A mummy is a dead body that has been preserved with special chemicals and wrapped in cloth.",
+                    "answers": [
+                        "True",
+                        "False"
+                    ],
+                    "solution": [0]
+                },
+                {
+                    "type": "multi",
+                    "prompt": "It takes multiple steps to make a mummy. All of the following are steps to make a mummy EXCEPT",
+                    "answers": [
+                        "A dead body is wrapped in cloth.",
+                        "Organs are removed.",
+                        "Special chemicals are put on the body.",
+                        "Detailed coffins or cases are made.",
+                        "A special outfit is created."
+                    ],
+                    "solution": [0]
+                },
+                {
+                    "type": "multi",
+                    "prompt": "True or False: The Egyptians would mummify animals like cats and dogs.",
+                    "answers": [
+                        "True",
+                        "False"
+                    ],
+                    "solution": [0]
+                },
+                {
+                    "type": "multi",
+                    "prompt": "Why did the Egyptians create mummies?",
+                    "answers": [
+                        "To protect their loved ones after death",
+                        "To leave clues for future generations about their life",
+                        "To celebrate the lives of their loved ones",
+                        "To help scientists and researchers"
+                    ],
+                    "solution": [0]
+                },
+                {
+                    "type": "multi",
+                    "prompt": "How is the Ancient Egyptian tradition of mummification related to their beliefs?",
+                    "answers": [
+                        "The mummification process preserves one’s body for the afterlife.",
+                        "The mummification process celebrates and honors the lives of loved ones.",
+                        "The mummification process documents important information about Ancient Egyptian civilization.",
+                        "The mummification process provides future generations with critical information that can be used to solve present problems."
+                    ],
+                    "solution": [0]
+                },
+                {
+                    "type": "multi",
+                    "prompt": "According to the article, what did scientists in the past do to study mummies?",
+                    "answers": [
+                        "They looked through microscopes.",
+                        "They analyzed food remains.",
+                        "They cut through the bodies.",
+                        "They soaked the bodies in chemicals."
+                    ],
+                    "solution": [0]
+                },
+                {
+                    "type": "multi",
+                    "prompt": "What do scientists do now to study mummies?",
+                    "answers": [
+                        "Travel internationally",
+                        "Use X-rays to model the mummies insides",
+                        "Collaborate at academic conferences",
+                        "Carbon date materials"
+                    ],
+                    "solution": [0]
+                },
+                {
+                    "type": "multi",
+                    "prompt": "True or False: Scientists can tell about the diet of mummies when they were living.",
+                    "answers": [
+                        "True",
+                        "False"
+                    ],
+                    "solution": [0]
+                },
+                {
+                    "type": "multi",
+                    "prompt": "About how many years ago did Hatshepsut live?",
+                    "answers": [
+                        "5000 years ago",
+                        "3500 years ago",
+                        "350 years ago",
+                        "50 years ago"
+                    ],
+                    "solution": [0]
+                },
+                {
+                    "type": "multi",
+                    "prompt": "The article states that Ancient Egyptian civilization began about 5,100 years ago. Based on the information in the text, Queen Hatshepsut was one of the first pharaohs.",
+                    "answers": [
+                        "True",
+                        "False"
+                    ],
+                    "solution": [0]
+                },
+                {
+                    "type": "multi",
+                    "prompt": "On page 2, the article says that Queen Hatshepsut reigned in Egypt. This means that Hatshepsut:",
+                    "answers": [
+                        "was the ruler of Egypt",
+                        "took control illegally",
+                        "treated Egyptians unfairly",
+                        "had a very long life"
+                    ],
+                    "solution": [0]
+                },
+                {
+                    "type": "multi",
+                    "prompt": "How did scientists identify Hatshepsut's mummy?",
+                    "answers": [
+                        "They used the results of DNA testing.",
+                        "They found her family tomb.",
+                        "They located her husband's remains.",
+                        "They decoded the writing on her mummy case."
+                    ],
+                    "solution": [0]
+                },
+                {
+                    "type": "multi",
+                    "prompt": "According to the text, Queen Hatshepsut 'stole the throne and declared herself a pharoah. She even dressed as a man.' What do you think the author included these details in the text?",
+                    "answers": [
+                        "To show how rare it was for Queen Hatshepsut to be a pharoah, or Egyptian King",
+                        "To show clues to look for in terms of identifying Queen Hatshepsut’s mummy",
+                        "To show how DNA evidence might be helpful in identifying Queen Hatshepsut",
+                        "To show that Queen Hatshepsut became Queen illegally"
+                    ],
+                    "solution": [0]
+                },
+                {
+                    "type": "multi",
+                    "prompt": "Scientists think the study of mummies could someday help to make sick people better. Which of the following explains why?",
+                    "answers": [
+                        "Because the chemicals that Ancient Egyptians put on the mummies tell us about illnesses",
+                        "Because mummies had ancient illnesses",
+                        "The mummification process preserved medicines and cures that were used in Egyptian times.",
+                        "Researchers learn what diseases infected ancient people to understand how diseases have changed over time."
+                    ],
+                    "solution": [0]
+                },
+                {
+                    "type": "multi",
+                    "prompt": "According to the text, studying mummies teaches us about the past and present. Why do you think researchers focus on studying mummies versus other artifacts from other ancient civilizations?",
+                    "answers": [
+                        "Ancient Egyptian civilization began 5,100 years ago, so mummies are particularly old artifacts.",
+                        "The mummification process preserves the bodies from decomposing making it easier to study the mummies and the diseases the infected them.",
+                        "Queen Hatshepsut was a particularly important figure and the first female ruler, making studying her mummy important.",
+                        "The detailed coffins, or cases, show the sophisticated civilization that existed in Ancient Egypt and from which we can learn a lot."
+                    ],
+                    "solution": [0]
+                },
+                {
+                    "type": "multi",
+                    "prompt": "Bob Brier says that 'mummies are crucial to medical science.' Brier means that:",
+                    "answers": [
+                        "scientists are surprised about what mummies can teach them",
+                        "research on mummies should be done only by doctors",
+                        "scientists are worried that mummies may bring back old diseases",
+                        "information about mummies is very important to doctors."
+                    ],
+                    "solution": [0]
+                },
+                {
+                    "type": "multi",
+                    "prompt": "In the last paragraph, what does Bob Brier mean by the phrase 'to read' a mummy?",
+                    "answers": [
+                        "To understand the words written on a mummy",
+                        "To visit museum exhibitions about mummies",
+                        "To gather information by examining a mummy",
+                        "To make sense of the stories about mummies"
+                    ],
+                    "solution": [0]
+                },
+                {
+                    "type": "multi",
+                    "prompt": "Which of the following sentences says why Hatshepsut is considered a powerful female ruler?",
+                    "answers": [
+                        "Hatshepsut reigned more than 3,500 years ago- as queen and king.",
+                        "She first served as queen until her husband died.",
+                        "She stole the throne and declared herself a pharaoh.",
+                        "She even dressed as a man.",
+                        "After Hatshepsut' death, her mummy mysteriously disappeared from its tomb."
+                    ],
+                    "solution": [0]
+                }
+            ]
+        },
+        {
+            "type": "digital",
+            "pdfPath": "content/graduate_content/suffrage.pdf",
+            "questions": [
+                {
+                    "type": "open",
+                    "prompt": "Write a brief summary of the reading. Include A) the main idea of the passage, B) a list of key points, and C) any other relevant information you might remember. You may list your thoughts in phrases or sentences. There is no need to write a paragraph."
+                },
+                {
+                    "type": "multi",
+                    "prompt": "What is the main purpose of this text?",
+                    "answers": [
+                        "To describe the events leading to the passage of the 19th Amendment",
+                        "To identify the states that first supported women’s voting rights",
+                        "To discuss the most important leaders of the suffragist movement in the 1800s",
+                        "To explain why the equal Rights Amendment has not been ratified"
+                    ],
+                    "solution": [0]
+                },
+                {
+                    "type": "multi",
+                    "prompt": "According to the text, why did Abigail Adams warn the Founding Fathers to “remember the ladies”?",
+                    "answers": [
+                        "She knew 1776 was an important time in US history.",
+                        "She wanted a more equal government.",
+                        "She warned that women would rebel and not follow laws made where women did not have a say.",
+                        "She thought women were smart and could guide improve laws and government."
+                    ],
+                    "solution": [0]
+                },
+                {
+                    "type": "multi",
+                    "prompt": "What was the constitutional amendment that gave women the right to vote in all elections?",
+                    "answers": [
+                        "1st amendment",
+                        "5th amendment",
+                        "12th amendment",
+                        "19th amendment",
+                        "Equal Rights amendment"
+                    ],
+                    "solution": [0]
+                },
+                {
+                    "type": "multi",
+                    "prompt": "About how many years did it take after the Declaration of Independence for women to earn the right to vote in every state?",
+                    "answers": [
+                        "10 years",
+                        "50 years",
+                        "100 years",
+                        "150 years",
+                        "200 years"
+                    ],
+                    "solution": [0]
+                },
+                {
+                    "type": "multi",
+                    "prompt": "In terms of women’s suffrage, what is a key difference between the Declaration of Independence and the 19th Amendment?",
+                    "answers": [
+                        "One gave equal rights to men and the other gave voting rights to all.",
+                        "One gave men voting rights and the other gave women voting rights.",
+                        "One gave men equal rights and the other gave women equal rights.",
+                        "One happened in history and the other happened recently."
+                    ],
+                    "solution": [0]
+                },
+                {
+                    "type": "multi",
+                    "prompt": "According to the article, what was most surprising about the 'Womanifesto'?",
+                    "answers": [
+                        "It was written by Elizabeth Cady Stanton.",
+                        "It called for equal voting rights for men and women.",
+                        "It was based on the Declaration of Independence.",
+                        "It had such a large number of resolutions."
+                    ],
+                    "solution": [0]
+                },
+                {
+                    "type": "multi",
+                    "prompt": "When Elizabeth Cady Stanton wrote the Womanifesto, why did she demand equal voting rights rather than other rights like property ownership?",
+                    "answers": [
+                        "It was patterned on the Declaration of Independence which showed that universal suffrage was important.",
+                        "She wanted to shock people and get more attention for the important cause",
+                        "She realized that being able to vote meant that women could have a say in making laws that could get them more rights.",
+                        "She thought it would encourage more individuals to join the Women’s suffrage movement."
+                    ],
+                    "solution": [0]
+                },
+                {
+                    "type": "multi",
+                    "prompt": "The article says that women in the suffrage movement 'pressed their case state by state.' This means that the women:",
+                    "answers": [
+                        "spoke with newspaper reporters in many states.",
+                        "strongly urged the states to pass women's suffrage.",
+                        "traveled in large groups together from state to state.",
+                        "introduced the idea of women's suffrage to the states."
+                    ],
+                    "solution": [0]
+                },
+                {
+                    "type": "multi",
+                    "prompt": "Women could vote in certain territories and state elections before they could vote nationally.",
+                    "answers": [
+                        "True",
+                        "False"
+                    ],
+                    "solution": [0]
+                },
+                {
+                    "type": "multi",
+                    "prompt": "Which was the first state or territory to pass a law allowing women to vote?",
+                    "answers": [
+                        "New York",
+                        "Wyomying",
+                        "Tennessee",
+                        "Pennsylvania",
+                        "Washington, DC"
+                    ],
+                    "solution": [0]
+                },
+                {
+                    "type": "multi",
+                    "prompt": "Why was the Wyoming Territory the first state or territory to give women the right to vote?",
+                    "answers": [
+                        "Because the small number of women there would not have had much political influence",
+                        "Because the suffragist movement was very active in the western United States",
+                        "Because most politicians there chose not to vote on that resolution",
+                        "Because it was important for women to have the vote in such a dangerous area"
+                    ],
+                    "solution": [0]
+                },
+                {
+                    "type": "multi",
+                    "prompt": "The following were factors that contributed to the women’s suffrage movement EXCEPT",
+                    "answers": [
+                        "Women organized at the Women’s Rights Convention.",
+                        "Women demonstrated and picketed.",
+                        "More women were graduating and working outside the home.",
+                        "A constitutional amendment passed easily to gather support."
+                    ],
+                    "solution": [0]
+                },
+                {
+                    "type": "multi",
+                    "prompt": " The text states that 'In 1878, a constitutional amendment was introduced…in 1887, the Senate voted against it.' What can you infer from that information?",
+                    "answers": [
+                        "The amendment established equal voting rights for all and support was mixed.",
+                        "The amendment established equal rights for all and had strong support.",
+                        "The amendment established equal voting rights for all, but had declining support.",
+                        "The amendment established equal voting rights and had increasing support."
+                    ],
+                    "solution": [0]
+                },
+                {
+                    "type": "multi",
+                    "prompt": "After marches and protests, President Woodrow Wilson supported the 19th amendment.",
+                    "answers": [
+                        "True",
+                        "False"
+                    ],
+                    "solution": [0]
+                },
+                {
+                    "type": "multi",
+                    "prompt": "What state played a key role in passing the 19th amendment because it was the final state needed to approve the amendment?",
+                    "answers": [
+                        "New York",
+                        "Wyoming",
+                        "Tennessee",
+                        "Pennsylvania",
+                        "Washington, DC"
+                    ],
+                    "solution": [0]
+                },
+                {
+                    "type": "multi",
+                    "prompt": "Both houses of Congress voted to change the Constitution in which year?",
+                    "answers": [
+                        "1878",
+                        "1887",
+                        "1918",
+                        "1919",
+                        "1920"
+                    ],
+                    "solution": [0]
+                },
+                {
+                    "type": "multi",
+                    "prompt": "Once the 19th amendment passed, the women’s suffrage movement took off, with the Equal Rights Amendment being passed shortly thereafter.",
+                    "answers": [
+                        "True",
+                        "False"
+                    ],
+                    "solution": [0]
+                },
+                {
+                    "type": "multi",
+                    "prompt": "When was the first election where more women than men voted?",
+                    "answers": [
+                        "1869",
+                        "1920",
+                        "1972",
+                        "1980",
+                        "2022"
+                    ],
+                    "solution": [0]
+                }
+            ]
+        },
+        {
+            "type": "digital",
+            "pdfPath": "content/graduate_content/MOOCA_digital.pdf",
+            "questions": [
+                {
+                    "type": "multi",
+                    "prompt": "For Passage #1, select the best sentence to complete the story",
+                    "answers": [
+                        "Polgar felt empowered to challenge Kasparov's views on traditional gender stereotypes.",
+                        "Polgar wanted to become the youngest grandmaster chess player and travel the world to play.",
+                        "Polgar proved her critics wrong by being the first woman to beat him in a match in 2002."
+                    ],
+                    "solution": [0]
+                },
+                {
+                    "type": "multi",
+                    "prompt": "For Passage #2, select the best sentence to complete the story",
+                    "answers": [
+                        "People like to drink coffee because caffeine is a stimulant in the body and can make people feel mentally aware and physically alert.",
+                        "When the body digests caffeine, the body produces a chemical that prevents the development of unhealthy tissue related to liver disease.",
+                        "Determining why the world’s most popular beverage, coffee, provides benefits that prevent liver disease is challenging for scientists."
+                    ],
+                    "solution": [0]
+                },
+                {
+                    "type": "multi",
+                    "prompt": "For Passage #3, select the best sentence to complete the story",
+                    "answers": [
+                        "For example, a liver was eventually successfully donated from one twin and transplanted to the other.",
+                        "So, a transplant replaces failing organs with new organs from other people or animals.",
+                        "Ultimately, a rejection to an organ transplant due to a person’s autoimmune system could be fatal."
+                    ],
+                    "solution": [0]
+                },
+                {
+                    "type": "multi",
+                    "prompt": "For Passage #4, select the best sentence to complete the story",
+                    "answers": [
+                        "Patients appreciate it when nurses impart their medical knowledge and pay extra attention to help them comprehend their care.",
+                        "Importantly, patients who do not understand their education will likely not follow treatment plans or use medical services correctly.",
+                        "So, nurses need to provide quality education to help prevent and avoid additional illnesses and injuries during treatment."
+                    ],
+                    "solution": [0]
+                },
+                {
+                    "type": "multi",
+                    "prompt": "For Passage #5, select the best sentence to complete the story",
+                    "answers": [
+                        "Gender roles have changed over time that led to more rights for women such as suffrage rights and employment rights, but progression of these rights has not always been linear, consistent, or permanent.",
+                        "The second wave of feminism did not necessarily have far reaching effects on gender roles outside of the US, or even in all areas within the US, but the Equal Rights Amendment was passed in 1972 by Congress.",
+                        "In the mid-1960s, Betty Friedan’s book, “The Feminine Mystique,” revealed the details of the average discontented housewife and oppressive decision making by men in power such as in advertising."
+                    ],
+                    "solution": [0]
+                }
+            ]
+        },
+        {
+            "type": "paper",
+            "pdfPath": "",
+            "questions": [
+                {
+                    "type": "multi",
+                    "prompt": "For Passage #1, select the best sentence to complete the story",
+                    "answers": [
+                        "These perceived threats of the sympathetic nervous system could result in  an increased chance of a heart attack, increasing need for breathing.",
+                        "The structure of the divided nervous system allows people to feel differently depending on the state of the breath and body.",
+                        "Consciously taking a deep breath slows respiration and signals the nervous system to suppress the sympathetic nervous system."
+                    ],
+                    "solution": [0]
+                },
+                {
+                    "type": "multi",
+                    "prompt": "For Passage #2, select the best sentence to complete the story",
+                    "answers": [
+                        "Asexual organisms include bacteria, hydras, and flatworms, but some plants that reproduce sexually can also reproduce asexually.",
+                        "Since offspring of living organisms share genetic material of their parents, the biological process is referred to as reproduction.",
+                        "Because each asexual organism can reproduce on their own, they tend to reproduce more quickly than sexual organisms."
+                    ],
+                    "solution": [0]
+                },
+                {
+                    "type": "multi",
+                    "prompt": "For Passage #3, select the best sentence to complete the story",
+                    "answers": [
+                        "Interactions between humans are needed through communication, social gatherings, and dating.",
+                        "New social media platforms may have a sole focus with a specific function such as text, photos, or video.",
+                        "Interactions become so stimulating at times that people continue them for as long as possible."
+                    ],
+                    "solution": [0]
+                },
+                {
+                    "type": "multi",
+                    "prompt": "For Passage #4, select the best sentence to complete the story",
+                    "answers": [
+                        "Healthy soil is important for all food crops to grow, but not all types of food crops grow in the identical types or combinations of soil materials.",
+                        "Fortunately, our food supply system including green houses and transportation is diverse enough to support and ship a diverse range or crops.",
+                        "The soil moisture level a plant thrives in depends on the plant structure, the geographic location where the planet grows, and the nutrients the plant needs."
+                    ],
+                    "solution": [0]
+                },
+                {
+                    "type": "multi",
+                    "prompt": "For Passage #5, select the best sentence to complete the story",
+                    "answers": [
+                        "People who use devices with capacitive touchscreens need to avoid pressing on the screen with too much pressure.",
+                        "The types of touch screens that are most accepted to use with electronic devices are resistive and capacitive touch screens.",
+                        "A plastic stylus works on a resistive touch screen, but not a capacitive because plastic insulates electrical current."
+                    ],
+                    "solution": [0]
+                }
+            ]
+        }
+    ]
+}
