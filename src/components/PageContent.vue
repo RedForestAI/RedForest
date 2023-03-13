@@ -216,10 +216,10 @@ export default defineComponent({
         if (element instanceof HTMLElement && element.parentNode != null) {
           const wrapperDiv = document.createElement("div")
           
-          wrapperDiv.style['background-color'] = "rgb(255,255,255)"
-          element.style['color'] = "red"
-          element.style['text-decoration-line'] = 'underline'
-          element.style['text-decoration-color'] = "red"
+          /* wrapperDiv.style['background-color'] = "rgb(255,255,255)" */
+          /* element.style['color'] = "red" */
+          /* element.style['text-decoration-line'] = 'underline' */
+          /* element.style['text-decoration-color'] = "red" */
 
           element.parentNode.replaceChild(wrapperDiv, element)
           wrapperDiv.appendChild(element)
