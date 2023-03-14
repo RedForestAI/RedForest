@@ -29,6 +29,7 @@ tracker.install({
     // Start with the highlevel information
     {searchBy: 'id', searchName: 'scr-page-container'},
     {searchBy: 'id', searchName: 'scr-quiz-container'},
+    {searchBy: 'id', searchName: 'scr-total-quiz-color-container'},
     // Quiz
     {searchBy: 'id', searchName: 'quiz-container'},
     {searchBy: 'id', searchName: 'question-title'},
