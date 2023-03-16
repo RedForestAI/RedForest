@@ -102,8 +102,8 @@ li {
   align-items: center;
 }
 .answer-radio {
-  height: 15px;
-  width: 15px;
+  height: 20px;
+  width: 20px;
   vertical-align: middle;
 }
 .answer-text {
