@@ -274,7 +274,7 @@ export default defineComponent({
   
 </script>
 
-<style>
+<style scoped>
 
 .tools {
   height: 30px;

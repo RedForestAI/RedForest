@@ -8,7 +8,40 @@ import { createPinia } from 'pinia' // State management
 import AOIWebTracker from 'aoiwebtracker' // AOI tracker
 import { ChimeraJSIntegrator } from 'chimera-js-integrator' // ChimeraPy integrator
 import VuePdf from 'vue3-pdfjs' // PDF
-import emitter from './emitter'
+import emitter from './emitter' // Event Bus
+
+// Vuetify
+import 'vuetify/styles'
+import { createVuetify } from 'vuetify'
+import * as components from 'vuetify/components'
+import * as directives from 'vuetify/directives'
+
+const myCustomLightTheme = {
+  dark: false,
+  colors: {
+    background: '#FFFFFF',
+    surface: '#FFFFFF',
+    primary: '#4f84f7',
+    'primary-darken-1': '#3700B3',
+    secondary: '#03DAC6',
+    'secondary-darken-1': '#018786',
+    error: '#B00020',
+    info: '#2196F3',
+    success: '#4CAF50',
+    warning: '#FB8C00',
+  }
+}
+
+const vuetify = createVuetify({
+  components,
+  directives,
+  theme: {
+    defaultTheme: 'myCustomLightTheme',
+    themes: {
+      myCustomLightTheme
+    }
+  }
+})
 
 // Internal Imports
 import { useMainStore } from '@/store/MainStore'
@@ -60,6 +93,9 @@ initPromise.then(
 
     // Create application
     const app = createApp(App)
+
+    // Install Vuetify
+    app.use(vuetify)
 
     // Install store first (as others depend on it)
     app.use(pinia)

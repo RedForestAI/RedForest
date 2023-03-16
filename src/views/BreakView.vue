@@ -1,11 +1,23 @@
-
 <template>
-  <div id="break-box">
-    <h1>Doing Great!</h1>
-    <h3>{{ configurationStore.username }}</h3>
-    <p>Take a break and come back when you are ready to continue</p>
-    <button id="continue-button" @click="continueModule">Continue</button>
-  </div>
+  <v-card id="scr-break-box" class="mx-auto px-6 py-8" max-width="344"
+    text="Take a small mental break and come back when you are ready to continue"
+  >
+    <template v-slot:title>
+    Doing great, {{ configurationStore.username }}
+    </template>
+
+    <v-card-actions>
+      <v-btn
+        color="success"
+        size="large"
+        type="submit"
+        variant="elevated"
+        @click="continueModule"
+      >
+        Continue
+      </v-btn>
+    </v-card-actions>
+  </v-card>
 </template>
 
 <script lang="ts">
@@ -30,14 +42,8 @@ export default defineComponent({
 </script>
 
 <style scoped>
-#break-box {
-  width:300px;
-  height:400px;
-  border:1px solid #000;
-  margin: auto;
+#scr-break-box {
   margin-top: 10em;
-  background-color: #AAAA;
-  color: #FFFF
 }
 
 #continue-button {

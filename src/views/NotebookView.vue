@@ -65,8 +65,6 @@ export default {
   padding-top: 5em;
   float: left;
   width: 100%;
-  background-color: #444444;
-  color: #FFFFFF;
 }
 
 #scr-total-quiz-wrapper {
@@ -83,8 +81,6 @@ export default {
   top: 1em;
   right: 0;
   float: right;
-  background-color: #444444;
-  color: #FFFFFF;
   z-index: 15;
 }
 

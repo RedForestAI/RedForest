@@ -3,6 +3,7 @@ import { createRouter, createWebHistory } from "vue-router"
 
 // View Imports
 import LoginView from '@/views/LoginView.vue'
+import TutorialView from '@/views/TutorialView.vue'
 import NotebookView from '@/views/NotebookView.vue'
 import CompletionView from '@/views/CompletionView.vue'
 import BreakView from '@/views/BreakView.vue'
@@ -35,6 +36,12 @@ const router = createRouter({
       path: '/completion',
       name: 'completion',
       component: CompletionView,
+      meta:{requiresAuth: true}
+    },
+    {
+      path: '/tutorial',
+      name: 'tutorial',
+      component: TutorialView,
       meta:{requiresAuth: true}
     }
   ]

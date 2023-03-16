@@ -1,11 +1,13 @@
 <template>
-  <body>
-    <div id='scr-header'><AppHeader/></div>
-    <div id='scr-main-div'>
-      <router-view />
+  <v-app>
+    <body>
+      <div id='scr-header'><AppHeader/></div>
+      <div id='scr-main-div'>
+        <router-view />
+      </div>
       <div id='scr-footer'><AppFooter/></div>
-    </div>
-  </body>
+    </body>
+  </v-app>
 </template>
 
 <script lang="ts">
@@ -29,20 +31,24 @@ html {
   scrollbar-width: none;
 }
 
+html, body {
+  height: 100%;
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+}
+
 :root {
   color-scheme: dark;
 }
-
-/* html::-webkit-scrollbar { */
-/*   display: none; */
-/* } */
 
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: left;
-  color: #2c3e50;
 }
 
 #scr-header {
@@ -50,27 +56,17 @@ html {
   position: fixed;
   padding-top: 1em;
   padding-bottom: 1em;
-  background-color: #000000;
   width: 100%;
   z-index: 30;
-  color: #FFFFFF;
 }
 
 #scr-main-div {
-  display: flex;
-  flex-direction: column;
-  min-height: 100vh;
+  flex: 1 0 auto;
 }
 
 #scr-footer {
-  bottom: 0;
-  display: flex;
   flex-direction: column;
   width: 100%;
-}
-
-body {
-  margin: 0px;
 }
 
 </style>

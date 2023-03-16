@@ -5,21 +5,23 @@
     {{ quizContentStore.currentQuestion.prompt }}
     </p>
       <div v-if="quizContentStore.currentQuestion.type == 'open'">
-        <textarea class="answer-textarea" name="question" rows="10" v-model="currentQuestionSelectedAnswer">
-        </textarea>
+        <v-textarea class="answer-textarea" name="question" rows="10" v-model="currentQuestionSelectedAnswer">
+        </v-textarea>
       </div>
       <div v-else>
         <table>
-          <tr v-for="(answer, index) in quizContentStore.currentQuestion.answers" :key="answer" class="scr-answers">
-            <td><input type="radio" name="question" class="answer-radio" v-model="currentQuestionSelectedAnswer" :value="index"></td>
-            <td><p class="answer-text">{{ answer }}</p></td>
+          <tr v-for="(answer, index) in quizContentStore.currentQuestion.answers" :key="answer">
+            <div class="scr-answers">
+              <td><input type="radio" name="question" class="answer-radio" v-model="currentQuestionSelectedAnswer" :value="index"></td>
+              <td><p class="answer-text">{{ answer }}</p></td>
+            </div>
           </tr>
         </table>
       </div>
     <div id="quiz-buttons">
       <!-- <button class="prev-button" v-on:click="prevQuestion">Previous</button> -->
-      <button v-if="!quizContentStore.getNextOrSubmit" class="next-button" v-on:click="nextQuestion" :disabled="(currentQuestionSelectedAnswer == -1) || (currentQuestionSelectedAnswer.toString() == '')">Next</button>
-      <button v-if="quizContentStore.getNextOrSubmit" class="next-button" v-on:click="submitQuestions" :disabled="(currentQuestionSelectedAnswer == -1) || (currentQuestionSelectedAnswer.toString() == '')">Submit</button>
+      <v-btn v-if="!quizContentStore.getNextOrSubmit" class="next-button" v-on:click="nextQuestion" :disabled="(currentQuestionSelectedAnswer == -1) || (currentQuestionSelectedAnswer.toString() == '')">Next</v-btn>
+      <v-btn v-if="quizContentStore.getNextOrSubmit" class="next-button" v-on:click="submitQuestions" :disabled="(currentQuestionSelectedAnswer == -1) || (currentQuestionSelectedAnswer.toString() == '')">Submit</v-btn>
     </div>
   </div>
 </template>
@@ -78,12 +80,15 @@ export default defineComponent({
 #quiz-container {
   padding: 1em;
   min-height: 100vh;
+  font-size: 20px;
 }
 #question-title {
   text-align: left;
 }
 #quiz-prompt {
   text-align: left;
+  padding-top: 2em;
+  padding-bottom: 1em;
 }
 #quiz-buttons {
   margin-top: 5em;
@@ -91,9 +96,10 @@ export default defineComponent({
 li {
   list-style: none;
 }
-.question-answer {
-  text-align: left;
-  width: 100%;
+.scr-answers {
+  display: flex;
+  padding-top: 3em;
+  align-items: center;
 }
 .answer-radio {
   height: 15px;

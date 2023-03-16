@@ -1,7 +1,9 @@
 <template>
-  <footer>
-    <p><span id="w0" class="hl">Test</span> Copyright &copy; {{ year }} - Vanderbilt OELE Group</p>
-  </footer>
+  <v-footer id="scr-footer">
+    <div>
+      Copyright &copy; {{ year }} - Vanderbilt OELE Group
+    </div>
+  </v-footer>
 </template>
 
 <script lang="ts">
@@ -15,8 +17,8 @@ export default {
 }
 </script>
 
-<style>
-footer {
+<style scoped>
+#scr-footer {
   width: 100%;
   background-color: #000000;
   color: #FFFF;

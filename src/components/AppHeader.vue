@@ -1,35 +1,19 @@
 <template>
-  <div id="scr-nav">
-    <div id="scr-left-nav" class="scr-nav-column">
-      <nav>
-        <ul>
-          <li>SandCastle Reader</li>
-        </ul>
-      </nav>
-    </div>
-    <div id="scr-center-nav" class="scr-nav-column">
-      <nav>
-        <ul>
-          <div :class="{ hidden: (!inNotebook || configurationStore.readingMode == 'paper') }">
-            <li><button v-on:click="configurationStore.zoomIn()">+</button></li>
-            <span> {{ (configurationStore.zoom * 100).toFixed(0) }}</span>
-            <li><button v-on:click="configurationStore.zoomOut()">-</button></li>
-          </div>
-        </ul>
-      </nav>
-    </div>
-    <div id="scr-right-nav" class="scr-nav-column">
-      <nav>
-        <ul>
-          <li v-if="inNotebook && configurationStore.readingMode == 'digital'"><button v-on:click="configurationStore.toggleQuiz()">Quiz</button></li>
-          <!-- 
-          <li v-if="inNotebook"><router-link to="/notebook">Tutorial</router-link></li> 
-          <li v-if="configurationStore.loggedIn"><button v-on:click="logOut"> {{ configurationStore.username + ", Log Out" }}</button></li>
-          -->
-        </ul>
-      </nav>
-    </div>
-  </div>
+  <v-app-bar id="scr-nav"
+    color="primary"
+    density="compact"
+  >
+    <v-app-bar-title id="scr-left-nav">
+      SandCastle Reader
+    </v-app-bar-title>
+
+    <template v-slot:append>
+      <div id="scr-right-nav">
+        <v-btn v-if="!InNotebook && configurationStore.loggedIn && configurationStore.readingMode == 'digital'" v-on:click="configurationStore.toggleQuiz()">Quiz</v-btn>
+        <v-btn v-if="configurationStore.loggedIn" v-on:click="logOut"> Log Out </v-btn>
+      </div>
+    </template>
+  </v-app-bar>
 </template>
 
 <script lang="ts">
@@ -76,10 +60,8 @@ export default defineComponent({
 })
 </script>
 
-<style>
+<style scoped>
 #scr-nav {
-  z-index: 30;
-  height: 20px;
 }
 .scr-nav-column {
   float: left;

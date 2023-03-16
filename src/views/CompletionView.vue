@@ -1,10 +1,23 @@
 <template>
-  <div id="completion-box">
-    <h1>Completion!</h1>
-    <h3>{{ configurationStore.username }}</h3>
-    <p>Thank you for participating in our study!</p>
-    <button id="exit-button" @click="returnToLogin">Exit</button>
-  </div>
+  <v-card id="scr-completion-box" class="mx-auto px-6 py-8" max-width="344"
+    text="Thank you for participation in our study!"
+  >
+    <template v-slot:title>
+    Completion!
+    </template>
+
+    <v-card-actions>
+      <v-btn
+        color="success"
+        size="large"
+        type="submit"
+        variant="elevated"
+        @click="returnToLogin"
+      >
+        Exit
+      </v-btn>
+    </v-card-actions>
+  </v-card>
 </template>
 
 <script lang="ts">
@@ -32,14 +45,9 @@ export default defineComponent({
 </script>
 
 <style scoped>
-#completion-box {
-  width:300px;
-  height:400px;
-  border:1px solid #000;
+#scr-completion-box {
   margin: auto;
   margin-top: 10em;
-  background-color: #AAAA;
-  color: #FFFF
 }
 
 #exit-button {

@@ -30,7 +30,7 @@ export default defineComponent({
 })
 </script>
 
-<style>
+<style scoped>
 .scr-glossary-child {
   overflow-y: auto;
 }

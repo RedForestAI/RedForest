@@ -1,15 +1,42 @@
 <template>
-  <div id="login-box">
-    <h1>Login</h1> 
-    <div id="inputs">
-      <input v-model="username" id="username" name="username" placeholder="Username">
-      <input v-model="password" id="password" name="password" placeholder="Password" type="password">
-    </div>
-    <div id="options">
-      <router-link to="/">Or register!</router-link>
-      <button @click="submitLogin">Next</button>
-    </div>
-  </div>
+  <v-card id="scr-login-box" class="mx-auto px-6 py-8" max-width="344">
+    <v-form
+      v-model="form"
+      @submit.prevent="submitLogin"
+    >
+      <v-text-field
+        v-model="username"
+        :readonly="loading"
+        :rules="[required]"
+        class="mb-2"
+        clearable
+        label="Username"
+      ></v-text-field>
+
+      <v-text-field
+        v-model="password"
+        :readonly="loading"
+        :rules="[required]"
+        clearable
+        label="Password"
+        placeholder="Enter your password"
+      ></v-text-field>
+
+      <br>
+
+      <v-btn
+        :disabled="!form"
+        :loading="loading"
+        block
+        color="success"
+        size="large"
+        type="submit"
+        variant="elevated"
+      >
+        Sign In
+      </v-btn>
+    </v-form>
+  </v-card>
 </template>
 
 <script lang="ts">
@@ -51,7 +78,8 @@ export default defineComponent({
             // If login success, save username and password and move on
             if (res.data.success){
               this.configurationStore.logIn(this.username, this.password)
-              this.$router.push("/notebook")
+              this.$router.push("/tutorial")
+              /* this.$router.push("/notebook") */
             }
 
             // Else, inform of failure
@@ -74,22 +102,11 @@ export default defineComponent({
 </script>
 
 <style scoped>
-#login-box {
-  width:300px;
+#scr-login-box {
+  width:400px;
   height:400px;
-  border:1px solid #000;
   margin: auto;
   margin-top: 10em;
-  background-color: #AAAA;
-  color: #FFFF
-}
-#inputs {
-  text-align: center;
-  margin-top: 8em;
-  display: flex;
-  flex-flow: row wrap;
-  justify-content: space-around;
-  height: 100px;
 }
 #options {
   display: flex;
@@ -98,7 +115,7 @@ export default defineComponent({
   margin-top: 2em;
 }
 
-input {
+.scr-login-inputs {
   height: 1em;
   width: 250px;
 }

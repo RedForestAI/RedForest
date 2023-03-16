@@ -27,6 +27,7 @@
     "vue-router": "^4.1.2",
     "vue-sidebar-menu": "^5.2.4",
     "vue3-pdfjs": "^0.1.6",
+    "vuetify": "^3.1.8",
     "ws": "^8.12.1"
   },
   "devDependencies": {
