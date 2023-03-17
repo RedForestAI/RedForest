@@ -1,6 +1,7 @@
 <template>
   <div id="quiz-container">
-      <h1 id="question-title">Question {{ quizContentStore.currentQuestionID + 1}}</h1>
+    <v-progress-linear id="question-load-bar" :model-value="(quizContentStore.currentQuestionID / quizContentStore.questions.length) * 100"></v-progress-linear>
+    <h1 id="question-title">Question {{ quizContentStore.currentQuestionID + 1}}</h1>
     <p id="quiz-prompt">
     {{ quizContentStore.currentQuestion.prompt }}
     </p>
@@ -34,13 +35,14 @@ import { mapStores } from 'pinia'
 
 type QuizContentDetails = {
   currentQuestionSelectedAnswer: number | string,
-  buttonDisabled: boolean
+  value: Number
 }
 
 export default defineComponent({
   data() {
     return {
       currentQuestionSelectedAnswer: '',
+      value: 10
     } as QuizContentDetails
   },
   methods: {
@@ -71,7 +73,7 @@ export default defineComponent({
   },
   computed: {
     ...mapStores(useQuizContentStore), // reference: quizContentStore 
-    ...mapStores(useModuleStore) // reference: moduleStore
+    ...mapStores(useModuleStore), // reference: moduleStore
   }
 })
 </script>
@@ -82,6 +84,10 @@ export default defineComponent({
   min-height: 100vh;
   font-size: 20px;
 }
+#question-load-bar {
+  margin-bottom: 1em;
+}
+
 #question-title {
   text-align: left;
 }
