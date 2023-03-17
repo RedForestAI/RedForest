@@ -1,6 +1,6 @@
 <template>
   <v-app>
-    <body>
+    <body id="scr-app">
       <div id='scr-header'><AppHeader/></div>
       <div id='scr-main-div'>
         <router-view />

@@ -6,7 +6,6 @@
     >
       <v-text-field
         v-model="username"
-        :readonly="loading"
         :rules="[required]"
         class="mb-2"
         clearable
@@ -15,7 +14,6 @@
 
       <v-text-field
         v-model="password"
-        :readonly="loading"
         :rules="[required]"
         clearable
         label="Password"
@@ -26,7 +24,6 @@
 
       <v-btn
         :disabled="!form"
-        :loading="loading"
         block
         color="success"
         size="large"
@@ -49,6 +46,8 @@ import { useConfigurationStore } from '@/store/ConfigurationStore'
 export default defineComponent({
   data () {
     return {
+      form: true,
+      required: true,
       username: "", // type: string
       password: "" // type: string
     }

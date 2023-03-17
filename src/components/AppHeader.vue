@@ -9,7 +9,7 @@
 
     <template v-slot:append>
       <div id="scr-right-nav">
-        <v-btn v-if="!InNotebook && configurationStore.loggedIn && configurationStore.readingMode == 'digital'" v-on:click="configurationStore.toggleQuiz()">Quiz</v-btn>
+        <v-btn v-if="!configurationStore.inNotebook && configurationStore.loggedIn && configurationStore.readingMode == 'digital'" v-on:click="configurationStore.toggleQuiz()">Quiz</v-btn>
         <v-btn v-if="configurationStore.loggedIn" v-on:click="logOut"> Log Out </v-btn>
       </div>
     </template>

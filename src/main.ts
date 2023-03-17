@@ -9,6 +9,7 @@ import AOIWebTracker from 'aoiwebtracker' // AOI tracker
 import { ChimeraJSIntegrator } from 'chimera-js-integrator' // ChimeraPy integrator
 import VuePdf from 'vue3-pdfjs' // PDF
 import emitter from './emitter' // Event Bus
+import InputTracker from './inputTracker'
 
 // Vuetify
 import 'vuetify/styles'
@@ -109,5 +110,8 @@ initPromise.then(
 
     // Finish mounting the application
     app.mount('#app') 
+
+    // Tracking mouse movements
+    const mTracker = new InputTracker(emitter)
   }
 )
