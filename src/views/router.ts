@@ -6,7 +6,7 @@ import LoginView from '@/views/LoginView.vue'
 import TutorialView from '@/views/TutorialView.vue'
 import NotebookView from '@/views/NotebookView.vue'
 import CompletionView from '@/views/CompletionView.vue'
-import BreakView from '@/views/BreakView.vue'
+import InstructionView from '@/views/InstructionView.vue'
 
 // Store Imports
 import { useConfigurationStore } from '@/store/ConfigurationStore'
@@ -21,27 +21,27 @@ const router = createRouter({
       component: LoginView
     },
     {
+      path: '/tutorial',
+      name: 'tutorial',
+      component: TutorialView,
+      meta:{requiresAuth: true}
+    },
+    {
       path: '/notebook',
       name: 'notebook',
       component: NotebookView,
       meta:{requiresAuth: true}
     },
     {
-      path: '/break',
-      name: 'break',
-      component: BreakView,
-      meta:{requiresAuth: true}
+      path: '/instruction',
+      name: 'instruction',
+      component: InstructionView,
+      meta:{requiresAuth: true},
     },
     {
       path: '/completion',
       name: 'completion',
       component: CompletionView,
-      meta:{requiresAuth: true}
-    },
-    {
-      path: '/tutorial',
-      name: 'tutorial',
-      component: TutorialView,
       meta:{requiresAuth: true}
     }
   ]

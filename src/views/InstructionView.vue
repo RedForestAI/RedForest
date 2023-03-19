@@ -1,9 +1,11 @@
 <template>
-  <v-card id="scr-break-box" class="mx-auto px-6 py-8" max-width="344"
-    text="Take a small mental break and come back when you are ready to continue"
-  >
+  <v-card id="scr-instruction-box" class="mx-auto px-6 py-8">
     <template v-slot:title>
-    Doing great, {{ configurationStore.username }}
+    {{ moduleStore.moduleData[moduleStore.contentID].instructions.title }} 
+    </template>
+    
+    <template v-slot:text>
+    {{ moduleStore.moduleData[moduleStore.contentID].instructions.prompt }} 
     </template>
 
     <v-card-actions>
@@ -14,7 +16,7 @@
         variant="elevated"
         @click="continueModule"
       >
-        Continue
+      Next
       </v-btn>
     </v-card-actions>
   </v-card>
@@ -25,25 +27,34 @@ import { defineComponent } from 'vue'
 
 import { mapStores } from 'pinia'
 
-import { useConfigurationStore } from '@/store/ConfigurationStore'
 import { useModuleStore } from '@/store/ModuleStore'
+import { useConfigurationStore } from '@/store/ConfigurationStore'
 
 export default defineComponent({
   methods: {
-    continueModule() {
-      this.$router.push('notebook')
+    continueModule() { 
+      // If passages remaining, continue
+      if (this.moduleStore.contentID < this.moduleStore.moduleData.length){
+        this.$router.push('notebook')
+      }
+      else { // Else it's the end
+        this.configurationStore.logOut()
+        this.$router.push('/')
+      }
     }
   },
   computed: {
-    ...mapStores(useConfigurationStore),
     ...mapStores(useModuleStore),
+    ...mapStores(useConfigurationStore)
   }
 })
 </script>
 
 <style scoped>
-#scr-break-box {
+#scr-instruction-box {
   margin-top: 10em;
+  width: 40%;
+  height: 30%;
 }
 
 #continue-button {

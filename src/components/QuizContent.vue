@@ -67,7 +67,7 @@ export default defineComponent({
       }
       else {
         this.moduleStore.nextPassage()
-        this.$router.push('break')
+        this.$router.push('instruction')
       }
     }
   },
@@ -81,8 +81,9 @@ export default defineComponent({
 <style scoped>
 #quiz-container {
   padding: 1em;
-  min-height: 100vh;
   font-size: 20px;
+  overflow-y: auto;
+  max-height: 80vh;
 }
 #question-load-bar {
   margin-bottom: 1em;

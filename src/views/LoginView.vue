@@ -78,7 +78,6 @@ export default defineComponent({
             if (res.data.success){
               this.configurationStore.logIn(this.username, this.password)
               this.$router.push("/tutorial")
-              /* this.$router.push("/notebook") */
             }
 
             // Else, inform of failure

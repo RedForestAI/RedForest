@@ -1,6 +1,10 @@
 {
     "passages": [
         {
+            "instructions": {
+                "title": "1st Passage: Unwrapping the Past (Paper)",
+                "prompt": "For this passage, you will read the content in paper form (attached to a tablet). You will answer a series of questions in the computer while reading the passage in the tablet. As you answer questions, you will NOT be able to return to previous questions. Make sure before proceeding to the next question that your answer is final."
+            },
             "type": "paper",
             "pdfPath": "",
             "questions": [
@@ -225,6 +229,10 @@
             ]
         },
         {
+            "instructions": {
+                "title": "2nd Passage: Suffrage (Digital)",
+                "prompt": "For this passage, you will read the content in digital form (in the computer). You will answer a series of questions in the computer. As you answer questions, you will NOT be able to return to previous questions. Make sure before proceeding to the next question that your answer is final."
+            },
             "type": "digital",
             "pdfPath": "content/graduate_content/suffrage.pdf",
             "questions": [
@@ -433,6 +441,10 @@
             ]
         },
         {
+            "instructions": {
+                "title": "3rd Passage: MOOCA (Digital)",
+                "prompt": "For these passage, you will read the content in digital form (in the computer). For the MOOCA, each question correspond to a passage. As you answer questions, you will NOT be able to return to previous questions. Make sure before proceeding to the next question that your answer is final."
+            },
             "type": "digital",
             "pdfPath": "content/graduate_content/MOOCA_digital.pdf",
             "questions": [
@@ -489,12 +501,16 @@
             ]
         },
         {
+            "instructions": {
+                "title": "4th Passage: MOOCA (Paper)",
+                "prompt": "For these passages, you will read the content in paper form (attached to a tablet). You will answer a series of questions in the computer while reading the passage in the tablet. For the MOOCA, each question correspond to a passage. As you answer questions, you will NOT be able to return to previous questions. Make sure before proceeding to the next question that your answer is final."
+            },
             "type": "paper",
             "pdfPath": "",
             "questions": [
                 {
                     "type": "multi",
-                    "prompt": "For Passage #1, select the best sentence to complete the story",
+                    "prompt": "For Passage #6, select the best sentence to complete the story",
                     "answers": [
                         "These perceived threats of the sympathetic nervous system could result in  an increased chance of a heart attack, increasing need for breathing.",
                         "The structure of the divided nervous system allows people to feel differently depending on the state of the breath and body.",
@@ -504,7 +520,7 @@
                 },
                 {
                     "type": "multi",
-                    "prompt": "For Passage #2, select the best sentence to complete the story",
+                    "prompt": "For Passage #7, select the best sentence to complete the story",
                     "answers": [
                         "Asexual organisms include bacteria, hydras, and flatworms, but some plants that reproduce sexually can also reproduce asexually.",
                         "Since offspring of living organisms share genetic material of their parents, the biological process is referred to as reproduction.",
@@ -514,7 +530,7 @@
                 },
                 {
                     "type": "multi",
-                    "prompt": "For Passage #3, select the best sentence to complete the story",
+                    "prompt": "For Passage #8, select the best sentence to complete the story",
                     "answers": [
                         "Interactions between humans are needed through communication, social gatherings, and dating.",
                         "New social media platforms may have a sole focus with a specific function such as text, photos, or video.",
@@ -524,7 +540,7 @@
                 },
                 {
                     "type": "multi",
-                    "prompt": "For Passage #4, select the best sentence to complete the story",
+                    "prompt": "For Passage #9, select the best sentence to complete the story",
                     "answers": [
                         "Healthy soil is important for all food crops to grow, but not all types of food crops grow in the identical types or combinations of soil materials.",
                         "Fortunately, our food supply system including green houses and transportation is diverse enough to support and ship a diverse range or crops.",
@@ -534,7 +550,7 @@
                 },
                 {
                     "type": "multi",
-                    "prompt": "For Passage #5, select the best sentence to complete the story",
+                    "prompt": "For Passage #10, select the best sentence to complete the story",
                     "answers": [
                         "People who use devices with capacitive touchscreens need to avoid pressing on the screen with too much pressure.",
                         "The types of touch screens that are most accepted to use with electronic devices are resistive and capacitive touch screens.",

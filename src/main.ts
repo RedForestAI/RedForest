@@ -1,5 +1,5 @@
 // Creating app
-import { createApp } from 'vue'
+import { createApp, markRaw } from 'vue'
 import App from '@/App.vue'
 
 // Plugins
@@ -9,7 +9,7 @@ import AOIWebTracker from 'aoiwebtracker' // AOI tracker
 import { ChimeraJSIntegrator } from 'chimera-js-integrator' // ChimeraPy integrator
 import VuePdf from 'vue3-pdfjs' // PDF
 import emitter from './emitter' // Event Bus
-import InputTracker from './inputTracker'
+import InputTracker from './inputTracker' // Mouse and Touch tracking
 
 // Vuetify
 import 'vuetify/styles'
@@ -20,7 +20,7 @@ import * as directives from 'vuetify/directives'
 const myCustomLightTheme = {
   dark: false,
   colors: {
-    background: '#FFFFFF',
+    background: '#EEEEEE',
     surface: '#FFFFFF',
     primary: '#4f84f7',
     'primary-darken-1': '#3700B3',
@@ -46,10 +46,6 @@ const vuetify = createVuetify({
 
 // Internal Imports
 import { useMainStore } from '@/store/MainStore'
-
-// Create pinia
-const pinia = createPinia()
-const store = useMainStore(pinia)
     
 // Install ChimeraPy integration
 const chimerajs = new ChimeraJSIntegrator(emitter, [], 9100)
@@ -84,7 +80,9 @@ tracker.install({
   timeSpacing: 200
 })
 
-// Initialized store
+// Create pinia and initialize store
+const pinia = createPinia()
+const store = useMainStore(pinia)
 const initPromise = store.initialize()
 
 // Only execute the following once the store had loaded
@@ -106,7 +104,7 @@ initPromise.then(
 
     // Then install others
     app.use(router)
-        .use(VuePdf)
+       .use(VuePdf)
 
     // Finish mounting the application
     app.mount('#app') 

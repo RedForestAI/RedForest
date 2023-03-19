@@ -25,7 +25,7 @@ export const useConfigurationStore = defineStore('configuration', {
             quizHidden: true,
             zoom: 1,
             quizButtonEnabled: false,
-            readingMode: "digital"
+            readingMode: "digital",
         } as ConfigurationDetails
     },
     actions: {

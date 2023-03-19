@@ -21,14 +21,21 @@
 </template>
 
 <script lang="ts">
+import { mapStores } from 'pinia'
 import { defineComponent } from 'vue'
+
+import { useModuleStore } from '@/store/ModuleStore'
 
 export default defineComponent({
   methods: {
-      tutorialContinue() {
-        this.$router.push("/notebook")
+    tutorialContinue() {
+      this.moduleStore.startModule() 
+      this.$router.push('instruction')
     }
-  } 
+  },
+  computed: {
+    ...mapStores(useModuleStore)
+  }
 })
 </script>
 
