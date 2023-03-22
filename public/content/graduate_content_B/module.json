@@ -2,11 +2,11 @@
     "passages": [
         {
             "instructions": {
-                "title": "1st Passage: Unwrapping the Past (Paper)",
-                "prompt": "For this passage, you will read the content in paper form (attached to a tablet). You will answer a series of questions in the computer while reading the passage in the tablet. As you answer questions, you will NOT be able to return to previous questions. Make sure before proceeding to the next question that your answer is final."
+                "title": "1st Passage: Unwrapping the Past (Digital)",
+                "prompt": "For this passage, you will read the content in digital form. As you answer questions, you will NOT be able to return to previous questions. Make sure before proceeding to the next question that your answer is final."
             },
-            "type": "paper",
-            "pdfPath": "",
+            "type": "digital",
+            "pdfPath": "content/graduate_content_B/unwrapping_the_past.pdf",
             "questions": [
                 {
                     "type": "open",
@@ -230,11 +230,11 @@
         },
         {
             "instructions": {
-                "title": "2nd Passage: Suffrage (Digital)",
-                "prompt": "For this passage, you will read the content in digital form (in the computer). You will answer a series of questions in the computer. As you answer questions, you will NOT be able to return to previous questions. Make sure before proceeding to the next question that your answer is final."
+                "title": "2nd Passage: Suffrage (Paper)",
+                "prompt": "For this passage, you will read the content in paper form (in the tablet). You will answer a series of questions in the computer while reading the passage in the tablet. As you answer questions, you will NOT be able to return to previous questions. Make sure before proceeding to the next question that your answer is final."
             },
-            "type": "digital",
-            "pdfPath": "content/graduate_content/suffrage.pdf",
+            "type": "paper",
+            "pdfPath": "",
             "questions": [
                 {
                     "type": "open",
@@ -442,11 +442,11 @@
         },
         {
             "instructions": {
-                "title": "3rd Passage: MOOCA (Digital)",
-                "prompt": "For these passage, you will read the content in digital form (in the computer). For the MOOCA, each question correspond to a passage. As you answer questions, you will NOT be able to return to previous questions. Make sure before proceeding to the next question that your answer is final."
+                "title": "3rd Passage: MOOCA (Paper)",
+                "prompt": "For these passage, you will read the content in paper form (in the tablet). For the MOOCA, each question correspond to a passage. As you answer questions, you will NOT be able to return to previous questions. Make sure before proceeding to the next question that your answer is final."
             },
-            "type": "digital",
-            "pdfPath": "content/graduate_content/MOOCA_digital.pdf",
+            "type": "paper",
+            "pdfPath": "",
             "questions": [
                 {
                     "type": "multi",
@@ -502,11 +502,11 @@
         },
         {
             "instructions": {
-                "title": "4th Passage: MOOCA (Paper)",
-                "prompt": "For these passages, you will read the content in paper form (attached to a tablet). You will answer a series of questions in the computer while reading the passage in the tablet. For the MOOCA, each question correspond to a passage. As you answer questions, you will NOT be able to return to previous questions. Make sure before proceeding to the next question that your answer is final."
+                "title": "4th Passage: MOOCA (Digital)",
+                "prompt": "For these passages, you will read the content in digital form (using the computer). You will answer a series of questions in the computer. For the MOOCA, each question correspond to a passage. As you answer questions, you will NOT be able to return to previous questions. Make sure before proceeding to the next question that your answer is final."
             },
-            "type": "paper",
-            "pdfPath": "",
+            "type": "digital",
+            "pdfPath": "content/graduate_content_B/MOOCA2_digital.pdf",
             "questions": [
                 {
                     "type": "multi",
