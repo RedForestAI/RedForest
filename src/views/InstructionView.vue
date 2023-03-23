@@ -43,6 +43,11 @@ export default defineComponent({
       }
     }
   },
+  mounted() {
+    if (!this.moduleStore.passageHasInstructions){
+      this.$router.push('notebook')
+    }
+  },
   computed: {
     ...mapStores(useModuleStore),
     ...mapStores(useConfigurationStore)

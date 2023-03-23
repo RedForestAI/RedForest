@@ -9,7 +9,7 @@ type IInstruction = {
 }
 
 type PassageData = {
-  instruction: IInstruction
+  instructions: IInstruction
   type: string
   pdfPath: string
   questions: Question[]
@@ -33,6 +33,9 @@ export const useModuleStore = defineStore('module', {
   getters: {
     lastPassage(state): boolean {
       return this.contentID >= (this.moduleData.length-1)
+    },
+    passageHasInstructions(state): boolean {
+      return this.moduleData[this.contentID].instructions.title != ''
     }
   },
   actions: {

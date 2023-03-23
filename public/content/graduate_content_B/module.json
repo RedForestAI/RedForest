@@ -506,7 +506,7 @@
                 "prompt": "For these passages, you will read the content in digital form (using the computer). You will answer a series of questions in the computer. For the MOOCA, each question correspond to a passage. As you answer questions, you will NOT be able to return to previous questions. Make sure before proceeding to the next question that your answer is final."
             },
             "type": "digital",
-            "pdfPath": "content/graduate_content_B/MOOCA2_digital.pdf",
+            "pdfPath": "content/graduate_content_B/MOOCA_6.pdf",
             "questions": [
                 {
                     "type": "multi",
@@ -517,7 +517,17 @@
                         "Consciously taking a deep breath slows respiration and signals the nervous system to suppress the sympathetic nervous system."
                     ],
                     "solution": [0]
-                },
+                }
+            ]
+        },
+        {
+            "instructions": {
+                "title": "",
+                "prompt": ""
+            },
+            "type": "digital",
+            "pdfPath": "content/graduate_content_B/MOOCA_7.pdf",
+            "questions": [
                 {
                     "type": "multi",
                     "prompt": "For Passage #7, select the best sentence to complete the story",
@@ -527,7 +537,17 @@
                         "Because each asexual organism can reproduce on their own, they tend to reproduce more quickly than sexual organisms."
                     ],
                     "solution": [0]
-                },
+                }
+            ]
+        },
+        {
+            "instructions": {
+                "title": "",
+                "prompt": ""
+            },
+            "type": "digital",
+            "pdfPath": "content/graduate_content_B/MOOCA_8.pdf",
+            "questions": [
                 {
                     "type": "multi",
                     "prompt": "For Passage #8, select the best sentence to complete the story",
@@ -537,7 +557,17 @@
                         "Interactions become so stimulating at times that people continue them for as long as possible."
                     ],
                     "solution": [0]
-                },
+                }
+            ]
+        },
+        {
+            "instructions": {
+                "title": "",
+                "prompt": ""
+            },
+            "type": "digital",
+            "pdfPath": "content/graduate_content_B/MOOCA_9.pdf",
+            "questions": [
                 {
                     "type": "multi",
                     "prompt": "For Passage #9, select the best sentence to complete the story",
@@ -547,7 +577,17 @@
                         "The soil moisture level a plant thrives in depends on the plant structure, the geographic location where the planet grows, and the nutrients the plant needs."
                     ],
                     "solution": [0]
-                },
+                }
+            ]
+        },
+        {
+            "instructions": {
+                "title": "",
+                "prompt": ""
+            },
+            "type": "digital",
+            "pdfPath": "content/graduate_content_B/MOOCA_10.pdf",
+            "questions": [
                 {
                     "type": "multi",
                     "prompt": "For Passage #10, select the best sentence to complete the story",

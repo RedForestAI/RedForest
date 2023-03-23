@@ -446,7 +446,7 @@
                 "prompt": "For these passage, you will read the content in digital form (in the computer). For the MOOCA, each question correspond to a passage. As you answer questions, you will NOT be able to return to previous questions. Make sure before proceeding to the next question that your answer is final."
             },
             "type": "digital",
-            "pdfPath": "content/graduate_content_A/MOOCA_digital.pdf",
+            "pdfPath": "content/graduate_content_A/MOOCA_1.pdf",
             "questions": [
                 {
                     "type": "multi",
@@ -457,7 +457,17 @@
                         "Polgar proved her critics wrong by being the first woman to beat him in a match in 2002."
                     ],
                     "solution": [0]
-                },
+                }
+            ]
+        },
+        {
+            "instructions": {
+                "title": "",
+                "prompt": ""
+            },
+            "type": "digital",
+            "pdfPath": "content/graduate_content_A/MOOCA_2.pdf",
+            "questions": [
                 {
                     "type": "multi",
                     "prompt": "For Passage #2, select the best sentence to complete the story",
@@ -467,7 +477,17 @@
                         "Determining why the world’s most popular beverage, coffee, provides benefits that prevent liver disease is challenging for scientists."
                     ],
                     "solution": [0]
-                },
+                }
+            ]
+        },
+        {
+            "instructions": {
+                "title": "",
+                "prompt": ""
+            },
+            "type": "digital",
+            "pdfPath": "content/graduate_content_A/MOOCA_3.pdf",
+            "questions": [
                 {
                     "type": "multi",
                     "prompt": "For Passage #3, select the best sentence to complete the story",
@@ -477,7 +497,17 @@
                         "Ultimately, a rejection to an organ transplant due to a person’s autoimmune system could be fatal."
                     ],
                     "solution": [0]
-                },
+                }
+            ]
+        },
+        {
+            "instructions": {
+                "title": "",
+                "prompt": ""
+            },
+            "type": "digital",
+            "pdfPath": "content/graduate_content_A/MOOCA_4.pdf",
+            "questions": [
                 {
                     "type": "multi",
                     "prompt": "For Passage #4, select the best sentence to complete the story",
@@ -487,7 +517,17 @@
                         "So, nurses need to provide quality education to help prevent and avoid additional illnesses and injuries during treatment."
                     ],
                     "solution": [0]
-                },
+                }
+            ]
+        },
+        {
+            "instructions": {
+                "title": "",
+                "prompt": ""
+            },
+            "type": "digital",
+            "pdfPath": "content/graduate_content_A/MOOCA_5.pdf",
+            "questions": [
                 {
                     "type": "multi",
                     "prompt": "For Passage #5, select the best sentence to complete the story",
