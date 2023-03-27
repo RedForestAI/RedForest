@@ -1,10 +1,9 @@
 <template>
   <div id="scr-page-container">
     <div class="scr-page-content">
-      <div id="scr-tutorial-video">  
-        <video controls>
+      <div id="scr-tutorial-video-container">  
+        <video controls id="scr-tutorial-video">
           <source
-            size="1080"
             :src='require("@/assets/videos/tutorial.mp4")'
             type="video/mp4"
           />
@@ -48,6 +47,8 @@ export default defineComponent({
 
 #scr-tutorial-info {
   padding-top: 2em;
+  padding-left: 10em;
+  padding-right: 10em;
   display: inline-flex;
   width: 100%;
   font-size: 20px;
@@ -61,11 +62,15 @@ width: 90%;
   right: 0;
 }
 
-#scr-tutorial-video {
+#scr-tutorial-video-container {
   padding-top: 10em;
   width: 100%;
   display: flex;
   justify-content: center;
+}
+
+#scr-tutorial-video {
+  width: 70%
 }
 
 </style>
