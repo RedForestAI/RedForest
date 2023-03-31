@@ -5,10 +5,11 @@
     </template>
     
     <template v-slot:text>
-    {{ moduleStore.moduleData[moduleStore.contentID].instructions.prompt }} 
+    Read the text located in your workstation before continuing! Then press the "FINISHED" button.
     </template>
 
     <v-card-actions>
+      <v-spacer></v-spacer>
       <v-btn
         color="success"
         size="large"
@@ -16,7 +17,7 @@
         variant="elevated"
         @click="continueModule"
       >
-      Next
+      FINISHED
       </v-btn>
     </v-card-actions>
   </v-card>
@@ -35,24 +36,12 @@ export default defineComponent({
     continueModule() { 
       // If passages remaining, continue
       if (this.moduleStore.contentID < this.moduleStore.moduleData.length){
-  
-        // For digital, go to notebook
-        if(this.configurationStore.readingMode == 'digital'){
-          this.$router.push('notebook')
-        }
-        else {
-          this.$router.push('prepaper')
-        }
+        this.$router.push('notebook')
       }
       else { // Else it's the end
         this.configurationStore.logOut()
         this.$router.push('/')
       }
-    }
-  },
-  mounted() {
-    if (!this.moduleStore.passageHasInstructions){
-      this.$router.push('notebook')
     }
   },
   computed: {

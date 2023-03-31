@@ -7,6 +7,7 @@ import TutorialView from '@/views/TutorialView.vue'
 import NotebookView from '@/views/NotebookView.vue'
 import CompletionView from '@/views/CompletionView.vue'
 import InstructionView from '@/views/InstructionView.vue'
+import PrePaperView from '@/views/PrePaperView.vue'
 
 // Store Imports
 import { useConfigurationStore } from '@/store/ConfigurationStore'
@@ -36,6 +37,12 @@ const router = createRouter({
       path: '/instruction',
       name: 'instruction',
       component: InstructionView,
+      meta:{requiresAuth: true},
+    },
+    {
+      path: '/prepaper',
+      name: 'prepaper',
+      component: PrePaperView,
       meta:{requiresAuth: true},
     },
     {
