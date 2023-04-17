@@ -6,6 +6,7 @@
                 "prompt": "For this passage, you will read the content in paper form (attached to a tablet). You will answer a series of questions in the computer while reading the passage in the tablet. As you answer questions, you will NOT be able to return to previous questions. Make sure before proceeding to the next question that your answer is final."
             },
             "type": "paper",
+            "prepaper_show": true,
             "pdfPath": "",
             "questions": [
                 {
@@ -234,6 +235,7 @@
                 "prompt": "For this passage, you will read the content in digital form (in the computer). You will answer a series of questions in the computer. As you answer questions, you will NOT be able to return to previous questions. Make sure before proceeding to the next question that your answer is final."
             },
             "type": "digital",
+            "prepaper_show": false,
             "pdfPath": "content/graduate_content_A/suffrage.pdf",
             "questions": [
                 {
@@ -446,6 +448,7 @@
                 "prompt": "For these passage, you will read the content in digital form (in the computer). For the MOOCA, each question correspond to a passage. As you answer questions, you will NOT be able to return to previous questions. Make sure before proceeding to the next question that your answer is final."
             },
             "type": "digital",
+            "prepaper_show": false,
             "pdfPath": "content/graduate_content_A/MOOCA_1.pdf",
             "questions": [
                 {
@@ -466,6 +469,7 @@
                 "prompt": ""
             },
             "type": "digital",
+            "prepaper_show": false,
             "pdfPath": "content/graduate_content_A/MOOCA_2.pdf",
             "questions": [
                 {
@@ -486,6 +490,7 @@
                 "prompt": ""
             },
             "type": "digital",
+            "prepaper_show": false,
             "pdfPath": "content/graduate_content_A/MOOCA_3.pdf",
             "questions": [
                 {
@@ -506,6 +511,7 @@
                 "prompt": ""
             },
             "type": "digital",
+            "prepaper_show": false,
             "pdfPath": "content/graduate_content_A/MOOCA_4.pdf",
             "questions": [
                 {
@@ -526,6 +532,7 @@
                 "prompt": ""
             },
             "type": "digital",
+            "prepaper_show": false,
             "pdfPath": "content/graduate_content_A/MOOCA_5.pdf",
             "questions": [
                 {
@@ -546,6 +553,7 @@
                 "prompt": "For these passages, you will read the content in paper form (attached to a tablet). You will answer a series of questions in the computer while reading the passage in the tablet. For the MOOCA, each question correspond to a passage. As you answer questions, you will NOT be able to return to previous questions. Make sure before proceeding to the next question that your answer is final."
             },
             "type": "paper",
+            "prepaper_show": false,
             "pdfPath": "",
             "questions": [
                 {

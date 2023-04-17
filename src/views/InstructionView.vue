@@ -37,7 +37,7 @@ export default defineComponent({
       if (this.moduleStore.contentID < this.moduleStore.moduleData.length){
   
         // For digital, go to notebook
-        if(this.configurationStore.readingMode == 'digital'){
+        if(!this.moduleStore.moduleData[this.moduleStore.contentID].prepaper_show){
           this.$router.push('notebook')
         }
         else {

@@ -11,6 +11,7 @@ type IInstruction = {
 type PassageData = {
   instructions: IInstruction
   type: string
+  prepaper_show: boolean
   pdfPath: string
   questions: Question[]
   answers: number[]
