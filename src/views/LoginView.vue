@@ -41,6 +41,7 @@ import { defineComponent } from 'vue'
 import { mapStores } from 'pinia'
 import axios from 'axios'
 
+import { useModuleStore } from '@/store/ModuleStore'
 import { useConfigurationStore } from '@/store/ConfigurationStore'
 
 export default defineComponent({
@@ -76,7 +77,24 @@ export default defineComponent({
 
             // If login success, save username and password and move on
             if (res.data.success){
+
+              // Login
               this.configurationStore.logIn(this.username, this.password)
+
+              // Load the correct protocol
+              console.log(res.data)
+              let path = ''
+              if (res.data.module == 'A') {
+                path = 'content/graduate_content_A/module.json'
+              }
+              else if (res.data.module == 'B') {
+                path = 'content/graduate_content_B/module.json'
+              }
+              else {
+                console.log("System Failure, could not determine the protocol for participant!")
+              }
+              this.moduleStore.loadModule(path)
+              
               this.$router.push("/tutorial")
             }
 
@@ -94,7 +112,8 @@ export default defineComponent({
     }
   },
   computed: {
-    ...mapStores(useConfigurationStore)
+    ...mapStores(useConfigurationStore),
+    ...mapStores(useModuleStore)
   }
 })
 </script>

@@ -81,6 +81,8 @@ export const useModuleStore = defineStore('module', {
     },
     loadModule (modulePath: string) {
 
+      console.log("Loading Module from: " + modulePath)
+
       // Load the question JSON
       fetch(modulePath)
         .then((res) => res.json())
