@@ -1,6 +1,6 @@
 // src/LoginPage.js
 
-import React, { useState } from 'react';
+import { useState } from 'react';
 import {
   Grid,
   Button,
@@ -19,6 +19,7 @@ import {
 } from '@mui/material';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import { useNavigate } from 'react-router-dom';
+import useAuthStore from '../stores/authStore'; // Import the Zustand store
 
 const LoginPage = () => {
   const [email, setEmail] = useState('');
@@ -26,6 +27,7 @@ const LoginPage = () => {
   const [openDialog, setOpenDialog] = useState(false);
   const [dialogMessage, setDialogMessage] = useState('');
   const navigate = useNavigate();
+  const authStore = useAuthStore();
 
   const handleLogin = () => {
     // Check if email or password is empty
@@ -47,8 +49,17 @@ const LoginPage = () => {
         if (!response.ok) {
           throw new Error('Login failed.');
         }
-        // Handle successful login here by saving the token to localStorage
-        // and redirecting to the dashboard
+        // Handle successful login here
+        return response.json();
+      })
+      .then((data) => {
+        // Update the Zustand store with the login data
+        authStore.setAccessToken(data.access_token);
+        authStore.setAccessTokenExpires(data.access_token_expires);
+        authStore.setRefreshToken(data.refresh_token);
+        authStore.setRefreshTokenExpires(data.refresh_token_expires);
+
+        // Handle successful login here
         navigate('/dashboard');
       })
       .catch((error) => {

@@ -5,9 +5,10 @@ import Menu from '@mui/material/Menu';
 import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
 import { useNavigate } from 'react-router-dom';
+import useAuthStore from '../stores/authStore';
 
 export default function AppBarUser() {
-    const [auth, setAuth] = React.useState(false);
+    const authStore = useAuthStore();
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
     const navigate = useNavigate();
 
@@ -19,13 +20,17 @@ export default function AppBarUser() {
     setAnchorEl(event.currentTarget);
     }
 
+    const handleClose = () => {
+      setAnchorEl(null);
+    };
+
     const handleAccount = () => {
         console.log("handleAccount")
     }
 
     return (
             <div>
-              {auth
+              {authStore.accessToken
                   ? <div>
                       <IconButton
                         size="large"
@@ -50,8 +55,10 @@ export default function AppBarUser() {
                           horizontal: 'right',
                         }}
                         open={Boolean(anchorEl)}
+                        onClose={handleClose}
                       >
                         <MenuItem onClick={handleAccount}>My account</MenuItem>
+                        <MenuItem onClick={handleAccount}>Logout</MenuItem>
                       </Menu>
                   </div>
                 : <div>
