@@ -4,20 +4,20 @@ import MenuItem from '@mui/material/MenuItem';
 import Menu from '@mui/material/Menu';
 import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
+import { useNavigate } from 'react-router-dom';
 
 export default function AppBarUser() {
     const [auth, setAuth] = React.useState(false);
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+    const navigate = useNavigate();
 
     const handleLogin = () => {
-        console.log("handleLogin")
+        navigate('/login');
     }
-
 
     const handleMenu = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
-    };
-
+    }
 
     const handleAccount = () => {
         console.log("handleAccount")
