@@ -3,6 +3,7 @@ import React from 'react';
 import { useParams } from 'react-router-dom';
 import PDFViewer from '../components/PDFViewer'; // Import the PDFViewer component
 import ResponsiveAppBar from '../components/ResponsiveAppBar';
+import './css/AssignmentPage.css'
 
 interface AssignmentPageProps {
   // Define any additional props you might need
@@ -14,7 +15,9 @@ const AssignmentPage: React.FC<AssignmentPageProps> = () => {
   return (
     <div className="assignment-page">
       <ResponsiveAppBar />
-      <PDFViewer />
+      <div className='pdf-viewer-container'>
+        <PDFViewer />
+      </div>
     </div>
   );
 };

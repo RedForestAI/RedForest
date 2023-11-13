@@ -25,7 +25,10 @@ const PDFViewer = () => {
       <Document file={pdfUrl} onLoadSuccess={onDocumentLoadSuccess}>
         {Array.from(new Array(numPages), (el, index) => (
           <div>
-            <Page key={`page_${index + 1}`} pageNumber={index + 1} />
+            <Page 
+              key={`page_${index + 1}`} pageNumber={index + 1}
+              width={0.5*window.innerWidth}
+            />
             <div style={{ height: '16px' }}></div>
           </div>
         ))}
