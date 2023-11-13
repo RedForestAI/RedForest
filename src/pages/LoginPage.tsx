@@ -55,6 +55,7 @@ const LoginPage = () => {
       .then((data) => {
         // Update the Zustand store with the login data
         authStore.setIsLoggedIn(true);
+        authStore.setEmail(data.email);
         authStore.setAccessToken(data.access_token);
         authStore.setAccessTokenExpires(data.access_token_expires);
         authStore.setRefreshToken(data.refresh_token);
@@ -133,7 +134,7 @@ const LoginPage = () => {
               </Link>
             </Grid>
             <Grid item>
-              <Link href="#" variant="body2">
+              <Link href="/register" variant="body2">
                 Don't have an account? Sign Up
               </Link>
             </Grid>

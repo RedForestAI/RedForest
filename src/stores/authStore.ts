@@ -3,6 +3,7 @@ import { devtools, persist } from 'zustand/middleware';
 
 interface AuthStoreState {
   isAuth: boolean;
+  email: string | null;
   accessToken: string | null;
   accessTokenExpires: string | null;
   refreshToken: string | null;
@@ -12,6 +13,7 @@ interface AuthStoreState {
 interface AuthStoreActions {
   logout: () => void;
   setIsLoggedIn: (isAuth: boolean) => void;
+  setEmail: (email: string) => void;
   setAccessToken: (accessToken: string) => void;
   setAccessTokenExpires: (accessTokenExpires: string) => void;
   setRefreshToken: (refreshToken: string) => void;
@@ -23,6 +25,7 @@ devtools(
   persist((set) => ({
     // Initialize the store with null values for tokens
     isAuth: false,
+    email: null,
     accessToken: null,
     accessTokenExpires: null,
     refreshToken: null,
@@ -30,6 +33,7 @@ devtools(
 
     // Setters to update the state
     setIsLoggedIn: (isAuth: boolean) => set({ isAuth }),
+    setEmail: (email: string) => set({ email }),
     setAccessToken: (accessToken: string) => set({ accessToken }),
     setAccessTokenExpires: (accessTokenExpires: string) => set({ accessTokenExpires }),
     setRefreshToken: (refreshToken: string) => set({ refreshToken }),
