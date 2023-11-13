@@ -9,6 +9,7 @@ import {
 } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import useAuthStore from '../stores/authStore';
+import ResponsiveAppBar from '../components/ResponsiveAppBar';
   
 
 const VerifyEmailPage = () => {
@@ -20,6 +21,9 @@ const VerifyEmailPage = () => {
     console.log(authStore.email)
     if (!authStore.email) {
       navigate('/');
+    }
+    else {
+      handleResendVerification();
     }
   }, [authStore.isAuth, navigate]);
 
@@ -55,41 +59,44 @@ const VerifyEmailPage = () => {
   };
 
   return (
-    <Container component="main" maxWidth="xs">
-      <CssBaseline />
-      <Box
-        sx={{
-          marginTop: 8,
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-        }}
-      >
-        <Typography component="h1" variant="h5">
-          Email Verification
-        </Typography>
-        <Typography variant="body2" color="textSecondary" paragraph>
-          An email with a verification link has been sent to {authStore.email}.
-        </Typography>
-        <Typography variant="body2" color="textSecondary" paragraph>
-          After you verify your email, you can log in by returning to the home page.
-        </Typography>
-        <Button
-          type="button"
-          fullWidth
-          variant="contained"
-          color="primary"
-          onClick={handleResendVerification}
-          disabled={isLoading}
+    <div>
+      <ResponsiveAppBar />
+      <Container component="main" maxWidth="xs">
+        <CssBaseline />
+        <Box
+          sx={{
+            marginTop: 8,
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+          }}
         >
-          {isLoading ? (
-            <CircularProgress size={24} color="inherit" />
-          ) : (
-            'Resend Verification Email'
-          )}
-        </Button>
-      </Box>
-    </Container>
+          <Typography component="h1" variant="h5">
+            Email Verification
+          </Typography>
+          <Typography variant="body2" color="textSecondary" paragraph>
+            An email with a verification link has been sent to {authStore.email}.
+          </Typography>
+          <Typography variant="body2" color="textSecondary" paragraph>
+            After you verify your email, you can log in by returning to the home page.
+          </Typography>
+          <Button
+            type="button"
+            fullWidth
+            variant="contained"
+            color="primary"
+            onClick={handleResendVerification}
+            disabled={isLoading}
+          >
+            {isLoading ? (
+              <CircularProgress size={24} color="inherit" />
+            ) : (
+              'Resend Verification Email'
+            )}
+          </Button>
+        </Box>
+      </Container>
+    </div>
   );
 };
 
