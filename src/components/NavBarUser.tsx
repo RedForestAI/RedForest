@@ -28,6 +28,11 @@ export default function AppBarUser() {
         console.log("handleAccount")
     }
 
+    const handleLogout = () => {
+      authStore.logout();
+      navigate('/');
+    }
+
     return (
             <div>
               {authStore.accessToken
@@ -58,7 +63,7 @@ export default function AppBarUser() {
                         onClose={handleClose}
                       >
                         <MenuItem onClick={handleAccount}>My account</MenuItem>
-                        <MenuItem onClick={handleAccount}>Logout</MenuItem>
+                        <MenuItem onClick={handleLogout}>Logout</MenuItem>
                       </Menu>
                   </div>
                 : <div>

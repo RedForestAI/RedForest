@@ -54,13 +54,14 @@ const LoginPage = () => {
       })
       .then((data) => {
         // Update the Zustand store with the login data
+        authStore.setIsLoggedIn(true);
         authStore.setAccessToken(data.access_token);
         authStore.setAccessTokenExpires(data.access_token_expires);
         authStore.setRefreshToken(data.refresh_token);
         authStore.setRefreshTokenExpires(data.refresh_token_expires);
 
         // Handle successful login here
-        navigate('/dashboard');
+        navigate('/user');
       })
       .catch((error) => {
         // Handle login failure and display an error message in the modal
