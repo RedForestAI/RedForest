@@ -24,6 +24,10 @@ export default function AppBarUser() {
       setAnchorEl(null);
     };
 
+    const handleDashboard = () => {
+      navigate('/user')
+    }
+
     const handleAccount = () => {
         console.log("handleAccount")
     }
@@ -62,7 +66,8 @@ export default function AppBarUser() {
                         open={Boolean(anchorEl)}
                         onClose={handleClose}
                       >
-                        <MenuItem onClick={handleAccount}>My account</MenuItem>
+                        <MenuItem onClick={handleDashboard}>Dashboard</MenuItem>
+                        <MenuItem onClick={handleAccount}>Account</MenuItem>
                         <MenuItem onClick={handleLogout}>Logout</MenuItem>
                       </Menu>
                   </div>

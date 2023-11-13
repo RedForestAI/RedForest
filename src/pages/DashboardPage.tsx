@@ -1,6 +1,4 @@
 // Dashboard.js
-
-import React from 'react';
 import { Container, Typography } from '@mui/material';
 import ResponsiveAppBar from '../components/ResponsiveAppBar';
 import Assignment from '../components/Assignment';
@@ -36,7 +34,7 @@ const Dashboard = () => {
         </Typography>
          {assignments.map((assignment) => (
           <Assignment
-            key={assignment.id}
+            id={assignment.id}
             title={assignment.title}
             progress={assignment.progress}
             completion={assignment.completion}

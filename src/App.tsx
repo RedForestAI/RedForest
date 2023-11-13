@@ -7,6 +7,8 @@ import LoginPage from './pages/LoginPage';
 import DashboardPage from './pages/DashboardPage';
 import RegisterPage from './pages/RegisterPage';
 import VerifyEmailPage from './pages/VerifyEmailPage';
+import AssignmentPage from './pages/AssignmentPage';
+import NotFoundPage from './pages/NotFoundPage'
 
 const App: React.FC = () => (
 	<BrowserRouter>
@@ -17,7 +19,13 @@ const App: React.FC = () => (
       <Route path="/verify-email" element=<VerifyEmailPage />/>
       <Route path='/user/*' element={<ProtectedRoute />}>
         <Route index element=<DashboardPage />/>
+        <Route path='assignments/:id' element=<AssignmentPage />/>
+        {/* Catch-all route for 404 page */}
+        <Route path="*" element=<NotFoundPage />/>
       </Route>
+
+      {/* Catch-all route for 404 page */}
+      <Route path="*" element=<NotFoundPage />/>
 		</Routes>
 	</BrowserRouter>
 );
