@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   Button,
   Container,
@@ -10,35 +10,42 @@ import {
 import { useNavigate } from 'react-router-dom';
 import useAuthStore from '../stores/authStore';
 import ResponsiveAppBar from '../components/ResponsiveAppBar';
-  
 
 const VerifyEmailPage = () => {
   const [isLoading, setIsLoading] = useState(false);
   const authStore = useAuthStore();
   const navigate = useNavigate();
+  const isMounted = useRef(false); // Ref to track component mount status
 
   useEffect(() => {
-    console.log(authStore.email)
+    if (!isMounted.current) {
+      // The component is mounting, do nothing
+      isMounted.current = true;
+      return;
+    }
+
     if (!authStore.email) {
       navigate('/');
-    }
-    else {
+    } else {
       handleResendVerification();
     }
-  }, [authStore.isAuth, navigate]);
+  }, [authStore.email, navigate]);
 
   const handleResendVerification = async () => {
     setIsLoading(true);
 
     try {
       // Send an AJAX request to FastAPI's /mail/verify with the email parameter
-      const response = await fetch(`${process.env.REACT_APP_API_URL}/mail/verify`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ email: authStore.email }),
-      });
+      const response = await fetch(
+        `${process.env.REACT_APP_API_URL}/mail/verify`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ email: authStore.email }),
+        }
+      );
 
       if (response.ok) {
         // Successful response (e.g., email verification sent)
