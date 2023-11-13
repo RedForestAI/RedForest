@@ -1,9 +1,8 @@
-// AssignmentPage.tsx
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import PDFViewer from '../components/PDFViewer'; // Import the PDFViewer component
 import ResponsiveAppBar from '../components/ResponsiveAppBar';
-import './css/AssignmentPage.css'
+import './css/AssignmentPage.css';
 
 interface AssignmentPageProps {
   // Define any additional props you might need
