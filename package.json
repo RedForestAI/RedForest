@@ -18,6 +18,7 @@
     "match-sorter": "^6.3.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "react-load-script": "^0.0.6",
     "react-pdf": "^7.5.1",
     "react-pdf-highlighter": "^6.1.0",
     "react-router-dom": "^6.18.0",
