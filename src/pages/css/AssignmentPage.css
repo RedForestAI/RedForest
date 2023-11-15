@@ -1,0 +1,14 @@
+/* AssignmentPage.css */
+
+.assignment-page {
+  background-color: #333; /* Replace with your desired dark background color */
+  color: white; /* Set the text color to contrast with the dark background */
+  min-height: 100vh; /* Ensure the background color covers the entire viewport */
+}
+
+.pdf-viewer-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  /* height: 100vh; /1* Adjust the height as needed for your layout *1/ */
+}

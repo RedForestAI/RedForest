@@ -2,72 +2,54 @@
   "name": "sandcastlereader",
   "version": "0.1.0",
   "private": true,
-  "scripts": {
-    "serve": "vue-cli-service serve",
-    "build": "vue-cli-service build",
-    "lint": "vue-cli-service lint",
-    "test": "jest"
-  },
   "dependencies": {
-    "@vue/cli-plugin-unit-jest": "^5.0.8",
-    "@vue/vue3-jest": "^27.0.0",
-    "aoiwebtracker": "^0.0.4",
-    "axios": "^0.27.2",
-    "chimera-js-integrator": "^0.0.7",
-    "core-js": "^3.8.3",
-    "isomorphic-ws": "^5.0.0",
-    "jest": "^27.5.1",
-    "js-logger": "^1.6.1",
-    "mitt": "^3.0.0",
-    "pinia": "^2.0.28",
-    "sass": "^1.54.5",
-    "sass-loader": "^13.0.2",
-    "vue": "^3.2.13",
-    "vue-class-component": "^8.0.0-0",
-    "vue-router": "^4.1.2",
-    "vue-sidebar-menu": "^5.2.4",
-    "vue3-pdfjs": "^0.1.6",
-    "vuetify": "^3.1.8",
-    "ws": "^8.12.1"
+    "@emotion/react": "^11.11.1",
+    "@emotion/styled": "^11.11.0",
+    "@mui/icons-material": "^5.14.16",
+    "@mui/material": "^5.14.17",
+    "@testing-library/jest-dom": "^5.17.0",
+    "@testing-library/react": "^13.4.0",
+    "@testing-library/user-event": "^13.5.0",
+    "@types/jest": "^27.5.2",
+    "@types/node": "^16.18.61",
+    "@types/react": "^18.2.37",
+    "@types/react-dom": "^18.2.15",
+    "localforage": "^1.10.0",
+    "match-sorter": "^6.3.1",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-load-script": "^0.0.6",
+    "react-pdf": "^7.5.1",
+    "react-pdf-highlighter": "^6.1.0",
+    "react-router-dom": "^6.18.0",
+    "react-scripts": "5.0.1",
+    "sort-by": "^1.2.0",
+    "typescript": "^4.9.5",
+    "web-vitals": "^2.1.4",
+    "zustand": "^4.4.6"
   },
-  "devDependencies": {
-    "@babel/core": "^7.12.16",
-    "@babel/eslint-parser": "^7.12.16",
-    "@testing-library/vue": "^6.6.1",
-    "@types/jest": "^27.0.1",
-    "@typescript-eslint/eslint-plugin": "^5.4.0",
-    "@typescript-eslint/parser": "^5.4.0",
-    "@vue/cli-plugin-babel": "~5.0.0",
-    "@vue/cli-plugin-eslint": "~5.0.0",
-    "@vue/cli-plugin-typescript": "~5.0.0",
-    "@vue/cli-service": "~5.0.0",
-    "@vue/eslint-config-typescript": "^9.1.0",
-    "babel-core": "^7.0.0-bridge.0",
-    "eslint": "^7.32.0",
-    "eslint-plugin-vue": "^8.0.3",
-    "ts-jest": "^27.0.4",
-    "typescript": "~4.5.5",
-    "vue3-jest": "^27.0.0-alpha.1"
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject"
   },
   "eslintConfig": {
-    "root": true,
-    "env": {
-      "node": true
-    },
     "extends": [
-      "plugin:vue/vue3-essential",
-      "eslint:recommended",
-      "@vue/typescript"
-    ],
-    "parserOptions": {
-      "parser": "@typescript-eslint/parser"
-    },
-    "rules": {}
+      "react-app",
+      "react-app/jest"
+    ]
   },
-  "browserslist": [
-    "> 1%",
-    "last 2 versions",
-    "not dead",
-    "not ie 11"
-  ]
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  }
 }
