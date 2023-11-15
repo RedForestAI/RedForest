@@ -3,29 +3,42 @@ let instance = null;
 export class WebGazerManager {
   constructor() {
     if (!instance) {
-      this.loadScript();
       instance = this;
+      this.scriptId = 'webgazer-script';
+      this.loadScript();
     }
 
     return instance;
   }
 
-  loadScript() {
-    const script = document.createElement('script');
-    script.src = 'https://webgazer.cs.brown.edu/webgazer.js'; // Adjust the path to your local script
-    script.onload = () => {
-      this.isLoaded = true;
-      this.isActive = false;
-      this.isListening = false;
-    };
-    script.onerror = () => {
-      console.error('Error loading WebGazer.js');
-    };
-    document.head.appendChild(script);
+  removeExistingScript() {
+    const existingScript = document.getElementById(this.scriptId);
+    if (existingScript) {
+      existingScript.remove();
+    }
+    window.webgazer = null; // Clear the existing webgazer object
   }
 
-  setupWebGazer() {
-    if (this.isLoaded && !this.isActive) {
+  loadScript() {
+    this.removeExistingScript();
+
+    return new Promise((resolve, reject) => {
+      const script = document.createElement('script');
+      script.id = this.scriptId;
+      script.src = 'https://webgazer.cs.brown.edu/webgazer.js';
+      script.onload = () => resolve();
+      script.onerror = () => {
+        console.error('Error loading WebGazer.js');
+        reject();
+      };
+      document.head.appendChild(script);
+    });
+  }
+
+  async setupWebGazer() {
+    try {
+      await this.loadScript();
+
       window.webgazer.setGazeListener((data, elapsedTime) => {
         if (data) {
           this.gazeData = window.webgazer.util.bound(data);
@@ -33,19 +46,21 @@ export class WebGazerManager {
       }).begin();
       this.hide();
       this.isActive = true;
-      this.isListening = true;
+    } catch (error) {
+      console.error('Error setting up WebGazer:', error);
     }
   }
-  
+
   start() {
-    if (this.isLoaded) {
-      if (!this.isListening) {
-        this.setupWebGazer(); 
-      }
-      else if (!this.isActive) {
+    if (!this.scriptLoaded) {
+      this.loadScript();
+    }
+
+    if (!this.isListening) {
+      this.setupWebGazer();
+    } else if (!this.isActive) {
       window.webgazer && window.webgazer.resume();
       this.isActive = true;
-      }
     }
   }
 
@@ -64,7 +79,6 @@ export class WebGazerManager {
   stop() {
     if (this.isActive) {
       window.webgazer && window.webgazer.pause();
-      this.hide();
       this.isActive = false;
     }
   }
@@ -81,10 +95,3 @@ export class WebGazerManager {
     return this.gazeData;
   }
 }
-
-export const getWebGazerInstance = () => {
-  if (!instance) {
-    instance = new WebGazerManager();
-  }
-  return instance;
-};

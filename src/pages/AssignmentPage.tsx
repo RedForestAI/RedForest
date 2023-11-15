@@ -3,12 +3,12 @@ import React from 'react';
 import { useParams } from 'react-router-dom';
 import PDFViewer from '../components/PDFViewer';
 import ResponsiveAppBar from '../components/ResponsiveAppBar';
-import { getWebGazerInstance } from '../contexts/webgaze/WebGazerManager'
+import { WebGazerManager } from '../contexts/webgaze/WebGazerManager'
 import './css/AssignmentPage.css';
 
 const AssignmentPage = () => {
   const { id } = useParams<{ id: string }>();
-  const webGazer = getWebGazerInstance();
+  let webGazer = new WebGazerManager();
 
   const handleStart = () => {
     webGazer.start();
@@ -28,6 +28,7 @@ const AssignmentPage = () => {
   
   const handleEnd = () => {
     webGazer.end();
+    webGazer = new WebGazerManager();
   };
 
   return (
