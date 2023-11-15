@@ -1,28 +1,22 @@
-
 import React, { createContext, useState, useEffect } from 'react';
+import { getWebGazerInstance } from './WebGazerManager';
 
 export const WebGazeContext = createContext({ x: 0, y: 0 });
 
 export const WebGazeProvider = ({ children }) => {
   const [gazeData, setGazeData] = useState({ x: 0, y: 0 });
+  const webGazer = getWebGazerInstance();
 
   useEffect(() => {
-    const handleScriptLoad = () => {
-      window.webgazer.setGazeListener((data, elapsedTime) => {
-        if (data) {
-          setGazeData(window.webgazer.util.bound(data));
-        }
-      }).begin();
+    const interval = setInterval(() => {
+      setGazeData(webGazer.getGazeData());
+    }, 100); // Update gaze data every 100ms
+
+    return () => {
+      clearInterval(interval);
+      webGazer.end(); // Clean up
     };
-
-    const script = document.createElement("script");
-    script.src = "https://webgazer.cs.brown.edu/webgazer.js";
-    script.onload = handleScriptLoad;
-    script.onerror = () => console.log('Error loading WebGazer.js');
-    document.head.appendChild(script);
-
-    return () => window.webgazer && window.webgazer.end(); // Cleanup WebGazer on unmount
-  }, []);
+  }, [webGazer]);
 
   return (
     <WebGazeContext.Provider value={gazeData}>
