@@ -63,17 +63,18 @@ export class WebGazerManager {
 
   stop() {
     if (this.isActive) {
-      window.webgazer && window.webgazer.end();
+      window.webgazer && window.webgazer.pause();
       this.hide();
       this.isActive = false;
     }
   }
 
   end() {
-    if (this.isActive) {
-      window.webgazer && window.webgazer.end();
-      this.isActive = false;
-    }
+    window.webgazer && window.webgazer.stopVideo();
+    window.webgazer && window.webgazer.end();
+    this.isActive = false;
+    this.isListening = false;
+    this.isLoaded = false;
   }
 
   getGazeData() {
