@@ -72,7 +72,6 @@ export class WebGazerManager {
   end() {
     if (this.isActive) {
       window.webgazer && window.webgazer.end();
-      window.webgazer && window.webgazer.stopVideo();
       this.isActive = false;
     }
   }
