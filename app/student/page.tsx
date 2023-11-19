@@ -10,10 +10,10 @@ const Dashboard = () => {
   return (
     <div>
       <div className="container mx-auto p-4">
-        <h1 className="text-xl font-bold mb-4">Your Assignments</h1>
+        <h1 className="text-xl font-bold mb-4">Assignments</h1>
         <div>
           {assignments.map((assignment, index) => (
-            <div key={index} className="bg-white p-4 rounded-md shadow-md mb-4">
+            <div key={index} className="bg-grey p-4 rounded-md shadow-md mb-4">
               <h2 className="font-bold text-lg">{assignment.title} (Course ID: {assignment.courseId})</h2>
               <p>Deadline: {assignment.deadline}</p>
               <div className="w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700">
