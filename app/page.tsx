@@ -1,42 +1,41 @@
-"use client"
+// pages/index.js
+"use client";
 
-import { WebGazerManager } from '../contexts/webgaze/WebGazerManager'
+import React from 'react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faEnvelope } from '@fortawesome/free-solid-svg-icons';
+import { faGithub } from '@fortawesome/free-brands-svg-icons'; // Import from free-brands-svg-icons
 
-export default function HomePage() {
+const HomePage = () => {
 
-  let webGazer = new WebGazerManager();
-
-  const handleStart = () => {
-    webGazer.start();
-  };
-  
-  const handleHide = () => {
-    webGazer.hide();
-  };
-  
-  const handleShow = () => {
-    webGazer.show();
-  };
-
-  const handleStop = () => {
-    webGazer.stop();
-  };
-  
-  const handleEnd = () => {
-    webGazer.end();
-    webGazer = new WebGazerManager();
-  };
+  const openInNewTab = (url: string) => {
+      window.open(url, "_blank", "noreferrer");
+    };
 
   return (
-    <div className="flex flex-col items-center justify-center h-screen bg-black">
-      <button className="bg-blue-500 text-white font-bold py-2 px-4 rounded hover:bg-blue-700 m-2" onClick={handleStart}>Start WebGazer</button>
-      <button className="bg-green-500 text-white font-bold py-2 px-4 rounded hover:bg-green-700 m-2" onClick={handleShow}>Show WebGazer</button>
-      <button className="bg-yellow-500 text-white font-bold py-2 px-4 rounded hover:bg-yellow-700 m-2" onClick={handleHide}>Hide WebGazer</button>
-      <button className="bg-red-500 text-white font-bold py-2 px-4 rounded hover:bg-red-700 m-2" onClick={handleStop}>Stop WebGazer</button>
-      <button className="bg-purple-500 text-white font-bold py-2 px-4 rounded hover:bg-purple-700 m-2" onClick={handleEnd}>End WebGazer</button>
-      <div className="text-white text-4xl font-bold mt-8">
-        <h1>Hello World</h1>
-      </div>
+    <div className="h-screen flex flex-col justify-center items-center">
+      <header className="mt-8 text-white text-center">
+        <h1 className="text-4xl font-bold">Welcome to SandCastleReader</h1>
+        <p className="mt-4 text-xl">Your AI-Powered Classroom Assistant</p>
+      </header>
+
+      <section className="mt-64 text-white text-center max-w-lg">
+        <h2 className="text-2xl font-semibold">Our Goal</h2>
+        <p className="mt-4 text-lg">
+          SandCastleReader is dedicated to bringing AI via eye-tracking to the classroom.
+          We help teachers understand how students perform in assignments, making education more effective.
+        </p>
+      </section>
+
+      <section className="mt-auto text-white text-center pb-16">
+        <h2 className="text-2xl font-semibold">Contact Us</h2>
+        <div className="mt-4 flex justify-center space-x-6">
+          <FontAwesomeIcon icon={faEnvelope} onClick={() => openInNewTab('mailto:sandcastlereader@gmail.com')}/>
+          <FontAwesomeIcon icon={faGithub} onClick={() => openInNewTab("https://github.com/reading-analytics-group/SandCastleReader")}/>
+        </div>
+      </section>
     </div>
   );
 };
+
+export default HomePage;
