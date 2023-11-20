@@ -25,10 +25,11 @@ const Login = () => {
 
     if (error) {
       setError(error.message);
-    } 
+    } else {
+      // Redirect to dashboard
+      router.push("/student")
+    }
 
-    // Redirect to dashboard
-    router.push("/student")
   }
 
   return (
