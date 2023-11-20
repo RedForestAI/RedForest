@@ -4,7 +4,7 @@ import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 
 
-import Login from '../../../components/auth/login'
+import Account from '../../../components/auth/account'
 
 export default async function LoginPage() {
   const cookieStore = cookies()
@@ -22,10 +22,10 @@ export default async function LoginPage() {
   )
   const { data } = await supabase.auth.getSession();
 
-  if (data?.session) {
-    redirect('/student')
+  if (!data?.session) {
+    redirect('/login')
   }
 
-  return <Login />
+  return <Account />
 
 }

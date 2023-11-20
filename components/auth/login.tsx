@@ -3,11 +3,13 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { createBrowserClient } from '@supabase/ssr'
+import { useRouter } from 'next/navigation';
 
 const Login = () => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [error, setError] = useState(null);
+  const [email, setEmail] = useState<string>('');
+  const [password, setPassword] = useState<string>('');
+  const [error, setError] = useState<string>('');
+  const router = useRouter();
 
   const supabase = createBrowserClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -24,6 +26,9 @@ const Login = () => {
     if (error) {
       setError(error.message);
     } 
+
+    // Redirect to dashboard
+    router.push("/student")
   }
 
   return (

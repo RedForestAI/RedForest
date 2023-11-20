@@ -1,7 +1,8 @@
 'use client';
 
 import Link from "next/link";
-import React, { useState } from "react";
+import { createBrowserClient } from '@supabase/ssr';
+import React, { useState, useEffect } from "react";
 import { FaBars, FaTimes } from "react-icons/fa";
 
 interface NavLink {
@@ -11,14 +12,30 @@ interface NavLink {
 }
 
 const Navbar = () => {
-    const [nav, setNav] = useState(false);
+  const supabase = createBrowserClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+  )
 
-  const links: NavLink[] = [
-    {
-      id: 1,
-      link: "auth/login",
-      title: "Login"
-    }
+  const [nav, setNav] = useState(false);  
+  const [loggedIn, setLoggedIn] = useState(false);
+
+  useEffect(() => {
+    const user = supabase.auth.getUser();
+    setLoggedIn(!!user);
+
+    supabase.auth.onAuthStateChange((event: any, session: any) => {
+      setLoggedIn(!!session?.user);
+    })
+
+  }, []);
+
+  const links: NavLink[] = loggedIn 
+  ? [
+    { id: 1, link: "auth/account", title: "Account" }
+  ]
+  : [
+    { id: 1, link: "auth/login", title: "Login" }
   ]
 
   return (

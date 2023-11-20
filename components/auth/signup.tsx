@@ -5,10 +5,10 @@ import Link from 'next/link';
 import { createBrowserClient } from '@supabase/ssr'
 
 const SignUp = () => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState<string>('');
+  const [password, setPassword] = useState<string>('');
   const [successMsg, setSuccessMsg] = useState<string>("");
-  const [error, setError] = useState(null);
+  const [error, setError] = useState<string>("");
 
   const supabase = createBrowserClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
