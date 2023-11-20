@@ -7,7 +7,8 @@ import { redirect } from 'next/navigation';
 import Login from '../../../components/auth/login'
 
 export default async function LoginPage() {
-  const cookieStore = cookies(cookies)
+  const cookieStore = cookies()
+
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL, 
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY, 
