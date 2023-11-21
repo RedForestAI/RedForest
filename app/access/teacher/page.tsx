@@ -1,5 +1,14 @@
 
+"use client";
+
+import NavBar from "@/components/NavBar";
+
 const Dashboard = () => {
+  
+  const navLinks = [
+    { id: 1, link: "account", title: "Account" },
+  ];
+
   // Sample data for assignments
   const assignments = [
     { title: "Assignment 1", courseId: "COURSE101", deadline: "2023-12-01", progress: 60, completed: false },
@@ -9,6 +18,7 @@ const Dashboard = () => {
 
   return (
     <div>
+      <NavBar links={navLinks}/>
       <div className="container mx-auto p-4">
         <h1 className="text-xl font-bold mb-4">Assignments</h1>
         <div>
