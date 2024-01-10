@@ -1,24 +1,12 @@
-import { createServerClient, type CookieOptions } from '@supabase/ssr'
-import { cookies } from 'next/headers'
+
 import { prisma } from "@/lib/db";
+import { supabase } from "@/lib/supabase";
 import NavBar from "@/components/NavBar";
 
 export default async function Dashboard() {
   
-  const cookieStore = cookies()
-  const supabase = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    {
-      cookies: {
-        get(name: string) {
-          return cookieStore.get(name)?.value
-        },
-      },
-    }
-  )
+  // Fetch data
   const { data } = await supabase.auth.getSession();
-
   const profile = await prisma.profile.findUnique({
     where: {id: data.session?.user.id},
   });
