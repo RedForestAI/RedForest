@@ -1,9 +1,6 @@
-
-"use client";
-
 import NavBar from "@/components/NavBar";
 
-const Dashboard = () => {
+export default async function Dashboard() {
   
   const navLinks = [
     { id: 1, link: "account", title: "Account" },
@@ -37,5 +34,3 @@ const Dashboard = () => {
     </div>
   );
 };
-
-export default Dashboard;

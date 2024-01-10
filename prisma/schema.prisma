@@ -1,0 +1,31 @@
+   generator client {
+     provider = "prisma-client-js"
+   }
+
+   datasource db {
+     provider = "postgresql"
+     url = env("DATABASE_URL")
+   }
+
+   enum Role {
+     admin
+     user
+   }
+
+   model Profile {
+     id    String @id @db.Uuid
+     role  Role   @default(user)
+     notes Note[]
+
+     @@map("profile")
+   }
+
+   model Note {
+     id   String @id @default(uuid()) @db.Uuid
+     text String
+
+     user   Profile @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+     userId String  @db.Uuid
+
+     @@map("note")
+   }

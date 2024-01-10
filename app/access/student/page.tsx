@@ -1,8 +1,29 @@
-"use client";
-
+import { createServerClient, type CookieOptions } from '@supabase/ssr'
+import { cookies } from 'next/headers'
+import { prisma } from "@/lib/db";
 import NavBar from "@/components/NavBar";
 
-const Dashboard = () => {
+export default async function Dashboard() {
+  
+  const cookieStore = cookies()
+  const supabase = createServerClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    {
+      cookies: {
+        get(name: string) {
+          return cookieStore.get(name)?.value
+        },
+      },
+    }
+  )
+  const { data } = await supabase.auth.getSession();
+
+  const profile = await prisma.profile.findUnique({
+    where: {id: data.session?.user.id},
+  });
+  console.log(profile)
+
   const navLinks = [
     { id: 1, link: "account", title: "Account" },
   ];
@@ -17,6 +38,7 @@ const Dashboard = () => {
   return (
     <div>
       <NavBar links={navLinks}/>
+      <p>{JSON.stringify({ profile })}</p>
       <div className="container mx-auto p-4">
         <h1 className="text-xl font-bold mb-4">Assignments</h1>
         <div>
@@ -35,5 +57,3 @@ const Dashboard = () => {
     </div>
   );
 };
-
-export default Dashboard;
