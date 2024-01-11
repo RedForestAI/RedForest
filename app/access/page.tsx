@@ -35,7 +35,14 @@ export default async function Dashboard() {
         where: {id: courseEnrollment.courseId},
       })));
     console.log(courses)
-  }
+  } else if (profile?.role === Role.TEACHER) {
+      
+      // Get courses
+      courses = await prisma.course.findMany({
+        where: {teacherId: data.session?.user.id},
+      });
+      console.log(courses)
+    }
 
   return (
     <div>

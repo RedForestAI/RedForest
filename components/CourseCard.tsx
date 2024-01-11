@@ -8,7 +8,7 @@ interface CourseCardProps {
 
 const CourseCard = ( props : CourseCardProps) => {
   return (
-    <div className="bg-neutral-800 flex w-full flex-col items-stretch mt-3 pb-5 rounded-b-2xl">
+    <div className="bg-neutral-800 flex w-full flex-col items-stretch mt-3 pb-5 rounded-2xl">
       <div className="bg-emerald-300 flex shrink-0 h-[104px] flex-col rounded-t-2xl" />
       <div className="flex items-stretch justify-between gap-5 mt-3 pr-5">
         <span className="flex flex-col items-stretch px-2">

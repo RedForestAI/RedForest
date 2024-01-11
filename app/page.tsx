@@ -1,21 +1,11 @@
-// pages/index.js
-"use client";
+"use server";
 
-import React from 'react';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import NavBar from '@/components/NavBar';
+import OpenTabIconButton from '@/components/OpenTabIconButton';
 import { faEnvelope } from '@fortawesome/free-solid-svg-icons';
 import { faGithub } from '@fortawesome/free-brands-svg-icons';
-import NavBar from '@/components/NavBar';
 
-const HomePage = () => {
-
-  const navLinks = [
-    { id: 1, link: "/auth/login", title: "Login" },
-  ];
-
-  const openInNewTab = (url: string) => {
-      window.open(url, "_blank", "noreferrer");
-    };
+export default async function HomePage() {
 
   return (
     <div>
@@ -37,13 +27,11 @@ const HomePage = () => {
         <section className="mt-auto text-white text-center pb-16">
           <h2 className="text-2xl font-semibold">Contact Us</h2>
           <div className="mt-4 flex justify-center space-x-6">
-            <FontAwesomeIcon icon={faEnvelope} onClick={() => openInNewTab('mailto:contact.redforest.ai@gmail.com')}/>
-            <FontAwesomeIcon icon={faGithub} onClick={() => openInNewTab("https://github.com/reading-analytics-group/RedForest")}/>
+            <OpenTabIconButton icon={faEnvelope} url="mailto:contact.redforest.ai@gmail.com" />
+            <OpenTabIconButton icon={faGithub} url="https://github.com/reading-analytics-group/RedForest" />
           </div>
         </section>
       </div>
     </div>
   );
 };
-
-export default HomePage;

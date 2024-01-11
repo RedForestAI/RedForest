@@ -1,7 +1,6 @@
-'use client';
+"use server";
 
 import Link from "next/link";
-import React, { useState } from "react";
 
 interface NavbarProps {
   includeBurger: boolean;
@@ -10,8 +9,7 @@ interface NavbarProps {
 }
 
 const Navbar = (props: NavbarProps) => {
-  
-  const [nav, setNav] = useState(false);  
+
 
   return (
     <div className="items-stretch bg-zinc-900 flex w-full justify-between gap-5 px-3.5 py-2 border-b-neutral-400 border-b-opacity-50 border-b border-solid max-md:max-w-full max-md:flex-wrap">
