@@ -10,7 +10,17 @@ const getProfiles = (): Prisma.ProfileCreateInput[] => [
 const getCourses = (profiles: Profile[]): Prisma.CourseCreateInput[] => [
   {
     id: "10000000-0000-0000-0000-000000000000",
-    name: "Course ID",
+    name: "Course ID #1",
+    teacher: { connect: { id: profiles[2].id }},
+  },
+  {
+    id: "10000000-0000-0000-0000-000000000001",
+    name: "Course ID #2",
+    teacher: { connect: { id: profiles[2].id }},
+  },
+  {
+    id: "10000000-0000-0000-0000-000000000002",
+    name: "Course ID #3",
     teacher: { connect: { id: profiles[2].id }},
   }
 ];
@@ -25,6 +35,26 @@ const getCourseEnrollments = (profiles: Profile[], courses: Course[]): Prisma.co
     id: "20000000-0000-0000-0000-000000000001",
     student: { connect: { id: profiles[1].id }},
     course: { connect: { id: courses[0].id }},
+  },
+  {
+    id: "20000000-0000-0000-0000-000000000002",
+    student: { connect: { id: profiles[0].id }},
+    course: { connect: { id: courses[1].id }},
+  },
+  {
+    id: "20000000-0000-0000-0000-000000000003",
+    student: { connect: { id: profiles[1].id }},
+    course: { connect: { id: courses[1].id }},
+  },
+  {
+    id: "20000000-0000-0000-0000-000000000004",
+    student: { connect: { id: profiles[0].id }},
+    course: { connect: { id: courses[2].id }},
+  },
+  {
+    id: "20000000-0000-0000-0000-000000000005",
+    student: { connect: { id: profiles[1].id }},
+    course: { connect: { id: courses[2].id }},
   },
 ];
 
