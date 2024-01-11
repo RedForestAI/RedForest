@@ -1,9 +1,19 @@
+
+import { prisma } from "@/lib/db";
+import { supabase } from "@/lib/supabase";
 import NavBar from "@/components/NavBar";
 
 export default async function Dashboard() {
   
+  // Fetch data
+  const { data } = await supabase.auth.getSession();
+  const profile = await prisma.profile.findUnique({
+    where: {id: data.session?.user.id},
+  });
+  console.log(profile);
+
   const navLinks = [
-    { id: 1, link: "account", title: "Account" },
+    { id: 1, link: "access/account", title: "Account" },
   ];
 
   // Sample data for assignments

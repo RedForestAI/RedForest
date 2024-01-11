@@ -1,31 +1,30 @@
-   generator client {
-     provider = "prisma-client-js"
-   }
+generator client {
+  provider = "prisma-client-js"
+}
 
-   datasource db {
-     provider = "postgresql"
-     url = env("DATABASE_URL")
-   }
+datasource db {
+  provider = "postgresql"
+  url = env("DATABASE_URL")
+}
 
-   enum Role {
-     admin
-     user
-   }
+enum Role {
+  ADMIN
+  STUDENT
+  TEACHER
+}
 
-   model Profile {
-     id    String @id @db.Uuid
-     role  Role   @default(user)
-     notes Note[]
+model Profile {
+  id          String      @id @db.Uuid
+  role        Role        @default(STUDENT)
+  courses     Course[]    
 
-     @@map("profile")
-   }
+  @@map("profile")
+}
 
-   model Note {
-     id   String @id @default(uuid()) @db.Uuid
-     text String
+model Course {
+  id          String      @id @default(uuid()) @db.Uuid
+  title       String
+  students    Profile[]   
 
-     user   Profile @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-     userId String  @db.Uuid
-
-     @@map("note")
-   }
+  @@map("course")
+}
