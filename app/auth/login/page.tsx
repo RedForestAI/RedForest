@@ -28,7 +28,7 @@ const Login = () => {
       setError(error.message);
     } else {
       // Redirect to dashboard
-      router.push("../access/student")
+      router.push("../access")
     }
 
   }

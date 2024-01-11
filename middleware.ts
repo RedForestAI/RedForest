@@ -71,7 +71,7 @@ export async function middleware(request: NextRequest) {
 
     // Redirect to / if session and entering /auth routes
     if (request.nextUrl.pathname.startsWith("/auth")) {
-      const redirectURL = new URL("/access/student", request.nextUrl.origin);
+      const redirectURL = new URL("/access", request.nextUrl.origin);
       return NextResponse.redirect(redirectURL.toString())
     }
   }
