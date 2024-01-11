@@ -49,7 +49,7 @@ export default async function Dashboard() {
       <div className="container mx-auto p-4">
         <div>
           {courses.map((course, index) => (
-            <CourseCard course={course} key={index}/>
+            <CourseCard course={course} enableOptions={false} key={index}/>
           ))}
         </div>
       </div>
