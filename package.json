@@ -10,9 +10,9 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "migrate-dev": "npx prisma migrate dev && npx tsx lib/seedTriggers.ts",
-    "seed": "npx prisma db seed",
-    "vercel-build": "prisma generate && prisma migrate deploy && npx tsx lib/seedTriggers.ts && next build"
+    "migrate-dev": "prisma migrate dev && tsx lib/seedTriggers.ts",
+    "seed": "prisma db seed",
+    "vercel-build": "prisma generate && prisma migrate deploy && tsx lib/seedTriggers.ts && next build"
   },
   "dependencies": {
     "@fortawesome/fontawesome-free": "^6.4.2",
