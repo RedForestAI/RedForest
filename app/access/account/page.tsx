@@ -27,12 +27,12 @@ const Account = () => {
 
   async function handleLogout() {
     await supabase.auth.signOut();
-    router.push("/")
+    router.push("/auth/logout");
   }
 
   return (
     <div>
-      <NavBar />
+      <NavBar includeBurger={true} accountLink={"/access/account"} logoLink={"/access"}/>
       <div className="container mx-auto p-4">
         <h1 className="text-xl font-bold mb-4">Account Settings</h1>
         {error && <div className="mt-4 text-red-600">{error}</div>}

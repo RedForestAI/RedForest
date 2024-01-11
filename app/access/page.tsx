@@ -1,7 +1,6 @@
 
 import { prisma } from "@/lib/db";
 import { createClient } from "@/utils/supabase/server";
-import { cookies } from 'next/headers'
 import { Role, Course } from "@prisma/client";
 
 import NavBar from "@/components/NavBar";
@@ -10,8 +9,7 @@ import CourseCard from "@/components/CourseCard";
 export default async function Dashboard() {
   
   // Fetch data
-  const cookieStore = cookies()
-  const supabase = createClient(cookieStore)
+  const supabase = createClient()
   const { data } = await supabase.auth.getSession();
 
   // Determine role
@@ -23,7 +21,7 @@ export default async function Dashboard() {
   // Default values
   let courses: Course[] = [];
 
-  if (profile && profile.role === Role.STUDENT) {
+  if (profile?.role === Role.STUDENT) {
     
     // Get course enrollments
     const courseEnrollments = await prisma.courseEnrollment.findMany({
@@ -39,17 +37,14 @@ export default async function Dashboard() {
     console.log(courses)
   }
 
-  const navLinks = [
-    { id: 1, link: "access/account", title: "Account" },
-  ];
 
   return (
     <div>
-      <NavBar links={navLinks}/>
+      <NavBar includeBurger={true} accountLink={"access/account"} logoLink={"/access"}/>
       <div className="container mx-auto p-4">
         <div>
           {courses.map((course, index) => (
-            <CourseCard course={course} enableOptions={false} key={index}/>
+            <CourseCard course={course} enableOptions={profile?.role == Role.TEACHER} key={index}/>
           ))}
         </div>
       </div>

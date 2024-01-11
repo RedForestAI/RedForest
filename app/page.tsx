@@ -19,7 +19,7 @@ const HomePage = () => {
 
   return (
     <div>
-      <NavBar links={navLinks} />
+      <NavBar includeBurger={false} accountLink={"auth/login"} logoLink={"/"} />
       <div className="h-screen flex flex-col justify-center items-center">
         <header className="mt-8 text-white text-center">
           <h1 className="text-4xl font-bold">Welcome to RedForest</h1>
