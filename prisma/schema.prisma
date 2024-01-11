@@ -14,17 +14,40 @@ enum Role {
 }
 
 model Profile {
-  id          String      @id @db.Uuid
-  role        Role        @default(STUDENT)
-  courses     Course[]    
+  id                String      @id @db.Uuid
+  role              Role        @default(STUDENT)
+  
+  // TEACHER
+  ownCourses        Course[]    @relation(name: "ownCourses")
+
+  // STUDENT
+  enrollCourses     courseEnrollment[]
 
   @@map("profile")
 }
 
 model Course {
-  id          String      @id @default(uuid()) @db.Uuid
-  title       String
-  students    Profile[]   
+  id                String      @id @default(uuid()) @db.Uuid
+  name              String
+  
+  // TEACHER
+  teacher           Profile     @relation(name: "ownCourses", fields: [teacherId], references: [id])
+  teacherId         String      @db.Uuid
+  
+  // STUDENT
+  students          courseEnrollment[]
 
   @@map("course")
+}
+
+// Reference: https://www.prisma.io/docs/orm/more/help-and-troubleshooting/help-articles/working-with-many-to-many-relations#explicit-relations
+model courseEnrollment {
+  id                String      @id @default(uuid()) @db.Uuid
+  student           Profile     @relation(fields: [studentId], references: [id])
+  studentId         String      @db.Uuid
+  course            Course      @relation(fields: [courseId], references: [id])
+  courseId          String      @db.Uuid
+
+  @@index([studentId, courseId])
+  @@map("course_enrollment")
 }

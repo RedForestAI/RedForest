@@ -1,30 +1,71 @@
-import { PrismaClient, Role } from '@prisma/client'
-const prisma = new PrismaClient()
-async function main() {
-  const s1 = await prisma.profile.upsert({
-    where: { id: '00000000-0000-0000-0000-000000000001' },
-    update: {},
-    create: {
-      id: '00000000-0000-0000-0000-000000000001',
-      role: Role.STUDENT
-    },
-  })
-  const s2 = await prisma.profile.upsert({
-    where: { id: '00000000-0000-0000-0000-000000000002' },
-    update: {},
-    create: {
-      id: '00000000-0000-0000-0000-000000000002',
-      role: Role.STUDENT
-    },
-  })
-  console.log({ s1, s2 })
-}
+import { PrismaClient, Role, Prisma, Profile, Course } from '@prisma/client'
+const client = new PrismaClient()
+
+const getProfiles = (): Prisma.ProfileCreateInput[] => [
+  { id: "00000000-0000-0000-0000-000000000001", role: Role.STUDENT },
+  { id: "00000000-0000-0000-0000-000000000002", role: Role.STUDENT },
+  { id: "00000000-0000-0000-0000-000000000003", role: Role.TEACHER },
+];
+
+const getCourses = (profiles: Profile[]): Prisma.CourseCreateInput[] => [
+  {
+    id: "10000000-0000-0000-0000-000000000000",
+    name: "Course ID",
+    teacher: { connect: { id: profiles[2].id }},
+  }
+];
+
+const getCourseEnrollments = (profiles: Profile[], courses: Course[]): Prisma.courseEnrollmentCreateInput[] => [
+  {
+    id: "20000000-0000-0000-0000-000000000000",
+    student: { connect: { id: profiles[0].id }},
+    course: { connect: { id: courses[0].id }},
+  },
+  {
+    id: "20000000-0000-0000-0000-000000000001",
+    student: { connect: { id: profiles[1].id }},
+    course: { connect: { id: courses[0].id }},
+  },
+];
+
+const main = async () => {
+  const profiles = await Promise.all(
+    getProfiles().map((profile) => client.profile.upsert(
+      {
+        where: { id: profile.id },
+        update: { ...profile },
+        create: { ...profile },
+      }
+    ))
+  );
+
+  const courses = await Promise.all(
+    getCourses(profiles).map((course) => client.course.upsert(
+      {
+        where: { id: course.id },
+        update: { ...course },
+        create: { ...course },
+      }))
+  )
+
+  const courseEnrollments = await Promise.all(
+    getCourseEnrollments(profiles, courses).map((courseEnrollment) => client.courseEnrollment.upsert(
+      {
+        where: { id: courseEnrollment.id },
+        update: { ...courseEnrollment },
+        create: { ...courseEnrollment },
+      }))
+  )
+
+  console.log({ profiles, courses, courseEnrollments });
+};
+
 main()
   .then(async () => {
-    await prisma.$disconnect()
+    await client.$disconnect()
   })
   .catch(async (e) => {
     console.error(e)
-    await prisma.$disconnect()
+    await client.$disconnect()
     process.exit(1)
   })
