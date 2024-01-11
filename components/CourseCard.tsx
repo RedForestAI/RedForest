@@ -1,5 +1,4 @@
 'use client';
-
 import { Course } from '@prisma/client'
 
 interface CourseCardProps {

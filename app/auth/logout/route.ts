@@ -7,6 +7,6 @@ export async function GET(request: Request) {
   await supabase.auth.signOut();
 
   // return the user to an error page with some instructions
-  const { origin } = absoluteUrl(request);
+  const { origin } = absoluteUrl(request); // @ts-ignore
   return NextResponse.redirect(origin);
 }

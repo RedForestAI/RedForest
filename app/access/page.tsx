@@ -37,7 +37,6 @@ export default async function Dashboard() {
     console.log(courses)
   }
 
-
   return (
     <div>
       <NavBar includeBurger={true} accountLink={"access/account"} logoLink={"/access"}/>
