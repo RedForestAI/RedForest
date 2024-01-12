@@ -1,21 +1,22 @@
 
 import { prisma } from "@/lib/db";
-import { createClient } from "@/utils/supabase/server";
+import { supabase } from "@/lib/supabase/server";
 import { Role, Course } from "@prisma/client";
 
 import NavBar from "@/components/NavBar";
 import CourseCard from "@/components/CourseCard";
-import MyModal from "@/components/cruds/CourseCreate";
+import CourseCreate from "@/components/cruds/CourseCreate";
 
 export default async function Dashboard() {
   
   // Fetch data
-  const supabase = createClient()
-  const { data } = await supabase.auth.getSession();
+  const { data } = await supabase.auth.getUser();
+
+  console.log(data);
 
   // Determine role
   const profile = await prisma.profile.findUnique({
-    where: {id: data.session?.user.id},
+    where: {id: data.user?.id},
   });
 
   // Default values
@@ -25,7 +26,7 @@ export default async function Dashboard() {
     
     // Get course enrollments
     const courseEnrollments = await prisma.courseEnrollment.findMany({
-      where: {studentId: data.session?.user.id},
+      where: {studentId: data.user?.id},
     });
 
     // Get course
@@ -38,7 +39,7 @@ export default async function Dashboard() {
       
     // Get courses
     courses = await prisma.course.findMany({
-      where: {teacherId: data.session?.user.id},
+      where: {teacherId: data.user?.id},
     });
   }
 
@@ -51,7 +52,7 @@ export default async function Dashboard() {
             <CourseCard course={course} enableOptions={profile?.role == Role.TEACHER} key={index}/>
           ))}
         </div>
-        {profile?.role == Role.TEACHER && <MyModal />}
+        {profile?.role == Role.TEACHER && <CourseCreate />}
 
       </div>
     </div>

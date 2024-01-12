@@ -4,8 +4,13 @@ import NavBar from '@/components/NavBar';
 import OpenTabIconButton from '@/components/OpenTabIconButton';
 import { faEnvelope } from '@fortawesome/free-solid-svg-icons';
 import { faGithub } from '@fortawesome/free-brands-svg-icons';
+import { supabase } from "@/lib/supabase/server";
 
 export default async function HomePage() {
+
+  // Fetch data
+  const { data } = await supabase.auth.getSession();
+  console.log(data);
 
   return (
     <div>

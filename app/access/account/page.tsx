@@ -1,12 +1,11 @@
 "use server";
 
-import Link from "next/link";
 import NavBar from '@/components/NavBar';
-import { createClient } from "@/utils/supabase/server";
+import { supabase } from "@/lib/supabase/server";
+import LogoutButton from '@/components/forms/LogoutButton';
 
 export default async function Account() {
   // Fetch data
-  const supabase = createClient()
   const { data } = await supabase.auth.getSession();
 
   return (
@@ -21,11 +20,7 @@ export default async function Account() {
           </div>
           : <div className="mt-4 text-red-600">Failed to fetch account information</div>
         }
-        <Link key={'logout'} href={"/ops/logout"}>
-          <button className="bg-blue-500 hover:bg-blue-700 mt-2 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
-            Logout
-          </button>
-        </Link>
+      <LogoutButton />
       </div>
     </div>
   );

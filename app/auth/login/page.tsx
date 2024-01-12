@@ -1,9 +1,14 @@
 "use server";
 
+import { supabase } from '@/lib/supabase/server';
 import NavBar from '@/components/NavBar';
 import LoginForm from '@/components/forms/LoginForm';
 
-const Login = () => {
+export default async function Login() {
+
+  // Fetch data
+  const { data } = await supabase.auth.getSession();
+  console.log(data);
 
   return (
     <div>
@@ -12,5 +17,3 @@ const Login = () => {
     </div>
   );
 };
-
-export default Login;

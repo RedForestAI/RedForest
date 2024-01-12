@@ -1,9 +1,9 @@
 "use client";
 
 import Link from 'next/link';
-import { createBrowserClient } from "@supabase/ssr";
+import { createClient } from "@/lib/supabase/client";
 import { useRouter } from 'next/navigation'
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 const LoginForm = () => {
   const [email, setEmail] = useState<string>('');
@@ -11,13 +11,23 @@ const LoginForm = () => {
   const [error, setError] = useState<string>('');
   const router = useRouter();
 
-  const supabase = createBrowserClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-  );
+  function validateInput() {
+    if (email === '' || password === '' || password.length < 8) {
+      setError("Please fill out all fields.");
+      return false;
+    }
+    return true; 
+  }
 
   async function signInWithEmail(e: any) {
     e.preventDefault();
+
+    if (!validateInput()) {
+      return;
+    }
+
+    const supabase = createClient();
+
     const { data, error } = await supabase.auth.signInWithPassword({
       email: email,
       password: password
@@ -46,7 +56,7 @@ const LoginForm = () => {
                 <label htmlFor="password" className="block mb-2 text-sm font-medium text-gray-900">Password</label>
                 <input type="password" id="password" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" required onChange={(e) => setPassword(e.target.value)}/>
               </div>
-              <button className="w-full text-white bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center" onClick={signInWithEmail}>Login</button>
+              <button type="button" className="w-full text-white bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center" onClick={signInWithEmail}>Login</button>
             </form>
             {error && <div className="mt-4 text-red-600">{error}</div>}
             <div className="flex justify-between items-center mt-4">
