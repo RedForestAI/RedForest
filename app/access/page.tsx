@@ -5,6 +5,7 @@ import { Role, Course } from "@prisma/client";
 
 import NavBar from "@/components/NavBar";
 import CourseCard from "@/components/CourseCard";
+import MyModal from "@/components/cruds/CourseCreate";
 
 export default async function Dashboard() {
   
@@ -16,7 +17,6 @@ export default async function Dashboard() {
   const profile = await prisma.profile.findUnique({
     where: {id: data.session?.user.id},
   });
-  console.log(profile)
 
   // Default values
   let courses: Course[] = [];
@@ -27,22 +27,20 @@ export default async function Dashboard() {
     const courseEnrollments = await prisma.courseEnrollment.findMany({
       where: {studentId: data.session?.user.id},
     });
-    console.log(courseEnrollments)
 
     // Get course
     courses = await Promise.all(
       courseEnrollments.map(async (courseEnrollment) => prisma.course.findUniqueOrThrow({
         where: {id: courseEnrollment.courseId},
-      })));
-    console.log(courses)
+      }))
+    );
   } else if (profile?.role === Role.TEACHER) {
       
-      // Get courses
-      courses = await prisma.course.findMany({
-        where: {teacherId: data.session?.user.id},
-      });
-      console.log(courses)
-    }
+    // Get courses
+    courses = await prisma.course.findMany({
+      where: {teacherId: data.session?.user.id},
+    });
+  }
 
   return (
     <div>
@@ -53,6 +51,8 @@ export default async function Dashboard() {
             <CourseCard course={course} enableOptions={profile?.role == Role.TEACHER} key={index}/>
           ))}
         </div>
+        {profile?.role == Role.TEACHER && <MyModal />}
+
       </div>
     </div>
   );
