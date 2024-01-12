@@ -1,20 +1,23 @@
 "use server";
 
+import { cookies } from 'next/headers'
+import { createServerComponentClient } from '@supabase/auth-helpers-nextjs'
 import NavBar from '@/components/NavBar';
 import OpenTabIconButton from '@/components/OpenTabIconButton';
 import { faEnvelope } from '@fortawesome/free-solid-svg-icons';
 import { faGithub } from '@fortawesome/free-brands-svg-icons';
-import { supabase } from "@/lib/supabase/server";
 
 export default async function HomePage() {
 
   // Fetch data
+  const cookieStore = cookies()
+  const supabase = createServerComponentClient({ cookies: () => cookieStore })
   const { data } = await supabase.auth.getSession();
   console.log(data);
 
   return (
     <div>
-      <NavBar includeBurger={false} accountLink={"auth/login"} logoLink={"/"} />
+      <NavBar includeBurger={false} accountLink={"session/login"} logoLink={"/"} />
       <div className="h-screen flex flex-col justify-center items-center">
         <header className="mt-8 text-white text-center">
           <h1 className="text-4xl font-bold">Welcome to RedForest</h1>

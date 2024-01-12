@@ -1,6 +1,7 @@
 
 import { prisma } from "@/lib/db";
-import { supabase } from "@/lib/supabase/server";
+import { cookies } from 'next/headers'
+import { createServerComponentClient } from '@supabase/auth-helpers-nextjs'
 import { Role, Course } from "@prisma/client";
 
 import NavBar from "@/components/NavBar";
@@ -10,6 +11,8 @@ import CourseCreate from "@/components/cruds/CourseCreate";
 export default async function Dashboard() {
   
   // Fetch data
+  const cookieStore = cookies()
+  const supabase = createServerComponentClient({ cookies: () => cookieStore })
   const { data } = await supabase.auth.getUser();
 
   console.log(data);
@@ -18,6 +21,8 @@ export default async function Dashboard() {
   const profile = await prisma.profile.findUnique({
     where: {id: data.user?.id},
   });
+
+  console.log(profile);
 
   // Default values
   let courses: Course[] = [];
@@ -53,7 +58,6 @@ export default async function Dashboard() {
           ))}
         </div>
         {profile?.role == Role.TEACHER && <CourseCreate />}
-
       </div>
     </div>
   );
