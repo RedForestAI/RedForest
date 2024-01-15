@@ -7,6 +7,10 @@ export const getServerUser = cache(async () => {
   const mappedCookies = new Map(ckies);
   const accessToken = mappedCookies.get("access-token")?.value;
   const refreshToken = mappedCookies.get("refresh-token")?.value;
+  // const cookieStore = cookies()
+  // const supabase = createServerComponentClient({ cookies: () => cookieStore })
+  // const { data } = await supabase.auth.getSession();
+  // console.log(data);
 
   if (!accessToken || !refreshToken) {
     return {

@@ -1,0 +1,97 @@
+"use client";
+
+import { Dialog, Transition } from '@headlessui/react'
+import { Fragment, useState } from 'react'
+import { useForm, SubmitHandler } from "react-hook-form";
+
+type Inputs = {
+  courseName: string
+}
+
+export default function CourseCreate() {
+  const {
+    register,
+    handleSubmit,
+    watch,
+    formState: { errors },
+  } = useForm<Inputs>()
+  let [isOpen, setIsOpen] = useState<boolean>(true)
+
+  function closeModal() {
+    setIsOpen(false)
+  }
+
+  function openModal() {
+    setIsOpen(true)
+  }
+
+  const onSubmit: SubmitHandler<Inputs> = async (data) => {
+    console.log(data)
+    
+  }
+
+  return (
+    <>
+      <button onClick={openModal} className="w-full" type="button">
+        <div className="justify-center items-center bg-neutral-800 flex flex-col px-16 py-8 rounded-2xl border-[3px] border-solid border-emerald-50 max-md:px-5 mt-3 pb-5 h-44">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-12 h-12">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v6m3-3H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+          </svg>
+        </div>
+      </button>
+
+      <Transition appear show={isOpen} as={Fragment}>
+        <Dialog as="div" className="relative z-10" onClose={closeModal}>
+          <Transition.Child
+            as={Fragment}
+            enter="ease-out duration-300"
+            enterFrom="opacity-0"
+            enterTo="opacity-100"
+            leave="ease-in duration-200"
+            leaveFrom="opacity-100"
+            leaveTo="opacity-0"
+          >
+            <div className="fixed inset-0 bg-black/25" />
+          </Transition.Child>
+
+          <div className="fixed inset-0 overflow-y-auto">
+            <div className="flex min-h-full items-center justify-center p-4 text-center">
+              <Transition.Child
+                as={Fragment}
+                enter="ease-out duration-300"
+                enterFrom="opacity-0 scale-95"
+                enterTo="opacity-100 scale-100"
+                leave="ease-in duration-200"
+                leaveFrom="opacity-100 scale-100"
+                leaveTo="opacity-0 scale-95"
+              >
+                <Dialog.Panel className="w-full max-w-md transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all">
+                  <Dialog.Title
+                    as="h3"
+                    className="text-lg font-medium leading-6 text-gray-900 border-b-4 border-inherit pb-2"
+                  >
+                    Create Course
+                  </Dialog.Title>
+
+                  <form className="pt-4 pb-4 space-y-4" onSubmit={handleSubmit(onSubmit)}>
+                    <input {...register("courseName", { required: true, maxLength: 20 })} placeholder="Course Name" className="block w-full rounded-md border-0 py-1.5 pl-2 pr-20 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"/>
+                    {errors.courseName && <span className="text-red-900">This field is required or not filled correctly</span>}
+                    
+                    <div className="pt-4">
+                      <button
+                        type="submit"
+                        className="inline-flex justify-center rounded-md border border-transparent bg-blue-100 px-4 py-2 text-sm font-medium text-blue-900 hover:bg-blue-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
+                      >
+                        Add
+                      </button>
+                    </div>
+                  </form>
+                </Dialog.Panel>
+              </Transition.Child>
+            </div>
+          </div>
+        </Dialog>
+      </Transition>
+    </>
+  )
+}

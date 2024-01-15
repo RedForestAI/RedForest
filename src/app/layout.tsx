@@ -1,3 +1,4 @@
+import type { Metadata } from 'next'
 import { TailwindIndicator } from "~/components/TailwindIndicator";
 import { Providers } from "~/providers";
 import "~/styles/globals.css";
@@ -9,18 +10,21 @@ import { AuthProvider } from "~/providers/AuthProvider/AuthProvider";
 import { TRPCReactProvider } from "~/trpc/react";
 import { headers } from "next/headers";
 
-export const metadata = {
-  title: "t3-app-dir-supabase",
-  description: "Boilerplate for t3-app-dir-supabase.",
-};
+export const metadata: Metadata = {
+  title: 'RedForest',
+  description: 'AI-powered reading assistance',
+}
 
 const font = Roboto({
   weight: ["100", "300", "400", "500", "700", "900"],
   subsets: ["latin"],
 });
 
-async function RootLayout({ children }: { children: React.ReactNode }) {
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
   const user = await getServerUser();
+
+  console.log("user");
+  console.log(user);
 
   return (
     <>
@@ -47,5 +51,3 @@ async function RootLayout({ children }: { children: React.ReactNode }) {
     </>
   );
 }
-
-export default RootLayout;
