@@ -2,16 +2,12 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
-import { createBrowserClient } from '@supabase/ssr';
+import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 
-const ForgotPasswordForm = () => {
+export default function ForgotPasswordForm() {
   const [email, setEmail] = useState<string>('');
   const [successMsg, setSuccessMsg] = useState<string>("");
-  
-  const supabase = createBrowserClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-  )
+  const supabase = createClientComponentClient();
 
   async function resetPassword(e: any) {
     e.preventDefault()
@@ -47,5 +43,3 @@ const ForgotPasswordForm = () => {
     </div>
   );
 };
-
-export default ForgotPasswordForm;

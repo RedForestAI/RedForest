@@ -5,7 +5,7 @@ import NavBar from '@/components/NavBar';
 const UpdatePassword = () => {
   return (
     <div>
-      <NavBar includeBurger={false} accountLink={"/auth/update-password"} logoLink={"/"}/>
+      <NavBar includeBurger={false} accountLink={"/session/login"} logoLink={"/"}/>
       <div className="flex justify-center items-center h-screen bg-zinc-950">
         <div className="p-6 max-w-sm w-full bg-white rounded-lg border border-gray-200 shadow-md">
           <h2 className="mb-4 text-xl font-bold text-gray-900">Update Password</h2>
