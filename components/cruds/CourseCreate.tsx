@@ -25,8 +25,9 @@ export default function CourseCreate() {
     setIsOpen(true)
   }
 
-  const onSubmit: SubmitHandler<Inputs> = (data) => {
+  const onSubmit: SubmitHandler<Inputs> = async (data) => {
     console.log(data)
+    
   }
 
   return (

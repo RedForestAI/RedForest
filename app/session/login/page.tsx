@@ -19,7 +19,7 @@ export default function LoginForm() {
       setError("Please fill out all fields.");
       return false;
     }
-    return true; 
+    return true;
   }
 
   async function signInWithEmail(e: any) {
