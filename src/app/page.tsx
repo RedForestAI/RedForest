@@ -2,10 +2,13 @@
 
 import { cookies } from 'next/headers'
 import { createServerComponentClient } from '@supabase/auth-helpers-nextjs'
-import NavBar from '@/components/NavBar';
-import OpenTabIconButton from '@/components/OpenTabIconButton';
 import { faEnvelope } from '@fortawesome/free-solid-svg-icons';
 import { faGithub } from '@fortawesome/free-brands-svg-icons';
+import { Suspense } from 'react';
+
+import ServerDataStreaming from './_components/ServerDataStreaming';
+import NavBar from '@/components/NavBar';
+import OpenTabIconButton from '@/components/OpenTabIconButton';
 
 export default async function HomePage() {
 
@@ -31,6 +34,14 @@ export default async function HomePage() {
             We help teachers understand how students perform in assignments, making education more effective.
           </p>
         </section>
+
+        <Suspense
+          fallback={
+            <p className="text-2xl text-white">Streaming TRPC Query...</p>
+          }
+        >
+          <ServerDataStreaming />
+        </Suspense>
 
         <section className="mt-auto text-white text-center pb-16">
           <h2 className="text-2xl font-semibold">Contact Us</h2>
