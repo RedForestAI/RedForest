@@ -9,7 +9,7 @@ import React, {
 } from "react";
 
 import { type Session, type User } from "@supabase/supabase-js";
-import { supabase } from "@/server/supabase/supabaseClient";
+import { supabase } from "~/server/supabase/supabaseClient";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 
 export const AuthContext = createContext<{

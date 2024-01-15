@@ -1,40 +1,54 @@
-"use server";
+import Link from "next/link";
+import { Suspense } from "react";
+import { ServerDataStreaming } from "./_components/ServerDataStreaming";
 
-import { cookies } from 'next/headers'
-import { createServerComponentClient } from '@supabase/auth-helpers-nextjs'
-import { faEnvelope } from '@fortawesome/free-solid-svg-icons';
-import { faGithub } from '@fortawesome/free-brands-svg-icons';
-import { Suspense } from 'react';
-
-import ServerDataStreaming from './_components/ServerDataStreaming';
-import NavBar from '@/components/NavBar';
-import OpenTabIconButton from '@/components/OpenTabIconButton';
-
-export default async function HomePage() {
-
-  // Fetch data
-  const cookieStore = cookies()
-  const supabase = createServerComponentClient({ cookies: () => cookieStore })
-  const { data } = await supabase.auth.getSession();
-  console.log(data);
-
+const Homepage = async () => {
   return (
-    <div>
-      <NavBar includeBurger={false} accountLink={"session/login"} logoLink={"/"} />
-      <div className="h-screen flex flex-col justify-center items-center">
-        <header className="mt-8 text-white text-center">
-          <h1 className="text-4xl font-bold">Welcome to RedForest</h1>
-          <p className="mt-4 text-xl">Your AI-Powered Classroom Assistant</p>
-        </header>
-
-        <section className="mt-64 text-white text-center max-w-lg">
-          <h2 className="text-2xl font-semibold">Our Goal</h2>
-          <p className="mt-4 text-lg">
-            RedForest is dedicated to bringing AI via eye-tracking to the classroom.
-            We help teachers understand how students perform in assignments, making education more effective.
+    <main className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-b from-[#2e026d] to-[#15162c]">
+      <div className="container flex flex-col items-center justify-center gap-12 px-4 py-16 ">
+        <div className="flex flex-col items-center gap-6">
+          <h1 className="text-5xl font-extrabold tracking-tight text-white sm:text-[5rem]">
+            Nextjs 14 App router starter
+          </h1>
+          <p className="font-extrabold tracking-tight text-white sm:text-[2rem]">
+            Based On
           </p>
-        </section>
-
+          <p className="text-xl font-extrabold tracking-tight text-white sm:text-[3rem]">
+            Create <span className="text-[hsl(280,100%,70%)]">T3</span> App
+          </p>
+        </div>
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:gap-8">
+          <Link
+            className="flex max-w-xs flex-col gap-4 rounded-xl bg-white/10 p-4 text-white hover:bg-white/20"
+            href="https://create.t3.gg/en/usage/first-steps"
+            target="_blank"
+          >
+            <h3 className="text-2xl font-bold">First Steps →</h3>
+            <div className="text-lg">
+              Just the basics - Everything you need to know to set up your
+              database and authentication.
+            </div>
+          </Link>
+          <Link
+            className="flex max-w-xs flex-col gap-4 rounded-xl bg-white/10 p-4 text-white hover:bg-white/20"
+            href="https://create.t3.gg/en/introduction"
+            target="_blank"
+          >
+            <h3 className="text-2xl font-bold">Documentation →</h3>
+            <div className="text-lg">
+              Learn more about Create T3 App, the libraries it uses, and how to
+              deploy it.
+            </div>
+          </Link>
+        </div>
+        <div className="flex w-full flex-1 flex-col items-center gap-4">
+          <Link href="/login" className="text-lg text-white">
+            Login
+          </Link>
+          <Link href="/authenticated" className="text-lg text-white">
+            Authenticated Route Example
+          </Link>
+        </div>
         <Suspense
           fallback={
             <p className="text-2xl text-white">Streaming TRPC Query...</p>
@@ -42,15 +56,9 @@ export default async function HomePage() {
         >
           <ServerDataStreaming />
         </Suspense>
-
-        <section className="mt-auto text-white text-center pb-16">
-          <h2 className="text-2xl font-semibold">Contact Us</h2>
-          <div className="mt-4 flex justify-center space-x-6">
-            <OpenTabIconButton icon={faEnvelope} url="mailto:contact.redforest.ai@gmail.com" />
-            <OpenTabIconButton icon={faGithub} url="https://github.com/reading-analytics-group/RedForest" />
-          </div>
-        </section>
       </div>
-    </div>
+    </main>
   );
 };
+
+export default Homepage;

@@ -1,4 +1,4 @@
-import { createTRPCRouter, privateProcedure } from "@/server/api/trpc";
+import { createTRPCRouter, privateProcedure } from "~/server/api/trpc";
 
 export const authRouter = createTRPCRouter({
   getProfile: privateProcedure.query(({ ctx }) => {

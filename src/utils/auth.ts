@@ -1,6 +1,6 @@
 import { cache } from "react";
 import { cookies } from "next/headers";
-import { supabase } from "@/server/supabase/supabaseClient";
+import { supabase } from "~/server/supabase/supabaseClient";
 
 export const getServerUser = cache(async () => {
   const ckies = cookies();

@@ -1,5 +1,3 @@
-"use server";
-
 import {
   createTRPCProxyClient,
   loggerLink,
@@ -7,10 +5,10 @@ import {
 } from "@trpc/client";
 import { cookies, headers } from "next/headers";
 
-import { appRouter } from "@/server/api/root";
+import { appRouter } from "~/server/api/root";
 import { transformer } from "./shared";
 import { cache } from "react";
-import { createTRPCContext } from "@/server/api/trpc";
+import { createTRPCContext } from "~/server/api/trpc";
 import { observable } from "@trpc/server/observable";
 import { callProcedure } from "@trpc/server";
 import { type TRPCErrorResponse } from "@trpc/server/rpc";
@@ -68,8 +66,7 @@ export const api = createTRPCProxyClient<typeof appRouter>({
               observer.complete();
             })
             .catch((cause: TRPCErrorResponse) => {
-              // observer.error(TRPCClientError.from(cause));
-              console.log(cause);
+              observer.error(TRPCClientError.from(cause));
             });
         }),
   ],
