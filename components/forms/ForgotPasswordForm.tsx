@@ -2,17 +2,12 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
-import { createBrowserClient } from '@supabase/ssr'
-import NavBar from '@/components/NavBar';
+import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 
-const ForgotPassword = () => {
+export default function ForgotPasswordForm() {
   const [email, setEmail] = useState<string>('');
   const [successMsg, setSuccessMsg] = useState<string>("");
-  
-  const supabase = createBrowserClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-  )
+  const supabase = createClientComponentClient();
 
   async function resetPassword(e: any) {
     e.preventDefault()
@@ -27,7 +22,6 @@ const ForgotPassword = () => {
 
   return (
     <div>
-      <NavBar />
       <div className="flex justify-center items-center h-screen bg-zinc-950">
         <div className="p-6 max-w-sm w-full bg-white rounded-lg border border-gray-200 shadow-md">
           <h2 className="mb-4 text-xl font-bold text-gray-900">Forgot Password</h2>
@@ -49,5 +43,3 @@ const ForgotPassword = () => {
     </div>
   );
 };
-
-export default ForgotPassword;

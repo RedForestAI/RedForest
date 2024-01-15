@@ -1,25 +1,23 @@
-// pages/index.js
-"use client";
+"use server";
 
-import React from 'react';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { cookies } from 'next/headers'
+import { createServerComponentClient } from '@supabase/auth-helpers-nextjs'
+import NavBar from '@/components/NavBar';
+import OpenTabIconButton from '@/components/OpenTabIconButton';
 import { faEnvelope } from '@fortawesome/free-solid-svg-icons';
 import { faGithub } from '@fortawesome/free-brands-svg-icons';
-import NavBar from '@/components/NavBar';
 
-const HomePage = () => {
+export default async function HomePage() {
 
-  const navLinks = [
-    { id: 1, link: "/auth/login", title: "Login" },
-  ];
-
-  const openInNewTab = (url: string) => {
-      window.open(url, "_blank", "noreferrer");
-    };
+  // Fetch data
+  const cookieStore = cookies()
+  const supabase = createServerComponentClient({ cookies: () => cookieStore })
+  const { data } = await supabase.auth.getSession();
+  console.log(data);
 
   return (
     <div>
-      <NavBar links={navLinks} />
+      <NavBar includeBurger={false} accountLink={"session/login"} logoLink={"/"} />
       <div className="h-screen flex flex-col justify-center items-center">
         <header className="mt-8 text-white text-center">
           <h1 className="text-4xl font-bold">Welcome to RedForest</h1>
@@ -37,13 +35,11 @@ const HomePage = () => {
         <section className="mt-auto text-white text-center pb-16">
           <h2 className="text-2xl font-semibold">Contact Us</h2>
           <div className="mt-4 flex justify-center space-x-6">
-            <FontAwesomeIcon icon={faEnvelope} onClick={() => openInNewTab('mailto:contact.redforest.ai@gmail.com')}/>
-            <FontAwesomeIcon icon={faGithub} onClick={() => openInNewTab("https://github.com/reading-analytics-group/RedForest")}/>
+            <OpenTabIconButton icon={faEnvelope} url="mailto:contact.redforest.ai@gmail.com" />
+            <OpenTabIconButton icon={faGithub} url="https://github.com/reading-analytics-group/RedForest" />
           </div>
         </section>
       </div>
     </div>
   );
 };
-
-export default HomePage;

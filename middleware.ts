@@ -1,80 +1,48 @@
-import { createServerClient, type CookieOptions } from '@supabase/ssr';
-import { NextResponse, type NextRequest } from 'next/server';
+import { createMiddlewareClient } from '@supabase/auth-helpers-nextjs'
+import { NextResponse } from 'next/server'
+
+import type { NextRequest } from 'next/server'
 
 const protectedRoutes = ['/access']
 
-export async function middleware(request: NextRequest) {
-  let response = NextResponse.next({
-    request: {
-      headers: request.headers,
-    },
-  })
+export async function middleware(req: NextRequest) {
+  const res = NextResponse.next()
 
-  const supabase = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    {
-      cookies: {
-        get(name: string) {
-          return request.cookies.get(name)?.value
-        },
-        set(name: string, value: string, options: CookieOptions) {
-          request.cookies.set({
-            name,
-            value,
-            ...options,
-          })
-          response = NextResponse.next({
-            request: {
-              headers: request.headers,
-            },
-          })
-          response.cookies.set({
-            name,
-            value,
-            ...options,
-          })
-        },
-        remove(name: string, options: CookieOptions) {
-          request.cookies.set({
-            name,
-            value: '',
-            ...options,
-          })
-          response = NextResponse.next({
-            request: {
-              headers: request.headers,
-            },
-          })
-          response.cookies.set({
-            name,
-            value: '',
-            ...options,
-          })
-        },
-      },
-    }
-  )
+  // Create a Supabase client configured to use cookies
+  const supabase = createMiddlewareClient({ req, res })
 
-  // Obtain the user session if available
+  // Refresh session if expired - required for Server Components
   let { data } = await supabase.auth.getSession()
- 
+
   // Redirect to /auth/login if no session and entering a protected route
   if (!data?.session) {
     for (const route of protectedRoutes) {
-      if (request.nextUrl.pathname.startsWith(route)){
-        const redirectURL = new URL("/auth/login", request.nextUrl.origin);
+      if (req.nextUrl.pathname.startsWith(route)){
+        const redirectURL = new URL("/session/login", req.nextUrl.origin);
         return NextResponse.redirect(redirectURL.toString())
       }
     }
   } else {
 
     // Redirect to / if session and entering /auth routes
-    if (request.nextUrl.pathname.startsWith("/auth")) {
-      const redirectURL = new URL("/access", request.nextUrl.origin);
+    if (req.nextUrl.pathname.startsWith("/session")) {
+      const redirectURL = new URL("/access", req.nextUrl.origin);
       return NextResponse.redirect(redirectURL.toString())
     }
   }
 
-  return response
+  return res
+}
+
+// Ensure the middleware is only called for relevant paths.
+export const config = {
+  matcher: [
+    /*
+     * Match all request paths except for the ones starting with:
+     * - _next/static (static files)
+     * - _next/image (image optimization files)
+     * - favicon.ico (favicon file)
+     */
+    '/((?!_next/static|_next/image|favicon.ico).*)',
+  ],
 }
