@@ -40,7 +40,7 @@ export default function CourseCreate( { profile }: CourseCreateProps) {
 
   const onSubmit: SubmitHandler<Inputs> = async (data) => {
     try {
-      let { data: any } = await courseMutation.mutateAsync({name: data.courseName, teacherId: profile.id})
+      await courseMutation.mutateAsync({name: data.courseName, teacherId: profile.id})
       console.log(data)
       closeModal()
 
@@ -50,8 +50,8 @@ export default function CourseCreate( { profile }: CourseCreateProps) {
         router.refresh();
       });
 
-    } catch (error) {
-      setErrorMessage("Failed to create course: " + error.message)
+    } catch (error: any) {
+      setErrorMessage("Failed to create course: " + error?.message)
     }
   }
 

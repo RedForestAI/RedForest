@@ -5,7 +5,7 @@ import { Role } from "@prisma/client";
 export const courseRouter = createTRPCRouter({
   
   get: privateProcedure
-    .input(z.object({ profileId: z.string(), role: z.enum([Role.TEACHER, Role.STUDENT]) }))
+    .input(z.object({ profileId: z.string(), role: z.enum([Role.TEACHER, Role.STUDENT, Role.ADMIN]) }))
     .query( async ({ input, ctx }) => {
       // Get course enrollments
       // console.log(input.profileId);
