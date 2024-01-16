@@ -23,9 +23,8 @@ import { db } from "~/server/db";
 
 export const createTRPCContext = async (opts: { headers: Headers }) => {
   const headers = opts.headers;
-  const authToken = headers.get("authorization");
   const supabase = createServerActionClient({ cookies })
-  
+
   const user = await supabase.auth.getUser();
   console.log(user);
 

@@ -1,21 +1,32 @@
 "use client";
 
+import { Profile } from "@prisma/client";
 import { Dialog, Transition } from '@headlessui/react'
-import { Fragment, useState } from 'react'
+import { Fragment, useState, useTransition } from 'react'
 import { useForm, SubmitHandler } from "react-hook-form";
+import { api } from "~/trpc/react";
+import { useRouter } from "next/navigation";
 
 type Inputs = {
   courseName: string
 }
 
-export default function CourseCreate() {
+type CourseCreateProps = {
+  profile: Profile
+}
+
+export default function CourseCreate( { profile }: CourseCreateProps) {
   const {
     register,
     handleSubmit,
     watch,
     formState: { errors },
   } = useForm<Inputs>()
-  let [isOpen, setIsOpen] = useState<boolean>(true)
+
+  let [isOpen, setIsOpen] = useState<boolean>(false)
+  let [errorMessage, setErrorMessage] = useState<string>("")
+  const router = useRouter();
+  const [isPending, startTransition] = useTransition();
 
   function closeModal() {
     setIsOpen(false)
@@ -25,9 +36,23 @@ export default function CourseCreate() {
     setIsOpen(true)
   }
 
+  const courseMutation = api.course.create.useMutation()
+
   const onSubmit: SubmitHandler<Inputs> = async (data) => {
-    console.log(data)
-    
+    try {
+      let { data: any } = await courseMutation.mutateAsync({name: data.courseName, teacherId: profile.id})
+      console.log(data)
+      closeModal()
+
+      startTransition(() => {
+        // Refresh the current route and fetch new data from the server without
+        // losing client-side browser or React state.
+        router.refresh();
+      });
+
+    } catch (error) {
+      setErrorMessage("Failed to create course: " + error.message)
+    }
   }
 
   return (
@@ -76,7 +101,8 @@ export default function CourseCreate() {
                   <form className="pt-4 pb-4 space-y-4" onSubmit={handleSubmit(onSubmit)}>
                     <input {...register("courseName", { required: true, maxLength: 20 })} placeholder="Course Name" className="block w-full rounded-md border-0 py-1.5 pl-2 pr-20 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"/>
                     {errors.courseName && <span className="text-red-900">This field is required or not filled correctly</span>}
-                    
+                    {errorMessage && <span className="text-red-900">{errorMessage}</span>}
+
                     <div className="pt-4">
                       <button
                         type="submit"

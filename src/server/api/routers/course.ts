@@ -3,7 +3,8 @@ import { createTRPCRouter, privateProcedure, publicProcedure } from "~/server/ap
 import { Role } from "@prisma/client";
 
 export const courseRouter = createTRPCRouter({
-  getCourses: privateProcedure
+  
+  get: privateProcedure
     .input(z.object({ profileId: z.string(), role: z.enum([Role.TEACHER, Role.STUDENT]) }))
     .query( async ({ input, ctx }) => {
       // Get course enrollments
@@ -31,5 +32,35 @@ export const courseRouter = createTRPCRouter({
       else {
         throw new Error("Invalid role");
       }
+    }),
+
+  create: privateProcedure
+    .input(z.object({ name: z.string(), teacherId: z.string() }))
+    .mutation(async ({ input, ctx }) => {
+
+      // First check that indeed the user is a teacher
+      const teacher = await ctx.db.profile.findUniqueOrThrow({
+        where: {id: input.teacherId}
+      });
+      if (teacher.role !== Role.TEACHER) {
+        throw new Error("User is not a teacher");
+      }
+
+      // Check that all courses have unique names
+      const courses = await ctx.db.course.findMany({
+        where: {teacherId: input.teacherId}
+      });
+
+      const courseNames = courses.map(course => course.name);
+      if (courseNames.includes(input.name)) {
+        throw new Error("Course name already exists");
+      }
+
+      return await ctx.db.course.create({
+        data: {
+          name: input.name,
+          teacherId: input.teacherId,
+        },
+      });
     }),
 });
