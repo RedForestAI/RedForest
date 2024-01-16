@@ -16,7 +16,10 @@ export default function SignUp() {
     e.preventDefault()
     const { data, error } = await supabase.auth.signUp({
       email: email,
-      password: password
+      password: password,
+      options: {
+        emailRedirectTo: `${origin}/api/auth/callback`
+      }
     })
 
     console.log(data)
