@@ -1,3 +1,4 @@
+
 import { PrismaClient, Role, Prisma, Profile, Course } from '@prisma/client'
 const client = new PrismaClient()
 
@@ -11,16 +12,19 @@ const getCourses = (profiles: Profile[]): Prisma.CourseCreateInput[] => [
   {
     id: "10000000-0000-0000-0000-000000000000",
     name: "Course ID #1",
+    // @ts-ignore
     teacher: { connect: { id: profiles[2].id }},
   },
   {
     id: "10000000-0000-0000-0000-000000000001",
     name: "Course ID #2",
+    // @ts-ignore
     teacher: { connect: { id: profiles[2].id }},
   },
   {
     id: "10000000-0000-0000-0000-000000000002",
     name: "Course ID #3",
+    // @ts-ignore
     teacher: { connect: { id: profiles[2].id }},
   }
 ];
@@ -28,32 +32,44 @@ const getCourses = (profiles: Profile[]): Prisma.CourseCreateInput[] => [
 const getCourseEnrollments = (profiles: Profile[], courses: Course[]): Prisma.courseEnrollmentCreateInput[] => [
   {
     id: "20000000-0000-0000-0000-000000000000",
+    // @ts-ignore
     student: { connect: { id: profiles[0].id }},
+    // @ts-ignore
     course: { connect: { id: courses[0].id }},
   },
   {
     id: "20000000-0000-0000-0000-000000000001",
+    // @ts-ignore
     student: { connect: { id: profiles[1].id }},
+    // @ts-ignore
     course: { connect: { id: courses[0].id }},
   },
   {
     id: "20000000-0000-0000-0000-000000000002",
+    // @ts-ignore
     student: { connect: { id: profiles[0].id }},
+    // @ts-ignore
     course: { connect: { id: courses[1].id }},
   },
   {
     id: "20000000-0000-0000-0000-000000000003",
+    // @ts-ignore
     student: { connect: { id: profiles[1].id }},
+    // @ts-ignore
     course: { connect: { id: courses[1].id }},
   },
   {
     id: "20000000-0000-0000-0000-000000000004",
+    // @ts-ignore
     student: { connect: { id: profiles[0].id }},
+    // @ts-ignore
     course: { connect: { id: courses[2].id }},
   },
   {
     id: "20000000-0000-0000-0000-000000000005",
+    // @ts-ignore
     student: { connect: { id: profiles[1].id }},
+    // @ts-ignore
     course: { connect: { id: courses[2].id }},
   },
 ];

@@ -1,3 +1,6 @@
+# NextJs
+.next
+
 # Avoid environment files
 .env
 .env.development
