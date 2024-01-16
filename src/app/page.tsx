@@ -10,10 +10,10 @@ import { faGithub } from '@fortawesome/free-brands-svg-icons';
 export default async function HomePage() {
 
   // Fetch data
-  // const cookieStore = cookies()
-  // const supabase = createServerComponentClient({ cookies: () => cookieStore })
-  // const { data } = await supabase.auth.getSession();
-  // console.log(data);
+  const cookieStore = cookies()
+  const supabase = createServerComponentClient({ cookies: () => cookieStore })
+  const { data } = await supabase.auth.getSession();
+  console.log(data);
 
   return (
     <div>

@@ -11,9 +11,10 @@ export default async function Dashboard() {
   
   // Fetch data
   let profile: Profile = await api.auth.getProfile.query();
-  // let courses: Course[] = await api.course.getCourses.query({profileId: profile.id});
-  // let profile: Profile = null
-  let courses: Course[] = []
+  let courses: Course[] = await api.course.getCourses.query({profileId: profile.id, role: profile.role});
+
+  // console.log(profile);
+  // console.log(courses);
 
   return (
     <div>
