@@ -1,11 +1,14 @@
 import { type PropsWithChildren } from "react";
-import { getServerUser } from "~/utils/auth";
 import { PrivateRouteBase } from "./PrivateRouteBase";
+import { cookies } from 'next/headers'
+import { createServerComponentClient } from '@supabase/auth-helpers-nextjs'
 
 export const PrivateRoute = async ({ children }: PropsWithChildren) => {
-  const user = await getServerUser();
+  const cookieStore = cookies()
+  const supabase = createServerComponentClient({ cookies: () => cookieStore })
+  const { data } = await supabase.auth.getUser();
 
-  if (!user) return null; // Prevent server side render of authorized page
+  if (!data.user) return null; // Prevent server side render of authorized page
 
   return <PrivateRouteBase>{children}</PrivateRouteBase>;
 };

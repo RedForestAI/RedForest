@@ -5,8 +5,6 @@ import "~/styles/globals.css";
 import { cn } from "~/utils/cn";
 import { Roboto } from "next/font/google";
 import { Toaster } from "~/components/ui/toaster";
-import { getServerUser } from "~/utils/auth";
-import { AuthProvider } from "~/providers/AuthProvider/AuthProvider";
 import { TRPCReactProvider } from "~/trpc/react";
 import { headers } from "next/headers";
 
@@ -21,10 +19,6 @@ const font = Roboto({
 });
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
-  const user = await getServerUser();
-
-  console.log("user");
-  console.log(user);
 
   return (
     <>
@@ -38,12 +32,10 @@ export default async function RootLayout({ children }: { children: React.ReactNo
           )}
         >
           <TRPCReactProvider headers={headers()}>
-            <AuthProvider {...user}>
               <Providers>
                 {children}
                 <Toaster />
               </Providers>
-            </AuthProvider>
           </TRPCReactProvider>
           <TailwindIndicator />
         </body>

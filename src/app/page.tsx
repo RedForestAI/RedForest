@@ -9,7 +9,7 @@ import { faGithub } from '@fortawesome/free-brands-svg-icons';
 
 export default async function HomePage() {
 
-  // // Fetch data
+  // Fetch data
   // const cookieStore = cookies()
   // const supabase = createServerComponentClient({ cookies: () => cookieStore })
   // const { data } = await supabase.auth.getSession();
@@ -17,7 +17,7 @@ export default async function HomePage() {
 
   return (
     <div>
-      <NavBar includeBurger={false} accountLink={"login"} logoLink={"/"} />
+      <NavBar includeBurger={false} accountLink={"session/login"} logoLink={"/"} />
       <div className="h-screen flex flex-col justify-center items-center bg-zinc-950">
         <header className="mt-8 text-white text-center">
           <h1 className="text-4xl font-bold">Welcome to RedForest</h1>

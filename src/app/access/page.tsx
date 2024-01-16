@@ -14,7 +14,7 @@ export default async function Dashboard() {
   const cookieStore = cookies()
   const supabase = createServerComponentClient({ cookies: () => cookieStore })
   const { data } = await supabase.auth.getUser();
-  let profile = {id: 0, role: Role.STUDENT};
+  let profile: any = null;
 
   console.log(data);
 
@@ -55,14 +55,18 @@ export default async function Dashboard() {
 
   return (
     <div>
-      <NavBar includeBurger={true} accountLink={"/account"} logoLink={"/access"}/>
+      <NavBar includeBurger={true} accountLink={"/access/account"} logoLink={"/access"}/>
       <div className="container mx-auto p-4">
-        <div>
-          {courses.map((course, index) => (
-            <CourseCard course={course} enableOptions={profile?.role == Role.TEACHER} key={index}/>
-          ))}
-        </div>
-        {profile?.role == Role.TEACHER && <CourseCreate />}
+        {profile &&
+          <div>
+            <div>
+              {courses.map((course, index) => (
+                <CourseCard course={course} enableOptions={profile?.role == Role.TEACHER} key={index}/>
+              ))}
+            </div>
+            {profile?.role == Role.TEACHER && <CourseCreate />}
+          </div>
+        }
       </div>
     </div>
   );

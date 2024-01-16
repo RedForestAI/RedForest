@@ -39,7 +39,7 @@ const Page = () => {
     } else {
       // Redirect to dashboard
       console.log("redirecting to access")
-      router.push("access");
+      router.push("../access");
     }
 
   }

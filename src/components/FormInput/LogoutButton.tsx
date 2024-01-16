@@ -16,6 +16,7 @@ export default function LogoutButton() {
       headers: { 'Content-Type': 'application/json' }
     })
     .then(response => console.log(response))
+    router.push('../session/login')
     router.refresh();
   }
 
