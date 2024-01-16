@@ -13,3 +13,15 @@ export async function POST(request: Request) {
     status: 301,
   })
 }
+
+export async function GET(request: Request) {
+  const requestUrl = new URL(request.url)
+  const cookieStore = cookies()
+  const supabase = createRouteHandlerClient({ cookies: () => cookieStore })
+
+  await supabase.auth.signOut()
+
+  return NextResponse.redirect(`${requestUrl.origin}`, {
+    status: 301,
+  })
+}

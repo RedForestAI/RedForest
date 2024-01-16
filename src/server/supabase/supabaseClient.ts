@@ -1,11 +1,9 @@
 import { createClient } from "@supabase/supabase-js";
 
-import { type Database } from "./supabaseTypes";
-
 import { env } from "~/env.mjs";
 
 export const getServiceSupabase = () =>
-  createClient<Database>(
+  createClient(
     env.NEXT_PUBLIC_SUPABASE_URL,
     env.SUPABASE_SERVICE_KEY,
     {
@@ -16,7 +14,7 @@ export const getServiceSupabase = () =>
     },
   );
 
-export const clientSupabase = createClient<Database>(
+export const clientSupabase = createClient(
   env.NEXT_PUBLIC_SUPABASE_URL,
   env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
 );
