@@ -10,6 +10,7 @@ type DangerZoneFormProps = {
 
 export default function DangerZoneForm(props: DangerZoneFormProps) {
   const accountConvert = api.auth.convertToTeacher.useMutation()
+  const accountDelete = api.auth.deleteAccount.useMutation()
   const router = useRouter();
 
   const convertToTeacher = async () => {
@@ -19,6 +20,16 @@ export default function DangerZoneForm(props: DangerZoneFormProps) {
       router.refresh();
     } catch (error: any) {
       console.log("Failed to convert to teacher: " + error?.message)
+    }
+  }
+
+  const deleteAccount = async () => {
+    try {
+      await accountDelete.mutateAsync({profileId: props.profile.id})
+      console.log("Deleted account")
+      router.push("/api/auth/logout");
+    } catch (error: any) {
+      console.log("Failed to delete account: " + error?.message)
     }
   }
 
@@ -33,7 +44,7 @@ export default function DangerZoneForm(props: DangerZoneFormProps) {
           </div>
         }
         <p className="mt-4 mb-4">Beware that deleting your account is permanent and will delete all your courses and user information.</p>
-        <button className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"> Delete Account </button>
+        <button onClick={deleteAccount} className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"> Delete Account </button>
       </div>
     </>
   )
