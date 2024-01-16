@@ -9,9 +9,10 @@
 import { TRPCError, initTRPC } from "@trpc/server";
 import superjson from "superjson";
 import { ZodError } from "zod";
+import { cookies } from 'next/headers'
+import { createServerActionClient } from '@supabase/auth-helpers-nextjs'
 
 import { db } from "~/server/db";
-import { getUserAsAdmin } from "../supabase/supabaseClient";
 
 /**
  * This is the actual context you will use in your router. It will be used to process every request
@@ -23,8 +24,10 @@ import { getUserAsAdmin } from "../supabase/supabaseClient";
 export const createTRPCContext = async (opts: { headers: Headers }) => {
   const headers = opts.headers;
   const authToken = headers.get("authorization");
-
-  const { user } = authToken ? await getUserAsAdmin(authToken) : { user: null };
+  const supabase = createServerActionClient({ cookies })
+  
+  const user = await supabase.auth.getUser();
+  console.log(user);
 
   return {
     ...opts,

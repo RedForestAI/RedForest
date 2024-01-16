@@ -7,7 +7,7 @@ import { useState } from "react";
 
 import { type AppRouter } from "~/server/api/root";
 import { getUrl, transformer } from "./shared";
-import { supabase } from "~/server/supabase/supabaseClient";
+import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 
 export const api = createTRPCReact<AppRouter>({
   overrides: {
@@ -35,6 +35,7 @@ export function TRPCReactProvider(props: {
   headers: Headers;
 }) {
   const [queryClient] = useState(() => new QueryClient());
+  const supabase = createClientComponentClient()
 
   const [trpcClient] = useState(() =>
     api.createClient({
@@ -50,7 +51,7 @@ export function TRPCReactProvider(props: {
           url: getUrl(),
           async headers() {
             const heads = new Map(props.headers);
-            const { data } = await supabase().auth.getSession();
+            const { data } = await supabase.auth.getSession();
 
             if (data.session) {
               heads.set("authorization", data.session.access_token);
