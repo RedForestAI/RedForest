@@ -7,15 +7,20 @@ export const courseRouter = createTRPCRouter({
   get: privateProcedure
     .input(z.object({ profileId: z.string(), role: z.enum([Role.TEACHER, Role.STUDENT, Role.ADMIN]) }))
     .query( async ({ input, ctx }) => {
-      // Get course enrollments
-      // console.log(input.profileId);
+
+      // Authenticated user and given profileID
+      if (!ctx.user.data.user || input.profileId !== ctx.user.data.user.id) {
+        throw new Error("User is not authenticated");
+      }
 
       if (input.role === Role.TEACHER) {
+        // Get their courses they teach
         return await ctx.db.course.findMany({
           where: {teacherId: input.profileId},
         });
       }
       else if (input.role === Role.STUDENT) {
+        // Get course enrollments
         const courseEnrollments = await ctx.db.courseEnrollment.findMany({
           where: {studentId: input.profileId},
         });
@@ -37,6 +42,11 @@ export const courseRouter = createTRPCRouter({
   create: privateProcedure
     .input(z.object({ name: z.string(), teacherId: z.string() }))
     .mutation(async ({ input, ctx }) => {
+
+      // Authenticated user and given profileID
+      if (!ctx.user.data.user || input.teacherId !== ctx.user.data.user.id) {
+        throw new Error("User is not authenticated");
+      }
 
       // First check that indeed the user is a teacher
       const teacher = await ctx.db.profile.findUniqueOrThrow({
@@ -62,5 +72,30 @@ export const courseRouter = createTRPCRouter({
           teacherId: input.teacherId,
         },
       });
+    }),
+
+  delete: privateProcedure
+    .input(z.object({ courseId: z.string(), teacherId: z.string() }))
+    .mutation(async ({ input, ctx }) => {
+      // Authenticated user and given profileID
+      if (!ctx.user.data.user || input.teacherId !== ctx.user.data.user.id) {
+        throw new Error("User is not authenticated");
+      }
+
+      // Get the course to delete
+      const course = await ctx.db.course.findUniqueOrThrow({
+        where: {id: input.courseId}
+      });
+
+      // Check that the course belongs to the teacher
+      if (course.teacherId !== input.teacherId) {
+        throw new Error("Course does not belong to teacher");
+      }
+
+      // Delete the course
+      return await ctx.db.course.delete({
+        where: {id: input.courseId}
+      });
+
     }),
 });

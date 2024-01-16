@@ -1,4 +1,5 @@
 import { Course } from '@prisma/client'
+import DropDown from './course-dropdown-menu';
 
 interface CourseCardProps {
   course: Course
@@ -16,11 +17,7 @@ const CourseCard = ( props : CourseCardProps) => {
             Fall 2023
           </div>
         </span>
-        {props.enableOptions && <img
-          loading="lazy"
-          src="data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACwAAAAAAQABAAACAkQBADs="
-          className="aspect-square object-contain object-center w-[22px] overflow-hidden shrink-0 max-w-full mt-2.5 self-start"
-        />}
+        {props.enableOptions && <DropDown courseId={props.course.id} teacherId={props.course.teacherId}/>}
       </div>
     </div>
   )

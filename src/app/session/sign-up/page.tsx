@@ -23,7 +23,7 @@ export default function SignUp() {
     })
 
     console.log(data)
-
+    
     if (error) {
       setError(error.message);
     } else {
