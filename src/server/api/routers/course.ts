@@ -9,7 +9,7 @@ export const courseRouter = createTRPCRouter({
     .query( async ({ input, ctx }) => {
 
       // Authenticated user and given profileID
-      if (!ctx.user.data.user && input.profileId !== ctx.user.data.user?.id) {
+      if (!ctx.user.data.user || input.profileId !== ctx.user.data.user.id) {
         throw new Error("User is not authenticated");
       }
 
@@ -44,7 +44,7 @@ export const courseRouter = createTRPCRouter({
     .mutation(async ({ input, ctx }) => {
 
       // Authenticated user and given profileID
-      if (!ctx.user.data.user && input.teacherId !== ctx.user.data.user?.id) {
+      if (!ctx.user.data.user || input.teacherId !== ctx.user.data.user.id) {
         throw new Error("User is not authenticated");
       }
 
@@ -78,7 +78,7 @@ export const courseRouter = createTRPCRouter({
     .input(z.object({ courseId: z.string(), teacherId: z.string() }))
     .mutation(async ({ input, ctx }) => {
       // Authenticated user and given profileID
-      if (!ctx.user.data.user && input.teacherId !== ctx.user.data.user?.id) {
+      if (!ctx.user.data.user || input.teacherId !== ctx.user.data.user.id) {
         throw new Error("User is not authenticated");
       }
 
