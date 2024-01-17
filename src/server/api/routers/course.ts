@@ -107,6 +107,26 @@ export const courseRouter = createTRPCRouter({
         throw new Error("Course does not belong to teacher");
       }
 
+      // Delete all course enrollments
+      const courseEnrollments = await ctx.db.courseEnrollment.findMany({
+        where: {courseId: input.courseId}
+      });
+      await Promise.all(
+        courseEnrollments.map(async (courseEnrollment) => ctx.db.courseEnrollment.delete({
+          where: {id: courseEnrollment.id}
+        }))
+      );
+
+      // Delete all assignments
+      const assignments = await ctx.db.assignment.findMany({
+        where: {courseId: input.courseId}
+      });
+      await Promise.all(
+        assignments.map(async (assignment) => ctx.db.assignment.delete({
+          where: {id: assignment.id}
+        }))
+      );
+
       // Delete the course
       return await ctx.db.course.delete({
         where: {id: input.courseId}

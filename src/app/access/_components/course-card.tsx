@@ -1,7 +1,6 @@
 import { Course } from '@prisma/client'
 import Link from "next/link";
-
-import DropDown from './course-dropdown-menu';
+import CourseOptions from './course-options';
 
 interface CourseCardProps {
   course: Course
@@ -22,7 +21,7 @@ const CourseCard = ( props : CourseCardProps) => {
               Fall 2023
             </div>
           </span>
-        {props.enableOptions && <DropDown courseId={props.course.id} teacherId={props.course.teacherId}/>}
+        {props.enableOptions && <CourseOptions course={props.course} teacherId={props.course.teacherId}/>}
         </div>
       </div>
     </div>
