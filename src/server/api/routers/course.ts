@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { createTRPCRouter, privateProcedure, publicProcedure } from "~/server/api/trpc";
+import { createTRPCRouter, privateProcedure } from "~/server/api/trpc";
 import { Role } from "@prisma/client";
 
 export const courseRouter = createTRPCRouter({
@@ -37,6 +37,21 @@ export const courseRouter = createTRPCRouter({
       else {
         throw new Error("Invalid role");
       }
+    }),
+
+  getOne: privateProcedure
+    .input(z.object({ courseId: z.string(), profileId: z.string()}))
+    .query(async ({ input, ctx }) => {
+
+      // Authenticated user and given profileID
+      if (!ctx.user.data.user || input.profileId !== ctx.user.data.user.id) {
+        throw new Error("User is not authenticated");
+      }
+
+      // Get the course
+      return await ctx.db.course.findUniqueOrThrow({
+        where: {id: input.courseId}
+      });
     }),
 
   create: privateProcedure

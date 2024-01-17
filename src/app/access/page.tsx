@@ -1,7 +1,7 @@
 import { Profile, Role, Course } from "@prisma/client";
 import NavBar from "~/components/ui/navbar";
-import CourseCard from "~/components/ui/course-card";
-import CourseCreate from "~/components/Modals/course-create";
+import CourseCard from "./_components/course-card";
+import CourseCreate from "./_components/course-create";
 import { api } from '~/trpc/server';
 
 export default async function Dashboard() {
@@ -9,6 +9,11 @@ export default async function Dashboard() {
   // Fetch data
   let profile: Profile = await api.auth.getProfile.query();
   let courses: Course[] = await api.course.get.query({profileId: profile.id, role: profile.role});
+
+  // Sort by course name
+  courses.sort((a, b) => {
+    return a.name.localeCompare(b.name);
+  });
 
   return (
     <div>
