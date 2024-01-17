@@ -3,6 +3,7 @@ import { Profile, Assignment, Role, Course } from "@prisma/client";
 import NavBar from "~/components/ui/navbar";
 import { api } from '~/trpc/server';
 import AssignmentCard from "./_components/assignment-card";
+import AssignmentCreate from './_components/assignment-create';
 
 export default async function Page({params}: {params: { courseId: string }}) {
 
@@ -29,7 +30,7 @@ export default async function Page({params}: {params: { courseId: string }}) {
                   <AssignmentCard assignment={assignment} course={course} key={index}/>
                 ))}
               </div>
-              {/* {profile?.role == Role.TEACHER && <AssignmentCreate profile={profile}/>} */}
+              {profile?.role == Role.TEACHER && <AssignmentCreate profile={profile} course={course}/>}
             </div>
           : <div>
               <p>Failed to fetch profile and course information</p>

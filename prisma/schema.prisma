@@ -59,9 +59,11 @@ model courseEnrollment {
 model Assignment {
   id                String      @id @default(uuid()) @db.Uuid
   name              String
-  dueDate           DateTime
+  dueDate           DateTime    @default(now())
   course            Course      @relation(fields: [courseId], references: [id])
   courseId          String      @db.Uuid
 
+  published         Boolean     @default(false)
+  publishedDate     DateTime    @default(now())
   @@map("assignment")
 }
