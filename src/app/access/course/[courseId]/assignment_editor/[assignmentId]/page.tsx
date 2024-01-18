@@ -26,7 +26,7 @@ export default async function Page({params}: {params: { courseId: string, assign
   return (
     <div>
       <NavBar includeBurger={true} accountLink={"/access/account"} logoLink={"/access"}/>
-      <div className="items-stretch bg-zinc-900 flex flex-col px-5 py-11 max-md:px-5">
+      <div className="pt-20 items-stretch bg-zinc-900 flex flex-col px-5 py-11 max-md:px-5">
       <div className="justify-center bg-white bg-opacity-0 flex flex-col pt-1.5 pb-4 px-3.5 items-start max-md:max-w-full">
         <span className="text-white text-center text-base whitespace-nowrap justify-center items-stretch bg-stone-900 z-[1] ml-5 px-1.5 max-md:ml-2.5">
           Assignment Information

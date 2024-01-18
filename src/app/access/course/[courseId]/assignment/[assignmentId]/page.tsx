@@ -9,7 +9,7 @@ export default function Page() {
   return (
     <div>
       <NavBar includeBurger={true} accountLink={"/access/account"} logoLink={"/access"}/>
-      <div>
+      <div className="pt-20">
         <PDFViewer file={pdfUrl}/>
       </div>
     </div>
