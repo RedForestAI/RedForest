@@ -1,9 +1,11 @@
 import "./WebGazer.css"
 
+// @ts-ignore
 let instance = null;
 
 export class WebGazerManager {
   constructor() {
+    // @ts-ignore
     if (!instance) {
       instance = this;
       this.scriptId = 'webgazer-script';
@@ -20,11 +22,13 @@ export class WebGazerManager {
   removeExistingScript() {
     // Ensure this runs only in the browser
     if (typeof document !== "undefined") {
+      // @ts-ignore
       const existingScript = document.getElementById(this.scriptId);
       if (existingScript) {
         existingScript.remove();
       }
       if (typeof window !== "undefined") {
+        // @ts-ignore
         window.webgazer = null; // Clear the existing webgazer object
       }
     }
@@ -36,10 +40,12 @@ export class WebGazerManager {
     if (typeof document !== "undefined") {
       return new Promise((resolve, reject) => {
         const script = document.createElement('script');
+        // @ts-ignore
         script.id = this.scriptId;
         script.src = 'https://webgazer.cs.brown.edu/webgazer.js';
         script.onload = () => {
           this.scriptLoaded = true;
+          // @ts-ignore
           resolve();
         };
         script.onerror = () => {
@@ -55,8 +61,10 @@ export class WebGazerManager {
     try {
       await this.loadScript();
 
+      // @ts-ignore
       window.webgazer.setGazeListener((data, elapsedTime) => {
         if (data) {
+          // @ts-ignore
           this.gazeData = window.webgazer.util.bound(data);
         }
       }).begin();
@@ -71,17 +79,20 @@ export class WebGazerManager {
     if (!this.scriptLoaded) {
       this.loadScript();
     }
-
+    // @ts-ignore
     if (!this.isListening) {
       this.setupWebGazer();
     } else if (!this.isActive) {
+      // @ts-ignore
       window.webgazer && window.webgazer.resume();
       this.isActive = true;
     }
   }
 
   show() {
+    // @ts-ignore
     if (this.isActive && window.webgazer) {
+      // @ts-ignore
       window.webgazer
         .showPredictionPoints(true)
         // .showVideo(true);
@@ -89,7 +100,9 @@ export class WebGazerManager {
   }
 
   hide() {
+    // @ts-ignore
     if (this.isActive && window.webgazer) {
+      // @ts-ignore
       window.webgazer
         .showPredictionPoints(false)
         .showVideo(false);
@@ -104,7 +117,9 @@ export class WebGazerManager {
   }
 
   stop() {
+    // @ts-ignore
     if (this.isActive && window.webgazer) {
+      // @ts-ignore
       window.webgazer.pause();
       this.isActive = false;
     }
@@ -112,8 +127,11 @@ export class WebGazerManager {
 
   end() {
     try {
+      // @ts-ignore
       if (window.webgazer) {
+        // @ts-ignore
         window.webgazer.stopVideo();
+        // @ts-ignore
         window.webgazer.end();
         this.isActive = false;
         this.scriptLoaded = false;
