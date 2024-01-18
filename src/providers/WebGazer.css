@@ -1,0 +1,9 @@
+#webgazerVideoContainer {
+    display: block !important; 
+    position: fixed !important;
+    top: 0px !important;
+    left: 0px !important;
+    width: 320px !important;
+    height: 240px !important;
+    z-index: 100 !important;
+}

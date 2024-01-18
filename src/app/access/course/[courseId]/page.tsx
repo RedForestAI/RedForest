@@ -30,12 +30,12 @@ export default async function Page({params}: {params: { courseId: string }}) {
   return (
     <div>
       <NavBar includeBurger={true} accountLink={"/access/account"} logoLink={"/access"}/>
-      <div className="container mx-auto p-4">
+      <div className="pt-20 container mx-auto p-4">
         {profile && course
           ? <div>
               <div>
                 {assignments.map((assignment, index) => (
-                  <AssignmentCard assignment={assignment} course={course!} key={index}/>
+                  <AssignmentCard assignment={assignment} course={course!} editable={profile.role === Role.TEACHER} key={index}/>
                 ))}
               </div>
               {profile?.role == Role.TEACHER && <AssignmentCreate profile={profile} course={course}/>}

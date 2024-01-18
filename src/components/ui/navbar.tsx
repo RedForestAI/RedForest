@@ -8,7 +8,7 @@ interface NavbarProps {
 
 export default function Navbar(props: NavbarProps) {
   return (
-    <div className="items-stretch bg-zinc-900 flex w-full justify-between gap-5 px-3.5 py-2 border-b-neutral-400 border-b-opacity-50 border-b border-solid max-md:max-w-full max-md:flex-wrap">
+    <div className="fixed top-0 z-10 items-stretch bg-zinc-900 flex w-full justify-between gap-5 px-3.5 py-2 border-b-neutral-400 border-b-opacity-50 border-b border-solid max-md:max-w-full max-md:flex-wrap">
       <div className="items-stretch flex justify-between gap-4 py-0.5">
         {props.includeBurger && <div className="p-3 space-y-1.5 bg-gray-600 rounded shadow">
           <span className="block w-7 h-0.5 bg-gray-100"></span>

@@ -4,6 +4,7 @@ import Link from "next/link";
 interface AssignmentCardProps {
   course: Course
   assignment: Assignment
+  editable: boolean
 }
 
 const AssignmentCard = ( props : AssignmentCardProps) => {
@@ -37,8 +38,16 @@ const AssignmentCard = ( props : AssignmentCardProps) => {
   }
 
   const getLink = () => {
-    if (!props.assignment.published) return `/access/course/${props.course.id}/assignment_editor/${props.assignment.id}`;
-    return `/access/course/${props.course.id}/assignment/${props.assignment.id}`;
+
+    // Teacher
+    if (props.editable) {
+      if (!props.assignment.published) return `/access/course/${props.course.id}/assignment_editor/${props.assignment.id}`;
+      return `/access/course/${props.course.id}/assignment/${props.assignment.id}`;
+    }
+
+    // Student
+    return `/access/course/${props.course.id}/assignment/${props.assignment.id}`
+
   }
 
   return (

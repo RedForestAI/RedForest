@@ -18,7 +18,7 @@ export default async function Account() {
   return (
     <div>
       <NavBar includeBurger={true} accountLink={"/access/account"} logoLink={"/access"}/>
-      <div className="container mx-auto p-4">
+      <div className="pt-20 container mx-auto p-4">
         {data && data.user
           ? <>
             <h1 className="text-xl font-bold mb-4">Account</h1>
