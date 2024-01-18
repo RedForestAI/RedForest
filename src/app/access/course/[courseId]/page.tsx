@@ -35,7 +35,7 @@ export default async function Page({params}: {params: { courseId: string }}) {
           ? <div>
               <div>
                 {assignments.map((assignment, index) => (
-                  <AssignmentCard assignment={assignment} course={course!} key={index}/>
+                  <AssignmentCard assignment={assignment} course={course!} editable={profile.role === Role.TEACHER} key={index}/>
                 ))}
               </div>
               {profile?.role == Role.TEACHER && <AssignmentCreate profile={profile} course={course}/>}

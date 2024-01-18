@@ -6,6 +6,10 @@ await import("./src/env.mjs");
 
 /** @type {import("next").NextConfig} */
 const config = {
+  webpack: (config) => {
+    config.resolve.alias.canvas = false;
+    return config;
+  },
   reactStrictMode: true,
 
   /**

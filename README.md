@@ -119,3 +119,5 @@ You can check out the [create-t3-app GitHub repository](https://github.com/t3-os
 ## How do I deploy this?
 
 Follow deployment guides for [Vercel](https://create.t3.gg/en/deployment/vercel), [Netlify](https://create.t3.gg/en/deployment/netlify) and [Docker](https://create.t3.gg/en/deployment/docker) for more information.
+
+https://redforest.app/api/enroll?courseId=c4ba17aa-967e-4a1b-98ac-46f717cc05d7&password=qzixcplj
