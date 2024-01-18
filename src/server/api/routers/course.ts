@@ -54,6 +54,29 @@ export const courseRouter = createTRPCRouter({
       });
     }),
 
+  getInviteLink: privateProcedure
+    .input(z.object({ passwordId: z.string(), teacherId: z.string() }))
+    .query(async ({ input, ctx }) => {
+
+      // Authenticated user and given profileID
+      if (!ctx.user.data.user || input.teacherId !== ctx.user.data.user.id) {
+        throw new Error("User is not authenticated");
+      }
+
+      // First check that indeed the user is a teacher
+      const teacher = await ctx.db.profile.findUniqueOrThrow({
+        where: {id: input.teacherId}
+      });
+      if (teacher.role !== Role.TEACHER) {
+        throw new Error("User is not a teacher");
+      }
+
+      // Get the course password
+      return await ctx.db.coursePassword.findUniqueOrThrow({
+        where: {id: input.passwordId}
+      });
+    }),
+
   create: privateProcedure
     .input(z.object({ name: z.string(), teacherId: z.string() }))
     .mutation(async ({ input, ctx }) => {
@@ -81,10 +104,19 @@ export const courseRouter = createTRPCRouter({
         throw new Error("Course name already exists");
       }
 
+      // Create a course password
+      const password = Math.random().toString(36).slice(-8);
+      const dbPassword = await ctx.db.coursePassword.create({
+        data: {
+          secret: password,
+        },
+      });
+
       return await ctx.db.course.create({
         data: {
           name: input.name,
           teacherId: input.teacherId,
+          passwordId: dbPassword.id,
         },
       });
     }),
@@ -106,6 +138,26 @@ export const courseRouter = createTRPCRouter({
       if (course.teacherId !== input.teacherId) {
         throw new Error("Course does not belong to teacher");
       }
+
+      // Delete all course enrollments
+      const courseEnrollments = await ctx.db.courseEnrollment.findMany({
+        where: {courseId: input.courseId}
+      });
+      await Promise.all(
+        courseEnrollments.map(async (courseEnrollment) => ctx.db.courseEnrollment.delete({
+          where: {id: courseEnrollment.id}
+        }))
+      );
+
+      // Delete all assignments
+      const assignments = await ctx.db.assignment.findMany({
+        where: {courseId: input.courseId}
+      });
+      await Promise.all(
+        assignments.map(async (assignment) => ctx.db.assignment.delete({
+          where: {id: assignment.id}
+        }))
+      );
 
       // Delete the course
       return await ctx.db.course.delete({

@@ -7,10 +7,18 @@ import AssignmentCreate from './_components/assignment-create';
 
 export default async function Page({params}: {params: { courseId: string }}) {
 
+  // Default values
+  let course: Course | null = null;
+  let assignments: Assignment[] = [];
+
   // Fetch data
   let profile: Profile = await api.auth.getProfile.query();
-  let course: Course = await api.course.getOne.query({courseId: params.courseId, profileId: profile.id});
-  let assignments: Assignment[] = await api.assignment.get.query({courseId: params.courseId});
+  try {
+    course = await api.course.getOne.query({courseId: params.courseId, profileId: profile.id});
+    assignments = await api.assignment.get.query({courseId: params.courseId});
+  } catch (e) {
+    console.log(e);
+  }
 
   // Sort by due date
   assignments.sort((a, b) => {
@@ -23,11 +31,11 @@ export default async function Page({params}: {params: { courseId: string }}) {
     <div>
       <NavBar includeBurger={true} accountLink={"/access/account"} logoLink={"/access"}/>
       <div className="container mx-auto p-4">
-        {profile?.id
+        {profile && course
           ? <div>
               <div>
                 {assignments.map((assignment, index) => (
-                  <AssignmentCard assignment={assignment} course={course} key={index}/>
+                  <AssignmentCard assignment={assignment} course={course!} key={index}/>
                 ))}
               </div>
               {profile?.role == Role.TEACHER && <AssignmentCreate profile={profile} course={course}/>}
