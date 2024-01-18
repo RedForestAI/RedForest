@@ -17,6 +17,7 @@ export const assignmentRouter = createTRPCRouter({
     .query( async ({ input, ctx }) => {
 
       // Get assignment by id
+      console.log(input.id)
       return await ctx.db.assignment.findUniqueOrThrow({
         where: {id: input.id},
       });
@@ -32,6 +33,16 @@ export const assignmentRouter = createTRPCRouter({
           courseId: input.courseId,
           name: "",
         }
+      });
+    }),
+
+  delete: privateProcedure
+    .input(z.object({ id: z.string()}))
+    .mutation(async ({ input, ctx }) => {
+
+      // Delete assignment
+      return ctx.db.assignment.delete({
+        where: {id: input.id},
       });
     }),
 });

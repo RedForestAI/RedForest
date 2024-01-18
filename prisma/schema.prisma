@@ -34,6 +34,8 @@ model Course {
   // TEACHER
   teacher           Profile     @relation(name: "ownCourses", fields: [teacherId], references: [id])
   teacherId         String      @db.Uuid
+  password          CoursePassword @relation(fields: [passwordId], references: [id])
+  passwordId        String      @db.Uuid @unique
   
   // STUDENT
   students          courseEnrollment[]
@@ -42,6 +44,15 @@ model Course {
   assignments       Assignment[]
 
   @@map("course")
+}
+
+model CoursePassword {
+  id                String      @id @default(uuid()) @db.Uuid
+  course            Course?     
+  courseId          String?     @db.Uuid @unique
+  secret            String      @unique
+
+  @@map("course_password")
 }
 
 // Reference: https://www.prisma.io/docs/orm/more/help-and-troubleshooting/help-articles/working-with-many-to-many-relations#explicit-relations

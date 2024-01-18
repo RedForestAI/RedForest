@@ -1,8 +1,8 @@
 import { Profile, Assignment, Role } from "@prisma/client";
 import { redirect } from "next/navigation";
-import Link from "next/link";
 
 import NavBar from "~/components/ui/navbar";
+import ActionButtons from "./_components/action-buttons";
 import { api } from '~/trpc/server';
 
 export default async function Page({params}: {params: { courseId: string, assignmentId: string }}) {
@@ -14,14 +14,14 @@ export default async function Page({params}: {params: { courseId: string, assign
     redirect(`/access/course/${params.courseId}`)
   }
 
-  // Get the course
-  try {
-    const course = await api.course.getOne.query({courseId: params.courseId, profileId: profile.id});
-  } catch (e) {
-    redirect(`/access/course/${params.courseId}`)
-  }
-
   const assignment: Assignment = await api.assignment.getOne.query({id: params.assignmentId});
+
+  const getAssignmentName = () => {
+    if (!assignment.published) {
+      return `${assignment.name} (Draft)`
+    }
+    return assignment.name
+  }
 
   return (
     <div>
@@ -33,7 +33,7 @@ export default async function Page({params}: {params: { courseId: string, assign
         </span>
         <div className="items-stretch self-stretch flex flex-col p-8 rounded-2xl border-[3px] border-solid border-white max-md:max-w-full max-md:px-5">
           <span className="justify-center text-white text-base items-stretch border px-2.5 rounded-2xl border-solid border-zinc-300 max-md:max-w-full">
-            {assignment.name}
+            {getAssignmentName()}
           </span>
           <span className="justify-center text-white text-base items-stretch border mt-8 px-2.5 rounded-2xl border-solid border-zinc-300 max-md:max-w-full">
             {assignment.dueDate.toLocaleDateString()}
@@ -117,20 +117,7 @@ export default async function Page({params}: {params: { courseId: string, assign
           </div>
         </div>
       </div>
-      <div className="justify-between items-stretch flex gap-2.5 mt-8 mb-8 pl-20 pr-10 py-3 max-md:max-w-full max-md:flex-wrap max-md:px-5">
-        <Link href={`../../../course/${params.courseId}`}>
-          <div className="flex grow basis-[0%] flex-col justify-center items-stretch rounded-2xl">
-            <span className="justify-center text-white text-center text-base bg-orange-600 items-stretch px-7 py-4 rounded-2xl max-md:px-5">
-              Save
-            </span>
-          </div>
-        </Link>
-        <div className="flex grow basis-[0%] flex-col justify-center items-stretch rounded-2xl">
-          <span className="justify-center text-white text-center text-base bg-orange-600 items-stretch px-5 py-4 rounded-2xl max-md:px-5">
-            Publish
-          </span>
-        </div>
-      </div>
+      <ActionButtons courseId={params.courseId} assignmentId={params.assignmentId}/>
     </div>
     </div>
   )

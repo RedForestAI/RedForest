@@ -9,7 +9,7 @@ export default async function Dashboard() {
   // Fetch data
   let profile: Profile = await api.auth.getProfile.query();
   let courses: Course[] = await api.course.get.query({profileId: profile.id, role: profile.role});
-
+  
   // Sort by course name
   courses.sort((a, b) => {
     return a.name.localeCompare(b.name);

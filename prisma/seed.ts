@@ -20,16 +20,19 @@ const getCourses = (profiles: Profile[]): Prisma.CourseCreateInput[] => [
     id: "10000000-0000-0000-0000-000000000000",
     name: "Course ID #1",
     teacher: { connect: { id: profiles[2]?.id }},
+    password: { create: { secret: "password1" }},
   },
   {
     id: "10000000-0000-0000-0000-000000000001",
     name: "Course ID #2",
     teacher: { connect: { id: profiles[2]?.id }},
+    password: { create: { secret: "password2" }},
   },
   {
     id: "10000000-0000-0000-0000-000000000002",
     name: "Course ID #3",
     teacher: { connect: { id: profiles[2]?.id }},
+    password: { create: { secret: "password3" }},
   }
 ];
 

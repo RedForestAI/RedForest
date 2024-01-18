@@ -17,7 +17,7 @@ export default function AssignmentCreate( props: AssignmentCreateProps) {
   const createAssignment = async () => {
     try {
       const result = await mutation.mutateAsync({courseId: props.course.id});
-      router.push(`access/assignment_editor/${result.id}`)
+      router.push(`../../access/course/${props.course.id}/assignment_editor/${result.id}`)
     } catch {
       console.log("Failed to create assignment")
     }

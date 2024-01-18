@@ -81,10 +81,19 @@ export const courseRouter = createTRPCRouter({
         throw new Error("Course name already exists");
       }
 
+      // Create a course password
+      const password = Math.random().toString(36).slice(-8);
+      const dbPassword = await ctx.db.coursePassword.create({
+        data: {
+          secret: password,
+        },
+      });
+
       return await ctx.db.course.create({
         data: {
           name: input.name,
           teacherId: input.teacherId,
+          passwordId: dbPassword.id,
         },
       });
     }),
