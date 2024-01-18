@@ -1,8 +1,8 @@
 "use client";
 
-import { Course } from "@prisma/client";
+import { Course, CoursePassword } from "@prisma/client";
 import { Dialog, Transition } from '@headlessui/react'
-import { Fragment, useState } from 'react'
+import { Fragment, useEffect, useState } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faGear } from '@fortawesome/free-solid-svg-icons';
 import { useRouter } from "next/navigation";
@@ -14,7 +14,6 @@ type CourseOptionsProps = {
 }
 
 export default function CourseOptions( props: CourseOptionsProps) {
-
   let [isOpen, setIsOpen] = useState<boolean>(false)
 
   function closeModal() {
@@ -27,6 +26,7 @@ export default function CourseOptions( props: CourseOptionsProps) {
 
   const router = useRouter();
   const deleteMutation = api.course.delete.useMutation()
+  const linkQuery = api.course.getInviteLink.useQuery({passwordId: props.course.passwordId, teacherId: props.teacherId}, {enabled: false})
 
   const deleteCourse = async () => {
     try {
@@ -37,6 +37,20 @@ export default function CourseOptions( props: CourseOptionsProps) {
       console.log(error)
     }
   }
+
+  const copyInviteLink = async () => {
+
+    const result = await linkQuery.refetch();
+
+    if (result.error || !result.data) {
+      console.log(result.error)
+      return;
+    }
+
+    const link = `${origin}/api/enroll?courseId=${props.course.id}&password=${result.data.secret}`;
+    navigator.clipboard.writeText(link)
+  };
+
 
   return (
     <>
@@ -95,7 +109,7 @@ export default function CourseOptions( props: CourseOptionsProps) {
                         </span>
                       </div>
                     </div>
-                    <div className="justify-center text-white text-center text-base w-full bg-blue-400 self-stretch items-center mt-2.5 px-16 py-4 rounded-2xl">
+                    <div onClick={copyInviteLink} className="cursor-pointer justify-center text-white text-center text-base w-full bg-blue-400 self-stretch items-center mt-2.5 px-16 py-4 rounded-2xl">
                     Copy Invite Link
                     </div>
                   </div>

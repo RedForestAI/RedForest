@@ -54,6 +54,29 @@ export const courseRouter = createTRPCRouter({
       });
     }),
 
+  getInviteLink: privateProcedure
+    .input(z.object({ passwordId: z.string(), teacherId: z.string() }))
+    .query(async ({ input, ctx }) => {
+
+      // Authenticated user and given profileID
+      if (!ctx.user.data.user || input.teacherId !== ctx.user.data.user.id) {
+        throw new Error("User is not authenticated");
+      }
+
+      // First check that indeed the user is a teacher
+      const teacher = await ctx.db.profile.findUniqueOrThrow({
+        where: {id: input.teacherId}
+      });
+      if (teacher.role !== Role.TEACHER) {
+        throw new Error("User is not a teacher");
+      }
+
+      // Get the course password
+      return await ctx.db.coursePassword.findUniqueOrThrow({
+        where: {id: input.passwordId}
+      });
+    }),
+
   create: privateProcedure
     .input(z.object({ name: z.string(), teacherId: z.string() }))
     .mutation(async ({ input, ctx }) => {
