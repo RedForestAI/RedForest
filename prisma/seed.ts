@@ -1,5 +1,6 @@
 
-import { PrismaClient, Role, Prisma, Profile, Course } from '@prisma/client'
+import { PrismaClient, Role, Prisma, Profile, Course, Assignment, Activity, ActivityType } from '@prisma/client'
+import { get } from 'http';
 const client = new PrismaClient()
 
 const today = new Date();
@@ -126,6 +127,36 @@ const getAssignments = (courses: Course[]): Prisma.AssignmentCreateInput[] => [
   },
 ]
 
+const getActivities = (assignments: Assignment[]): Prisma.ActivityCreateInput[] => {
+  let activities = []
+  for (let i = 0; i < assignments.length; i++) {
+    activities.push(
+      {
+        id: "40000000-0000-0000-0000-00000000000" + i,
+        name: "Activity ID #" + i,
+        description: `Activity ID ${i} Description`,
+        type: ActivityType.READING,
+        assignment: { connect: { id: assignments[i]?.id }},
+      }
+    )
+  }
+  return activities
+}
+
+const getReadingActivities = (activities: Activity[]): Prisma.ReadingActivityCreateInput[] => {
+  let rActivities = []
+  for (let i = 0; i < activities.length; i++) {
+    if (activities[i]?.type !== ActivityType.READING) continue
+    rActivities.push(
+      {
+        id: "50000000-0000-0000-0000-00000000000" + i,
+        readingUrl: ['https://arxiv.org/pdf/1708.08021.pdf']
+      }
+    )
+  }
+  return rActivities
+}
+
 const main = async () => {
   const profiles = await Promise.all(
     getProfiles().map((profile) => client.profile.upsert(
@@ -164,7 +195,26 @@ const main = async () => {
       }))
   )
 
-  console.log({ profiles, courses, courseEnrollments, assignments});
+  const activities = await Promise.all(
+    getActivities(assignments).map((activity) => client.activity.upsert(
+      {
+        where: { id: activity.id },
+        update: { ...activity },
+        create: { ...activity },
+      }))
+  )
+
+  const readingActivities = await Promise.all(
+    getReadingActivities(activities).map((readingActivity) => client.readingActivity.upsert(
+      {
+        where: { id: readingActivity.id },
+        update: { ...readingActivity },
+        create: { ...readingActivity },
+      }
+      ))
+  )
+
+  console.log({ profiles, courses, courseEnrollments, assignments, activities, readingActivities});
 };
 
 main()

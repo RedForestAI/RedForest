@@ -74,7 +74,44 @@ model Assignment {
   course            Course      @relation(fields: [courseId], references: [id])
   courseId          String      @db.Uuid
 
+  activities        Activity[]
+
   published         Boolean     @default(false)
   publishedDate     DateTime    @default(now())
   @@map("assignment")
+}
+
+enum ActivityType {
+  READING
+}
+
+model Activity {
+  id                String      @id @default(uuid()) @db.Uuid
+  name              String?
+  description       String?
+  type              ActivityType
+  questions         Question[]
+
+  // Assignment
+  assignment        Assignment  @relation(fields: [assignmentId], references: [id])
+  assignmentId      String      @db.Uuid
+  @@map("activity")
+}
+
+model ReadingActivity {
+  id                String      @id @default(uuid()) @db.Uuid
+  readingUrl        String[]
+  @@map("activity_reading")
+}
+
+model Question {
+  id                String      @id @default(uuid()) @db.Uuid
+  content           String
+  options           Json
+  answer            Int
+
+  // Activity
+  activity          Activity    @relation(fields: [activityId], references: [id])
+  activityId        String      @db.Uuid
+  @@map("question")
 }
