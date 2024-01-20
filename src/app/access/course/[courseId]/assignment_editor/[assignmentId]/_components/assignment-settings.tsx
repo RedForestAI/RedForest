@@ -40,7 +40,7 @@ export default function AssignmentSettings(props: AssignmentSettingsProps) {
             />
           </div>
         </>
-        : <div className="w-full flex justify-center"><span className="loading loading-spinner loading-lg h-18"></span></div>
+        : <div className="w-full flex justify-center min-h-40"><span className="loading loading-spinner loading-lg h-18"></span></div>
       }
     </div>
   </div>

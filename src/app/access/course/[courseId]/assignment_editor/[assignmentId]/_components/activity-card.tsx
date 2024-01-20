@@ -1,7 +1,13 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { IconDefinition } from '@fortawesome/fontawesome-svg-core';
 
-export function ActivityCard(props: {icon: IconDefinition}) {
+type ActivityCardProps = {
+  icon: IconDefinition
+  name: string | null
+  description: string | null
+}
+
+export function ActivityCard(props: ActivityCardProps) {
   return (
     <div className="card w-full bg-base-200 border shadow-xl m-4">
         <div className="flex flex-row h-full">
@@ -9,8 +15,8 @@ export function ActivityCard(props: {icon: IconDefinition}) {
             <FontAwesomeIcon icon={props.icon} className="h-16"/>
           </div>
           <div className="flex flex-col w-9/12 p-4">
-            <h2 className="card-title">Activity</h2>
-            <p className="card-subtitle">Subtitle</p>
+            <h2 className="card-title">{props.name}</h2>
+            <p className="card-subtitle">{props.description}</p>
           </div>
           <h2 className="card-title">5 pts</h2>
         </div>

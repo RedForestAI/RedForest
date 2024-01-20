@@ -1,6 +1,6 @@
 "use client";
 
-import { Profile, Assignment, Role } from "@prisma/client";
+import { Profile, Assignment, Role, Activity } from "@prisma/client";
 
 import NavBar from "~/components/ui/navbar";
 import { useForm, SubmitHandler } from "react-hook-form";
@@ -22,7 +22,8 @@ export default function Page({params}: {params: { courseId: string, assignmentId
   // Queries
   const profileQuery = api.auth.getProfile.useQuery({}, {enabled: false})
   const assignmentQuery = api.assignment.getOne.useQuery({id: params.assignmentId}, {enabled: false});
-  
+  const activitiesQuery = api.activity.get.useQuery({assignmentId: params.assignmentId}, {enabled: false})
+
   // Mutations
   const deleteMutation = api.assignment.delete.useMutation();
   const updateMutation = api.assignment.updateSettings.useMutation();
@@ -30,6 +31,7 @@ export default function Page({params}: {params: { courseId: string, assignmentId
   // State
   const [profile, setProfile] = useState<Profile>();
   const [assignment, setAssignment] = useState<Assignment>();
+  const [activities, setActivities] = useState<Activity[]>([]);
   const forms = {
     assignmentSettings: useForm<SettingsInputs>()
   }
@@ -67,10 +69,26 @@ export default function Page({params}: {params: { courseId: string, assignmentId
       }
     }
     fetchAssignment();
+
+    const fetchActivities = async () => {
+      const result = await activitiesQuery.refetch();
+      console.log(result.data);
+      if (result.error || !result.data) {
+        console.log(result.error)
+        return;
+      }
+      else {
+        // Initially, sort by their index parameter
+        result.data.sort((a, b) => a.index - b.index);
+
+        setActivities(result.data);
+      }
+    }
+    fetchActivities();
+
   }, [])
 
   useEffect(() => {
-    console.log(assignment)
     forms.assignmentSettings.reset({ ...assignment})
   }, [assignment]);
 
@@ -142,7 +160,7 @@ export default function Page({params}: {params: { courseId: string, assignmentId
       <div className="pt-20 items-stretch bg-zinc-900 flex flex-col px-5 py-11 max-md:px-5">
       <form onSubmit={submitAllForms} className="flex flex-col gap-8">
         <AssignmentSettings assignment={assignment} formRegister={forms.assignmentSettings.register} control={forms.assignmentSettings.control} errors={forms.assignmentSettings.formState.errors}/>
-        <AssignmentStructure/>
+        <AssignmentStructure activities={activities} setActivities={setActivities}/>
         <div className="justify-between items-stretch flex mt-8 mb-8 pl-10 pr-10 py-3 max-md:max-w-full max-md:flex-wrap max-md:px-5">
           <button className="btn btn-error" name="action" value="Delete">Delete</button>
           <div className="flex flex-row gap-2.5">

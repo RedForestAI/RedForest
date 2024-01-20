@@ -9,6 +9,14 @@ yesterday.setDate(today.getDate() - 1)
 let tomorrow = new Date();
 tomorrow.setDate(today.getDate() + 1)
 
+function generateUUID() {
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+      const r = Math.random() * 16 | 0;
+      const v = c == 'x' ? r : (r & 0x3 | 0x8);
+      return v.toString(16);
+  });
+}
+
 
 const getProfiles = (): Prisma.ProfileCreateInput[] => [
   { id: "00000000-0000-0000-0000-000000000001", role: Role.STUDENT },
@@ -132,9 +140,30 @@ const getActivities = (assignments: Assignment[]): Prisma.ActivityCreateInput[] 
   for (let i = 0; i < assignments.length; i++) {
     activities.push(
       {
-        id: "40000000-0000-0000-0000-00000000000" + i,
+        id: generateUUID(),
+        index: 0,
         name: "Activity ID #" + i,
         description: `Activity ID ${i} Description`,
+        type: ActivityType.READING,
+        assignment: { connect: { id: assignments[i]?.id }},
+      }
+    )
+    activities.push(
+      {
+        id: generateUUID(),
+        index: 1,
+        name: `Activity ID # ${i} Part 2`,
+        description: `Activity ID ${i} Description - Part 2`,
+        type: ActivityType.READING,
+        assignment: { connect: { id: assignments[i]?.id }},
+      }
+    )
+    activities.push(
+      {
+        id: generateUUID(),
+        index: 2,
+        name: `Activity ID # ${i} Part 3`,
+        description: `Activity ID ${i} Description - Part 3`,
         type: ActivityType.READING,
         assignment: { connect: { id: assignments[i]?.id }},
       }
@@ -149,7 +178,7 @@ const getReadingActivities = (activities: Activity[]): Prisma.ReadingActivityCre
     if (activities[i]?.type !== ActivityType.READING) continue
     rActivities.push(
       {
-        id: "50000000-0000-0000-0000-00000000000" + i,
+        id: generateUUID(),
         readingUrl: ['https://arxiv.org/pdf/1708.08021.pdf']
       }
     )
@@ -203,6 +232,8 @@ const main = async () => {
         create: { ...activity },
       }))
   )
+
+  console.log(activities.length)
 
   const readingActivities = await Promise.all(
     getReadingActivities(activities).map((readingActivity) => client.readingActivity.upsert(
