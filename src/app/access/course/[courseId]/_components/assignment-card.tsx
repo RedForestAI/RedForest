@@ -17,7 +17,6 @@ const AssignmentCard = ( props : AssignmentCardProps) => {
   }
 
   const getDate = () => {
-    if (!props.assignment.published) return "No due date";
     const date = new Date(props.assignment.dueDate);
     return date.toLocaleDateString();
   }

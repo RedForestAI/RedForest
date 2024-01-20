@@ -36,6 +36,20 @@ export const assignmentRouter = createTRPCRouter({
       });
     }),
 
+  updateSettings: privateProcedure
+    .input(z.object({ id: z.string(), name: z.string(), dueDate: z.date(), published: z.boolean()}))
+    .mutation(async ({ input, ctx }) => {
+
+      return ctx.db.assignment.update({
+        where: {id: input.id},
+        data: {
+          name: input.name,
+          dueDate: input.dueDate,
+          published: input.published,
+        }
+      });
+    }),
+
   delete: privateProcedure
     .input(z.object({ id: z.string()}))
     .mutation(async ({ input, ctx }) => {

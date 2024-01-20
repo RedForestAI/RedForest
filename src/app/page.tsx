@@ -18,7 +18,7 @@ export default async function HomePage() {
   return (
     <div>
       <NavBar includeBurger={false} accountLink={"session/login"} logoLink={"/"} />
-      <div className="h-screen flex flex-col justify-center items-center bg-zinc-950">
+      <div className="pt-20 h-screen flex flex-col justify-center items-center bg-zinc-950">
         <header className="mt-8 text-white text-center">
           <h1 className="text-4xl font-bold">Welcome to RedForest</h1>
           <p className="mt-4 text-xl">Your AI-Powered Classroom Assistant</p>

@@ -4,7 +4,6 @@ import { Providers } from "~/providers";
 import "~/styles/globals.css";
 import { cn } from "~/utils/cn";
 import { Roboto } from "next/font/google";
-import { Toaster } from "~/components/ui/toaster";
 import { TRPCReactProvider } from "~/trpc/react";
 import { headers } from "next/headers";
 
@@ -34,7 +33,6 @@ export default async function RootLayout({ children }: { children: React.ReactNo
           <TRPCReactProvider headers={headers()}>
               <Providers>
                 {children}
-                <Toaster />
               </Providers>
           </TRPCReactProvider>
           <TailwindIndicator />
