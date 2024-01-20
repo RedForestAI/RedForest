@@ -1,13 +1,22 @@
+import { Activity } from '@prisma/client';
+
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { IconDefinition } from '@fortawesome/fontawesome-svg-core';
+import { faGear } from '@fortawesome/free-solid-svg-icons';
+import { useRouter } from 'next/navigation';
 
 type ActivityCardProps = {
   icon: IconDefinition
-  name: string | null
-  description: string | null
+  activity: Activity
 }
 
 export function ActivityCard(props: ActivityCardProps) {
+  const router = useRouter()
+
+  const openActivitySetting = () => {
+    router.push(`activity_editor/${props.activity.id}`)
+  }
+
   return (
     <div className="card w-full bg-base-200 border shadow-xl m-4">
         <div className="flex flex-row h-full">
@@ -15,10 +24,13 @@ export function ActivityCard(props: ActivityCardProps) {
             <FontAwesomeIcon icon={props.icon} className="h-16"/>
           </div>
           <div className="flex flex-col w-9/12 p-4">
-            <h2 className="card-title">{props.name}</h2>
-            <p className="card-subtitle">{props.description}</p>
+            <h2 className="card-title">{props.activity.name}</h2>
+            <p className="card-subtitle">{props.activity.description}</p>
           </div>
           <h2 className="card-title">5 pts</h2>
+          <div className="flex justify-end items-center w-1/12 pr-4">
+            <FontAwesomeIcon icon={faGear} onClick={openActivitySetting} className='h-8 cursor-pointer'/>
+          </div>
         </div>
     </div>
   )

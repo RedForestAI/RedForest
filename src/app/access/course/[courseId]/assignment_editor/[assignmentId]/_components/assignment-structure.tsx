@@ -19,7 +19,7 @@ export default function AssignmentStructure(props: StructureProps) {
           <Reorder.Group axis="y" values={props.activities} onReorder={props.setActivities}>
             {props.activities.map((item) => (
               <Reorder.Item key={item.id} value={item}>
-                <ActivityCard name={item.name} description={item.description} icon={faBook}/>
+                <ActivityCard activity={item} icon={faBook}/>
               </Reorder.Item>
             ))}
           </Reorder.Group>
