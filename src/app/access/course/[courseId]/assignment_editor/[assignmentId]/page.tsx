@@ -140,7 +140,7 @@ export default function Page({params}: {params: { courseId: string, assignmentId
     <div>
       <NavBar includeBurger={true} accountLink={"/access/account"} logoLink={"/access"}/>
       <div className="pt-20 items-stretch bg-zinc-900 flex flex-col px-5 py-11 max-md:px-5">
-      <form onSubmit={submitAllForms}>
+      <form onSubmit={submitAllForms} className="flex flex-col gap-8">
         <AssignmentSettings assignment={assignment} formRegister={forms.assignmentSettings.register} control={forms.assignmentSettings.control} errors={forms.assignmentSettings.formState.errors}/>
         <AssignmentStructure/>
         <div className="justify-between items-stretch flex mt-8 mb-8 pl-10 pr-10 py-3 max-md:max-w-full max-md:flex-wrap max-md:px-5">

@@ -58,7 +58,7 @@ export default function CourseCreate( { profile }: CourseCreateProps) {
   return (
     <>
       <button onClick={openModal} className="w-full" type="button">
-        <div className="justify-center items-center bg-neutral-800 flex flex-col px-16 py-8 rounded-2xl border-[3px] border-solid border-emerald-50 max-md:px-5 mt-3 pb-5 h-44">
+        <div className="justify-center items-center bg-neutral-800  px-16 py-8 rounded-2xl border-[3px] border-solid border-emerald-50 max-md:px-5 mt-3 pb-5 h-44">
           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-12 h-12">
             <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v6m3-3H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
           </svg>

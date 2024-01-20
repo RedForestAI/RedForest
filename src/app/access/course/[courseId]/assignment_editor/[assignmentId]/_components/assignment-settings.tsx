@@ -1,8 +1,7 @@
 "use client";
 import { Assignment } from "@prisma/client"
-import { useForm, SubmitHandler, Controller } from "react-hook-form";
+import { Controller } from "react-hook-form";
 import DatePicker from "react-datepicker";
-import { useState } from "react";
 import "react-datepicker/dist/react-datepicker.css";
 
 type AssignmentSettingsProps = {
@@ -14,11 +13,10 @@ type AssignmentSettingsProps = {
 
 export default function AssignmentSettings(props: AssignmentSettingsProps) {
 
-
   return (
-    <div className="justify-center bg-white bg-opacity-0 flex flex-col pt-1.5 pb-4 px-3.5 items-start max-md:max-w-full">
-      <div className="label"><span className="label-text text-lg">Assignment Information</span></div>
-      <div className="items-stretch self-stretch gap-4 flex flex-col p-8 rounded-2xl border-[3px] border-solid border-white max-md:max-w-full max-md:px-5">
+    <div className="card bg-base-100 shadow-xl w-full">
+      <div className="card-body">
+      <h2 className="card-title">Settings</h2>
       { props.assignment
         ? <>
           <div>
@@ -44,7 +42,7 @@ export default function AssignmentSettings(props: AssignmentSettingsProps) {
         </>
         : <div className="w-full flex justify-center"><span className="loading loading-spinner loading-lg h-18"></span></div>
       }
-      </div>
     </div>
+  </div>
   )
 }
