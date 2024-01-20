@@ -7,6 +7,7 @@ import LogoutButton from '@/components/FormInput/LogoutButton';
 import { api } from '~/trpc/server';
 import { Profile } from '@prisma/client';
 import DangerZoneForm from './_components/DangerZoneForm';
+import ThemeToggle from '../../../components/ui/theme-toggle';
 
 export default async function Account() {
   // Fetch data

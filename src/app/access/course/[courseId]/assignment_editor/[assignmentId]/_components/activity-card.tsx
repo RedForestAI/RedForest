@@ -1,4 +1,4 @@
-import { Activity } from '@prisma/client';
+import { Activity, Assignment } from '@prisma/client';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { IconDefinition } from '@fortawesome/fontawesome-svg-core';
@@ -7,6 +7,7 @@ import { useRouter } from 'next/navigation';
 
 type ActivityCardProps = {
   icon: IconDefinition
+  assignment: Assignment
   activity: Activity
 }
 
@@ -14,7 +15,7 @@ export function ActivityCard(props: ActivityCardProps) {
   const router = useRouter()
 
   const openActivitySetting = () => {
-    router.push(`activity_editor/${props.activity.id}`)
+    router.push(`${props.assignment.id}/activity_editor/${props.activity.id}`)
   }
 
   return (

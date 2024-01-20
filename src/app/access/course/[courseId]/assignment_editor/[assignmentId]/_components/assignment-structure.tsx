@@ -1,10 +1,10 @@
-import { Activity } from '@prisma/client'
+import { Activity, Assignment } from '@prisma/client'
 import { ActivityCard, EmptyActivityCard } from "./activity-card"
 import { Reorder } from 'framer-motion'
-import { useState } from 'react'
 import { faBook } from "@fortawesome/free-solid-svg-icons"
 
 type StructureProps = {
+  assignment: Assignment
   activities: Activity[]
   setActivities: any
 }
@@ -19,7 +19,7 @@ export default function AssignmentStructure(props: StructureProps) {
           <Reorder.Group axis="y" values={props.activities} onReorder={props.setActivities}>
             {props.activities.map((item) => (
               <Reorder.Item key={item.id} value={item}>
-                <ActivityCard activity={item} icon={faBook}/>
+                <ActivityCard assignment={props.assignment} activity={item} icon={faBook}/>
               </Reorder.Item>
             ))}
           </Reorder.Group>
