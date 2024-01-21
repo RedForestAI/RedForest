@@ -24,7 +24,7 @@ export default async function Page({params}: {params: { activityId: string}}) {
         }
         return <ReadingForm {...propData}/>
       default:
-        return <h1 className="text-red-500">Failed to load activity</h1>
+        return <h1 className="text-error">Failed to load activity</h1>
     }
   
   }
@@ -32,8 +32,7 @@ export default async function Page({params}: {params: { activityId: string}}) {
   return (
   <>
     <NavBar profile={profile}/>
-    <div className="mt-20"/>
-    <div className="m-16">
+    <div className="mt-4 ml-8 mr-8">
       <Slot children={getForm(activity)}/>
     </div>
   </>
