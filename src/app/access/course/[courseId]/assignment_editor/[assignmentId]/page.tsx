@@ -6,7 +6,9 @@ import AssignmentForm from "./_components/assignment-form";
 import { api } from "~/trpc/server";
 
 export default async function Page({params}: {params: { courseId: string, assignmentId: string }}) {
+  
   // Queries
+  const profile = await api.auth.getProfile.query();
   const assignment = await api.assignment.getOne.query({id: params.assignmentId});
   const activities = await api.activity.getMany.query({assignmentId: params.assignmentId})
 
@@ -21,8 +23,8 @@ export default async function Page({params}: {params: { courseId: string, assign
 
   return (
     <div>
-      <NavBar includeBurger={true} accountLink={"/access/account"} logoLink={"/access"}/>
-      <div className="pt-20 items-stretch bg-zinc-900 flex flex-col px-5 py-11 max-md:px-5">
+      <NavBar profile={profile}/>
+      <div className="items-stretch flex flex-col px-5 py-11 max-md:px-5 pl-12 pr-12">
         <AssignmentForm {...formData}/>
       </div>
     </div>

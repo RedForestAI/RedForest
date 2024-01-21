@@ -58,7 +58,7 @@ export default function CourseCreate( { profile }: CourseCreateProps) {
   return (
     <>
       <button onClick={openModal} className="w-full mt-4" type="button">
-        <div className="flex justify-center items-center bg-base-300 px-16 py-8 rounded-2xl border-[3px] border-solid max-md:px-5 h-44">
+        <div className="flex justify-center items-center bg-base shadow-xl px-16 py-8 rounded-2xl border-[3px] border-solid max-md:px-5 h-44">
           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-12 h-12">
             <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v6m3-3H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
           </svg>
@@ -90,7 +90,7 @@ export default function CourseCreate( { profile }: CourseCreateProps) {
                 leaveFrom="opacity-100 scale-100"
                 leaveTo="opacity-0 scale-95"
               >
-                <Dialog.Panel className="w-full max-w-md transform overflow-hidden rounded-2xl bg-base-100 p-6 text-left align-middle shadow-xl transition-all">
+                <Dialog.Panel className="w-full max-w-md transform overflow-hidden rounded-2xl p-6 bg-base-100 text-left align-middle transition-all">
                   <Dialog.Title
                     as="h3"
                     className="text-lg font-medium leading-6 border-b-4 border-inherit pb-2"

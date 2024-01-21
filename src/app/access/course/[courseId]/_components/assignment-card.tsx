@@ -51,24 +51,24 @@ const AssignmentCard = ( props : AssignmentCardProps) => {
 
   return (
     <Link href={getLink()}>
-      <span className="items-center self-stretch bg-base-300 flex flex-col px-2 py-3 rounded-2xl mt-4">
+      <div className="items-center self-stretch bg-base-100 shadow-xl border-[3px] border-solid flex flex-col px-2 py-3 rounded-2xl mt-4 pl-4 pr-4">
         <span className="self-stretch flex justify-between gap-5 items-start max-md:max-w-full max-md:flex-wrap">
           <span className="flex flex-col items-stretch">
             <div className="justify-center text-xl">
               {getAssignmentTitle()}
             </div>
-            <div className="justify-center text-base whitespace-nowrap mt-1.5">
+            <div className="justify-center whitespace-nowrap mt-1.5">
               {props.course.name}
             </div>
           </span>
-          <div className="justify-center text-base mt-5 self-end">
+          <div className="justify-center mt-5 self-end">
             Due: <span className={getColor()}>{getDate()}</span>
           </div>
         </span>
         <div className="bg-neutral self-stretch flex flex-col justify-center items-stretch pr-5 rounded-2xl max-md:max-w-full max-md:pr-5 mt-5">
           <div className="bg-primary text-xs font-medium text-primary-content text-center p-0.5 leading-none rounded-full" style={{width: "45%"}}> 45%</div>
         </div>
-      </span>
+      </div>
     </Link>
   )
 };

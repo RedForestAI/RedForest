@@ -40,11 +40,11 @@ export default function DangerZoneForm(props: DangerZoneFormProps) {
         {props.profile.role == "STUDENT" &&
           <div>
             <p className="mb-4">Convert your account from STUDENT to TEACHER. This will delete all course enrollments and user information.</p>
-            <button onClick={convertToTeacher} className="bg-error hover:bg-error-700 font-bold py-2 px-4 rounded"> Convert to TEACHER </button>
+            <button onClick={convertToTeacher} className="bg-error hover:bg-error font-bold py-2 px-4 rounded"> Convert to TEACHER </button>
           </div>
         }
         <p className="mt-4 mb-4">Beware that deleting your account is permanent and will delete all your courses and user information.</p>
-        <button onClick={deleteAccount} className="bg-error hover:bg-error-700 text-white font-bold py-2 px-4 rounded"> Delete Account </button>
+        <button onClick={deleteAccount} className="bg-error hover:bg-error text-white font-bold py-2 px-4 rounded"> Delete Account </button>
       </div>
     </>
   )

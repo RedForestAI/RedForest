@@ -11,6 +11,7 @@ export default async function Page({params}: {params: { activityId: string}}) {
   console.log(params.activityId)
 
   // Fetch the activity data
+  const profile = await api.auth.getProfile.query();
   const activity = await api.activity.getOne.query({id: params.activityId});
 
   const getForm = async (activity: any) => {
@@ -30,7 +31,7 @@ export default async function Page({params}: {params: { activityId: string}}) {
 
   return (
   <>
-    <NavBar includeBurger={true} accountLink={"/access/account"} logoLink={"/access"}/>
+    <NavBar profile={profile}/>
     <div className="mt-20"/>
     <div className="m-16">
       <Slot children={getForm(activity)}/>

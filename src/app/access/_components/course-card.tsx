@@ -9,7 +9,7 @@ interface CourseCardProps {
 
 const CourseCard = ( props : CourseCardProps) => {
   return (
-    <div className="mt-4 bg-base-300 rounded-2xl border border-2 border-primary">
+    <div className="mt-4 shadow-xl rounded-2xl border-[3px] border-solid">
       <Link href={`access/course/${props.course.id}`}>
         <div className="bg-primary flex shrink-0 h-[104px] flex-col rounded-t-2xl" />
       </Link>

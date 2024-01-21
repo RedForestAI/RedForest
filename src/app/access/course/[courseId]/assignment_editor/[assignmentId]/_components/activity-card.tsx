@@ -19,18 +19,18 @@ export function ActivityCard(props: ActivityCardProps) {
   }
 
   return (
-    <div className="card w-full bg-base-200 border shadow-xl m-4">
+    <div className="card w-full bg-base border-[3px] border-solid shadow-xl m-4">
         <div className="flex flex-row h-full">
           <div className="flex justify-center items-center border-r p-6">
-            <FontAwesomeIcon icon={props.icon} className="h-16"/>
+            <FontAwesomeIcon icon={props.icon} className="fa-3x h-8"/>
           </div>
           <div className="flex flex-col w-9/12 p-4">
             <h2 className="card-title">{props.activity.name}</h2>
             <p className="card-subtitle">{props.activity.description}</p>
           </div>
-          <h2 className="card-title">5 pts</h2>
+          <h2 className="card-title w-24">5 pts</h2>
           <div className="flex justify-end items-center w-1/12 pr-4">
-            <FontAwesomeIcon icon={faGear} onClick={openActivitySetting} className='h-8 cursor-pointer'/>
+            <FontAwesomeIcon icon={faGear} onClick={openActivitySetting} className='h-8 fa-2x cursor-pointer'/>
           </div>
         </div>
     </div>
