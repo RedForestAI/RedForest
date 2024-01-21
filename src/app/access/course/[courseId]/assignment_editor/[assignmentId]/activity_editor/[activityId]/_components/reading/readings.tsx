@@ -118,7 +118,7 @@ export default function Readings() {
   }
 
   return (
-    <div role="tabpanel" className="tab-content rounded-box shadow-xl p-6">
+    <div role="tabpanel" className="tab-content p-6">
       <div className="flex flex-col">
         <form
           className={`${

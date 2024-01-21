@@ -10,7 +10,6 @@ type StructureProps = {
 }
 
 export default function AssignmentStructure(props: StructureProps) {
-  // const [items, setItems] = useState<Activity[]>(props.activities)
   return (
     <div className="card w-full bg-base-100 shadow-xl border-[2px]">
       <div className="card-body">

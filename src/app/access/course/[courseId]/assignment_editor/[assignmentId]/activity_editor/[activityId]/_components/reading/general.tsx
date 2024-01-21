@@ -1,6 +1,6 @@
 export default function General() {
   return (
-    <div role="tabpanel" className="tab-content bg-base-100 border-base-300 rounded-box shadow-xl p-6">
+    <div role="tabpanel" className="tab-content p-6">
       <div className="form-control">
         <label className="label">
           <span className="label-text">Name</span>
