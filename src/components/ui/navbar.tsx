@@ -67,7 +67,7 @@ export default function Navbar(props: NavbarProps) {
   }
 
   return (
-    <div className="navbar shadow-xl">
+    <div className="navbar bg-base shadow-xl border-b">
       <div className="navbar-start">
         {props.profile &&
         <div className="dropdown">

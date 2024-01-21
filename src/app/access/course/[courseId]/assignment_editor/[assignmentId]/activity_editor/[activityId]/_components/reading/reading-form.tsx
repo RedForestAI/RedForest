@@ -3,6 +3,10 @@
 import { Activity, ReadingActivity } from '@prisma/client';
 import { useState } from 'react';
 
+import General from "./general"
+import Readings from "./readings"
+import Questions from "./questions"
+
 type ReadingFormProps = {
   activity: Activity
   readingActivity: ReadingActivity | null
@@ -26,7 +30,7 @@ function Label(props: LabelProps) {
         props.selectedTab === props.index ? 'text-accent [--tab-bg:bg-primary]' : ''
       }`}
       aria-label={props.text} 
-      checked={props.selectedTab === props.index} 
+      defaultChecked={props.selectedTab === props.index} 
       onClick={() => props.setSelectedTab(props.index)}
     />
     </>
@@ -34,34 +38,22 @@ function Label(props: LabelProps) {
 }
 
 export default function ReadingForm(props: ReadingFormProps) {
-  const [selectedTab, setSelectedTab] = useState<number>(0);
+  const [selectedTab, setSelectedTab] = useState<number>(1);
 
   return (
     <>
       <div role="tablist" className="tabs tabs-lifted tabs-lg">
         <Label index={0} text="General Settings" selectedTab={selectedTab} setSelectedTab={setSelectedTab}/>
-        <div role="tabpanel" className="tab-content bg-base-100 border-base-300 rounded-box shadow-xl p-6">
-          <div className="form-control">
-            <label className="label">
-              <span className="label-text">Name</span>
-            </label> 
-            <input type="text" placeholder="Reading Name" className="input input-bordered"/>
-          </div>
-          <div className="form-control">
-            <label className="label">
-              <span className="label-text">Description (optional)</span>
-            </label> 
-            <textarea placeholder="Reading Description" className="textarea textarea-bordered h-24"></textarea>
-          </div>
-        </div>
+        <General/>
 
         {/* <input type="radio" name="my_tabs_2" role="tab" className="tab" aria-label="Tab 2" checked={selectedTab === 1} onChange={() => setSelectedTab(1)}/> */}
         <Label index={1} text="Readings" selectedTab={selectedTab} setSelectedTab={setSelectedTab}/>
-        <div role="tabpanel" className="tab-content bg-base-100 border-base-300 rounded-box shadow-xl p-6">Tab content 2</div>
+        <Readings/>
 
         {/* <input type="radio" name="my_tabs_2" role="tab" className="tab" aria-label="Tab 3" checked={selectedTab === 2} onChange={() => setSelectedTab(2)}/> */}
         <Label index={2} text="Questions" selectedTab={selectedTab} setSelectedTab={setSelectedTab}/>
-        <div role="tabpanel" className="tab-content bg-base-100 border-base-300 rounded-box shadow-xl p-6">Tab content 3</div>
+        <Questions/>
+      
       </div>
       <div className="justify-between items-stretch flex mt-8 mb-8 pl-10 pr-10 py-3 max-md:max-w-full max-md:flex-wrap max-md:px-5">
         <button className="btn btn-error" name="action" value="Delete">Delete</button>

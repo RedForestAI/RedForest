@@ -28,9 +28,9 @@ export default async function Page({params}: {params: { courseId: string }}) {
   console.log(assignments);
 
   return (
-    <div>
+    <div className="min-h-screen">
       <NavBar profile={profile}/>
-      <div className="container mx-auto pl-12 pr-12">
+      <div className="container mx-auto pl-12 pr-12 bg-base-200 min-h-screen">
         {profile && course
           ? <div>
               <div>

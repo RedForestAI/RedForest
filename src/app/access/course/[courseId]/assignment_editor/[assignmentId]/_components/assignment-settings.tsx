@@ -14,7 +14,7 @@ type AssignmentSettingsProps = {
 export default function AssignmentSettings(props: AssignmentSettingsProps) {
 
   return (
-    <div className="card bg-base shadow-xl w-full">
+    <div className="card bg-base shadow-xl w-full border-[2px]">
       <div className="card-body">
       <h2 className="card-title">Settings</h2>
       { props.assignment

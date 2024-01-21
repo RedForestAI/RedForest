@@ -2,7 +2,7 @@
 
 import { ActivityType } from "@prisma/client"
 import Slot from "./_components/slot";
-import ReadingForm from './_components/reading-form';
+import ReadingForm from './_components/reading/reading-form';
 
 import NavBar from "~/components/ui/navbar";
 import { api } from '~/trpc/server';

@@ -20,7 +20,7 @@ export default async function Page() {
   return (
     <div>
       <NavBar profile={profile}/>
-      <div className="h-screen flex flex-col justify-center items-center bg-base">
+      <div className="h-screen flex flex-col justify-center items-center">
         <header className="mt-8 text-center">
           <h1 className="text-4xl font-bold">Welcome to RedForest</h1>
           <p className="mt-4 text-xl">Your AI-Powered Classroom Assistant</p>
