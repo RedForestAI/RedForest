@@ -38,7 +38,7 @@ function Label(props: LabelProps) {
 }
 
 export default function ReadingForm(props: ReadingFormProps) {
-  const [selectedTab, setSelectedTab] = useState<number>(0);
+  const [selectedTab, setSelectedTab] = useState<number>(2);
 
   return (
     <>
@@ -48,11 +48,11 @@ export default function ReadingForm(props: ReadingFormProps) {
 
         {/* <input type="radio" name="my_tabs_2" role="tab" className="tab" aria-label="Tab 2" checked={selectedTab === 1} onChange={() => setSelectedTab(1)}/> */}
         <Label index={1} text="Readings" selectedTab={selectedTab} setSelectedTab={setSelectedTab}/>
-        {/* <Readings/> */}
+        <Readings/>
 
         {/* <input type="radio" name="my_tabs_2" role="tab" className="tab" aria-label="Tab 3" checked={selectedTab === 2} onChange={() => setSelectedTab(2)}/> */}
         <Label index={2} text="Questions" selectedTab={selectedTab} setSelectedTab={setSelectedTab}/>
-        {/* <Questions/> */}
+        <Questions/>
       
       </div>
       <div className="justify-between items-stretch flex mt-8 mb-8 pl-10 pr-10 py-3 max-md:max-w-full max-md:flex-wrap max-md:px-5">
