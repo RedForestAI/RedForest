@@ -29,8 +29,8 @@ export default async function Page({params}: {params: { courseId: string }}) {
 
   return (
     <div>
-      <NavBar includeBurger={true} accountLink={"/access/account"} logoLink={"/access"}/>
-      <div className="pt-20 container mx-auto p-4">
+      <NavBar profile={profile}/>
+      <div className="container mx-auto pl-12 pr-12">
         {profile && course
           ? <div>
               <div>

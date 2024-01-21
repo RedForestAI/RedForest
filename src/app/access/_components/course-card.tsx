@@ -9,15 +9,15 @@ interface CourseCardProps {
 
 const CourseCard = ( props : CourseCardProps) => {
   return (
-    <div className="mt-4">
+    <div className="mt-4 bg-base-300 rounded-2xl border border-2 border-primary">
       <Link href={`access/course/${props.course.id}`}>
-        <div className="bg-emerald-300 flex shrink-0 h-[104px] flex-col rounded-t-2xl" />
+        <div className="bg-primary flex shrink-0 h-[104px] flex-col rounded-t-2xl" />
       </Link>
-      <div className="bg-neutral-800 flex w-full flex-col items-stretch pb-5 rounded-b-2xl">
+      <div className="flex w-full flex-col items-stretch pb-5 rounded-b-2xl">
         <div className="flex items-stretch justify-between gap-5 mt-3 pr-5">
-          <span className="flex flex-col items-stretch px-2">
-            <div className="justify-center text-white text-xl">{props.course.name}</div>
-            <div className="justify-center text-white text-opacity-50 text-base">
+          <span className="flex flex-col items-stretch px-2 ml-4">
+            <div className="justify-center text-xl">{props.course.name}</div>
+            <div className="justify-center text-opacity-50">
               Fall 2023
             </div>
           </span>

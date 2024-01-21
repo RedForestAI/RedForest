@@ -20,13 +20,13 @@ export default async function Page() {
   return (
     <div>
       <NavBar profile={profile}/>
-      <div className="h-screen flex flex-col justify-center items-center bg-primary">
+      <div className="h-screen flex flex-col justify-center items-center bg-base">
         <header className="mt-8 text-center">
           <h1 className="text-4xl font-bold">Welcome to RedForest</h1>
           <p className="mt-4 text-xl">Your AI-Powered Classroom Assistant</p>
         </header>
 
-        <section className="mt-64 text-primary text-center max-w-lg">
+        <section className="mt-64 text-center max-w-lg">
           <h2 className="text-2xl font-semibold">Our Goal</h2>
           <p className="mt-4 text-lg">
             RedForest is dedicated to bringing AI via eye-tracking to the classroom.
@@ -34,7 +34,7 @@ export default async function Page() {
           </p>
         </section>
 
-        <section className="mt-auto text-secondary text-center pb-16">
+        <section className="mt-auto text-center pb-16">
           <h2 className="text-2xl font-semibold">Contact Us</h2>
           <div className="mt-4 flex justify-center space-x-6">
             <OpenTabIconButton icon={faEnvelope} url="mailto:contact.redforest.ai@gmail.com" />

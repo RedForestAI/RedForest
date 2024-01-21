@@ -18,7 +18,7 @@ export default async function Dashboard() {
   return (
     <div>
       <NavBar profile={profile}/>
-      <div className="container mx-auto p-12">
+      <div className="container mx-auto pl-12 pr-12">
         {profile?.id
           ? <div>
               <div>

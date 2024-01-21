@@ -55,7 +55,7 @@ export default function CourseOptions( props: CourseOptionsProps) {
   return (
     <>
       <div className="flex justify-center items-center" onClick={openModal}>
-        <FontAwesomeIcon icon={faGear} className='h-8 cursor-pointer'/>
+        <FontAwesomeIcon icon={faGear} className='h-8 fa-2x cursor-pointer'/>
       </div>
 
       <Transition appear show={isOpen} as={Fragment}>
