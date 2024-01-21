@@ -1,9 +1,15 @@
+import { Question } from "@prisma/client"
 import { Reorder } from "framer-motion";
 import { useState } from "react";
 import { generateUUID } from "~/utils/uuid";
 
+import { faTrash } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+
 type QuestionCardProps = {
-  question: any
+  index: number
+  question: Question
+  setQuestions: any
 }
 
 type AnswerCardProps = {
@@ -13,15 +19,19 @@ type AnswerCardProps = {
 function AnswerCard(props: AnswerCardProps) {
   return (
     <div className="card shadow-xl mb-4">
-      <textarea placeholder="Answer" className="textarea textarea-bordered h-24">{props.answer}</textarea>
+      <textarea placeholder="Answer" className="textarea textarea-bordered h-18">{props.answer}</textarea>
     </div>
   )
 }
 
 
-function EmptyAnswerCard() {
+function EmptyAnswerCard(props: {setAnswers: any}) {
+  const createAnswer = () => {
+    props.setAnswers((prev: any) => [...prev, ""])
+  }
+
   return (
-    <div className="card border-[2px] border shadow-xl mb-4">
+    <div className="card border-[2px] border shadow-xl mb-4 cursor-pointer" onClick={createAnswer}>
       <div className="justify-center items-center flex flex-col h-12">
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-8 h-8">
           <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v6m3-3H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
@@ -32,13 +42,24 @@ function EmptyAnswerCard() {
 }
 
 export function QuestionCard(props: QuestionCardProps) {
-  const [answers, setAnswers] = useState<string[]>(["Option 1", "Option 2", "Option 3"])
+  const [answers, setAnswers] = useState<string[]>([])
+  const [open, setOpen] = useState<boolean>(false)
+
+  const deleteQuestion = () => {
+    console.log("Deleting question")
+    props.setQuestions((prev: any) => prev.filter((question: Question) => question.id !== props.question.id))
+  }
 
   return (
-    <div tabIndex={0} className="collapse collapse-arrow bg-base-300 w-full m-4 p-4">
-      <input type="checkbox" />
-      <div className="collapse-title text-xl font-medium">
-        Question
+    <div className={`collapse bg-base-300 w-full m-4 p-4 ${open ? 'collapse-open' : 'collapse-close'}`}>
+      <div className="text-xl font-medium flex justify-between items-center">
+        Question {props.index + 1}
+        <div>
+          <button className="btn btn-ghost btn-sm mr-4" onClick={deleteQuestion}>
+            <FontAwesomeIcon icon={faTrash} className='h-8' />
+          </button>
+          <button className="btn btn-ghost btn-sm" onClick={() => {setOpen(!open)}}>{open ? "+" : "-"}</button>
+        </div>
       </div>
       <div className="collapse-content">
         <div className="form-control">
@@ -83,13 +104,13 @@ export function QuestionCard(props: QuestionCardProps) {
             <span className="label-text">Question Options</span>
           </label> 
           <Reorder.Group axis="y" values={answers} onReorder={setAnswers}>
-            {answers.map((item) => (
+            {answers.map((item, index) => (
               <Reorder.Item key={item} value={item}>
                 <AnswerCard answer={item} />
               </Reorder.Item>
             ))}
           </Reorder.Group>
-          <EmptyAnswerCard />
+          <EmptyAnswerCard setAnswers={setAnswers}/>
         </div>
       </div>
     </div>

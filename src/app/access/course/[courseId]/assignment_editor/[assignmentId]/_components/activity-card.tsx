@@ -30,7 +30,9 @@ export function ActivityCard(props: ActivityCardProps) {
           </div>
           <h2 className="card-title w-24">5 pts</h2>
           <div className="flex justify-end items-center w-1/12 pr-4">
-            <FontAwesomeIcon icon={faGear} onClick={openActivitySetting} className='h-8 fa-2x cursor-pointer'/>
+            <button className="btn btn-ghost btn-sm mr-4" onClick={openActivitySetting}>
+              <FontAwesomeIcon icon={faGear} className='h-8 fa-2x' />
+            </button>
           </div>
         </div>
     </div>

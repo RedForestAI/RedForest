@@ -16,9 +16,9 @@ export default function Questions() {
     <div role="tabpanel" className="tab-content p-6">
       <div className="form-control">
         <Reorder.Group axis="y" values={questions} onReorder={setQuestions}>
-          {questions.map((item) => (
+          {questions.map((item, index) => (
             <Reorder.Item key={item.id} value={item}>
-              <QuestionCard question={item} />
+              <QuestionCard index={index} question={item} setQuestions={setQuestions} />
             </Reorder.Item>
           ))}
         </Reorder.Group>
