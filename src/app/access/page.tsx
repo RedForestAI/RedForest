@@ -17,8 +17,8 @@ export default async function Dashboard() {
 
   return (
     <div>
-      <NavBar includeBurger={true} accountLink={"/access/account"} logoLink={"/access"}/>
-      <div className="pt-20 container mx-auto p-4">
+      <NavBar profile={profile}/>
+      <div className="container mx-auto p-12">
         {profile?.id
           ? <div>
               <div>
