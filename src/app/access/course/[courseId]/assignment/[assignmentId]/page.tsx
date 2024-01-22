@@ -1,10 +1,10 @@
-"use client";
+"use server";
 
 import NavBar from "~/components/ui/navbar";
 import PDFViewer from "./_components/reading_activity/pdf-viewer";
 import { WebGazerManager } from '~/providers/WebGazerManager';
 
-export default function Page() {
+export default async function Page() {
   const pdfUrl = 'https://arxiv.org/pdf/1708.08021.pdf'; // Replace with your PDF URL
   let webGazer = new WebGazerManager();
 
@@ -31,7 +31,7 @@ export default function Page() {
 
   return (
     <div>
-      <NavBar includeBurger={true} accountLink={"/access/account"} logoLink={"/access"}/>
+      <NavBar/>
       <div className="pt-20">
       <div className="pb-4 flex flex-row items-center justify-center">
         <button className="bg-blue-500 text-white font-bold py-2 px-4 rounded hover:bg-blue-700 m-2" onClick={handleStart}>Start WebGazer</button>

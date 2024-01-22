@@ -12,7 +12,7 @@ type Breadcrum = {
 }
 
 type NavbarProps = {
-  profile: Profile | null
+  profile?: Profile | null
   breadcrumbs?: Breadcrum[] | null
 }
 

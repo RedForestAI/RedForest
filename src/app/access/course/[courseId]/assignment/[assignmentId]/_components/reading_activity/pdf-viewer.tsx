@@ -1,3 +1,5 @@
+"use client";
+
 // components/pdfviewer.tsx
 import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/20/solid";
 import { useEffect, useRef, useState } from "react";
