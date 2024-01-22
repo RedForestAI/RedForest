@@ -90,7 +90,7 @@ export default function Navbar(props: NavbarProps) {
           <img
             loading="lazy"
             src="/imgs/logo-192x192.png"
-            className="ml-4 mr-2 object-contain object-center w-[40px] overflow-hidden self-center shrink-0 max-w-full my-auto"
+            className="ml-4 mr-4 object-contain object-center w-[40px] overflow-hidden self-center shrink-0 max-w-full my-auto"
           />
         </Link>
 

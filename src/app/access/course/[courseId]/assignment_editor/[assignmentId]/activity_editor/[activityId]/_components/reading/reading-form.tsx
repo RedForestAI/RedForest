@@ -73,7 +73,7 @@ export default function ReadingForm(props: ReadingFormProps) {
       
       </div>
       <div className="justify-between items-stretch flex mt-8 mb-8 pl-10 pr-10 py-3 max-md:max-w-full max-md:flex-wrap max-md:px-5">
-        <button onClick={deleteActivity} className="btn btn-error" name="action" value="Delete">Delete</button>
+        <button className="btn btn-error" name="action" value="Delete">Delete</button>
         <div className="flex flex-row gap-2.5">
           <button className="btn btn-info" name="action" value="Save">Save</button>
           <button className="btn btn-info" name="action" value="Save&Close">Save & Close</button>
