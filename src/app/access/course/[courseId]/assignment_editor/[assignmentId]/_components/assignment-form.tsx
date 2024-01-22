@@ -5,7 +5,7 @@ import AssignmentSettings from "./assignment-settings";
 import AssignmentStructure from "./assignment-structure";
 
 import { useForm, SubmitHandler } from "react-hook-form";
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { api } from "~/trpc/react";
 
@@ -27,7 +27,8 @@ export default function AssignmentForm(props: FormProps) {
   const [assignment, setAssignment] = useState<Assignment>(props.assignment);
   const [activities, setActivities] = useState<Activity[]>(props.activities);
   const forms = {
-    assignmentSettings: useForm<SettingsInputs>()
+    settings: useForm<SettingsInputs>(),
+    structure: useForm<StructureIniputs>()
   }
 
   // Mutations
@@ -35,7 +36,7 @@ export default function AssignmentForm(props: FormProps) {
   const updateMutation = api.assignment.updateSettings.useMutation();
 
   useEffect(() => {
-    forms.assignmentSettings.reset({ ...assignment})
+    forms.settings.reset({ ...assignment})
   }, [assignment]);
 
   const settingsSubmit: SubmitHandler<SettingsInputs> = async (data) => {
@@ -60,7 +61,7 @@ export default function AssignmentForm(props: FormProps) {
 
   const saveFunction = async () => {
     console.log("Submitting all forms")
-    await forms.assignmentSettings.handleSubmit(settingsSubmit)();
+    await forms.settings.handleSubmit(settingsSubmit)();
     // router.push(`/access/course/${props.courseId}`)
     // router.refresh();
   }
@@ -102,7 +103,7 @@ export default function AssignmentForm(props: FormProps) {
   <p>Hello</p>
   return (
     <form onSubmit={submitAllForms} className="flex flex-col gap-8">
-      <AssignmentSettings assignment={assignment} formRegister={forms.assignmentSettings.register} control={forms.assignmentSettings.control} errors={forms.assignmentSettings.formState.errors}/>
+      <AssignmentSettings assignment={assignment} formRegister={forms.settings.register} control={forms.settings.control} errors={forms.settings.formState.errors}/>
       <AssignmentStructure assignment={assignment} activities={activities} setActivities={setActivities}/>
       <div className="justify-between items-stretch flex mt-8 mb-8 pl-10 pr-10 py-3 max-md:max-w-full max-md:flex-wrap max-md:px-5">
         <button className="btn btn-error" name="action" value="Delete">Delete</button>

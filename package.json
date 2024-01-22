@@ -8,7 +8,7 @@
     "start": "next start",
     "lint": "next lint",
     "migrate-dev": "prisma migrate dev && npx tsx prisma/seedTriggers.ts",
-    "seed": "prisma db seed",
+    "seed": "prisma db push --force-reset && prisma db seed",
     "vercel-build": "prisma generate && prisma migrate deploy && tsx prisma/seedTriggers.ts && next build"
   },
   "dependencies": {

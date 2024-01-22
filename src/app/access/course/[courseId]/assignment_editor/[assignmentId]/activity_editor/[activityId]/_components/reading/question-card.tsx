@@ -56,7 +56,7 @@ export function QuestionCard(props: QuestionCardProps) {
         Question {props.index + 1}
         <div>
           <button className="btn btn-ghost btn-sm mr-4" onClick={deleteQuestion}>
-            <FontAwesomeIcon icon={faTrash} className='h-8' />
+            <FontAwesomeIcon icon={faTrash} className='h-4' />
           </button>
           <button className="btn btn-ghost btn-sm" onClick={() => {setOpen(!open)}}>{open ? "+" : "-"}</button>
         </div>

@@ -34,7 +34,7 @@ export default function Navbar(props: NavbarProps) {
 
   useEffect(() => {
     const localTheme = localStorage.getItem("theme");
-    localTheme && setTheme(localTheme);
+    setTheme(localTheme || "dark");
   }, [])
 
   // set theme state in localstorage on mount & also update localstorage on state change

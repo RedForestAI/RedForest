@@ -41,12 +41,12 @@ export function ActivityCard(props: ActivityCardProps) {
 }
 
 export function EmptyActivityCard(props: {assignmentId: string, activities: Activity[], setActivities: any}) {
+  const router = useRouter();
   const mutation = api.activity.createEmpty.useMutation();
 
   const createActivity = async () => {
     try {
       const result = await mutation.mutateAsync({index: props.activities.length, assignmentId: props.assignmentId});
-      console.log("Created activity: ", result)
       props.setActivities([...props.activities, result])
     } catch (error) {
       console.log("Failed to create assignment: ", error)

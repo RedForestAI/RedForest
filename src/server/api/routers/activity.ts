@@ -1,6 +1,6 @@
-import { ActivityType } from "@prisma/client";
 import { z } from "zod";
 import { createTRPCRouter, privateProcedure } from "~/server/api/trpc";
+import { createEmptyReadingActivity } from "./activities/utils";
 
 export const activityRouter = createTRPCRouter({
   getMany: privateProcedure
@@ -25,15 +25,7 @@ export const activityRouter = createTRPCRouter({
     .input(z.object({ assignmentId: z.string(), index: z.number() }))
     .mutation( async ({ input, ctx }) => {
         // Get assignments pertaining to course
-        return await ctx.db.activity.create({
-          data: {
-            assignmentId: input.assignmentId,
-            name: "New Activity",
-            description: "New Activity",
-            type: ActivityType.READING,
-            index: input.index,
-          }
-      });
+        return await createEmptyReadingActivity(input.assignmentId, input.index, ctx.db);
     }),
 
   deleteOne: privateProcedure

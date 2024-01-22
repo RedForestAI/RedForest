@@ -1,13 +1,19 @@
 "use client";
 
 import { Activity, ReadingActivity } from '@prisma/client';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { api } from "~/trpc/react";
 import { useRouter } from 'next/navigation';
+import { useForm, SubmitHandler } from "react-hook-form";
 
 import General from "./general"
 import Readings from "./readings"
 import Questions from "./questions"
+
+type GeneralInputs = {
+  name: string
+  description: string
+}
 
 type ReadingFormProps = {
   courseId: string
@@ -42,28 +48,80 @@ function Label(props: LabelProps) {
 }
 
 export default function ReadingForm(props: ReadingFormProps) {
+
   // State
   const router = useRouter();
+  const [activity, setActivity] = useState<Activity>(props.activity);
+  const [readingActivity, setReadingActivity] = useState<ReadingActivity | null>(props.readingActivity);
   const [selectedTab, setSelectedTab] = useState<number>(0);
+  const forms = {
+    general: useForm<GeneralInputs>(),
+  }
 
   // Mutations
-  const deleteMutation = api.assignment.delete.useMutation();
+  const deleteMutation = api.activity.deleteOne.useMutation();
 
-  const deleteActivity = async () => {
+  useEffect(() => {
+    forms.general.reset({ ...activity})
+  }, [activity]);
+
+  const deleteFunction = async () => {
     try {
-      await deleteMutation.mutateAsync({id: props.activity.id});
-      router.push(`/access/course/${props}/assignment_editor/${props.assignmentId}`)
+      await deleteMutation.mutateAsync({id: activity.id});
+      router.push(`/access/course/${props.courseId}/assignment_editor/${props.assignmentId}`)
       router.refresh()
     } catch (error) {
-      console.log("Failed to delete assignment: ", error)
+      console.log("Failed to delete activity: ", error)
+    }
+  }
+
+  const saveFunction = async () => {
+    console.log("Submitting all forms")
+    // await forms.assignmentSettings.handleSubmit(settingsSubmit)();
+    // router.push(`/access/course/${props.courseId}`)
+    // router.refresh();
+  }
+
+  const publishFunction = async () => {
+    await saveFunction();
+  }
+
+  const submitAllForms = async (e: any) => {
+    e.preventDefault()
+
+    // Determine what button was pressed and which action to perform
+    const action = e.nativeEvent.submitter.value;
+    console.log(action)
+
+    if (action === "Delete") {
+      deleteFunction();
+      return;
+    }
+    else if (action === "Save") {
+      saveFunction();
+      return;
+    }
+    else if (action === "Save&Close") {
+      saveFunction();
+      router.push(`/access/course/${props.courseId}/assignment_editor/${props.assignmentId}`)
+      router.refresh();
+      return;
+    }
+    else if (action === "Publish") {
+      publishFunction()
+      return;
+    }
+    else {
+      console.log("Unknown action")
+      return;
     }
   }
 
   return (
-    <>
+    <form onSubmit={submitAllForms}>
       <div role="tablist" className="tabs tabs-lifted tabs-lg">
         <Label index={0} text="General Settings" selectedTab={selectedTab} setSelectedTab={setSelectedTab}/>
-        <General/>
+        <General activity={activity} formRegister={forms.general.register} errors={forms.general.formState.errors}/>
 
         <Label index={1} text="Readings" selectedTab={selectedTab} setSelectedTab={setSelectedTab}/>
         <Readings/>
@@ -80,6 +138,6 @@ export default function ReadingForm(props: ReadingFormProps) {
           <button className="btn btn-success" name="action" value="Publish">Publish</button>
         </div>
       </div>
-    </>
+    </form>
   )
 }

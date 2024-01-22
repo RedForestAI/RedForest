@@ -120,7 +120,7 @@ export default function Readings() {
   return (
     <div role="tabpanel" className="tab-content p-6">
       <div className="flex flex-col">
-        <form
+        <div
           className={`${
             dragActive ? "bg-primary text-primary-content" : "bg-base-300 text-base-content"
           } w-full p-4 rounded-lg  min-h-[10rem] text-center flex flex-col items-center justify-center`}
@@ -153,7 +153,7 @@ export default function Readings() {
           </p>
           <p className="text-xs">Only PDFs files are supported</p>
 
-        </form>
+        </div>
 
         {error && 
         <div className="mt-4 flex justify-center items-center">

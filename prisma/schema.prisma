@@ -88,7 +88,7 @@ enum ActivityType {
 model Activity {
   id                String      @id @default(uuid()) @db.Uuid
   index             Int
-  name              String?
+  name              String      @default("Activity")
   description       String?
   type              ActivityType
   questions         Question[]
@@ -105,10 +105,17 @@ model ReadingActivity {
   @@map("activity_reading")
 }
 
+enum QuestionType {
+  MULTIPLE_CHOICE
+  TRUE_FALSE
+  LIKERT_SCALE
+}
+
 model Question {
   id                String      @id @default(uuid()) @db.Uuid
   content           String
   options           Json
+  type              QuestionType
   answer            Int
 
   // Activity

@@ -1,5 +1,5 @@
 
-import { PrismaClient, Role, Prisma, Profile, Course, Assignment, Activity, ActivityType } from '@prisma/client'
+import { PrismaClient, Role, Prisma, Profile, Course, Assignment, Activity, ActivityType, Question, QuestionType } from '@prisma/client'
 import { get } from 'http';
 const client = new PrismaClient()
 
@@ -176,15 +176,37 @@ const getReadingActivities = (activities: Activity[]): Prisma.ReadingActivityCre
   let rActivities = []
   for (let i = 0; i < activities.length; i++) {
     if (activities[i]?.type !== ActivityType.READING) continue
-    rActivities.push(
-      {
-        id: generateUUID(),
-        readingUrl: ['https://arxiv.org/pdf/1708.08021.pdf']
-      }
-    )
+    if (activities[i]){
+      rActivities.push(
+        {
+          id: activities[i]!.id,
+          readingUrl: ['https://arxiv.org/pdf/1708.08021.pdf']
+        }
+      )
+    }
   }
   return rActivities
 }
+
+// TODO
+// const getQuestions = (activities: Activity[]): Prisma.QuestionCreateInput[] => {
+//   let questions: Question[] = []
+//   for (let i = 0; i < activities.length; i++) {
+//     if (activities[i]){
+//       questions.push(
+//         {
+//           id: generateUUID(),
+//           content: 'What is the answer to this question?',
+//           options: ['A', 'B', 'C', 'D'],
+//           type: QuestionType.MULTIPLE_CHOICE,
+//           answer: 0,
+//           activity: { connect: { id: activities[i]!.id }},
+//         }
+//       )
+//     }
+//   }
+//   return questions
+// }
 
 const main = async () => {
   const profiles = await Promise.all(
@@ -245,7 +267,7 @@ const main = async () => {
       ))
   )
 
-  console.log({ profiles, courses, courseEnrollments, assignments, activities, readingActivities});
+  console.log({ profiles, courses, courseEnrollments, assignments}); // , activities, readingActivities});
 };
 
 main()
