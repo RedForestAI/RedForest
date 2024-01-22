@@ -1,5 +1,6 @@
 
-import { PrismaClient, Role, Prisma, Profile, Course } from '@prisma/client'
+import { PrismaClient, Role, Prisma, Profile, Course, Assignment, Activity, ActivityType } from '@prisma/client'
+import { get } from 'http';
 const client = new PrismaClient()
 
 const today = new Date();
@@ -7,6 +8,14 @@ let yesterday = new Date();
 yesterday.setDate(today.getDate() - 1)
 let tomorrow = new Date();
 tomorrow.setDate(today.getDate() + 1)
+
+function generateUUID() {
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+      const r = Math.random() * 16 | 0;
+      const v = c == 'x' ? r : (r & 0x3 | 0x8);
+      return v.toString(16);
+  });
+}
 
 
 const getProfiles = (): Prisma.ProfileCreateInput[] => [
@@ -126,6 +135,57 @@ const getAssignments = (courses: Course[]): Prisma.AssignmentCreateInput[] => [
   },
 ]
 
+const getActivities = (assignments: Assignment[]): Prisma.ActivityCreateInput[] => {
+  let activities = []
+  for (let i = 0; i < assignments.length; i++) {
+    activities.push(
+      {
+        id: generateUUID(),
+        index: 0,
+        name: "Activity ID #" + i,
+        description: `Activity ID ${i} Description`,
+        type: ActivityType.READING,
+        assignment: { connect: { id: assignments[i]?.id }},
+      }
+    )
+    activities.push(
+      {
+        id: generateUUID(),
+        index: 1,
+        name: `Activity ID # ${i} Part 2`,
+        description: `Activity ID ${i} Description - Part 2`,
+        type: ActivityType.READING,
+        assignment: { connect: { id: assignments[i]?.id }},
+      }
+    )
+    activities.push(
+      {
+        id: generateUUID(),
+        index: 2,
+        name: `Activity ID # ${i} Part 3`,
+        description: `Activity ID ${i} Description - Part 3`,
+        type: ActivityType.READING,
+        assignment: { connect: { id: assignments[i]?.id }},
+      }
+    )
+  }
+  return activities
+}
+
+const getReadingActivities = (activities: Activity[]): Prisma.ReadingActivityCreateInput[] => {
+  let rActivities = []
+  for (let i = 0; i < activities.length; i++) {
+    if (activities[i]?.type !== ActivityType.READING) continue
+    rActivities.push(
+      {
+        id: generateUUID(),
+        readingUrl: ['https://arxiv.org/pdf/1708.08021.pdf']
+      }
+    )
+  }
+  return rActivities
+}
+
 const main = async () => {
   const profiles = await Promise.all(
     getProfiles().map((profile) => client.profile.upsert(
@@ -164,7 +224,28 @@ const main = async () => {
       }))
   )
 
-  console.log({ profiles, courses, courseEnrollments, assignments});
+  const activities = await Promise.all(
+    getActivities(assignments).map((activity) => client.activity.upsert(
+      {
+        where: { id: activity.id },
+        update: { ...activity },
+        create: { ...activity },
+      }))
+  )
+
+  console.log(activities.length)
+
+  const readingActivities = await Promise.all(
+    getReadingActivities(activities).map((readingActivity) => client.readingActivity.upsert(
+      {
+        where: { id: readingActivity.id },
+        update: { ...readingActivity },
+        create: { ...readingActivity },
+      }
+      ))
+  )
+
+  console.log({ profiles, courses, courseEnrollments, assignments, activities, readingActivities});
 };
 
 main()

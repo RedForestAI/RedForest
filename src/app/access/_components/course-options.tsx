@@ -55,7 +55,7 @@ export default function CourseOptions( props: CourseOptionsProps) {
   return (
     <>
       <div className="flex justify-center items-center" onClick={openModal}>
-        <FontAwesomeIcon icon={faGear} className='h-8 cursor-pointer'/>
+        <FontAwesomeIcon icon={faGear} className='h-8 fa-2x cursor-pointer'/>
       </div>
 
       <Transition appear show={isOpen} as={Fragment}>
@@ -83,48 +83,48 @@ export default function CourseOptions( props: CourseOptionsProps) {
                 leaveFrom="opacity-100 scale-100"
                 leaveTo="opacity-0 scale-95"
               >
-                <Dialog.Panel className="w-full max-w-md transform overflow-hidden rounded-2xl bg-zinc-700 p-6 text-left align-middle shadow-xl transition-all">
+                <Dialog.Panel className="w-full max-w-md transform overflow-hidden bg-base-100 rounded-2xl p-6 text-left align-middle shadow-xl transition-all">
                   <Dialog.Title
                     as="h3"
-                    className="text-lg font-medium leading-6 text-white border-b-4 border-inherit pb-2"
+                    className="text-lg font-medium leading-6 border-b-4 border-inherit pb-2"
                   >
                     Course Options
                   </Dialog.Title>
 
-                  <div className="self-stretch text-white text-2xl mt-2.5">Settings</div>
-                  <div className="w-full justify-center text-white text-base whitespace-nowrap items-stretch self-stretch border mt-2.5 px-2.5 rounded-2xl border-solid border-zinc-300">
+                  <div className="self-stretch text-2xl mt-2.5">Settings</div>
+                  <div className="w-full justify-center whitespace-nowrap items-stretch self-stretch border mt-2.5 px-2.5 rounded-2xl border-solid border-zinc-300">
                     {props.course.name}
                   </div>
 
                   
                   <div className=""> 
-                    <div className="self-stretch text-white text-2xl mt-2.5">Invitation</div>
+                    <div className="self-stretch text-2xl mt-2.5">Invitation</div>
                     <div className="items-stretch self-stretch flex justify-between gap-2.5 mt-2.5">
-                      <div className="justify-center text-white text-base whitespace-nowrap items-stretch border grow px-2.5 rounded-2xl border-solid border-zinc-300">
+                      <div className="justify-center whitespace-nowrap items-stretch border grow px-2.5 rounded-2xl border-solid border-zinc-300">
                         Email
                       </div>
                       <div className="flex basis-[0%] flex-col justify-center items-stretch rounded-2xl">
-                        <span className="justify-center text-white text-center text-base bg-blue-400 items-stretch px-7 py-4 rounded-2xl">
+                        <span className="justify-center text-center text-secondary-content bg-secondary items-stretch px-7 py-4 rounded-2xl">
                           Invite
                         </span>
                       </div>
                     </div>
-                    <div onClick={copyInviteLink} className="cursor-pointer justify-center text-white text-center text-base w-full bg-blue-400 self-stretch items-center mt-2.5 px-16 py-4 rounded-2xl">
+                    <div onClick={copyInviteLink} className="cursor-pointer justify-center text-center text-secondary-content w-full bg-secondary self-stretch items-center mt-2.5 px-16 py-4 rounded-2xl">
                     Copy Invite Link
                     </div>
                   </div>
 
                   <div className="">
-                    <div className="self-stretch text-rose-500 text-2xl mt-2.5">
+                    <div className="self-stretch text-error text-2xl mt-2.5">
                       Danger Zone
                     </div>
-                    <div className="items-stretch self-stretch border bg-stone-800 flex flex-col justify-center mt-2.5 p-2.5 rounded-2xl border-solid border-red-500">
+                    <div className="items-stretch self-stretch border flex flex-col justify-center mt-2.5 p-2.5 rounded-2xl border-solid border-error">
                       <span className="justify-between items-center flex gap-0">
-                        <div className="text-white text-base grow shrink basis-auto my-auto">
+                        <div className=" grow shrink basis-auto my-auto">
                           Delete course and all related content. This action cannot be undon.
                         </div>
                         <div onClick={deleteCourse} className="self-stretch flex basis-[0%] flex-col justify-center items-stretch rounded-2xl cursor-pointer">
-                          <div className="justify-center text-white text-center text-base bg-rose-500 items-stretch px-6 py-4 rounded-2xl">
+                          <div className="justify-center text-center text-white bg-error items-stretch px-6 py-4 rounded-2xl">
                             Delete
                           </div>
                         </div>
@@ -132,8 +132,7 @@ export default function CourseOptions( props: CourseOptionsProps) {
                     </div>
                   </div>
 
-
-                  <div className="justify-center text-white text-center text-base bg-emerald-300 items-stretch mt-12 px-7 py-4 rounded-2xl self-end">
+                  <div className="justify-center text-center bg-primary text-primary-content items-stretch mt-12 px-7 py-4 rounded-2xl self-end">
                     Save
                   </div>
 

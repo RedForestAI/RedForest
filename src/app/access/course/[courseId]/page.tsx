@@ -28,9 +28,9 @@ export default async function Page({params}: {params: { courseId: string }}) {
   console.log(assignments);
 
   return (
-    <div>
-      <NavBar includeBurger={true} accountLink={"/access/account"} logoLink={"/access"}/>
-      <div className="pt-20 container mx-auto p-4">
+    <div className="min-h-screen">
+      <NavBar profile={profile} breadcrumbs={[{name: "\\", url: `/access`}]}/>
+      <div className="container mx-auto pl-12 pr-12 bg-base-200 min-h-screen">
         {profile && course
           ? <div>
               <div>
