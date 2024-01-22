@@ -7,11 +7,13 @@ import ReadingForm from './_components/reading/reading-form';
 import NavBar from "~/components/ui/navbar";
 import { api } from '~/trpc/server';
 
-export default async function Page({params}: {params: { activityId: string}}) {
+export default async function Page({params}: {params: { courseId: string, assignmentId: string, activityId: string}}) {
   console.log(params.activityId)
 
   // Fetch the activity data
   const profile = await api.auth.getProfile.query();
+  const course = await api.course.getOne.query({courseId: params.courseId, profileId: profile.id});
+  const assignment = await api.assignment.getOne.query({id: params.assignmentId});
   const activity = await api.activity.getOne.query({id: params.activityId});
 
   const getForm = async (activity: any) => {
@@ -19,6 +21,8 @@ export default async function Page({params}: {params: { activityId: string}}) {
       case ActivityType.READING:
         const readingActivity = await api.readingActivity.getOne.query({id: params.activityId});
         const propData = {
+          courseId: params.courseId,
+          assignmentId: params.assignmentId,
           activity: activity,
           readingActivity: readingActivity
         }
@@ -31,7 +35,7 @@ export default async function Page({params}: {params: { activityId: string}}) {
 
   return (
   <>
-    <NavBar profile={profile}/>
+    <NavBar profile={profile} breadcrumbs={[{name: "\\", url: `/access`}, {name: course.name, url: `/access/course/${params.courseId}`}, {name: assignment.name, url: `/access/course/${params.courseId}/assignment_editor/${params.assignmentId}`}]}/>
     <div className="mt-4 ml-8 mr-8">
       <Slot children={getForm(activity)}/>
     </div>

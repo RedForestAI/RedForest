@@ -2,12 +2,16 @@
 
 import { Activity, ReadingActivity } from '@prisma/client';
 import { useState } from 'react';
+import { api } from "~/trpc/react";
+import { useRouter } from 'next/navigation';
 
 import General from "./general"
 import Readings from "./readings"
 import Questions from "./questions"
 
 type ReadingFormProps = {
+  courseId: string
+  assignmentId: string
   activity: Activity
   readingActivity: ReadingActivity | null
 }
@@ -38,7 +42,22 @@ function Label(props: LabelProps) {
 }
 
 export default function ReadingForm(props: ReadingFormProps) {
-  const [selectedTab, setSelectedTab] = useState<number>(2);
+  // State
+  const router = useRouter();
+  const [selectedTab, setSelectedTab] = useState<number>(0);
+
+  // Mutations
+  const deleteMutation = api.assignment.delete.useMutation();
+
+  const deleteActivity = async () => {
+    try {
+      await deleteMutation.mutateAsync({id: props.activity.id});
+      router.push(`/access/course/${props}/assignment_editor/${props.assignmentId}`)
+      router.refresh()
+    } catch (error) {
+      console.log("Failed to delete assignment: ", error)
+    }
+  }
 
   return (
     <>
@@ -46,17 +65,15 @@ export default function ReadingForm(props: ReadingFormProps) {
         <Label index={0} text="General Settings" selectedTab={selectedTab} setSelectedTab={setSelectedTab}/>
         <General/>
 
-        {/* <input type="radio" name="my_tabs_2" role="tab" className="tab" aria-label="Tab 2" checked={selectedTab === 1} onChange={() => setSelectedTab(1)}/> */}
         <Label index={1} text="Readings" selectedTab={selectedTab} setSelectedTab={setSelectedTab}/>
         <Readings/>
 
-        {/* <input type="radio" name="my_tabs_2" role="tab" className="tab" aria-label="Tab 3" checked={selectedTab === 2} onChange={() => setSelectedTab(2)}/> */}
         <Label index={2} text="Questions" selectedTab={selectedTab} setSelectedTab={setSelectedTab}/>
         <Questions/>
       
       </div>
       <div className="justify-between items-stretch flex mt-8 mb-8 pl-10 pr-10 py-3 max-md:max-w-full max-md:flex-wrap max-md:px-5">
-        <button className="btn btn-error" name="action" value="Delete">Delete</button>
+        <button onClick={deleteActivity} className="btn btn-error" name="action" value="Delete">Delete</button>
         <div className="flex flex-row gap-2.5">
           <button className="btn btn-info" name="action" value="Save">Save</button>
           <button className="btn btn-info" name="action" value="Save&Close">Save & Close</button>

@@ -22,7 +22,7 @@ export default function AssignmentStructure(props: StructureProps) {
               </Reorder.Item>
             ))}
           </Reorder.Group>
-          <EmptyActivityCard/>
+          <EmptyActivityCard assignmentId={props.assignment.id} activities={props.activities} setActivities={props.setActivities}/>
         </div>
       </div>
     </div>

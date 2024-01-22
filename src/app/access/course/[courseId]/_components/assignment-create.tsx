@@ -21,7 +21,6 @@ export default function AssignmentCreate( props: AssignmentCreateProps) {
     } catch {
       console.log("Failed to create assignment")
     }
-    
   }
 
   return (

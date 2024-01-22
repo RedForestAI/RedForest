@@ -9,6 +9,7 @@ export default async function Page({params}: {params: { courseId: string, assign
   
   // Queries
   const profile = await api.auth.getProfile.query();
+  const course = await api.course.getOne.query({courseId: params.courseId, profileId: profile.id});
   const assignment = await api.assignment.getOne.query({id: params.assignmentId});
   const activities = await api.activity.getMany.query({assignmentId: params.assignmentId})
 
@@ -23,7 +24,7 @@ export default async function Page({params}: {params: { courseId: string, assign
 
   return (
     <div>
-      <NavBar profile={profile}/>
+      <NavBar profile={profile} breadcrumbs={[{name: "\\", url: `/access`}, {name: course.name, url: `/access/course/${params.courseId}`}]}/>
       <div className="items-stretch flex flex-col px-5 py-11 max-md:px-5 pl-12 pr-12">
         <AssignmentForm {...formData}/>
       </div>

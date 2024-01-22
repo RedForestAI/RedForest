@@ -1,9 +1,10 @@
-import { Activity, Assignment } from '@prisma/client';
+import { Activity, Assignment, ActivityType } from '@prisma/client';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { IconDefinition } from '@fortawesome/fontawesome-svg-core';
 import { faGear } from '@fortawesome/free-solid-svg-icons';
 import { useRouter } from 'next/navigation';
+import { api } from "~/trpc/react";
 
 type ActivityCardProps = {
   icon: IconDefinition
@@ -39,9 +40,20 @@ export function ActivityCard(props: ActivityCardProps) {
   )
 }
 
-export function EmptyActivityCard() {
+export function EmptyActivityCard(props: {assignmentId: string, activities: Activity[], setActivities: any}) {
+  const mutation = api.activity.createEmpty.useMutation();
+
+  const createActivity = async () => {
+    try {
+      const result = await mutation.mutateAsync({index: props.activities.length, assignmentId: props.assignmentId});
+      console.log("Created activity: ", result)
+      props.setActivities([...props.activities, result])
+    } catch (error) {
+      console.log("Failed to create assignment: ", error)
+    }
+  }
   return (
-    <div className="card w-full border-[2px] shadow-xl m-4">
+    <div className="card w-full border-[2px] shadow-xl m-4 cursor-pointer" onClick={createActivity}>
       <div className="justify-center items-center flex flex-col h-28">
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-12 h-12">
           <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v6m3-3H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />

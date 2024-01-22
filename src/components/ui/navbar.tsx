@@ -6,8 +6,14 @@ import { useState, useEffect } from "react";
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 import { useRouter } from 'next/navigation'
 
+type Breadcrum = {
+  name: string
+  url: string
+}
+
 type NavbarProps = {
   profile: Profile | null
+  breadcrumbs?: Breadcrum[] | null
 }
 
 export default function Navbar(props: NavbarProps) {
@@ -84,9 +90,21 @@ export default function Navbar(props: NavbarProps) {
           <img
             loading="lazy"
             src="/imgs/logo-192x192.png"
-            className="ml-4 object-contain object-center w-[40px] overflow-hidden self-center shrink-0 max-w-full my-auto"
+            className="ml-4 mr-2 object-contain object-center w-[40px] overflow-hidden self-center shrink-0 max-w-full my-auto"
           />
         </Link>
+
+        <div className="text-sm breadcrumbs">
+          <ul>
+            {props.breadcrumbs && props.breadcrumbs.map((breadcrumb, index) => (
+              <li key={index}>
+                <Link href={breadcrumb.url} legacyBehavior={true}>
+                  <a>{breadcrumb.name}</a>
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </div>
       </div>
 
       <div className="navbar-end">
