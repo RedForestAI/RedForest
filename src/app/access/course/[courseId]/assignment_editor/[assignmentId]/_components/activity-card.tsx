@@ -5,20 +5,12 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { IconDefinition, faGear } from '@fortawesome/free-solid-svg-icons';
 import { useRouter } from "next/navigation";
 import { api } from "~/trpc/react";
-import { faBook } from "@fortawesome/free-solid-svg-icons"
+import { getIcon } from "../_utils/icons"
 
 type ActivityCardProps = {
   assignment: Assignment
   questions: Question[]
   activity: Activity
-}
-
-const getIcon = (type: ActivityType): IconDefinition => {
-  switch (type) {
-    case (ActivityType.READING):
-      return faBook
-  }
-  return faBook
 }
 
 export function ActivityCard(props: ActivityCardProps) {
@@ -64,6 +56,27 @@ export function EmptyActivityCard(props: {assignmentId: string, activities: Acti
   const mutation = api.activity.createEmpty.useMutation();
   let [isOpen, setIsOpen] = useState<boolean>(false)
 
+  let activityOptions = [
+    {
+      type: ActivityType.READING, 
+      name: "Reading", 
+      description: "Reading PDFs and answering questions",
+      onClick: async () => {
+        await createActivity(ActivityType.READING)
+        setIsOpen(false)
+      }
+    },
+    {
+      type: ActivityType.QUESTIONING, 
+      name: "Questioning", 
+      description: "Answering questions given a text prompt",
+      onClick: async () => {
+        await createActivity(ActivityType.QUESTIONING)
+        setIsOpen(false)
+      }
+    },
+  ]
+
   function closeModal() {
     setIsOpen(false)
   }
@@ -72,15 +85,16 @@ export function EmptyActivityCard(props: {assignmentId: string, activities: Acti
     setIsOpen(true)
   }
 
-  const createActivity = async () => {
+  const createActivity = async (type: ActivityType) => {
     try {
-      const result = await mutation.mutateAsync({index: props.activities.length, assignmentId: props.assignmentId});
+      const result = await mutation.mutateAsync({index: props.activities.length, type: type, assignmentId: props.assignmentId});
       props.setActivities([...props.activities, result])
       props.setQuestions([...props.questions, []])
     } catch (error) {
       console.log("Failed to create assignment: ", error)
     }
   }
+
   return (
     <>
     <div className="card w-full border-[2px] shadow-xl m-4 cursor-pointer" onClick={openModal}>
@@ -122,6 +136,21 @@ export function EmptyActivityCard(props: {assignmentId: string, activities: Acti
                   >
                     Activity Selector
                   </Dialog.Title>
+
+                  {activityOptions.map((activityOption, index) => (
+                    <div className="card w-full bg-base border-[3px] border-solid shadow-xl mt-2 cursor-pointer" onClick={activityOption.onClick}>
+                      <div className="flex flex-row h-full">
+                        <div className="flex justify-center items-center border-r p-6">
+                          <FontAwesomeIcon icon={getIcon(activityOption.type)} className="fa-3x h-8"/>
+                        </div>
+                        <div className="flex flex-col w-9/12 p-4">
+                          <h2 className="card-title">{activityOption.name}</h2>
+                          <p className="card-subtitle">{activityOption.description}</p>
+                        </div>
+                      </div>
+                    </div>
+                  ))
+                  }
 
                 </Dialog.Panel>
               </Transition.Child>
