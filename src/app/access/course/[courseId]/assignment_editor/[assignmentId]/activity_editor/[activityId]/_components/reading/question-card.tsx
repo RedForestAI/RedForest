@@ -2,6 +2,7 @@ import { Question, QuestionType } from "@prisma/client"
 import { Reorder } from "framer-motion";
 import { useState } from "react";
 import { generateUUID } from "~/utils/uuid";
+import { api } from "~/trpc/react";
 
 import { faTrash } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -141,10 +142,21 @@ export function QuestionCard(props: QuestionCardProps) {
   )
 }
 
-export function EmptyQuestionCard(props: {setQuestions: any}) {
+export function EmptyQuestionCard(props: {activityId: string, questions: Question[], setQuestions: any}) {
 
-  const createQuestion = () => {
-    props.setQuestions((prev: any) => [...prev, {id: generateUUID(), content: "What is the meaning of life?", options: [], answer: 1, activityId: "1"}])
+  const createMutation = api.question.create.useMutation();
+
+  const createQuestion = async () => {
+    const result = await createMutation.mutateAsync({
+      activityId: props.activityId, 
+      content: "Question Content", 
+      options: [], 
+      answer: 0,
+      type: QuestionType.MULTIPLE_CHOICE,
+      pts: 1,
+      index: props.questions.length,
+    })
+    // props.setQuestions((prev: any) => [...prev, {id: generateUUID(), content: "What is the meaning of life?", options: [], answer: 1, activityId: "1"}])
   }
 
   return (

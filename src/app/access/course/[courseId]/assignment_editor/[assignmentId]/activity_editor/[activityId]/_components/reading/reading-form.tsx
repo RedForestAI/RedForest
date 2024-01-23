@@ -121,7 +121,7 @@ export default function ReadingForm(props: ReadingFormProps) {
         <Readings/>
 
         <Label index={2} text="Questions" selectedTab={selectedTab} setSelectedTab={setSelectedTab}/>
-        <Questions questions={questions} setQuestions={setQuestions}/>
+        <Questions activityId={activity.id} questions={questions} setQuestions={setQuestions}/>
       
       </div>
       <div className="justify-between items-stretch flex mt-8 mb-8 pl-10 pr-10 py-3 max-md:max-w-full max-md:flex-wrap max-md:px-5">

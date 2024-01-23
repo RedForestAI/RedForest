@@ -17,6 +17,9 @@ export default async function Page({params}: {params: { courseId: string, assign
   const activity = await api.activity.getOne.query({id: params.activityId});
   const questions = await api.question.getMany.query({activityId: params.activityId})
 
+  // Sorts the questions by their index
+  questions.sort((a, b) => a.index - b.index)
+
   const getForm = async (activity: any) => {
     switch (activity.type) {
       case ActivityType.READING:

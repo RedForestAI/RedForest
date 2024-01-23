@@ -5,6 +5,7 @@ import { useState } from "react";
 import { QuestionCard, EmptyQuestionCard } from "./question-card";
 
 type QuestionsProps = {
+    activityId: string
     questions: Question[]
     setQuestions: any
 }
@@ -21,7 +22,7 @@ export default function Questions(props: QuestionsProps) {
             </Reorder.Item>
           ))}
         </Reorder.Group>
-        <EmptyQuestionCard setQuestions={props.setQuestions}/>
+        <EmptyQuestionCard activityId={props.activityId} questions={props.questions} setQuestions={props.setQuestions}/>
       </div>
     </div>
   )

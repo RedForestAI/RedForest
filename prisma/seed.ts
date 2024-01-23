@@ -199,6 +199,7 @@ const getQuestions = (activities: Activity[]): Prisma.QuestionCreateInput[] => {
         options: ['A', 'B', 'C', 'D'],
         type: QuestionType.MULTIPLE_CHOICE,
         answer: 0,
+        index: 0,
         pts: 2,
         activity: { connect: { id: activities[i]?.id }},
       });
