@@ -8,7 +8,6 @@ import NavBar from "~/components/ui/navbar";
 import { api } from '~/trpc/server';
 
 export default async function Page({params}: {params: { courseId: string, assignmentId: string, activityId: string}}) {
-  console.log(params.activityId)
 
   // Fetch the activity data
   const profile = await api.auth.getProfile.query();
@@ -21,6 +20,7 @@ export default async function Page({params}: {params: { courseId: string, assign
   questions.sort((a, b) => a.index - b.index)
 
   const getForm = async (activity: any) => {
+    if (!activity) return <h1 className="text-error">Failed to load activity</h1>
     switch (activity.type) {
       case ActivityType.READING:
         const readingActivity = await api.readingActivity.getOne.query({id: params.activityId});
@@ -35,7 +35,6 @@ export default async function Page({params}: {params: { courseId: string, assign
       default:
         return <h1 className="text-error">Failed to load activity</h1>
     }
-  
   }
 
   return (

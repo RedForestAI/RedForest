@@ -1,6 +1,6 @@
 import { Question, QuestionType } from "@prisma/client"
 import { Reorder } from "framer-motion";
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { generateUUID } from "~/utils/uuid";
 import { api } from "~/trpc/react";
 
@@ -55,25 +55,71 @@ function EmptyAnswerCard(props: {setAnswers: any}) {
 }
 
 export function QuestionCard(props: QuestionCardProps) {
+  // State
   const [answers, setAnswers] = useState<string[]>(props.question.options)
   const [open, setOpen] = useState<boolean>(false)
+  const contentRef = useRef(null)
+  const [contentHeight, setContentHeight] = useState(0);
+
+  const deleteMutation = api.question.delete.useMutation();
 
   const setNumberInput = (event: any) => {
     props.setQuestions((prev: any) => prev.map((question: Question) => {
       if (question.id === props.question.id) {
-        return {...question, pts: event.target.value}
+        return {...question, pts: Number(event.target.value)}
       }
       return question
     }))
   }
 
   const setQuestionContent = (event: any) => {
+    props.setQuestions((prev: any) => prev.map((question: Question) => {
+      if (question.id === props.question.id) {
+        return {...question, content: event.target.value}
+      }
+      return question
+    }))
   }
 
-  const deleteQuestion = () => {
-    console.log("Deleting question")
+  const setMC = () => {
+    props.setQuestions((prev: any) => prev.map((question: Question) => {
+      if (question.id === props.question.id) {
+        return {...question, type: QuestionType.MULTIPLE_CHOICE}
+      }
+      return question
+    }))
+  }
+
+  const setTF = () => {
+    props.setQuestions((prev: any) => prev.map((question: Question) => {
+      if (question.id === props.question.id) {
+        return {...question, type: QuestionType.TRUE_FALSE}
+      }
+      return question
+    }))
+  }
+
+  const setLS = () => {
+    props.setQuestions((prev: any) => prev.map((question: Question) => {
+      if (question.id === props.question.id) {
+        return {...question, type: QuestionType.LIKERT_SCALE}
+      }
+      return question
+    }))
+  }
+
+  const deleteQuestion = async () => {
+    const result = await deleteMutation.mutateAsync({id: props.question.id})
     props.setQuestions((prev: any) => prev.filter((question: Question) => question.id !== props.question.id))
   }
+
+  useEffect(() => {
+    if (props.question.type === QuestionType.MULTIPLE_CHOICE) {
+      setContentHeight(contentRef?.current!.scrollHeight);
+    } else {
+      setContentHeight(0);
+    }
+  }, [props.question.type]);
 
   return (
     <div className={`collapse bg-base-300 w-full m-4 p-4 ${open ? 'collapse-open' : 'collapse-close'}`}>
@@ -109,33 +155,38 @@ export function QuestionCard(props: QuestionCardProps) {
           </label> 
           <div className="flex flex-row justify-around items-center space-x-4">
             <label className="">
-              <input type="radio" name="radio" value={props.question.type == QuestionType.MULTIPLE_CHOICE}/>
+              <input type="radio" name="radio" checked={props.question.type == QuestionType.MULTIPLE_CHOICE} onChange={setMC}/>
               <span className="radio-mark"></span> Multiple Choice
             </label> 
             <label className="">
-              <input type="radio" name="radio" value={props.question.type == QuestionType.TRUE_FALSE}/>
+              <input type="radio" name="radio" checked={props.question.type == QuestionType.TRUE_FALSE} onChange={setTF}/>
               <span className="radio-mark"></span> True/False
             </label>
             <label className="">
-              <input type="radio" name="radio" value={props.question.type == QuestionType.LIKERT_SCALE}/>
+              <input type="radio" name="radio" checked={props.question.type == QuestionType.LIKERT_SCALE} onChange={setLS}/>
               <span className="radio-mark"></span> Likert Scale
             </label> 
           </div>
         </div>
 
         {/* Question Answer Options */}
-        <div className="form-control mt-4">
-          <label className="label">
-            <span className="label-text">Question Options</span>
-          </label> 
-          <Reorder.Group axis="y" values={answers} onReorder={setAnswers}>
-            {answers.map((item, index) => (
-              <Reorder.Item key={item} value={item}>
-                <AnswerCard index={index} answer={item} setAnswers={setAnswers}/>
-              </Reorder.Item>
-            ))}
-          </Reorder.Group>
-          <EmptyAnswerCard setAnswers={setAnswers}/>
+        <div 
+          ref={contentRef}
+          style={{maxHeight: `${contentHeight}px`}}
+          className={`form-control mt-4 transition-all duration-500 ${props.question.type === QuestionType.MULTIPLE_CHOICE ? 'max-h-screen' : 'max-h-0 overflow-hidden'}`}>
+            <div className="form-control mt-4">
+              <label className="label">
+                <span className="label-text">Question Options</span>
+              </label> 
+              <Reorder.Group axis="y" values={answers} onReorder={setAnswers}>
+                {answers.map((item, index) => (
+                  <Reorder.Item key={item} value={item}>
+                    <AnswerCard index={index} answer={item} setAnswers={setAnswers}/>
+                  </Reorder.Item>
+                ))}
+              </Reorder.Group>
+              <EmptyAnswerCard setAnswers={setAnswers}/>
+            </div>
         </div>
       </div>
     </div>
@@ -147,7 +198,7 @@ export function EmptyQuestionCard(props: {activityId: string, questions: Questio
   const createMutation = api.question.create.useMutation();
 
   const createQuestion = async () => {
-    const result = await createMutation.mutateAsync({
+    const result: Question = await createMutation.mutateAsync({
       activityId: props.activityId, 
       content: "Question Content", 
       options: [], 
@@ -156,7 +207,7 @@ export function EmptyQuestionCard(props: {activityId: string, questions: Questio
       pts: 1,
       index: props.questions.length,
     })
-    // props.setQuestions((prev: any) => [...prev, {id: generateUUID(), content: "What is the meaning of life?", options: [], answer: 1, activityId: "1"}])
+    props.setQuestions((prev: any) => [...prev, result])
   }
 
   return (

@@ -49,11 +49,12 @@ export default function ReadingForm(props: ReadingFormProps) {
   const [activity, setActivity] = useState<Activity>(props.activity);
   const [questions, setQuestions] = useState<Question[]>(props.questions);
   const [readingActivity, setReadingActivity] = useState<ReadingActivity | null>(props.readingActivity);
-  const [selectedTab, setSelectedTab] = useState<number>(0);
+  const [selectedTab, setSelectedTab] = useState<number>(2);
 
   // Mutations
   const deleteMutation = api.activity.deleteOne.useMutation();
   const updateMutation = api.activity.update.useMutation();
+  const updateQuestionMutation = api.question.update.useMutation();
 
   const deleteFunction = async () => {
     try {
@@ -66,14 +67,31 @@ export default function ReadingForm(props: ReadingFormProps) {
   }
 
   const saveFunction = async () => {
-    // await forms.general.handleSubmit(submit)();
-    console.log("Submitting all forms")
-    console.log(activity)
+    
+    // Settings
     try { 
       await updateMutation.mutateAsync({id: activity.id, name: activity.name, description: activity.description! });
     } catch (error) {
       console.log("Failed to update activity: ", error)
     }
+
+    // Questions
+    try {
+      await Promise.all(questions.map(async (question: Question) => {
+        await updateQuestionMutation.mutateAsync({
+          id: question.id, 
+          content: question.content, 
+          index: question.index,
+          options: question.options,
+          type: question.type,
+          answer: question.answer,
+          pts: question.pts
+        })
+      }))
+    } catch (error) {
+      console.log("Failed to update questions: ", error)
+    }
+    
   }
 
   const publishFunction = async () => {

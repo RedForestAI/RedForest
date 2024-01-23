@@ -20,7 +20,8 @@ export const questionRouter = createTRPCRouter({
       answer: z.number(), 
       type: z.enum([QuestionType.MULTIPLE_CHOICE, QuestionType.TRUE_FALSE, QuestionType.LIKERT_SCALE]), 
       options: z.array(z.string()), 
-      pts: z.number()}))
+      pts: z.number()
+    }))
     .mutation( async ({ input, ctx }) => {
         // Get assignments pertaining to course
         return await ctx.db.question.create({
@@ -33,6 +34,38 @@ export const questionRouter = createTRPCRouter({
             answer: input.answer,
             pts: input.pts
           }
+        });
+    }),
+
+  update: privateProcedure
+    .input(z.object({ 
+      id: z.string(),
+      content: z.string(), 
+      index: z.number(), 
+      answer: z.number(), 
+      type: z.enum([QuestionType.MULTIPLE_CHOICE, QuestionType.TRUE_FALSE, QuestionType.LIKERT_SCALE]), 
+      options: z.array(z.string()), 
+      pts: z.number()
+    }))
+    .mutation( async ({ input, ctx }) => {
+      return await ctx.db.question.update({
+        where: {id: input.id},
+        data: {
+          content: input.content,
+          index: input.index,
+          options: input.options,
+          type: input.type,
+          answer: input.answer,
+          pts: input.pts
+        }
+      });
+    }),
+
+  delete: privateProcedure
+    .input(z.object({ id: z.string()}))
+    .mutation( async ({ input, ctx }) => {
+        return await ctx.db.question.delete({
+          where: {id: input.id},
         });
     }),
 })
