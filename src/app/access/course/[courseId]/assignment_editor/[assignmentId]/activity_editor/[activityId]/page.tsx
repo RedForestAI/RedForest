@@ -3,6 +3,7 @@
 import { ActivityType } from "@prisma/client"
 import Slot from "./_components/slot";
 import ReadingForm from './_components/reading/reading-form';
+import QuestionForm from './_components/questioning/question-form';
 
 import NavBar from "~/components/ui/navbar";
 import { api } from '~/trpc/server';
@@ -29,7 +30,7 @@ export default async function Page({params}: {params: { courseId: string, assign
         // Sorts the files by their index
         files.sort((a, b) => a.index - b.index)
 
-        const propData = {
+        let readingPropData = {
           courseId: params.courseId,
           assignmentId: params.assignmentId,
           activity: activity,
@@ -37,7 +38,16 @@ export default async function Page({params}: {params: { courseId: string, assign
           questions: questions,
           files: files
         }
-        return <ReadingForm {...propData}/>
+        return <ReadingForm {...readingPropData}/>
+
+      case ActivityType.QUESTIONING:
+        let questionPropData = {
+          courseId: params.courseId,
+          assignmentId: params.assignmentId,
+          activity: activity,
+          questions: questions,
+        }
+        return <QuestionForm {...questionPropData}/>
       default:
         return <h1 className="text-error">Failed to load activity</h1>
     }

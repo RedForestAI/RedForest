@@ -34,7 +34,7 @@ export function ActivityCard(props: ActivityCardProps) {
     <div className="card w-full bg-base border-[3px] border-solid shadow-xl m-4">
         <div className="flex flex-row h-full">
           <div className="flex justify-center items-center border-r p-6">
-            <FontAwesomeIcon icon={getIcon(props.activity.type)} className="fa-3x h-8"/>
+            <FontAwesomeIcon icon={getIcon(props.activity.type)} className="fa-3x h-8 w-12"/>
           </div>
           <div className="flex flex-col w-9/12 p-4">
             <h2 className="card-title">{props.activity.name}</h2>
@@ -138,10 +138,10 @@ export function EmptyActivityCard(props: {assignmentId: string, activities: Acti
                   </Dialog.Title>
 
                   {activityOptions.map((activityOption, index) => (
-                    <div className="card w-full bg-base border-[3px] border-solid shadow-xl mt-2 cursor-pointer" onClick={activityOption.onClick}>
+                    <div key={index} className="card w-full bg-base border-[3px] border-solid shadow-xl mt-2 cursor-pointer" onClick={activityOption.onClick}>
                       <div className="flex flex-row h-full">
                         <div className="flex justify-center items-center border-r p-6">
-                          <FontAwesomeIcon icon={getIcon(activityOption.type)} className="fa-3x h-8"/>
+                          <FontAwesomeIcon icon={getIcon(activityOption.type)} className="fa-3x h-8 w-12"/>
                         </div>
                         <div className="flex flex-col w-9/12 p-4">
                           <h2 className="card-title">{activityOption.name}</h2>
