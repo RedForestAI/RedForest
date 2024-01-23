@@ -50,7 +50,7 @@ export function ActivityCard(props: ActivityCardProps) {
   )
 }
 
-export function EmptyActivityCard(props: {assignmentId: string, activities: Activity[], setActivities: any}) {
+export function EmptyActivityCard(props: {assignmentId: string, activities: Activity[], setActivities: any, questions: [], setQuestions: any}) {
   const router = useRouter();
   const mutation = api.activity.createEmpty.useMutation();
 
@@ -58,6 +58,7 @@ export function EmptyActivityCard(props: {assignmentId: string, activities: Acti
     try {
       const result = await mutation.mutateAsync({index: props.activities.length, assignmentId: props.assignmentId});
       props.setActivities([...props.activities, result])
+      props.setQuestions([...props.questions, []])
     } catch (error) {
       console.log("Failed to create assignment: ", error)
     }

@@ -25,6 +25,7 @@ export default function AssignmentForm(props: FormProps) {
 
   // State
   const router = useRouter();
+  const [questions, setQuestions] = useState<Question[][]>(props.questions);
   const [assignment, setAssignment] = useState<Assignment>(props.assignment);
   const [activities, setActivities] = useState<Activity[]>(props.activities);
   const forms = {
@@ -117,7 +118,7 @@ export default function AssignmentForm(props: FormProps) {
   return (
     <form onSubmit={submitAllForms} className="flex flex-col gap-8">
       <AssignmentSettings assignment={assignment} formRegister={forms.settings.register} control={forms.settings.control} errors={forms.settings.formState.errors}/>
-      <AssignmentStructure assignment={assignment} activities={activities} questions={props.questions} setActivities={setActivities}/>
+      <AssignmentStructure assignment={assignment} activities={activities} questions={questions} setQuestions={setQuestions} setActivities={setActivities}/>
       <div className="justify-between items-stretch flex mt-8 mb-8 pl-10 pr-10 py-3 max-md:max-w-full max-md:flex-wrap max-md:px-5">
         <button className="btn btn-error" name="action" value="Delete">Delete</button>
         <div className="flex flex-row gap-2.5">

@@ -8,6 +8,7 @@ type StructureProps = {
   activities: Activity[]
   setActivities: any
   questions: Question[][]
+  setQuestions: any
 }
 
 export default function AssignmentStructure(props: StructureProps) {
@@ -23,7 +24,7 @@ export default function AssignmentStructure(props: StructureProps) {
               </Reorder.Item>
             ))}
           </Reorder.Group>
-          <EmptyActivityCard assignmentId={props.assignment.id} activities={props.activities} setActivities={props.setActivities}/>
+          <EmptyActivityCard assignmentId={props.assignment.id} activities={props.activities} setActivities={props.setActivities} questions={props.questions} setQuestions={props.setQuestions}/>
         </div>
       </div>
     </div>
