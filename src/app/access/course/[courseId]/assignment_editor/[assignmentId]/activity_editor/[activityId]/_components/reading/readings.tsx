@@ -11,7 +11,8 @@ const sizeLimit = 5000000; // 5MB
 
 type ReadingProps = {
   readingActivity: ReadingActivity
-  readingFiles: ReadingFile[]
+  files: ReadingFile[]
+  setFiles: React.Dispatch<React.SetStateAction<ReadingFile[]>>
 }
 
 export default function Readings(props: ReadingProps) {
@@ -22,10 +23,9 @@ export default function Readings(props: ReadingProps) {
   const [error, setError] = useState< string>("");
   const [dragActive, setDragActive] = useState<boolean>(false);
   const inputRef = useRef<any>(null);
-  const [files, setFiles] = useState<ReadingFile[]>(props.readingFiles);
   const [totalMemory, setTotalMemory] = useState<number>(() => {
     let total = 0;
-    files.forEach(file => {
+    props.files.forEach(file => {
       total += file.size;
     })
     return total;
@@ -37,11 +37,11 @@ export default function Readings(props: ReadingProps) {
 
   useEffect(() => {
     computeTotalMemory();
-  }, [files])
+  }, [props.files])
 
   function computeTotalMemory() {
     let total = 0;
-    files.forEach(file => {
+    props.files.forEach(file => {
       total += file.size;
     })
     setTotalMemory(total);
@@ -59,10 +59,10 @@ export default function Readings(props: ReadingProps) {
       title: file.name,
       filepath: path,
       size: file.size,
-      index: files.length,
+      index: props.files.length,
       activityId: props.readingActivity.id
     });
-    setFiles((prevState: any) => [...prevState, readingFile]);
+    props.setFiles((prevState: any) => [...prevState, readingFile]);
   }
 
   async function handleChange(e: any) {
@@ -89,7 +89,7 @@ export default function Readings(props: ReadingProps) {
   }
 
   function handleSubmitFile(e: any) {
-    if (files.length === 0) {
+    if (props.files.length === 0) {
       // no file has been submitted
     } else {
       // write submit logic here
@@ -142,7 +142,7 @@ export default function Readings(props: ReadingProps) {
     // Ref: https://github.com/orgs/supabase/discussions/2466
 
     // Delete the file in the storage
-    const { data, error } = await supabase.storage.from('readings').remove([files[idx]!.filepath]);
+    const { data, error } = await supabase.storage.from('readings').remove([props.files[idx]!.filepath]);
     
     if (error) {
       console.log(error);
@@ -150,12 +150,12 @@ export default function Readings(props: ReadingProps) {
     }
     
     // Delete the file from the database
-    await deleteMutation.mutate({id: files[idx]!.id});
+    await deleteMutation.mutate({id: props.files[idx]!.id});
     
-    const newArr = [...files];
+    const newArr = [...props.files];
     newArr.splice(idx, 1);
-    setFiles([]);
-    setFiles(newArr);
+    props.setFiles([]);
+    props.setFiles(newArr);
   }
 
   function openFileExplorer() {
@@ -214,8 +214,8 @@ export default function Readings(props: ReadingProps) {
         }
 
         <div className="mt-4 text-xl border-b">Files & Order</div>
-        <Reorder.Group axis="y" values={files} onReorder={setFiles} className="mt-4">
-          {files.map((file: any, idx: any) => (
+        <Reorder.Group axis="y" values={props.files} onReorder={props.setFiles} className="mt-4">
+          {props.files.map((file: any, idx: any) => (
             <Reorder.Item key={file.id} value={file} className="w-full">
               <FileCard file={file} idx={idx} removeFile={removeFile}/>
             </Reorder.Item>

@@ -83,6 +83,7 @@ model Assignment {
 
 enum ActivityType {
   READING
+  QUESTIONING
 }
 
 model Activity {

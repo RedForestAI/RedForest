@@ -22,6 +22,13 @@ export const readingFileRouter = createTRPCRouter({
         }
       });
     }),
+
+  update: privateProcedure
+    .input(z.object({ id: z.string(), index: z.number()}))
+    .mutation( async ({ input, ctx }) => {
+      return await ctx.db.readingFile.update({where: {id: input.id}, data: {index: input.index}});
+    }),
+
   delete: privateProcedure
     .input(z.object({ id: z.string() }))
     .mutation( async ({ input, ctx }) => {

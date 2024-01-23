@@ -50,11 +50,13 @@ export default function ReadingForm(props: ReadingFormProps) {
   const [activity, setActivity] = useState<Activity>(props.activity);
   const [questions, setQuestions] = useState<Question[]>(props.questions);
   const [selectedTab, setSelectedTab] = useState<number>(0);
+  const [files, setFiles] = useState<ReadingFile[]>(props.files);
 
   // Mutations
   const deleteMutation = api.activity.deleteOne.useMutation();
   const updateMutation = api.activity.update.useMutation();
   const updateQuestionMutation = api.question.update.useMutation();
+  const updateFiles = api.readingFile.update.useMutation();
 
   const deleteFunction = async () => {
     try {
@@ -75,8 +77,27 @@ export default function ReadingForm(props: ReadingFormProps) {
       console.log("Failed to update activity: ", error)
     }
 
+    // Readings
+    try {
+      // First update their index based on their position in the array
+      files.forEach((file: ReadingFile, index: number) => {
+        file.index = index;
+      })
+
+      await Promise.all(files.map(async (file: ReadingFile) => {
+        await updateFiles.mutateAsync({id: file.id, index: file.index})
+      }))
+    } catch (error) {
+      console.log("Failed to update files: ", error)
+    }
+
     // Questions
     try {
+      // First update their index based on their position in the array
+      questions.forEach((question: Question, index: number) => {
+        question.index = index;
+      })
+
       await Promise.all(questions.map(async (question: Question) => {
         await updateQuestionMutation.mutateAsync({
           id: question.id, 
@@ -134,7 +155,7 @@ export default function ReadingForm(props: ReadingFormProps) {
         <General activity={activity} setActivity={setActivity}/>
 
         <Label index={1} text="Readings" selectedTab={selectedTab} setSelectedTab={setSelectedTab}/>
-        <Readings readingActivity={props.readingActivity} readingFiles={props.files}/>
+        <Readings readingActivity={props.readingActivity} files={files} setFiles={setFiles}/>
 
         <Label index={2} text="Questions" selectedTab={selectedTab} setSelectedTab={setSelectedTab}/>
         <Questions activityId={activity.id} questions={questions} setQuestions={setQuestions}/>
