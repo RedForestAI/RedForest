@@ -22,12 +22,23 @@ type AnswerCardProps = {
 function AnswerCard(props: AnswerCardProps) {
 
   const deleteAnswer = () => {
-    props.setAnswers((prev: any) => prev.filter((answer: string) => answer !== props.answer))
+    // Delete answer by index
+    props.setAnswers((prev: any) => prev.filter((answer: string, index: number) => index !== props.index))
+  }
+
+  const setText = (event: any) => {
+    // Update answer by index
+    props.setAnswers((prev: any) => prev.map((answer: string, index: number) => {
+      if (index === props.index) {
+        return event.target.value
+      }
+      return answer
+    }))
   }
 
   return (
     <div className="card shadow-xl mb-4 flex flex-row">
-      <textarea value={props.answer} placeholder="Answer" className="textarea textarea-bordered h-18 w-full"></textarea>
+      <textarea value={props.answer} onChange={setText} placeholder="Answer" className="textarea textarea-bordered h-18 w-full"></textarea>
       <div className="flex justify-center items-center">
         <button className="btn btn-ghost btn-sm mr-4" onClick={deleteAnswer}>
           <FontAwesomeIcon icon={faTrash} className='h-4' />
@@ -119,7 +130,7 @@ export function QuestionCard(props: QuestionCardProps) {
     } else {
       setContentHeight(0);
     }
-  }, [props.question.type]);
+  }, [props.question.type, answers]);
 
   return (
     <div className={`collapse bg-base-300 w-full m-4 p-4 ${open ? 'collapse-open' : 'collapse-close'}`}>
@@ -149,21 +160,21 @@ export function QuestionCard(props: QuestionCardProps) {
         </div>
 
         {/* Question Type via radio buttons*/}
-        <div className="form-control mt-4">
+        <div className="mt-4">
           <label className="label">
             <span className="label-text">Question Type</span>
           </label> 
           <div className="flex flex-row justify-around items-center space-x-4">
             <label className="">
-              <input type="radio" name="radio" checked={props.question.type == QuestionType.MULTIPLE_CHOICE} onChange={setMC}/>
+              <input type="radio" name={`radio-${props.index}`} checked={props.question.type == QuestionType.MULTIPLE_CHOICE} onChange={setMC}/>
               <span className="radio-mark"></span> Multiple Choice
             </label> 
             <label className="">
-              <input type="radio" name="radio" checked={props.question.type == QuestionType.TRUE_FALSE} onChange={setTF}/>
+              <input type="radio" name={`radio-${props.index}`} checked={props.question.type == QuestionType.TRUE_FALSE} onChange={setTF}/>
               <span className="radio-mark"></span> True/False
             </label>
             <label className="">
-              <input type="radio" name="radio" checked={props.question.type == QuestionType.LIKERT_SCALE} onChange={setLS}/>
+              <input type="radio" name={`radio-${props.index}`} checked={props.question.type == QuestionType.LIKERT_SCALE} onChange={setLS}/>
               <span className="radio-mark"></span> Likert Scale
             </label> 
           </div>
@@ -180,7 +191,7 @@ export function QuestionCard(props: QuestionCardProps) {
               </label> 
               <Reorder.Group axis="y" values={answers} onReorder={setAnswers}>
                 {answers.map((item, index) => (
-                  <Reorder.Item key={item} value={item}>
+                  <Reorder.Item key={index} value={item}>
                     <AnswerCard index={index} answer={item} setAnswers={setAnswers}/>
                   </Reorder.Item>
                 ))}
