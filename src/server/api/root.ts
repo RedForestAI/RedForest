@@ -5,6 +5,7 @@ import { assignmentRouter } from "./routers/assignment";
 import { activityRouter } from "./routers/activity";
 import { readingActivityRouter } from "./routers/activities/reading";
 import { questionRouter } from "./routers/question";
+import { readingFileRouter } from "./routers/activities/reading_file";
 
 /**
  * This is the primary router for your server.
@@ -18,6 +19,7 @@ export const appRouter = createTRPCRouter({
   activity: activityRouter,
   readingActivity: readingActivityRouter,
   question: questionRouter,
+  readingFile: readingFileRouter,
 });
 
 // export type definition of API

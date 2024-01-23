@@ -99,9 +99,22 @@ model Activity {
   @@map("activity")
 }
 
+model ReadingFile {
+  id                String      @id @default(uuid()) @db.Uuid
+  title             String
+  filepath          String
+  size              Int
+  index             Int
+
+  // ReadingActivity
+  activity          ReadingActivity @relation(fields: [activityId], references: [id])
+  activityId        String      @db.Uuid
+  @@map("file")
+}
+
 model ReadingActivity {
   id                String      @id @default(uuid()) @db.Uuid
-  readingUrl        String[]
+  files             ReadingFile[]
   @@map("activity_reading")
 }
 

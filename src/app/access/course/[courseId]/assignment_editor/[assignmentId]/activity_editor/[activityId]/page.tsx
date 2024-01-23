@@ -24,12 +24,18 @@ export default async function Page({params}: {params: { courseId: string, assign
     switch (activity.type) {
       case ActivityType.READING:
         const readingActivity = await api.readingActivity.getOne.query({id: params.activityId});
+        const files = await api.readingFile.getMany.query({activityId: readingActivity!.id})
+
+        // Sorts the files by their index
+        files.sort((a, b) => a.index - b.index)
+
         const propData = {
           courseId: params.courseId,
           assignmentId: params.assignmentId,
           activity: activity,
           readingActivity: readingActivity,
-          questions: questions
+          questions: questions,
+          files: files
         }
         return <ReadingForm {...propData}/>
       default:

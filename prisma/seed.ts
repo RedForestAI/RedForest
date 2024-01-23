@@ -180,7 +180,6 @@ const getReadingActivities = (activities: Activity[]): Prisma.ReadingActivityCre
       rActivities.push(
         {
           id: activities[i]!.id,
-          readingUrl: ['https://arxiv.org/pdf/1708.08021.pdf']
         }
       )
     }

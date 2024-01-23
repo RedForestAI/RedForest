@@ -16,8 +16,7 @@ export async function createEmptyReadingActivity(assignmentId: string, index: nu
     // Create Reading Activity Companion
     await db.readingActivity.create({
       data: {
-        id: activity.id,
-        readingUrl: ['https://arxiv.org/pdf/1708.08021.pdf']
+        id: activity.id
       }
     });
 

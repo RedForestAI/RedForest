@@ -1,6 +1,6 @@
 "use client";
 
-import { Activity, ReadingActivity, Question } from '@prisma/client';
+import { Activity, ReadingActivity, Question, ReadingFile } from '@prisma/client';
 import { useState, useEffect } from 'react';
 import { api } from "~/trpc/react";
 import { useRouter } from 'next/navigation';
@@ -14,7 +14,8 @@ type ReadingFormProps = {
   assignmentId: string
   activity: Activity
   questions: Question[]
-  readingActivity: ReadingActivity | null
+  readingActivity: ReadingActivity
+  files: ReadingFile[]
 }
 
 type LabelProps = {
@@ -48,8 +49,7 @@ export default function ReadingForm(props: ReadingFormProps) {
   const router = useRouter();
   const [activity, setActivity] = useState<Activity>(props.activity);
   const [questions, setQuestions] = useState<Question[]>(props.questions);
-  const [readingActivity, setReadingActivity] = useState<ReadingActivity | null>(props.readingActivity);
-  const [selectedTab, setSelectedTab] = useState<number>(2);
+  const [selectedTab, setSelectedTab] = useState<number>(1);
 
   // Mutations
   const deleteMutation = api.activity.deleteOne.useMutation();
@@ -136,7 +136,7 @@ export default function ReadingForm(props: ReadingFormProps) {
         <General activity={activity} setActivity={setActivity}/>
 
         <Label index={1} text="Readings" selectedTab={selectedTab} setSelectedTab={setSelectedTab}/>
-        <Readings/>
+        <Readings readingActivity={props.readingActivity} readingFiles={props.files}/>
 
         <Label index={2} text="Questions" selectedTab={selectedTab} setSelectedTab={setSelectedTab}/>
         <Questions activityId={activity.id} questions={questions} setQuestions={setQuestions}/>

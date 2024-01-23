@@ -1,16 +1,28 @@
 // https://innocentanyaele.medium.com/create-a-drag-and-drop-file-component-in-reactjs-nextjs-tailwind-6ae70ba06e4b
+import { ReadingActivity, ReadingFile } from "@prisma/client";
 import { useRef, useState, useEffect } from "react";
 import { Reorder } from 'framer-motion';
 import { FileCard, formatBytes } from "./file-card"
+import { api } from "~/trpc/react";
+import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
+import { generateUUID } from "~/utils/uuid";
 
 const sizeLimit = 5000000; // 5MB
 
-export default function Readings() {
+type ReadingProps = {
+  readingActivity: ReadingActivity
+  readingFiles: ReadingFile[]
+}
 
+export default function Readings(props: ReadingProps) {
+
+  const supabase = createClientComponentClient();
+
+  // State
   const [error, setError] = useState< string>("");
   const [dragActive, setDragActive] = useState<boolean>(false);
   const inputRef = useRef<any>(null);
-  const [files, setFiles] = useState<File[]>([]);
+  const [files, setFiles] = useState<ReadingFile[]>(props.readingFiles);
   const [totalMemory, setTotalMemory] = useState<number>(() => {
     let total = 0;
     files.forEach(file => {
@@ -18,6 +30,10 @@ export default function Readings() {
     })
     return total;
   });
+
+  // Mutations
+  const createMutation = api.readingFile.create.useMutation();
+  const deleteMutation = api.readingFile.delete.useMutation();
 
   useEffect(() => {
     computeTotalMemory();
@@ -31,7 +47,25 @@ export default function Readings() {
     setTotalMemory(total);
   }
 
-  function handleChange(e: any) {
+  async function uploadFile(file: File) {
+    // Create the File in the database
+    const path = `${props.readingActivity.id}/${generateUUID() + ".pdf"}`;
+    const { data, error } = await supabase.storage.from('readings').upload(path, file);
+    if (error) {
+      console.log(error);
+      return;
+    }
+    const readingFile: ReadingFile = await createMutation.mutateAsync({
+      title: file.name,
+      filepath: path,
+      size: file.size,
+      index: files.length,
+      activityId: props.readingActivity.id
+    });
+    setFiles((prevState: any) => [...prevState, readingFile]);
+  }
+
+  async function handleChange(e: any) {
     e.preventDefault();
     console.log("File has been added");
     let total = totalMemory;
@@ -43,11 +77,11 @@ export default function Readings() {
         if (e.target.files[i].type !== "application/pdf" || (totalMemory + e.target.files[i].size) > sizeLimit) {
           setError("Only PDFs are supported");
         }
-        else if ((total + e.traget.files[i].size) > sizeLimit){
+        else if ((total + e.target.files[i].size) > sizeLimit){
           setError("Total memory limit exceeded of 5MB");
         }
         else {
-          setFiles((prevState: any) => [...prevState, e.target.files[i]]);
+          uploadFile(e.target.files[i])
           total += e.target.files[i].size;
         }
       }
@@ -62,12 +96,10 @@ export default function Readings() {
     }
   }
 
-  function handleDrop(e: any) {
+  async function handleDrop(e: any) {
     e.preventDefault();
     e.stopPropagation();
     setDragActive(false);
-    console.log("File has been added");
-    console.log(e.dataTransfer.files)
     let total = totalMemory;
     if (e.dataTransfer.files && e.dataTransfer.files[0]) {
       for (let i = 0; i < e.dataTransfer.files["length"]; i++) {
@@ -80,7 +112,8 @@ export default function Readings() {
           setError("Total memory limit exceeded of 5MB");
         }
         else {
-          setFiles((prevState: any) => [...prevState, e.dataTransfer.files[i]]);
+          // Create the File in the database
+          uploadFile(e.dataTransfer.files[i])
           total += e.dataTransfer.files[i].size;
         }
       }
@@ -105,7 +138,16 @@ export default function Readings() {
     setDragActive(true);
   }
 
-  function removeFile(fileName: any, idx: any) {
+  async function removeFile(idx: any) {
+
+    // Delete the file in the storage
+    console.log(files[idx]!.filepath);
+    const { data, error } = await supabase.storage.from('readings').remove([files[idx]!.filepath]);
+    console.log(data, error)
+    
+    // Delete the file from the database
+    await deleteMutation.mutate({id: files[idx]!.id});
+    
     const newArr = [...files];
     newArr.splice(idx, 1);
     setFiles([]);
@@ -170,7 +212,7 @@ export default function Readings() {
         <div className="mt-4 text-xl border-b">Files & Order</div>
         <Reorder.Group axis="y" values={files} onReorder={setFiles} className="mt-4">
           {files.map((file: any, idx: any) => (
-            <Reorder.Item key={file.name} value={file} className="w-full">
+            <Reorder.Item key={file.id} value={file} className="w-full">
               <FileCard file={file} idx={idx} removeFile={removeFile}/>
             </Reorder.Item>
           ))}

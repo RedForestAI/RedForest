@@ -5,8 +5,8 @@ export const readingActivityRouter = createTRPCRouter({
   getOne: privateProcedure
     .input(z.object({ id: z.string() }))
     .query( async ({ input, ctx }) => {
-      return await ctx.db.readingActivity.findUnique({
+      return await ctx.db.readingActivity.findUniqueOrThrow({
         where: {id: input.id},
       });
-    })
+    }),
 })
