@@ -188,7 +188,6 @@ const getReadingActivities = (activities: Activity[]): Prisma.ReadingActivityCre
   return rActivities
 }
 
-// TODO
 const getQuestions = (activities: Activity[]): Prisma.QuestionCreateInput[] => {
   let questions: Prisma.QuestionCreateInput[] = []
   for (let i = 0; i < activities.length; i++) {

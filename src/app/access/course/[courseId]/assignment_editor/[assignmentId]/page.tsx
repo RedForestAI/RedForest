@@ -14,14 +14,14 @@ export default async function Page({params}: {params: { courseId: string, assign
   const assignment = await api.assignment.getOne.query({id: params.assignmentId});
   const activities = await api.activity.getMany.query({assignmentId: params.assignmentId})
   
+  // Sort the activities by their index
+  activities.sort((a, b) => a.index - b.index)
+
   // For each activity, get the questions
   let questions = Array<Array<Question>>()
   for (let i = 0; i < activities.length; i++) {
     questions.push(await api.question.getMany.query({activityId: activities[i]?.id!}))
   }
-
-  // Sort the activities by their index
-  activities.sort((a, b) => a.index - b.index)
 
   const formData = {
     courseId: params.courseId,

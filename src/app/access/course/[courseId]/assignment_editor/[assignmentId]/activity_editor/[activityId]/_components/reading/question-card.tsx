@@ -14,33 +14,54 @@ type QuestionCardProps = {
 }
 
 type AnswerCardProps = {
+  question_index: number
   index: number
-  answer: string
-  setAnswers: any
+  answerText: string
+  answer: number
+  setQuestions: any
 }
 
 function AnswerCard(props: AnswerCardProps) {
 
   const deleteAnswer = () => {
-    // Delete answer by index
-    props.setAnswers((prev: any) => prev.filter((answer: string, index: number) => index !== props.index))
-  }
-
-  const setText = (event: any) => {
-    // Update answer by index
-    props.setAnswers((prev: any) => prev.map((answer: string, index: number) => {
-      if (index === props.index) {
-        return event.target.value
+    props.setQuestions((prev: any) => prev.map((question: Question) => {
+      if (question.index === props.question_index) {
+        return {...question, options: question.options.filter((answer: string, index: number) => index !== props.index)}
       }
-      return answer
+      return question
     }))
   }
 
+  const setText = (event: any) => {
+    props.setQuestions((prev: any) => prev.map((question: Question) => {
+      if (question.index === props.question_index) {
+        return {...question, options: question.options.map((answer: string, index: number) => {
+          if (index === props.index) {
+            return event.target.value
+          }
+          return answer
+        })}
+      }
+      return question
+    }))
+  }
+
+  const setAnswer = () => {
+    props.setQuestions((prev: any) => prev.map((question: Question) => {
+      if (question.index === props.question_index) {
+        return {...question, answer: props.index}
+      }
+      return question
+    }))
+  }
+
+  // TODO: Add answer icon button
   return (
     <div className="card shadow-xl mb-4 flex flex-row">
-      <textarea value={props.answer} onChange={setText} placeholder="Answer" className="textarea textarea-bordered h-18 w-full"></textarea>
-      <div className="flex justify-center items-center">
-        <button className="btn btn-ghost btn-sm mr-4" onClick={deleteAnswer}>
+      <div className="flex justify-between items-center w-full">
+        <input type="radio" name={`radio-${props.question_index}-answer`} checked={props.answer == props.index} onChange={setAnswer} className="radio mr-2" />
+        <textarea value={props.answerText} onChange={setText} placeholder="Answer" className="textarea textarea-bordered h-18 w-full"></textarea>
+        <button className="btn btn-ghost btn-sm mr-2" onClick={deleteAnswer}>
           <FontAwesomeIcon icon={faTrash} className='h-4' />
         </button>
       </div>
@@ -49,9 +70,25 @@ function AnswerCard(props: AnswerCardProps) {
 }
 
 
-function EmptyAnswerCard(props: {setAnswers: any}) {
+function EmptyAnswerCard(props: {question_index: number, setQuestions: any}) {
   const createAnswer = () => {
-    props.setAnswers((prev: any) => [...prev, ""])
+    // If no prior answers, mark this as the correct answer
+    props.setQuestions((prev: any) => prev.map((question: Question) => {
+      if (question.index === props.question_index) {
+        if (question.options.length === 0) {
+          return {...question, answer: 0}
+        }
+        return question
+      }
+      return question
+    }))
+
+    props.setQuestions((prev: any) => prev.map((question: Question) => {
+      if (question.index === props.question_index) {
+        return {...question, options: [...question.options, ""]}
+      }
+      return question
+    }))
   }
 
   return (
@@ -66,8 +103,8 @@ function EmptyAnswerCard(props: {setAnswers: any}) {
 }
 
 export function QuestionCard(props: QuestionCardProps) {
+  
   // State
-  const [answers, setAnswers] = useState<string[]>(props.question.options)
   const [open, setOpen] = useState<boolean>(false)
   const contentRef = useRef(null)
   const [contentHeight, setContentHeight] = useState(0);
@@ -75,7 +112,7 @@ export function QuestionCard(props: QuestionCardProps) {
   const deleteMutation = api.question.delete.useMutation();
 
   const setNumberInput = (event: any) => {
-    props.setQuestions((prev: any) => prev.map((question: Question) => {
+    props.setQuestions((prev: Question[]) => prev.map((question: Question) => {
       if (question.id === props.question.id) {
         return {...question, pts: Number(event.target.value)}
       }
@@ -84,7 +121,7 @@ export function QuestionCard(props: QuestionCardProps) {
   }
 
   const setQuestionContent = (event: any) => {
-    props.setQuestions((prev: any) => prev.map((question: Question) => {
+    props.setQuestions((prev: Question[]) => prev.map((question: Question) => {
       if (question.id === props.question.id) {
         return {...question, content: event.target.value}
       }
@@ -92,8 +129,17 @@ export function QuestionCard(props: QuestionCardProps) {
     }))
   }
 
+  const setAnswers = (newAnswers: any) => {
+    props.setQuestions((prev: Question[]) => prev.map((question: Question) => {
+      if (question.id === props.question.id) {
+        return { ...question, options: newAnswers(question.options) };
+      }
+      return question;
+    }));
+  };
+
   const setMC = () => {
-    props.setQuestions((prev: any) => prev.map((question: Question) => {
+    props.setQuestions((prev: Question[]) => prev.map((question: Question) => {
       if (question.id === props.question.id) {
         return {...question, type: QuestionType.MULTIPLE_CHOICE}
       }
@@ -102,7 +148,7 @@ export function QuestionCard(props: QuestionCardProps) {
   }
 
   const setTF = () => {
-    props.setQuestions((prev: any) => prev.map((question: Question) => {
+    props.setQuestions((prev: Question[]) => prev.map((question: Question) => {
       if (question.id === props.question.id) {
         return {...question, type: QuestionType.TRUE_FALSE}
       }
@@ -111,7 +157,7 @@ export function QuestionCard(props: QuestionCardProps) {
   }
 
   const setLS = () => {
-    props.setQuestions((prev: any) => prev.map((question: Question) => {
+    props.setQuestions((prev: Question[]) => prev.map((question: Question) => {
       if (question.id === props.question.id) {
         return {...question, type: QuestionType.LIKERT_SCALE}
       }
@@ -130,7 +176,7 @@ export function QuestionCard(props: QuestionCardProps) {
     } else {
       setContentHeight(0);
     }
-  }, [props.question.type, answers]);
+  }, [props.question.type, props.question.options]);
 
   return (
     <div className={`collapse bg-base-300 w-full m-4 p-4 ${open ? 'collapse-open' : 'collapse-close'}`}>
@@ -165,16 +211,16 @@ export function QuestionCard(props: QuestionCardProps) {
             <span className="label-text">Question Type</span>
           </label> 
           <div className="flex flex-row justify-around items-center space-x-4">
-            <label className="">
-              <input type="radio" name={`radio-${props.index}`} checked={props.question.type == QuestionType.MULTIPLE_CHOICE} onChange={setMC}/>
+            <label className="flex justify-center items-center">
+              <input type="radio" className="radio mr-2" name={`radio-${props.index}`} checked={props.question.type == QuestionType.MULTIPLE_CHOICE} onChange={setMC}/>
               <span className="radio-mark"></span> Multiple Choice
             </label> 
-            <label className="">
-              <input type="radio" name={`radio-${props.index}`} checked={props.question.type == QuestionType.TRUE_FALSE} onChange={setTF}/>
+            <label className="flex justify-center items-center">
+              <input type="radio" className="radio mr-2" name={`radio-${props.index}`} checked={props.question.type == QuestionType.TRUE_FALSE} onChange={setTF}/>
               <span className="radio-mark"></span> True/False
             </label>
-            <label className="">
-              <input type="radio" name={`radio-${props.index}`} checked={props.question.type == QuestionType.LIKERT_SCALE} onChange={setLS}/>
+            <label className="flex justify-center items-center">
+              <input type="radio" className="radio mr-2" name={`radio-${props.index}`} checked={props.question.type == QuestionType.LIKERT_SCALE} onChange={setLS}/>
               <span className="radio-mark"></span> Likert Scale
             </label> 
           </div>
@@ -189,14 +235,14 @@ export function QuestionCard(props: QuestionCardProps) {
               <label className="label">
                 <span className="label-text">Question Options</span>
               </label> 
-              <Reorder.Group axis="y" values={answers} onReorder={setAnswers}>
-                {answers.map((item, index) => (
+              <Reorder.Group axis="y" values={props.question.options} onReorder={setAnswers}>
+                {props.question.options.map((item, index) => (
                   <Reorder.Item key={index} value={item}>
-                    <AnswerCard index={index} answer={item} setAnswers={setAnswers}/>
+                    <AnswerCard question_index={props.index} index={index} answer={props.question.answer} answerText={item} setQuestions={props.setQuestions}/>
                   </Reorder.Item>
                 ))}
               </Reorder.Group>
-              <EmptyAnswerCard setAnswers={setAnswers}/>
+              <EmptyAnswerCard question_index={props.index} setQuestions={props.setQuestions}/>
             </div>
         </div>
       </div>
