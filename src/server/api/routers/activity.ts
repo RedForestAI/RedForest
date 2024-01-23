@@ -38,6 +38,16 @@ export const activityRouter = createTRPCRouter({
         });
     }),
 
+  update: privateProcedure
+    .input(z.object({ id: z.string(), name: z.string(), description: z.string() }))
+    .mutation( async ({ input, ctx }) => {
+        // Get assignments pertaining to course
+        return await ctx.db.activity.update({
+          where: {id: input.id},
+          data: {name: input.name, description: input.description},
+        });
+    }),
+
   deleteOne: privateProcedure
     .input(z.object({ id: z.string() }))
     .mutation( async ({ input, ctx }) => {

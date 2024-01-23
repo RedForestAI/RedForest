@@ -1,4 +1,4 @@
-import { Activity, Assignment, ActivityType } from '@prisma/client';
+import { Activity, Assignment, Question } from '@prisma/client';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { IconDefinition } from '@fortawesome/fontawesome-svg-core';
@@ -9,6 +9,7 @@ import { api } from "~/trpc/react";
 type ActivityCardProps = {
   icon: IconDefinition
   assignment: Assignment
+  questions: Question[]
   activity: Activity
 }
 
@@ -17,6 +18,15 @@ export function ActivityCard(props: ActivityCardProps) {
 
   const openActivitySetting = () => {
     router.push(`${props.assignment.id}/activity_editor/${props.activity.id}`)
+  }
+
+  const getPts = () => {
+    // Compute total points
+    let totalPts = 0;
+    for (let i = 0; i < props.questions.length; i++) {
+      totalPts += props.questions[i]!.pts
+    }
+    return totalPts
   }
 
   return (
@@ -29,7 +39,7 @@ export function ActivityCard(props: ActivityCardProps) {
             <h2 className="card-title">{props.activity.name}</h2>
             <p className="card-subtitle">{props.activity.description}</p>
           </div>
-          <h2 className="card-title w-24">5 pts</h2>
+          <h2 className="card-title w-24">{getPts()} pts</h2>
           <div className="flex justify-end items-center w-1/12 pr-4">
             <button className="btn btn-ghost btn-sm mr-4" onClick={openActivitySetting}>
               <FontAwesomeIcon icon={faGear} className='h-8 fa-2x' />

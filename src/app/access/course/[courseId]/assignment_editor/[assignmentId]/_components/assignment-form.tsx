@@ -1,6 +1,6 @@
 "use client";
 
-import { Profile, Assignment, Role, Activity } from "@prisma/client";
+import { Profile, Assignment, Question, Activity } from "@prisma/client";
 import AssignmentSettings from "./assignment-settings";
 import AssignmentStructure from "./assignment-structure";
 
@@ -18,6 +18,7 @@ type FormProps = {
   courseId: string
   assignment: Assignment
   activities: Activity[]
+  questions: Question[][]
 }
 
 export default function AssignmentForm(props: FormProps) {
@@ -116,7 +117,7 @@ export default function AssignmentForm(props: FormProps) {
   return (
     <form onSubmit={submitAllForms} className="flex flex-col gap-8">
       <AssignmentSettings assignment={assignment} formRegister={forms.settings.register} control={forms.settings.control} errors={forms.settings.formState.errors}/>
-      <AssignmentStructure assignment={assignment} activities={activities} setActivities={setActivities}/>
+      <AssignmentStructure assignment={assignment} activities={activities} questions={props.questions} setActivities={setActivities}/>
       <div className="justify-between items-stretch flex mt-8 mb-8 pl-10 pr-10 py-3 max-md:max-w-full max-md:flex-wrap max-md:px-5">
         <button className="btn btn-error" name="action" value="Delete">Delete</button>
         <div className="flex flex-row gap-2.5">

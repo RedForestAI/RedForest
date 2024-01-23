@@ -4,16 +4,10 @@ import { Activity, ReadingActivity, Question } from '@prisma/client';
 import { useState, useEffect } from 'react';
 import { api } from "~/trpc/react";
 import { useRouter } from 'next/navigation';
-import { useForm, SubmitHandler } from "react-hook-form";
 
 import General from "./general"
 import Readings from "./readings"
 import Questions from "./questions"
-
-type GeneralInputs = {
-  name: string
-  description: string | null
-}
 
 type ReadingFormProps = {
   courseId: string
@@ -56,17 +50,10 @@ export default function ReadingForm(props: ReadingFormProps) {
   const [questions, setQuestions] = useState<Question[]>(props.questions);
   const [readingActivity, setReadingActivity] = useState<ReadingActivity | null>(props.readingActivity);
   const [selectedTab, setSelectedTab] = useState<number>(0);
-  const forms = {
-    general: useForm<GeneralInputs>(),
-  }
 
   // Mutations
   const deleteMutation = api.activity.deleteOne.useMutation();
-
-  useEffect(() => {
-    forms.general.reset({name: activity.name, description: activity.description})
-  }, [activity]);
-
+  const updateMutation = api.activity.update.useMutation();
 
   const deleteFunction = async () => {
     try {
@@ -79,10 +66,14 @@ export default function ReadingForm(props: ReadingFormProps) {
   }
 
   const saveFunction = async () => {
+    // await forms.general.handleSubmit(submit)();
     console.log("Submitting all forms")
-    // await forms.assignmentSettings.handleSubmit(settingsSubmit)();
-    // router.push(`/access/course/${props.courseId}`)
-    // router.refresh();
+    console.log(activity)
+    try { 
+      await updateMutation.mutateAsync({id: activity.id, name: activity.name, description: activity.description! });
+    } catch (error) {
+      console.log("Failed to update activity: ", error)
+    }
   }
 
   const publishFunction = async () => {
@@ -124,7 +115,7 @@ export default function ReadingForm(props: ReadingFormProps) {
     <form onSubmit={submitAllForms}>
       <div role="tablist" className="tabs tabs-lifted tabs-lg">
         <Label index={0} text="General Settings" selectedTab={selectedTab} setSelectedTab={setSelectedTab}/>
-        <General activity={activity} formRegister={forms.general.register} errors={forms.general.formState.errors}/>
+        <General activity={activity} setActivity={setActivity}/>
 
         <Label index={1} text="Readings" selectedTab={selectedTab} setSelectedTab={setSelectedTab}/>
         <Readings/>

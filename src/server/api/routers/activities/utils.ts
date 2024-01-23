@@ -14,12 +14,14 @@ export async function createEmptyReadingActivity(assignmentId: string, index: nu
     });
 
     // Create Reading Activity Companion
-    return await db.readingActivity.create({
+    await db.readingActivity.create({
       data: {
         id: activity.id,
         readingUrl: ['https://arxiv.org/pdf/1708.08021.pdf']
       }
     });
+
+    return activity;
 }
 
 export async function deleteActivity(activityId: string, db: PrismaClient) {

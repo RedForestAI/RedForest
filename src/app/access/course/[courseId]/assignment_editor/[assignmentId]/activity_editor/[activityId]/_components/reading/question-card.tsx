@@ -26,7 +26,7 @@ function AnswerCard(props: AnswerCardProps) {
 
   return (
     <div className="card shadow-xl mb-4 flex flex-row">
-      <textarea placeholder="Answer" className="textarea textarea-bordered h-18 w-full">{props.answer}</textarea>
+      <textarea value={props.answer} placeholder="Answer" className="textarea textarea-bordered h-18 w-full"></textarea>
       <div className="flex justify-center items-center">
         <button className="btn btn-ghost btn-sm mr-4" onClick={deleteAnswer}>
           <FontAwesomeIcon icon={faTrash} className='h-4' />
@@ -66,6 +66,9 @@ export function QuestionCard(props: QuestionCardProps) {
     }))
   }
 
+  const setQuestionContent = (event: any) => {
+  }
+
   const deleteQuestion = () => {
     console.log("Deleting question")
     props.setQuestions((prev: any) => prev.filter((question: Question) => question.id !== props.question.id))
@@ -87,7 +90,7 @@ export function QuestionCard(props: QuestionCardProps) {
           <label className="label">
             <span className="label-text">Description</span>
           </label> 
-          <textarea placeholder="Question content" className="textarea textarea-bordered h-24">{props.question.content}</textarea>
+          <textarea placeholder="Question content" className="textarea textarea-bordered h-24" value={props.question.content} onChange={setQuestionContent}></textarea>
         </div>
 
         {/* Points per question, default to 1*/}
@@ -105,15 +108,15 @@ export function QuestionCard(props: QuestionCardProps) {
           </label> 
           <div className="flex flex-row justify-around items-center space-x-4">
             <label className="">
-              <input type="radio" name="radio" checked={props.question.type == QuestionType.MULTIPLE_CHOICE}/>
+              <input type="radio" name="radio" value={props.question.type == QuestionType.MULTIPLE_CHOICE}/>
               <span className="radio-mark"></span> Multiple Choice
             </label> 
             <label className="">
-              <input type="radio" name="radio" checked={props.question.type == QuestionType.TRUE_FALSE}/>
+              <input type="radio" name="radio" value={props.question.type == QuestionType.TRUE_FALSE}/>
               <span className="radio-mark"></span> True/False
             </label>
             <label className="">
-              <input type="radio" name="radio" checked={props.question.type == QuestionType.LIKERT_SCALE}/>
+              <input type="radio" name="radio" value={props.question.type == QuestionType.LIKERT_SCALE}/>
               <span className="radio-mark"></span> Likert Scale
             </label> 
           </div>
