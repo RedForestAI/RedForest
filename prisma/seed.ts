@@ -144,7 +144,7 @@ const getActivities = (assignments: Assignment[]): Prisma.ActivityCreateInput[] 
         index: 0,
         name: "Activity ID #" + i,
         description: `Activity ID ${i} Description`,
-        type: ActivityType.READING,
+        type: ActivityType.QUESTIONING,
         assignment: { connect: { id: assignments[i]?.id }},
       }
     )
@@ -164,7 +164,7 @@ const getActivities = (assignments: Assignment[]): Prisma.ActivityCreateInput[] 
         index: 2,
         name: `Activity ID # ${i} Part 3`,
         description: `Activity ID ${i} Description - Part 3`,
-        type: ActivityType.READING,
+        type: ActivityType.QUESTIONING,
         assignment: { connect: { id: assignments[i]?.id }},
       }
     )
