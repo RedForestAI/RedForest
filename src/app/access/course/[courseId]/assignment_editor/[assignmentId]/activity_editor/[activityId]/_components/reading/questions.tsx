@@ -1,6 +1,5 @@
 import { Question, QuestionType } from "@prisma/client"
 import { Reorder } from "framer-motion";
-import { useState } from "react";
 
 import { QuestionCard, EmptyQuestionCard } from "./question-card";
 

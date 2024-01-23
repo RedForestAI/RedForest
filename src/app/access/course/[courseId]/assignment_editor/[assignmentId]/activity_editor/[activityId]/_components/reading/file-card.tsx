@@ -38,7 +38,7 @@ export function FileCard(props: FileCardProps) {
       <div className="w-full flex justify-end items-center">
         <p className="pr-4">{formatBytes(props.file.size)}</p>
         <button className="btn btn-ghost btn-sm mr-4" onClick={() => props.removeFile(props.idx)}>
-          <FontAwesomeIcon icon={faTrash} onClick={() => props.removeFile(props.idx)} className='h-4' />
+          <FontAwesomeIcon icon={faTrash} className='h-4' />
         </button>
       </div>
     </div>

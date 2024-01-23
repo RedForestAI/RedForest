@@ -49,7 +49,7 @@ export default function ReadingForm(props: ReadingFormProps) {
   const router = useRouter();
   const [activity, setActivity] = useState<Activity>(props.activity);
   const [questions, setQuestions] = useState<Question[]>(props.questions);
-  const [selectedTab, setSelectedTab] = useState<number>(1);
+  const [selectedTab, setSelectedTab] = useState<number>(0);
 
   // Mutations
   const deleteMutation = api.activity.deleteOne.useMutation();
@@ -103,7 +103,6 @@ export default function ReadingForm(props: ReadingFormProps) {
 
     // Determine what button was pressed and which action to perform
     const action = e.nativeEvent.submitter.value;
-    console.log(action)
 
     if (action === "Delete") {
       deleteFunction();
@@ -124,7 +123,6 @@ export default function ReadingForm(props: ReadingFormProps) {
       return;
     }
     else {
-      console.log("Unknown action")
       return;
     }
   }

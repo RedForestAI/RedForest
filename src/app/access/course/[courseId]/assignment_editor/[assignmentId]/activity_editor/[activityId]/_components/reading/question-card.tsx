@@ -55,7 +55,6 @@ function AnswerCard(props: AnswerCardProps) {
     }))
   }
 
-  // TODO: Add answer icon button
   return (
     <div className="card shadow-xl mb-4 flex flex-row">
       <div className="flex justify-between items-center w-full">
@@ -176,7 +175,7 @@ export function QuestionCard(props: QuestionCardProps) {
     } else {
       setContentHeight(0);
     }
-  }, [props.question.type, props.question.options]);
+  }, [props.question.type, props.question, open]);
 
   return (
     <div className={`collapse bg-base-300 w-full m-4 p-4 ${open ? 'collapse-open' : 'collapse-close'}`}>

@@ -49,7 +49,7 @@ export default function Readings(props: ReadingProps) {
 
   async function uploadFile(file: File) {
     // Create the File in the database
-    const path = `${props.readingActivity.id}/${generateUUID() + ".pdf"}`;
+    const path = `${props.readingActivity.id}/${generateUUID()}.pdf`;
     const { data, error } = await supabase.storage.from('readings').upload(path, file);
     if (error) {
       console.log(error);
@@ -139,11 +139,15 @@ export default function Readings(props: ReadingProps) {
   }
 
   async function removeFile(idx: any) {
+    // Ref: https://github.com/orgs/supabase/discussions/2466
 
     // Delete the file in the storage
-    console.log(files[idx]!.filepath);
     const { data, error } = await supabase.storage.from('readings').remove([files[idx]!.filepath]);
-    console.log(data, error)
+    
+    if (error) {
+      console.log(error);
+      return;
+    }
     
     // Delete the file from the database
     await deleteMutation.mutate({id: files[idx]!.id});
