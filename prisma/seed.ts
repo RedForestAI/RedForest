@@ -189,24 +189,23 @@ const getReadingActivities = (activities: Activity[]): Prisma.ReadingActivityCre
 }
 
 // TODO
-// const getQuestions = (activities: Activity[]): Prisma.QuestionCreateInput[] => {
-//   let questions: Question[] = []
-//   for (let i = 0; i < activities.length; i++) {
-//     if (activities[i]){
-//       questions.push(
-//         {
-//           id: generateUUID(),
-//           content: 'What is the answer to this question?',
-//           options: ['A', 'B', 'C', 'D'],
-//           type: QuestionType.MULTIPLE_CHOICE,
-//           answer: 0,
-//           activity: { connect: { id: activities[i]!.id }},
-//         }
-//       )
-//     }
-//   }
-//   return questions
-// }
+const getQuestions = (activities: Activity[]): Prisma.QuestionCreateInput[] => {
+  let questions: Prisma.QuestionCreateInput[] = []
+  for (let i = 0; i < activities.length; i++) {
+    if (activities[i]) {
+      questions.push({
+        id: generateUUID(),
+        content: 'What is the answer to this question?',
+        options: ['A', 'B', 'C', 'D'],
+        type: QuestionType.MULTIPLE_CHOICE,
+        answer: 0,
+        pts: 2,
+        activity: { connect: { id: activities[i]?.id }},
+      });
+    }
+  }
+  return questions;
+}
 
 const main = async () => {
   const profiles = await Promise.all(
@@ -267,7 +266,23 @@ const main = async () => {
       ))
   )
 
-  console.log({ profiles, courses, courseEnrollments, assignments}); // , activities, readingActivities});
+  const questions = await Promise.all(
+    getQuestions(activities).map((question) => client.question.upsert(
+      {
+        where: { id: question.id },
+        update: { ...question },
+        create: { ...question },
+      }
+      ))
+  )
+
+  console.log(profiles)
+  console.log(courses)
+  console.log(courseEnrollments)
+  console.log(assignments)
+  console.log(activities)
+  console.log(readingActivities)
+  console.log(questions)
 };
 
 main()

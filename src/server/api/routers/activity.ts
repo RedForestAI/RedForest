@@ -28,6 +28,16 @@ export const activityRouter = createTRPCRouter({
         return await createEmptyReadingActivity(input.assignmentId, input.index, ctx.db);
     }),
 
+  updateIndex: privateProcedure
+    .input(z.object({ id: z.string(), index: z.number() }))
+    .mutation( async ({ input, ctx }) => {
+        // Get assignments pertaining to course
+        return await ctx.db.activity.update({
+          where: {id: input.id},
+          data: {index: input.index},
+        });
+    }),
+
   deleteOne: privateProcedure
     .input(z.object({ id: z.string() }))
     .mutation( async ({ input, ctx }) => {

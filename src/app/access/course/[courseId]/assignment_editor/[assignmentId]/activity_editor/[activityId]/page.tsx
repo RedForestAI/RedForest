@@ -15,6 +15,7 @@ export default async function Page({params}: {params: { courseId: string, assign
   const course = await api.course.getOne.query({courseId: params.courseId, profileId: profile.id});
   const assignment = await api.assignment.getOne.query({id: params.assignmentId});
   const activity = await api.activity.getOne.query({id: params.activityId});
+  const questions = await api.question.getMany.query({activityId: params.activityId})
 
   const getForm = async (activity: any) => {
     switch (activity.type) {
@@ -24,7 +25,8 @@ export default async function Page({params}: {params: { courseId: string, assign
           courseId: params.courseId,
           assignmentId: params.assignmentId,
           activity: activity,
-          readingActivity: readingActivity
+          readingActivity: readingActivity,
+          questions: questions
         }
         return <ReadingForm {...propData}/>
       default:

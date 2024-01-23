@@ -1,6 +1,6 @@
 "use client";
 
-import { Activity, ReadingActivity } from '@prisma/client';
+import { Activity, ReadingActivity, Question } from '@prisma/client';
 import { useState, useEffect } from 'react';
 import { api } from "~/trpc/react";
 import { useRouter } from 'next/navigation';
@@ -12,13 +12,14 @@ import Questions from "./questions"
 
 type GeneralInputs = {
   name: string
-  description: string
+  description: string | null
 }
 
 type ReadingFormProps = {
   courseId: string
   assignmentId: string
   activity: Activity
+  questions: Question[]
   readingActivity: ReadingActivity | null
 }
 
@@ -52,6 +53,7 @@ export default function ReadingForm(props: ReadingFormProps) {
   // State
   const router = useRouter();
   const [activity, setActivity] = useState<Activity>(props.activity);
+  const [questions, setQuestions] = useState<Question[]>(props.questions);
   const [readingActivity, setReadingActivity] = useState<ReadingActivity | null>(props.readingActivity);
   const [selectedTab, setSelectedTab] = useState<number>(0);
   const forms = {
@@ -62,8 +64,9 @@ export default function ReadingForm(props: ReadingFormProps) {
   const deleteMutation = api.activity.deleteOne.useMutation();
 
   useEffect(() => {
-    forms.general.reset({ ...activity})
+    forms.general.reset({name: activity.name, description: activity.description})
   }, [activity]);
+
 
   const deleteFunction = async () => {
     try {
@@ -127,7 +130,7 @@ export default function ReadingForm(props: ReadingFormProps) {
         <Readings/>
 
         <Label index={2} text="Questions" selectedTab={selectedTab} setSelectedTab={setSelectedTab}/>
-        <Questions/>
+        <Questions questions={questions} setQuestions={setQuestions}/>
       
       </div>
       <div className="justify-between items-stretch flex mt-8 mb-8 pl-10 pr-10 py-3 max-md:max-w-full max-md:flex-wrap max-md:px-5">

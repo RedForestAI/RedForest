@@ -28,12 +28,12 @@ export default function AssignmentForm(props: FormProps) {
   const [activities, setActivities] = useState<Activity[]>(props.activities);
   const forms = {
     settings: useForm<SettingsInputs>(),
-    structure: useForm<StructureIniputs>()
   }
 
   // Mutations
   const deleteMutation = api.assignment.delete.useMutation();
   const updateMutation = api.assignment.updateSettings.useMutation();
+  const updateIndexMutation = api.activity.updateIndex.useMutation();
 
   useEffect(() => {
     forms.settings.reset({ ...assignment})
@@ -45,6 +45,19 @@ export default function AssignmentForm(props: FormProps) {
       await updateMutation.mutateAsync({id: assignment.id, name: data.name, dueDate: data.dueDate, published: false});
     } catch {
       console.log("Failed to update assignment")
+    }
+  }
+
+  const structureSubmit = async () => {
+    // First iterate through the activities and update their indices
+    for (let i = 0; i < activities.length; i++) {
+      if (activities[i]) {
+        try {
+          await updateIndexMutation.mutateAsync({id: activities[i]!.id, index: i});
+        } catch {
+          console.log("Failed to update activity index")
+        }
+      }
     }
   }
 
@@ -62,8 +75,7 @@ export default function AssignmentForm(props: FormProps) {
   const saveFunction = async () => {
     console.log("Submitting all forms")
     await forms.settings.handleSubmit(settingsSubmit)();
-    // router.push(`/access/course/${props.courseId}`)
-    // router.refresh();
+    await structureSubmit();
   }
 
   const publishFunction = async () => {
