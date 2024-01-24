@@ -1,5 +1,5 @@
 
-import { PrismaClient, Role, Prisma, Profile, Course, Assignment, Activity, ActivityType } from '@prisma/client'
+import { PrismaClient, Role, Prisma, Profile, Course, Assignment, Activity, ActivityType, Question, QuestionType } from '@prisma/client'
 import { get } from 'http';
 const client = new PrismaClient()
 
@@ -142,9 +142,9 @@ const getActivities = (assignments: Assignment[]): Prisma.ActivityCreateInput[] 
       {
         id: generateUUID(),
         index: 0,
-        name: "Activity ID #" + i,
-        description: `Activity ID ${i} Description`,
-        type: ActivityType.READING,
+        name: "Pretest",
+        description: `Pretest description`,
+        type: ActivityType.QUESTIONING,
         assignment: { connect: { id: assignments[i]?.id }},
       }
     )
@@ -152,8 +152,8 @@ const getActivities = (assignments: Assignment[]): Prisma.ActivityCreateInput[] 
       {
         id: generateUUID(),
         index: 1,
-        name: `Activity ID # ${i} Part 2`,
-        description: `Activity ID ${i} Description - Part 2`,
+        name: `Activity`,
+        description: `Activity Description`,
         type: ActivityType.READING,
         assignment: { connect: { id: assignments[i]?.id }},
       }
@@ -162,9 +162,9 @@ const getActivities = (assignments: Assignment[]): Prisma.ActivityCreateInput[] 
       {
         id: generateUUID(),
         index: 2,
-        name: `Activity ID # ${i} Part 3`,
-        description: `Activity ID ${i} Description - Part 3`,
-        type: ActivityType.READING,
+        name: `Posttest`,
+        description: `Posttest description`,
+        type: ActivityType.QUESTIONING,
         assignment: { connect: { id: assignments[i]?.id }},
       }
     )
@@ -176,14 +176,34 @@ const getReadingActivities = (activities: Activity[]): Prisma.ReadingActivityCre
   let rActivities = []
   for (let i = 0; i < activities.length; i++) {
     if (activities[i]?.type !== ActivityType.READING) continue
-    rActivities.push(
-      {
-        id: generateUUID(),
-        readingUrl: ['https://arxiv.org/pdf/1708.08021.pdf']
-      }
-    )
+    if (activities[i]){
+      rActivities.push(
+        {
+          id: activities[i]!.id,
+        }
+      )
+    }
   }
   return rActivities
+}
+
+const getQuestions = (activities: Activity[]): Prisma.QuestionCreateInput[] => {
+  let questions: Prisma.QuestionCreateInput[] = []
+  for (let i = 0; i < activities.length; i++) {
+    if (activities[i]) {
+      questions.push({
+        id: generateUUID(),
+        content: 'What is the answer to this question?',
+        options: ['A', 'B', 'C', 'D'],
+        type: QuestionType.MULTIPLE_CHOICE,
+        answer: 0,
+        index: 0,
+        pts: 2,
+        activity: { connect: { id: activities[i]?.id }},
+      });
+    }
+  }
+  return questions;
 }
 
 const main = async () => {
@@ -245,7 +265,23 @@ const main = async () => {
       ))
   )
 
-  console.log({ profiles, courses, courseEnrollments, assignments, activities, readingActivities});
+  const questions = await Promise.all(
+    getQuestions(activities).map((question) => client.question.upsert(
+      {
+        where: { id: question.id },
+        update: { ...question },
+        create: { ...question },
+      }
+      ))
+  )
+
+  console.log(profiles)
+  console.log(courses)
+  console.log(courseEnrollments)
+  console.log(assignments)
+  console.log(activities)
+  console.log(readingActivities)
+  console.log(questions)
 };
 
 main()

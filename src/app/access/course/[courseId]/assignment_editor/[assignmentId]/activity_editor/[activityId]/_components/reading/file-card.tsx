@@ -1,10 +1,11 @@
+import { ReadingFile } from "@prisma/client";
 import { faTrash } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 const titleLimit = 50; // 20 characters
 
 type FileCardProps = {
-  file: File
+  file: ReadingFile
   idx: number
   removeFile: any
 }
@@ -33,11 +34,11 @@ export function FileCard(props: FileCardProps) {
 
   return (
     <div key={props.idx} className="m-1 flex flex-row space-x-5 card bg-base w-full border-[2px] shadow-xl p-2 pr-4 pl-4">
-      <span>{formatTitle(props.file.name)}</span>
+      <span>{formatTitle(props.file.title)}</span>
       <div className="w-full flex justify-end items-center">
         <p className="pr-4">{formatBytes(props.file.size)}</p>
-        <button className="btn btn-ghost btn-sm mr-4" onClick={() => props.removeFile(props.file.name, props.idx)}>
-          <FontAwesomeIcon icon={faTrash} onClick={() => props.removeFile(props.file.name, props.idx)} className='h-8' />
+        <button className="btn btn-ghost btn-sm mr-4" onClick={() => props.removeFile(props.idx)}>
+          <FontAwesomeIcon icon={faTrash} className='h-4' />
         </button>
       </div>
     </div>

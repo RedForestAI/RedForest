@@ -41,7 +41,7 @@ const AssignmentCard = ( props : AssignmentCardProps) => {
     // Teacher
     if (props.editable) {
       if (!props.assignment.published) return `/access/course/${props.course.id}/assignment_editor/${props.assignment.id}`;
-      return `/access/course/${props.course.id}/assignment/${props.assignment.id}`;
+      return `/access/course/${props.course.id}/assignment_report/${props.assignment.id}`;
     }
 
     // Student
@@ -66,7 +66,7 @@ const AssignmentCard = ( props : AssignmentCardProps) => {
           </div>
         </span>
         <div className="bg-neutral self-stretch flex flex-col justify-center items-stretch pr-5 rounded-2xl max-md:max-w-full max-md:pr-5 mt-5">
-          <div className="bg-primary text-xs font-medium text-primary-content text-center p-0.5 leading-none rounded-full" style={{width: "45%"}}> 45%</div>
+          <div className="bg-primary text-xs font-medium text-primary-content text-center p-0.5 leading-none rounded-full" style={{width: "0%"}}> 0%</div>
         </div>
       </div>
     </Link>

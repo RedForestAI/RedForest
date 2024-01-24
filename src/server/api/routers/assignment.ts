@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { createTRPCRouter, privateProcedure } from "~/server/api/trpc";
+import { deleteActivity } from "./activities/utils";
 
 export const assignmentRouter = createTRPCRouter({
   get: privateProcedure
@@ -50,9 +51,30 @@ export const assignmentRouter = createTRPCRouter({
       });
     }),
 
+  publish: privateProcedure
+    .input(z.object({ id: z.string()}))
+    .mutation(async ({ input, ctx }) => {
+
+      return ctx.db.assignment.update({
+        where: {id: input.id},
+        data: {
+          published: true,
+          publishedDate: new Date(),
+        }
+      });
+    }),
+
   delete: privateProcedure
     .input(z.object({ id: z.string()}))
     .mutation(async ({ input, ctx }) => {
+
+      // Delete all activities pertaining to assignment
+      const activities = await ctx.db.activity.findMany({
+        where: {assignmentId: input.id},
+      });
+      for (const activity of activities) {
+        await deleteActivity(activity.id, ctx.db);
+      }
 
       // Delete assignment
       return ctx.db.assignment.delete({

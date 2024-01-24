@@ -6,16 +6,13 @@ import { api } from "~/trpc/react";
 import { useRouter } from 'next/navigation';
 
 import General from "../general/general"
-import Readings from "./readings"
 import Questions from "../general/questions"
 
-type ReadingFormProps = {
+type QuestionFormProps = {
   courseId: string
   assignmentId: string
   activity: Activity
   questions: Question[]
-  readingActivity: ReadingActivity
-  files: ReadingFile[]
 }
 
 type LabelProps = {
@@ -43,20 +40,18 @@ function Label(props: LabelProps) {
   )
 }
 
-export default function ReadingForm(props: ReadingFormProps) {
+export default function QuestionForm(props: QuestionFormProps) {
 
   // State
   const router = useRouter();
   const [activity, setActivity] = useState<Activity>(props.activity);
   const [questions, setQuestions] = useState<Question[]>(props.questions);
   const [selectedTab, setSelectedTab] = useState<number>(0);
-  const [files, setFiles] = useState<ReadingFile[]>(props.files);
 
   // Mutations
   const deleteMutation = api.activity.deleteOne.useMutation();
   const updateMutation = api.activity.update.useMutation();
   const updateQuestionMutation = api.question.update.useMutation();
-  const updateFiles = api.readingFile.update.useMutation();
 
   const deleteFunction = async () => {
     try {
@@ -75,20 +70,6 @@ export default function ReadingForm(props: ReadingFormProps) {
       await updateMutation.mutateAsync({id: activity.id, name: activity.name, description: activity.description! });
     } catch (error) {
       console.log("Failed to update activity: ", error)
-    }
-
-    // Readings
-    try {
-      // First update their index based on their position in the array
-      files.forEach((file: ReadingFile, index: number) => {
-        file.index = index;
-      })
-
-      await Promise.all(files.map(async (file: ReadingFile) => {
-        await updateFiles.mutateAsync({id: file.id, index: file.index})
-      }))
-    } catch (error) {
-      console.log("Failed to update files: ", error)
     }
 
     // Questions
@@ -153,9 +134,6 @@ export default function ReadingForm(props: ReadingFormProps) {
       <div role="tablist" className="tabs tabs-lifted tabs-lg">
         <Label index={0} text="General Settings" selectedTab={selectedTab} setSelectedTab={setSelectedTab}/>
         <General activity={activity} setActivity={setActivity}/>
-
-        <Label index={1} text="Readings" selectedTab={selectedTab} setSelectedTab={setSelectedTab}/>
-        <Readings readingActivity={props.readingActivity} files={files} setFiles={setFiles}/>
 
         <Label index={2} text="Questions" selectedTab={selectedTab} setSelectedTab={setSelectedTab}/>
         <Questions activityId={activity.id} questions={questions} setQuestions={setQuestions}/>

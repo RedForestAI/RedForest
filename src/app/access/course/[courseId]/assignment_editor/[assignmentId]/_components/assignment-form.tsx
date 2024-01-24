@@ -1,11 +1,11 @@
 "use client";
 
-import { Profile, Assignment, Role, Activity } from "@prisma/client";
+import { Profile, Assignment, Question, Activity } from "@prisma/client";
 import AssignmentSettings from "./assignment-settings";
 import AssignmentStructure from "./assignment-structure";
 
 import { useForm, SubmitHandler } from "react-hook-form";
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { api } from "~/trpc/react";
 
@@ -18,24 +18,28 @@ type FormProps = {
   courseId: string
   assignment: Assignment
   activities: Activity[]
+  questions: Question[][]
 }
 
 export default function AssignmentForm(props: FormProps) {
 
   // State
   const router = useRouter();
+  const [questions, setQuestions] = useState<Question[][]>(props.questions);
   const [assignment, setAssignment] = useState<Assignment>(props.assignment);
   const [activities, setActivities] = useState<Activity[]>(props.activities);
   const forms = {
-    assignmentSettings: useForm<SettingsInputs>()
+    settings: useForm<SettingsInputs>(),
   }
 
   // Mutations
   const deleteMutation = api.assignment.delete.useMutation();
   const updateMutation = api.assignment.updateSettings.useMutation();
+  const updateIndexMutation = api.activity.updateIndex.useMutation();
+  const publishMutation = api.assignment.publish.useMutation();
 
   useEffect(() => {
-    forms.assignmentSettings.reset({ ...assignment})
+    forms.settings.reset({ ...assignment})
   }, [assignment]);
 
   const settingsSubmit: SubmitHandler<SettingsInputs> = async (data) => {
@@ -44,6 +48,19 @@ export default function AssignmentForm(props: FormProps) {
       await updateMutation.mutateAsync({id: assignment.id, name: data.name, dueDate: data.dueDate, published: false});
     } catch {
       console.log("Failed to update assignment")
+    }
+  }
+
+  const structureSubmit = async () => {
+    // First iterate through the activities and update their indices
+    for (let i = 0; i < activities.length; i++) {
+      if (activities[i]) {
+        try {
+          await updateIndexMutation.mutateAsync({id: activities[i]!.id, index: i});
+        } catch {
+          console.log("Failed to update activity index")
+        }
+      }
     }
   }
 
@@ -60,13 +77,19 @@ export default function AssignmentForm(props: FormProps) {
 
   const saveFunction = async () => {
     console.log("Submitting all forms")
-    await forms.assignmentSettings.handleSubmit(settingsSubmit)();
-    // router.push(`/access/course/${props.courseId}`)
-    // router.refresh();
+    await forms.settings.handleSubmit(settingsSubmit)();
+    await structureSubmit();
   }
 
   const publishFunction = async () => {
     await saveFunction();
+
+    // Publish the assignment
+    try {
+      await publishMutation.mutateAsync({id: assignment.id});
+    } catch {
+      console.log("Failed to publish assignment")
+    }
   }
 
   const submitAllForms = async (e: any) => {
@@ -74,7 +97,6 @@ export default function AssignmentForm(props: FormProps) {
 
     // Determine what button was pressed and which action to perform
     const action = e.nativeEvent.submitter.value;
-    console.log(action)
 
     if (action === "Delete") {
       deleteFunction();
@@ -92,6 +114,8 @@ export default function AssignmentForm(props: FormProps) {
     }
     else if (action === "Publish") {
       publishFunction()
+      router.push(`/access/course/${props.courseId}`)
+      router.refresh();
       return;
     }
     else {
@@ -102,8 +126,8 @@ export default function AssignmentForm(props: FormProps) {
   <p>Hello</p>
   return (
     <form onSubmit={submitAllForms} className="flex flex-col gap-8">
-      <AssignmentSettings assignment={assignment} formRegister={forms.assignmentSettings.register} control={forms.assignmentSettings.control} errors={forms.assignmentSettings.formState.errors}/>
-      <AssignmentStructure assignment={assignment} activities={activities} setActivities={setActivities}/>
+      <AssignmentSettings assignment={assignment} formRegister={forms.settings.register} control={forms.settings.control} errors={forms.settings.formState.errors}/>
+      <AssignmentStructure assignment={assignment} activities={activities} questions={questions} setQuestions={setQuestions} setActivities={setActivities}/>
       <div className="justify-between items-stretch flex mt-8 mb-8 pl-10 pr-10 py-3 max-md:max-w-full max-md:flex-wrap max-md:px-5">
         <button className="btn btn-error" name="action" value="Delete">Delete</button>
         <div className="flex flex-row gap-2.5">
