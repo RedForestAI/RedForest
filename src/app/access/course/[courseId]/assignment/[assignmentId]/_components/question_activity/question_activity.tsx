@@ -17,13 +17,13 @@ type QuestionActivityProps = {
 
 export default function QuestionActivity(props: QuestionActivityProps) {
   // State
-  const { register, handleSubmit, formState: { errors } } = useForm();
+  const { register, handleSubmit, clearErrors, reset, formState: { errors } } = useForm();
   const [ currentQuestionId, setCurrentQuestionId ] = useState<number>(props.activityData.currentQuestionId)
   const [ complete, setComplete ] = useState<boolean>(false)
-  const [ answer, setAnswer ] = useState<number|null>(null)
 
   // Mutations
-  const updateChoiceMutation = api.activityData.updateChoice.useMutation()
+  // const updateChoiceMutation = api.activityData.updateChoice.useMutation()
+  const appendAnswerMutation = api.activityData.appendAnswer.useMutation()
 
   function getProgress() {
     const totalQuestions = props.questions.length;
@@ -32,20 +32,23 @@ export default function QuestionActivity(props: QuestionActivityProps) {
 
   async function onSubmit(data: any) {
     console.log(data)
-  }
-
-  async function onSubmitButton(e: any) {
-    e.preventDefault();
-    await handleSubmit(onSubmit)();
 
     // Update choice in the database
+    try {
+      await appendAnswerMutation.mutateAsync({id: props.activityData.id, answer: Number(data.answer)})
+    } catch (error) {
+      console.log(error)
+      return;
+    }
+    
+    if (currentQuestionId < props.questions.length - 1) {
+      setCurrentQuestionId(currentQuestionId + 1)
+    } else {
+      setCurrentQuestionId(currentQuestionId + 1)
+      setComplete(true)
+    }
 
-    // if (currentQuestionId < props.questions.length - 1) {
-    //   setCurrentQuestionId(currentQuestionId + 1)
-    // } else {
-    //   setCurrentQuestionId(currentQuestionId + 1)
-    //   setComplete(true)
-    // }
+    reset()
   }
 
   function nextActivity() {
@@ -71,7 +74,7 @@ export default function QuestionActivity(props: QuestionActivityProps) {
               props.questions[currentQuestionId]?.options.map((choice, index) => {
                 return (
                   <div key={index} className="flex justify-start items-center w-full mt-4">
-                    <input {...register("answer", {required: true})} value={index} id={index.toString()} type="radio" name={`radio-answer`} className="radio mr-4" />
+                    <input {...register(`answer`, {required: true})} value={index} type="radio" className="radio mr-4" />
                     <label className="text-xs">{choice}</label>
                   </div>
                 )
@@ -95,7 +98,14 @@ export default function QuestionActivity(props: QuestionActivityProps) {
         </>
       }
 
-    {errors.answer && <span className="text-rose-500">This field is required or not filled correctly</span>}
+    {errors.answer && 
+      <div className="toast toast-end">
+        <div className="alert alert-error flex flex-row">
+          <span>Missing answer choice</span>
+          <button className="btn btn-ghost" onClick={() => clearErrors("answer")}>Dismiss</button>
+        </div>
+      </div>
+    }
 
     </div>
   )

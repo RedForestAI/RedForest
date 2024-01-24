@@ -13,14 +13,16 @@ export const activityDataRouter = createTRPCRouter({
       });
     }),
 
-  updateChoice: privateProcedure
-    .input(z.object({ id: z.string(), json: z.string() }))
+  appendAnswer: privateProcedure
+    .input(z.object({ id: z.string(), answer: z.number() }))
     .mutation(async ({ input, ctx }) => {
       return await ctx.db.activityData.update({
-        where: {id: input.id},
-        data: {
-          data: input.json
-        }
+        where: { id: input.id },
+        data: { 
+          answers: { push: input.answer }, 
+          answersAt: { push: new Date()},
+          currentQuestionId: { increment: 1 } 
+        },
       });
     }),
 

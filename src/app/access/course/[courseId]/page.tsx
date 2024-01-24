@@ -28,8 +28,6 @@ export default async function Page({params}: {params: { courseId: string }}) {
   // Remove any assignments that are not published (if they are student)
   if (profile.role == Role.STUDENT) assignments = assignments.filter((assignment) => assignment.published);
 
-  console.log(assignments);
-
   return (
     <div className="min-h-screen">
       <NavBar profile={profile} breadcrumbs={[{name: "\\", url: `/access`}]}/>

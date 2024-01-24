@@ -130,7 +130,8 @@ model ActivityData {
   startedAt         DateTime?
   completed         Boolean     @default(false)
   completedAt       DateTime?
-  data              Json        @default("{}")
+  answers           Int[]
+  answersAt         DateTime[]
   currentQuestionId Int         @default(0)
   
   activityId        String      @db.Uuid
