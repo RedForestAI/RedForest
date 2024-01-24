@@ -24,7 +24,8 @@ export default function AssignmentBase(props: AssignmentBaseProps) {
       activity: props.activities[currentActId],
       activityData: props.activityDatas[currentActId],
       questions: props.questions[currentActId],
-      assignmentData: props.assignmentData
+      assignmentData: props.assignmentData,
+      setCurrentActId: setCurrentActId
     }
 
     switch (props.activities[currentActId]?.type) {

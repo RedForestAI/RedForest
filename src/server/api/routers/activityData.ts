@@ -13,6 +13,17 @@ export const activityDataRouter = createTRPCRouter({
       });
     }),
 
+  updateChoice: privateProcedure
+    .input(z.object({ id: z.string(), json: z.string() }))
+    .mutation(async ({ input, ctx }) => {
+      return await ctx.db.activityData.update({
+        where: {id: input.id},
+        data: {
+          data: input.json
+        }
+      });
+    }),
+
   create: privateProcedure
     .input(
       z.object({
