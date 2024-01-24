@@ -128,11 +128,14 @@ model ActivityData {
   id                String      @id @default(uuid()) @db.Uuid
   createdAt         DateTime    @default(now())
   startedAt         DateTime?
-  completed         Boolean     @default(false)
-  completedAt       DateTime?
+
   answers           Int[]
   answersAt         DateTime[]
   currentQuestionId Int         @default(0)
+
+  completed         Boolean     @default(false)
+  completedAt       DateTime?
+  score             Int         @default(0)
   
   activityId        String      @db.Uuid
   assignmentData    AssignmentData @relation(fields: [assignmentDataId], references: [id])

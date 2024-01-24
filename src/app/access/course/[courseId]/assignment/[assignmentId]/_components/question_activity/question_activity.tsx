@@ -22,8 +22,8 @@ export default function QuestionActivity(props: QuestionActivityProps) {
   const [ complete, setComplete ] = useState<boolean>(false)
 
   // Mutations
-  // const updateChoiceMutation = api.activityData.updateChoice.useMutation()
   const appendAnswerMutation = api.activityData.appendAnswer.useMutation()
+  const markAsCompleteMutation = api.activityData.markAsComplete.useMutation()
 
   function getProgress() {
     const totalQuestions = props.questions.length;
@@ -44,6 +44,15 @@ export default function QuestionActivity(props: QuestionActivityProps) {
     if (currentQuestionId < props.questions.length - 1) {
       setCurrentQuestionId(currentQuestionId + 1)
     } else {
+
+      // Mark as complete
+      try {
+        await markAsCompleteMutation.mutateAsync({id: props.activityData.id})
+      } catch (error) {
+        console.log(error)
+        return;
+      }
+
       setCurrentQuestionId(currentQuestionId + 1)
       setComplete(true)
     }

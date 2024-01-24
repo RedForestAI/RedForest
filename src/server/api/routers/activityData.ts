@@ -26,6 +26,42 @@ export const activityDataRouter = createTRPCRouter({
       });
     }),
 
+  markAsComplete: privateProcedure
+    .input(z.object({ id: z.string() }))
+    .mutation(async ({ input, ctx }) => {
+      // First check that length of answers is equal to length of questions
+      const activityData = await ctx.db.activityData.findUniqueOrThrow({
+        where: { id: input.id },
+      });
+
+      const activity = await ctx.db.activity.findUniqueOrThrow({
+        where: { id: activityData.activityId },
+      });
+
+      const questions = await ctx.db.question.findMany({
+        where: { activityId: activity.id },
+      });
+
+      if (questions.length !== activityData.answers.length) {
+        throw new Error("Activity is not complete");
+      }
+
+      // Compute the score, first sort the questions by index
+      const sortedQuestions = questions.sort((a, b) => a.index - b.index);
+
+      // Then compute the score
+      const score = sortedQuestions.reduce((acc, question, index) => {
+        const answer = activityData.answers[index];
+        return acc + (question.answer === answer ? question.pts : 0);
+      }, 0);
+
+      return await ctx.db.activityData.update({
+        where: { id: input.id },
+        data: { completed: true, completedAt: new Date(), score: score},
+      });
+
+    }),
+
   create: privateProcedure
     .input(
       z.object({
