@@ -23,7 +23,7 @@ model Profile {
 
   // STUDENT
   enrollCourses     courseEnrollment[]
-  userActivityData  UserActivityData[]
+  userAssignmentData AssignmentData[]
 
   @@map("profile")
 }
@@ -77,9 +77,32 @@ model Assignment {
 
   activities        Activity[]
 
+  // Student data
+  assignmentData    AssignmentData[]
+
   published         Boolean     @default(false)
   publishedDate     DateTime    @default(now())
   @@map("assignment")
+}
+
+model AssignmentData {
+  id                String      @id @default(uuid()) @db.Uuid
+  createdAt         DateTime    @default(now())
+  completed         Boolean     @default(false)
+  completedAt       DateTime?
+  data              Json        @default("{}")
+  currentActId      Int         @default(0)
+  
+  student           Profile     @relation(fields: [studentId], references: [id])
+  studentId         String      @db.Uuid
+
+  assignment        Assignment  @relation(fields: [assignmentId], references: [id])
+  assignmentId      String      @db.Uuid
+
+  activityData      ActivityData[]
+
+  @@map("user_assignment_data")
+
 }
 
 enum ActivityType {
@@ -95,29 +118,26 @@ model Activity {
   type              ActivityType
   questions         Question[]
 
-  // Student data
-  userActivityData  UserActivityData[]
-
   // Assignment
   assignment        Assignment  @relation(fields: [assignmentId], references: [id])
   assignmentId      String      @db.Uuid
   @@map("activity")
 }
 
-model UserActivityData {
+model ActivityData {
   id                String      @id @default(uuid()) @db.Uuid
   createdAt         DateTime    @default(now())
+  startedAt         DateTime?
   completed         Boolean     @default(false)
   completedAt       DateTime?
-  data              Json
+  data              Json        @default("{}")
+  currentQuestionId Int         @default(0)
   
-  student           Profile     @relation(fields: [studentId], references: [id])
-  studentId         String      @db.Uuid
-
-  activity          Activity    @relation(fields: [activityId], references: [id])
   activityId        String      @db.Uuid
+  assignmentData    AssignmentData @relation(fields: [assignmentDataId], references: [id])
+  assignmentDataId  String      @db.Uuid
 
-  TraceLogFiles     TraceLogFile[]
+  traceLogFiles     TraceLogFile[]
 
   @@map("user_activity_data")
 }
@@ -128,8 +148,8 @@ model TraceLogFile {
   filepath          String
 
   // User Activity
-  userActivityData  UserActivityData @relation(fields: [userActivityDataId], references: [id])
-  userActivityDataId String      @db.Uuid
+  activityData  ActivityData @relation(fields: [activityDataId], references: [id])
+  activityDataId String      @db.Uuid
   @@map("tracelog_file")
 
 }

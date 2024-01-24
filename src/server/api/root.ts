@@ -6,6 +6,7 @@ import { activityRouter } from "./routers/activity";
 import { readingActivityRouter } from "./routers/activities/reading";
 import { questionRouter } from "./routers/question";
 import { readingFileRouter } from "./routers/activities/reading_file";
+import { assignmentDataRouter } from "./routers/assignmentData";
 import { activityDataRouter } from "./routers/activityData";
 
 /**
@@ -21,6 +22,7 @@ export const appRouter = createTRPCRouter({
   readingActivity: readingActivityRouter,
   question: questionRouter,
   readingFile: readingFileRouter,
+  assignmentData: assignmentDataRouter,
   activityData: activityDataRouter,
 });
 

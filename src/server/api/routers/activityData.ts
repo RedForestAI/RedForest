@@ -3,12 +3,28 @@ import { createTRPCRouter, privateProcedure } from "~/server/api/trpc";
 
 export const activityDataRouter = createTRPCRouter({
   getOne: privateProcedure
-    .input(z.object({ activityId: z.string(), profileId: z.string() }))
+    .input(z.object({ activityId: z.string(), assignmentDataId: z.string() }))
     .query(async ({ input, ctx }) => {
-      return await ctx.db.userActivityData.findFirst({
+      return await ctx.db.activityData.findFirst({
         where: {
           activityId: input.activityId,
-          studentId: input.profileId,
+          assignmentDataId: input.assignmentDataId,
+        },
+      });
+    }),
+
+  create: privateProcedure
+    .input(
+      z.object({
+        activityId: z.string(),
+        assignmentDataId: z.string(),
+      })
+    )
+    .mutation(async ({ input, ctx }) => {
+      return await ctx.db.activityData.create({
+        data: {
+          activityId: input.activityId,
+          assignmentDataId: input.assignmentDataId,
         },
       });
     }),
