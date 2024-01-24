@@ -46,6 +46,15 @@ export const activityDataRouter = createTRPCRouter({
         throw new Error("Activity is not complete");
       }
 
+      // Update the currentActivityId of the assignmentData
+      const assignmentData = await ctx.db.assignmentData.findUniqueOrThrow({
+        where: { id: activityData.assignmentDataId },
+      });
+      await ctx.db.assignmentData.update({
+        where: { id: assignmentData.id },
+        data: { currentActId: { increment: 1 } },
+      });
+
       // Compute the score, first sort the questions by index
       const sortedQuestions = questions.sort((a, b) => a.index - b.index);
 

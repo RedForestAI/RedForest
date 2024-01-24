@@ -3,6 +3,7 @@
 import { Course, Assignment, Activity, ActivityData, AssignmentData, ActivityType, Question } from '@prisma/client'
 import { useState } from 'react'
 import QuestionActivity from "./question_activity/question_activity"
+import ReadingActivity from "./reading_activity/reading_activity"
 
 type AssignmentBaseProps = {
   course: Course
@@ -25,12 +26,13 @@ export default function AssignmentBase(props: AssignmentBaseProps) {
       activityData: props.activityDatas[currentActId],
       questions: props.questions[currentActId],
       assignmentData: props.assignmentData,
+      currentActId: currentActId,
       setCurrentActId: setCurrentActId
     }
 
     switch (props.activities[currentActId]?.type) {
       case (ActivityType.READING):
-        return <h1>Reading</h1>
+        return <ReadingActivity {...activityData}/>
       case (ActivityType.QUESTIONING):
         return <QuestionActivity {...activityData}/>
     }

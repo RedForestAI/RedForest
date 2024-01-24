@@ -12,6 +12,7 @@ type QuestionActivityProps = {
   activityData: ActivityData
   questions: Question[]
   assignmentData: AssignmentData
+  currentActId: number
   setCurrentActId: (id: number) => void
 }
 
@@ -55,6 +56,7 @@ export default function QuestionActivity(props: QuestionActivityProps) {
 
       setCurrentQuestionId(currentQuestionId + 1)
       setComplete(true)
+      props.setCurrentActId(props.currentActId + 1)
     }
 
     reset()
