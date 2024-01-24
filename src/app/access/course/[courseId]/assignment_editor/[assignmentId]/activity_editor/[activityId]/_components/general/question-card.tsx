@@ -171,6 +171,7 @@ export function QuestionCard(props: QuestionCardProps) {
 
   useEffect(() => {
     if (props.question.type === QuestionType.MULTIPLE_CHOICE) {
+      // @ts-ignore
       setContentHeight(contentRef?.current!.scrollHeight);
     } else {
       setContentHeight(0);
