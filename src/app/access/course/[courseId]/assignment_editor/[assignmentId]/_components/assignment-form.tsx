@@ -36,6 +36,7 @@ export default function AssignmentForm(props: FormProps) {
   const deleteMutation = api.assignment.delete.useMutation();
   const updateMutation = api.assignment.updateSettings.useMutation();
   const updateIndexMutation = api.activity.updateIndex.useMutation();
+  const publishMutation = api.assignment.publish.useMutation();
 
   useEffect(() => {
     forms.settings.reset({ ...assignment})
@@ -82,6 +83,13 @@ export default function AssignmentForm(props: FormProps) {
 
   const publishFunction = async () => {
     await saveFunction();
+
+    // Publish the assignment
+    try {
+      await publishMutation.mutateAsync({id: assignment.id});
+    } catch {
+      console.log("Failed to publish assignment")
+    }
   }
 
   const submitAllForms = async (e: any) => {
@@ -89,7 +97,6 @@ export default function AssignmentForm(props: FormProps) {
 
     // Determine what button was pressed and which action to perform
     const action = e.nativeEvent.submitter.value;
-    console.log(action)
 
     if (action === "Delete") {
       deleteFunction();
@@ -107,6 +114,8 @@ export default function AssignmentForm(props: FormProps) {
     }
     else if (action === "Publish") {
       publishFunction()
+      router.push(`/access/course/${props.courseId}`)
+      router.refresh();
       return;
     }
     else {

@@ -30,6 +30,8 @@ export async function deleteActivity(activityId: string, db: PrismaClient) {
 
   // Delete subactivity data
   if (activity?.type === ActivityType.READING) {
+    // Delete reading files
+    await db.readingFile.deleteMany({where: {activityId: activityId}});
     await db.readingActivity.delete({where: {id: activityId}});
   }
 

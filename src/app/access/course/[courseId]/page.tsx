@@ -25,6 +25,9 @@ export default async function Page({params}: {params: { courseId: string }}) {
     return a.dueDate.getTime() - b.dueDate.getTime();
   });
 
+  // Remove any assignments that are not published (if they are student)
+  if (profile.role == Role.STUDENT) assignments = assignments.filter((assignment) => assignment.published);
+
   console.log(assignments);
 
   return (
