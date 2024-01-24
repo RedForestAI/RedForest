@@ -23,6 +23,7 @@ model Profile {
 
   // STUDENT
   enrollCourses     courseEnrollment[]
+  userActivityData  UserActivityData[]
 
   @@map("profile")
 }
@@ -94,10 +95,43 @@ model Activity {
   type              ActivityType
   questions         Question[]
 
+  // Student data
+  userActivityData  UserActivityData[]
+
   // Assignment
   assignment        Assignment  @relation(fields: [assignmentId], references: [id])
   assignmentId      String      @db.Uuid
   @@map("activity")
+}
+
+model UserActivityData {
+  id                String      @id @default(uuid()) @db.Uuid
+  createdAt         DateTime    @default(now())
+  completed         Boolean     @default(false)
+  completedAt       DateTime?
+  data              Json
+  
+  student           Profile     @relation(fields: [studentId], references: [id])
+  studentId         String      @db.Uuid
+
+  activity          Activity    @relation(fields: [activityId], references: [id])
+  activityId        String      @db.Uuid
+
+  TraceLogFiles     TraceLogFile[]
+
+  @@map("user_activity_data")
+}
+
+model TraceLogFile {
+  id                String      @id @default(uuid()) @db.Uuid
+  createdAt         DateTime    @default(now())
+  filepath          String
+
+  // User Activity
+  userActivityData  UserActivityData @relation(fields: [userActivityDataId], references: [id])
+  userActivityDataId String      @db.Uuid
+  @@map("tracelog_file")
+
 }
 
 model ReadingFile {
@@ -110,7 +144,7 @@ model ReadingFile {
   // ReadingActivity
   activity          ReadingActivity @relation(fields: [activityId], references: [id])
   activityId        String      @db.Uuid
-  @@map("file")
+  @@map("activity_reading_file")
 }
 
 model ReadingActivity {

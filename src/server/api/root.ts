@@ -6,6 +6,7 @@ import { activityRouter } from "./routers/activity";
 import { readingActivityRouter } from "./routers/activities/reading";
 import { questionRouter } from "./routers/question";
 import { readingFileRouter } from "./routers/activities/reading_file";
+import { activityDataRouter } from "./routers/activityData";
 
 /**
  * This is the primary router for your server.
@@ -20,6 +21,7 @@ export const appRouter = createTRPCRouter({
   readingActivity: readingActivityRouter,
   question: questionRouter,
   readingFile: readingFileRouter,
+  activityData: activityDataRouter,
 });
 
 // export type definition of API

@@ -1,7 +1,7 @@
 "use server";
 
 import { ActivityType } from "@prisma/client"
-import Slot from "./_components/slot";
+import Slot from "~/utils/slot";
 import ReadingForm from './_components/reading/reading-form';
 import QuestionForm from './_components/questioning/question-form';
 

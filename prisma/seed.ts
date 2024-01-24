@@ -84,6 +84,8 @@ const getAssignments = (courses: Course[]): Prisma.AssignmentCreateInput[] => [
     name: "Assignment ID #1",
     dueDate: yesterday,
     course: { connect: { id: courses[0]?.id }},
+    published: true,
+    publishedDate: yesterday,
   },
   {
     id: "30000000-0000-0000-0000-000000000001",
@@ -102,6 +104,8 @@ const getAssignments = (courses: Course[]): Prisma.AssignmentCreateInput[] => [
     name: "Assignment ID #4",
     dueDate: yesterday,
     course: { connect: { id: courses[1]?.id }},
+    published: true,
+    publishedDate: yesterday,
   },
   {
     id: "30000000-0000-0000-0000-000000000011",
@@ -120,7 +124,10 @@ const getAssignments = (courses: Course[]): Prisma.AssignmentCreateInput[] => [
     name: "Assignment ID #7",
     dueDate: yesterday,
     course: { connect: { id: courses[2]?.id }},
+    published: true,
+    publishedDate: yesterday,
   },
+  
   {
     id: "30000000-0000-0000-0000-000000000021",
     name: "Assignment ID #8",

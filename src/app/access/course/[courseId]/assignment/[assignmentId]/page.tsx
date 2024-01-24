@@ -1,47 +1,56 @@
 "use server";
-
+import { ActivityType } from "@prisma/client"
+import Slot from "~/utils/slot";
 import NavBar from "~/components/ui/navbar";
-import PDFViewer from "./_components/reading_activity/pdf-viewer";
-import { WebGazerManager } from '~/providers/WebGazerManager';
 
-export default async function Page() {
-  const pdfUrl = 'https://arxiv.org/pdf/1708.08021.pdf'; // Replace with your PDF URL
-  let webGazer = new WebGazerManager();
+import { api } from '~/trpc/server';
 
-  const handleStart = () => {
-    webGazer.start();
-  };
-  
-  const handleHide = () => {
-    webGazer.hide();
-  };
-  
-  const handleShow = () => {
-    webGazer.show();
-  };
+export default async function Page({params}: {params: { courseId: string, assignmentId: string, activityId: string}}) {
 
-  const handleStop = () => {
-    webGazer.stop();
-  };
-  
-  const handleEnd = () => {
-    webGazer.end();
-    webGazer = new WebGazerManager();
-  };
+  // Fetch the activity data
+  const profile = await api.auth.getProfile.query();
+  const course = await api.course.getOne.query({courseId: params.courseId, profileId: profile.id});
+  const activities = await api.activity.getMany.query({assignmentId: params.assignmentId})
+
+  // Sorts the activities by their index
+  activities.sort((a, b) => a.index - b.index)
+
+  // Iterate through the activities and try to pull the user data for each one
+  const activityDatas = await Promise.all(activities.map(async (activity) => {
+    const data = await api.activityData.getOne.query({activityId: activity.id, profileId: profile.id})
+    return data
+  }))
+
+  console.log(activities)
+  console.log(activityDatas)
+
+  function getCurrentActivity() {
+    // Iterate through the activities and try to pull the user data for each one
+    // activities.forEach((activity, index) => {
+    for (let i = 0; i < activities.length; i++) {
+      let activityData = activityDatas[i]
+
+      if (activityData && activityData.completed) {
+        return <h1>Activity completed</h1>
+      }
+      switch (activities[i]?.type) {
+        case ActivityType.READING:
+          return <h1>Reading activity</h1>
+        case ActivityType.QUESTIONING:
+          return <h1>Questioning activity</h1>
+        default:
+          return <h1>Failed to load activity</h1>
+      }
+    }
+    return (<h1>Failed to load activity</h1>)
+  }
 
   return (
-    <div>
-      <NavBar/>
-      <div className="pt-20">
-      <div className="pb-4 flex flex-row items-center justify-center">
-        <button className="bg-blue-500 text-white font-bold py-2 px-4 rounded hover:bg-blue-700 m-2" onClick={handleStart}>Start WebGazer</button>
-        <button className="bg-green-500 text-white font-bold py-2 px-4 rounded hover:bg-green-700 m-2" onClick={handleShow}>Show WebGazer</button>
-        <button className="bg-yellow-500 text-white font-bold py-2 px-4 rounded hover:bg-yellow-700 m-2" onClick={handleHide}>Hide WebGazer</button>
-        <button className="bg-red-500 text-white font-bold py-2 px-4 rounded hover:bg-red-700 m-2" onClick={handleStop}>Stop WebGazer</button>
-        <button className="bg-purple-500 text-white font-bold py-2 px-4 rounded hover:bg-purple-700 m-2" onClick={handleEnd}>End WebGazer</button>
-      </div>
-        <PDFViewer file={pdfUrl}/>
-      </div>
+    <>
+    <NavBar profile={profile} breadcrumbs={[{name: "\\", url: `/access`}, {name: course.name, url: `/access/course/${params.courseId}`}]}/>
+    <div className="mt-4 ml-8 mr-8">
+      <Slot children={getCurrentActivity()}/>
     </div>
+  </>
   )
 }
