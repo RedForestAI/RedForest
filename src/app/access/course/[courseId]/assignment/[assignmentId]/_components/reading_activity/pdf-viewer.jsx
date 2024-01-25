@@ -27,28 +27,19 @@ const HighlightPopup = (comment) =>
     </div>
   ) : null;
 
-const PRIMARY_PDF_URL = "https://arxiv.org/pdf/1708.08021.pdf";
-const SECONDARY_PDF_URL = "https://arxiv.org/pdf/1604.02480.pdf";
+// const PRIMARY_PDF_URL = "https://arxiv.org/pdf/1708.08021.pdf";
+// const SECONDARY_PDF_URL = "https://arxiv.org/pdf/1604.02480.pdf";
 
-const PDFViewer = () => {
-  const searchParams = new URLSearchParams(document.location.search);
-  const initialUrl = searchParams.get('url') || PRIMARY_PDF_URL;
+// @ts-ignore
+const PDFViewer = (props) => {
 
-  const [url, setUrl] = useState(initialUrl);
+  console.log(props);
+
+  const [url, setUrl] = useState(props.url);
   const [highlights, setHighlights] = useState(
     // @ts-ignore
-    testHighlights[initialUrl] ? [...testHighlights[initialUrl]] : []
+    testHighlights[props.url] ? [...testHighlights[props.url]] : []
   );
-
-  const resetHighlights = () => {
-    setHighlights([]);
-  };
-
-  const toggleDocument = () => {
-    const newUrl = url === PRIMARY_PDF_URL ? SECONDARY_PDF_URL : PRIMARY_PDF_URL;
-    setUrl(newUrl);
-    setHighlights(testHighlights[newUrl] ? [...testHighlights[newUrl]] : []);
-  };
 
   // @ts-ignore
   let scrollViewerTo = useCallback((highlight) => {
