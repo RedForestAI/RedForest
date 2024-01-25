@@ -1,27 +1,6 @@
 
-
-  
-  .highlight__location {
-    margin-top: 0.5rem;
-    text-align: right;
-    font-size: 10px;
-  }
-  
-  .highlight__image {
-    overflow: auto;
-    max-width: 300px;
-    border: 1px dashed;
-  }
-  
-  blockquote {
-    padding: 0;
-    margin: 0;
-    quotes: "\201c" "\201d";
-  }
-  blockquote:before {
-    content: open-quote;
-  }
-  blockquote:after {
-    content: close-quote;
-  }
+body, html {
+  overflow-x: hidden;
+  overflow-y: hidden;
+}
   

@@ -11,6 +11,8 @@ import {
 import { NewHighlight } from 'react-pdf-highlighter';
 import { testHighlights } from './test-highlights';
 
+import './pdf-viewer.css';
+
 const getNextId = () => String(Math.random()).slice(2);
 
 const parseIdFromHash = () => document.location.hash.slice("#highlight-".length);
@@ -26,9 +28,6 @@ const HighlightPopup = (comment) =>
       {comment.emoji} {comment.text}
     </div>
   ) : null;
-
-// const PRIMARY_PDF_URL = "https://arxiv.org/pdf/1708.08021.pdf";
-// const SECONDARY_PDF_URL = "https://arxiv.org/pdf/1604.02480.pdf";
 
 // @ts-ignore
 const PDFViewer = (props) => {
