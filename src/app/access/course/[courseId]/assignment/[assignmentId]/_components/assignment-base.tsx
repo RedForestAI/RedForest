@@ -32,8 +32,10 @@ export default function AssignmentBase(props: AssignmentBaseProps) {
 
     switch (props.activities[currentActId]?.type) {
       case (ActivityType.READING):
+        // @ts-ignore
         return <ReadingActivity {...activityData}/>
       case (ActivityType.QUESTIONING):
+        // @ts-ignore
         return <QuestionActivity {...activityData}/>
     }
   }

@@ -35,6 +35,6 @@
     "**/*.cjs",
     "**/*.mjs",
     ".next/types/**/*.ts"
-  ],
+, "src/app/access/course/[courseId]/assignment/[assignmentId]/_components/reading_activity/pdf-viewer.tsx"  ],
   "exclude": ["node_modules"]
 }

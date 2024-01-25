@@ -15,7 +15,7 @@ import type { IHighlight, NewHighlight } from "react-pdf-highlighter";
 
 import { testHighlights as _testHighlights } from "./test-highlights";
 
-import "./pdf-viewer.css";
+// import "./pdf-viewer.css";
 
 const testHighlights: Record<string, Array<IHighlight>> = _testHighlights;
 
@@ -55,6 +55,7 @@ class App extends Component<{}, State> {
   state = {
     url: initialUrl,
     highlights: testHighlights[initialUrl]
+    // @ts-ignore
       ? [...testHighlights[initialUrl]]
       : [],
   };
@@ -136,14 +137,7 @@ class App extends Component<{}, State> {
     const { url, highlights } = this.state;
 
     return (
-      <div className="App" style={{ display: "flex", height: "100vh" }}>
-        <div
-          style={{
-            height: "100vh",
-            width: "75vw",
-            position: "relative",
-          }}
-        >
+      <div className="h-full overflow-auto w-full">
           <PdfLoader url={url} beforeLoad={<span className="loading loading-spinner loading-lg"></span>}>
             {(pdfDocument) => (
               <PdfHighlighter
@@ -166,7 +160,6 @@ class App extends Component<{}, State> {
                     onOpen={transformSelection}
                     onConfirm={(comment) => {
                       this.addHighlight({ content, position, comment });
-
                       hideTipAndSelection();
                     }}
                   />
@@ -220,7 +213,6 @@ class App extends Component<{}, State> {
               />
             )}
           </PdfLoader>
-        </div>
       </div>
     );
   }
