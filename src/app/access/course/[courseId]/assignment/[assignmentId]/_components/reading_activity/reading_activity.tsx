@@ -44,7 +44,7 @@ export default function ReadingActivity(props: ReadingActivityProps) {
   
   return (
     <>
-      {/* <PDFViewer url={pdfUrl}/> */}
+      {/* @ts-ignore */}
       <DynamicDocViewer url={pdfUrl}/>
     </>
   )
