@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect } from "react";
 import { Course, Assignment, Activity, ActivityData, AssignmentData, ActivityType, Question } from '@prisma/client'
 import { WebGazerManager } from '~/providers/WebGazerManager';
 import PDFViewer from './pdf-viewer';
@@ -44,7 +45,7 @@ export default function ReadingActivity(props: ReadingActivityProps) {
   return (
     <>
       <div className="w-full flex justify-center items-center">
-        <PDFViewer file={pdfUrl}/>
+        <PDFViewer/>
       </div>
     </>
   )
