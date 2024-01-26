@@ -1,5 +1,6 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect, useContext } from "react";
+import { useNavBarContext } from '~/providers/navbar-provider';
 import { Document, Page, pdfjs } from "react-pdf";
 pdfjs.GlobalWorkerOptions.workerSrc = new URL(
   "pdfjs-dist/build/pdf.worker.min.js",
@@ -10,6 +11,7 @@ import 'react-pdf/dist/Page/AnnotationLayer.css';
 import 'react-pdf/dist/Page/TextLayer.css';
 
 export default function PDFViewer(props: {file: string}) {
+  const { setNavBarContent } = useContext(useNavBarContext);
   const [numPages, setNumPages] = useState<number>(0);
   const [loading, setLoading] = useState(true);
   const [pageWidth, setPageWidth] = useState(0);
@@ -33,6 +35,23 @@ export default function PDFViewer(props: {file: string}) {
     cMapPacked: true,
     standardFontDataUrl: "standard_fonts/",
   };
+
+  useEffect(() => {
+    // Define the content you want to add to the navbar
+    const navBarExtras = (
+      <div className="flex flex-row gap-2 items-center ">
+        <button className="btn btn-ghost" onClick={() => setScale((prev) => (prev-0.1))}>-</button>
+        <p>{scale}</p>
+        <button className="btn btn-ghost" onClick={() => setScale((prev) => (prev+0.1))}>+</button>
+      </div>
+    );
+
+    // Update the navbar content
+    setNavBarContent(navBarExtras);
+
+    // Reset the navbar content when the component unmounts
+    return () => setNavBarContent(null);
+  }, []);
 
   return (
     <>
