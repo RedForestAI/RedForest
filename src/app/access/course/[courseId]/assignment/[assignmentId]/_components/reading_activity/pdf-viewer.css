@@ -1,6 +1,5 @@
 
-body, html {
-  overflow-x: hidden;
-  overflow-y: hidden;
+  /* In your CSS file */
+#pdf-controls {
+  display: none;
 }
-  

@@ -12,6 +12,7 @@
     "vercel-build": "prisma generate && prisma migrate deploy && tsx prisma/seedTriggers.ts && next build"
   },
   "dependencies": {
+    "@cyntler/react-doc-viewer": "^1.14.1",
     "@fortawesome/fontawesome-svg-core": "^6.5.1",
     "@fortawesome/free-brands-svg-icons": "^6.5.1",
     "@fortawesome/free-solid-svg-icons": "^6.5.1",
@@ -41,7 +42,6 @@
     "react-dom": "18.2.0",
     "react-hook-form": "^7.49.2",
     "react-pdf": "^7.7.0",
-    "react-pdf-highlighter": "^6.1.0",
     "superjson": "^1.13.3",
     "tailwind-merge": "^1.14.0",
     "tailwindcss-animate": "^1.0.7",
