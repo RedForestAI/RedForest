@@ -45,7 +45,7 @@ export default function ReadingActivity(props: ReadingActivityProps) {
   return (
     <>
       <div className="w-full flex justify-center items-center">
-        <PDFViewer/>
+        <PDFViewer file={pdfUrl}/>
       </div>
     </>
   )

@@ -1,49 +1,71 @@
-import React, { useRef, useState, useEffect } from 'react';
-import DocViewer, { DocViewerRenderers } from '@cyntler/react-doc-viewer';
+"use client";
+import { useState } from "react";
+import { Document, Page, pdfjs } from "react-pdf";
+pdfjs.GlobalWorkerOptions.workerSrc = new URL(
+  "pdfjs-dist/build/pdf.worker.min.js",
+  import.meta.url
+).toString();
 
-import "./pdf-viewer.css";
+import 'react-pdf/dist/Page/AnnotationLayer.css';
+import 'react-pdf/dist/Page/TextLayer.css';
 
-export default function PDFViewer() {
-  const docViewerRef = useRef(null);
-  const [zoomLevel, setZoomLevel] = useState(1); // Starting zoom level
+export default function PDFViewer(props: {file: string}) {
+  const [numPages, setNumPages] = useState<number>(0);
+  const [loading, setLoading] = useState(true);
+  const [pageWidth, setPageWidth] = useState(0);
+  const [scale, setScale] = useState(1.0);
 
-  const docs = [
-    { uri: "https://arxiv.org/pdf/1708.08021.pdf" } // Remote file
-  ];
+  function onDocumentLoadSuccess({
+    numPages: nextNumPages,
+  }: {
+    numPages: number;
+  }) {
+    setNumPages(nextNumPages);
+  }
 
-  const handleZoom = (e: any) => {
-    if (e.ctrlKey) {
-      e.preventDefault(); // Prevent whole page zoom
-      const zoomJump = e.deltaY > 0 ? 0.1 : -0.1; // Adjust zoom factor as needed
-      setZoomLevel((prevZoomLevel) => prevZoomLevel + zoomJump);
-    }
+  function onPageLoadSuccess() {
+    setPageWidth(window.innerWidth);
+    setLoading(false);
+  }
+
+  const options = {
+    cMapUrl: "cmaps/",
+    cMapPacked: true,
+    standardFontDataUrl: "standard_fonts/",
   };
 
-  useEffect(() => {
-    window.addEventListener("wheel", handleZoom, { passive: false });
-
-    return () => {
-      window.removeEventListener("wheel", handleZoom);
-    };
-  }, []);
-
   return (
-      <DocViewer
-        documents={docs}
-        pluginRenderers={DocViewerRenderers}
-        style={{ width: `${70*zoomLevel}%`, height: `100%` }}
-        config={{
-          header: {
-            disableHeader: true,
-            disableFileName: true,
-            retainURLParams: true
-          },
-          pdfVerticalScrollByDefault: true,
-          pdfZoom: {
-            defaultZoom: zoomLevel,
-            zoomJump: 0.1
-          }
-        }}
-      />
+    <>
+      <div
+        hidden={loading}
+        style={{ height: "calc(100vh - 64px)" }}
+        className="flex items-center"
+      >
+        <div className="h-full flex justify-center mx-auto">
+          <Document
+            file={props.file}
+            onLoadSuccess={onDocumentLoadSuccess}
+            onLoadError={console.error}
+            options={options}
+            renderMode="canvas"
+            className=""
+          >
+            {Array.from(new Array(numPages), (el, index) => (
+              <Page
+              className="mb-4"
+              key={`page_${index + 1}`}
+              pageNumber={index+1}
+              renderAnnotationLayer={true}
+              renderTextLayer={true}
+              onLoadSuccess={onPageLoadSuccess}
+              onRenderError={() => setLoading(false)}
+              width={Math.max(pageWidth * 0.5, 390)}
+              scale={scale}
+            />
+            ))}
+          </Document>
+        </div>
+      </div>
+    </>
   );
-};
+}
