@@ -3,7 +3,8 @@
 import { Course, Assignment, Activity, ActivityData, AssignmentData, Question } from '@prisma/client'
 import { useState } from 'react'
 import { api } from "~/trpc/react"
-import { useForm } from "react-hook-form";
+import { useForm } from "react-hook-form"
+import { useRouter } from "next/navigation"
 
 type QuestionActivityProps = {
   course: Course
@@ -12,19 +13,54 @@ type QuestionActivityProps = {
   activityData: ActivityData
   questions: Question[]
   assignmentData: AssignmentData
+  ammountOfActivities: number
   currentActId: number
   setCurrentActId: (id: number) => void
 }
 
+function ActivityCompletion(props: {assignmentComplete: boolean, next: () => void}) {
+  return (
+    <div className="w-full">
+      {!props.assignmentComplete
+        ? <>
+            <div className="self-stretch text-4xl mt-4 max-md:max-w-full">
+              You have completed this activity!
+            </div>
+            <div className="self-stretch text-xs mt-2.5 max-md:max-w-full">
+              Press continue when ready.
+            </div>
+            <div className="flex justify-end w-full items-center mt-4">
+              <button className="btn btn-primary" onClick={props.next}>Continue</button>
+            </div>
+          </>
+        : <>
+            <div className="self-stretch text-4xl mt-4 max-md:max-w-full">
+              You have completed this assignment!
+            </div>
+            <div className="self-stretch text-xs mt-2.5 max-md:max-w-full">
+              Press continue to return to Dashboard.
+            </div>
+            <div className="flex justify-end w-full items-center mt-4">
+              <button className="btn btn-primary" onClick={props.next}>Continue</button>
+            </div>
+          </>
+      }
+    </div>
+  )
+}
+
 export default function QuestionActivity(props: QuestionActivityProps) {
   // State
+  const router = useRouter()
   const { register, handleSubmit, clearErrors, reset, formState: { errors } } = useForm();
   const [ currentQuestionId, setCurrentQuestionId ] = useState<number>(props.activityData.currentQuestionId)
   const [ complete, setComplete ] = useState<boolean>(false)
+  const [ assignmentComplete, setAssignmentComplete ] = useState<boolean>(false)
 
   // Mutations
   const appendAnswerMutation = api.activityData.appendAnswer.useMutation()
   const markAsCompleteMutation = api.activityData.markAsComplete.useMutation()
+  const assignmentCompleteMutation = api.assignmentData.markAsComplete.useMutation()
 
   function getProgress() {
     const totalQuestions = props.questions.length;
@@ -51,19 +87,32 @@ export default function QuestionActivity(props: QuestionActivityProps) {
         await markAsCompleteMutation.mutateAsync({id: props.activityData.id})
       } catch (error) {
         console.log(error)
-        return;
+        return
       }
-
       setCurrentQuestionId(currentQuestionId + 1)
       setComplete(true)
-      props.setCurrentActId(props.currentActId + 1)
+
+      // Check if assignment is complete
+      if (props.currentActId <= props.ammountOfActivities - 1){
+        await assignmentCompleteMutation.mutateAsync({id: props.assignmentData.id})
+        setAssignmentComplete(true)
+      }
     }
 
     reset()
   }
 
-  function nextActivity() {
-    console.log("Next activity")
+  async function next() {
+
+    // Next activity
+    if (props.currentActId < props.ammountOfActivities - 1){
+      props.setCurrentActId(props.currentActId + 1)
+      return;
+    }
+
+    // Return to dashboard
+    router.push(`/access/course/${props.course.id}`)
+    router.refresh()
   }
 
   return (
@@ -96,17 +145,7 @@ export default function QuestionActivity(props: QuestionActivityProps) {
             </div>
           </form>
         </>
-        : <>
-          <div className="self-stretch text-4xl mt-4 max-md:max-w-full">
-            You have completed this activity!
-          </div>
-          <div className="self-stretch text-xs mt-2.5 max-md:max-w-full">
-            Press continue when ready.
-          </div>
-          <div className="flex justify-end w-full items-center mt-4">
-            <button className="btn btn-primary" onClick={nextActivity}>Continue</button>
-          </div>
-        </>
+        : <ActivityCompletion assignmentComplete={assignmentComplete} next={next}/>
       }
 
     {errors.answer && 

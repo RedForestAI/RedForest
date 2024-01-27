@@ -14,6 +14,7 @@ type ReadingActivityProps = {
   activityData: ActivityData
   questions: Question[]
   assignmentData: AssignmentData
+  ammountOfActivities: number
   currentActId: number
   setCurrentActId: (id: number) => void
 }

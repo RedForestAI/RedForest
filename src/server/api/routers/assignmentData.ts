@@ -13,6 +13,15 @@ export const assignmentDataRouter = createTRPCRouter({
         },
       });
     }),
+    
+  getMany: privateProcedure
+    .input(z.object({ studentId: z.string() }))
+    .query(async ({ input, ctx }) => {
+      // Find
+      return await ctx.db.assignmentData.findMany({
+        where: { studentId: input.studentId },
+      });
+    }),
 
   create: privateProcedure
     .input(
@@ -28,6 +37,26 @@ export const assignmentDataRouter = createTRPCRouter({
           assignmentId: input.assignmentId,
           studentId: input.studentId,
         },
+      });
+    }),
+
+  markAsComplete: privateProcedure
+    .input(z.object({ id: z.string() }))
+    .mutation(async ({ input, ctx }) => {
+      // Get all ActivityData for assignmentData
+      const activityData = await ctx.db.activityData.findMany({
+        where: { assignmentDataId: input.id },
+      });
+
+      // Compute the score through a sum
+      const score = activityData.reduce((acc, curr) => {
+        return acc + curr.score;
+      }, 0);
+      
+      // Update
+      return await ctx.db.assignmentData.update({
+        where: { id: input.id },
+        data: { completed: true, completedAt: new Date(), score: score },
       });
     }),
 });

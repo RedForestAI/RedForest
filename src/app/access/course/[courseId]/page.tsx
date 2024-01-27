@@ -1,4 +1,4 @@
-import { Profile, Assignment, Role, Course } from "@prisma/client";
+import { Profile, Assignment, Role, Course, AssignmentData } from "@prisma/client";
 
 import NavBar from "~/components/ui/navbar";
 import { api } from '~/trpc/server';
@@ -10,6 +10,7 @@ export default async function Page({params}: {params: { courseId: string }}) {
   // Default values
   let course: Course | null = null;
   let assignments: Assignment[] = [];
+  let assignmentsDatas: AssignmentData[] = [];
 
   // Fetch data
   let profile: Profile = await api.auth.getProfile.query();
@@ -26,7 +27,15 @@ export default async function Page({params}: {params: { courseId: string }}) {
   });
 
   // Remove any assignments that are not published (if they are student)
-  if (profile.role == Role.STUDENT) assignments = assignments.filter((assignment) => assignment.published);
+  if (profile.role == Role.STUDENT) {
+    assignments = assignments.filter((assignment) => assignment.published);
+    assignmentsDatas = await api.assignmentData.getMany.query({studentId: profile.id});
+
+    // Order assignmentData to match the assignments order
+    assignmentsDatas.sort((a, b) => {
+      return assignments.findIndex((assignment) => assignment.id == a.assignmentId) - assignments.findIndex((assignment) => assignment.id == b.assignmentId);
+    });
+  }
 
   return (
     <div className="min-h-screen">
@@ -36,7 +45,12 @@ export default async function Page({params}: {params: { courseId: string }}) {
           ? <div>
               <div>
                 {assignments.map((assignment, index) => (
-                  <AssignmentCard assignment={assignment} course={course!} editable={profile.role === Role.TEACHER} key={index}/>
+                  <>
+                    {profile.role == Role.STUDENT
+                      ? <AssignmentCard assignment={assignment} course={course!} editable={false} key={index} assignmentData={assignmentsDatas[index]}/>
+                      : <AssignmentCard assignment={assignment} course={course!} editable={true} key={index}/>
+                    }
+                  </>
                 ))}
               </div>
               {profile?.role == Role.TEACHER && <AssignmentCreate profile={profile} course={course}/>}

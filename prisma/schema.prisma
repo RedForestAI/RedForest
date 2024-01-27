@@ -90,8 +90,8 @@ model AssignmentData {
   createdAt         DateTime    @default(now())
   completed         Boolean     @default(false)
   completedAt       DateTime?
-  data              Json        @default("{}")
   currentActId      Int         @default(0)
+  score             Int         @default(0)
   
   student           Profile     @relation(fields: [studentId], references: [id])
   studentId         String      @db.Uuid

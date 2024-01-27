@@ -26,6 +26,7 @@ export default function AssignmentBase(props: AssignmentBaseProps) {
       activityData: props.activityDatas[currentActId],
       questions: props.questions[currentActId],
       assignmentData: props.assignmentData,
+      ammountOfActivities: props.activities.length,
       currentActId: currentActId,
       setCurrentActId: setCurrentActId
     }
@@ -37,7 +38,10 @@ export default function AssignmentBase(props: AssignmentBaseProps) {
       case (ActivityType.QUESTIONING):
         // @ts-ignore
         return <QuestionActivity {...activityData}/>
+      default:
+        return <p>Failed to load activity</p>
     }
+
   }
 
   return (

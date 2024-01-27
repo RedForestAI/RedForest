@@ -1,9 +1,10 @@
-import { Assignment, Course } from '@prisma/client'
+import { Assignment, Course, AssignmentData } from '@prisma/client'
 import Link from "next/link";
 
 interface AssignmentCardProps {
   course: Course
   assignment: Assignment
+  assignmentData?: AssignmentData
   editable: boolean
 }
 
@@ -22,7 +23,13 @@ const AssignmentCard = ( props : AssignmentCardProps) => {
   }
 
   const getColor = () => {
+    // Teacher
     if (!props.assignment.published) return "text-base-content";
+
+    // Student
+    // If completed, return green
+    if (props.assignmentData?.completed) return "text-success";
+
     const date = new Date(props.assignment.dueDate);
     const now = new Date();
     const diff = date.getTime() - now.getTime();
@@ -45,6 +52,7 @@ const AssignmentCard = ( props : AssignmentCardProps) => {
     }
 
     // Student
+    if (props.assignmentData?.completed) return `/access/course/${props.course.id}/assignment_report/${props.assignment.id}`
     return `/access/course/${props.course.id}/assignment/${props.assignment.id}`
 
   }
@@ -61,13 +69,16 @@ const AssignmentCard = ( props : AssignmentCardProps) => {
               {props.course.name}
             </div>
           </span>
-          <div className="justify-center mt-5 self-end">
-            Due: <span className={getColor()}>{getDate()}</span>
+          <div className="flex flex-col justify-end items-end gap-2 self-end w-36">
+            {props.assignmentData && props.assignmentData.completed && <div className="badge badge-success">Completed</div>}
+            <span className={getColor()}>{`${getDate()}`}</span>
           </div>
         </span>
-        <div className="bg-neutral self-stretch flex flex-col justify-center items-stretch pr-5 rounded-2xl max-md:max-w-full max-md:pr-5 mt-5">
-          <div className="bg-primary text-xs font-medium text-primary-content text-center p-0.5 leading-none rounded-full" style={{width: "0%"}}> 0%</div>
-        </div>
+        {!props.assignmentData?.completed &&
+          <div className="bg-neutral self-stretch flex flex-col justify-center items-stretch pr-5 rounded-2xl max-md:max-w-full max-md:pr-5 mt-5">
+            <div className="bg-primary text-xs font-medium text-primary-content text-center p-0.5 leading-none rounded-full" style={{width: "0%"}}> 0%</div>
+          </div>
+        }
       </div>
     </Link>
   )
