@@ -4,6 +4,7 @@ import { useEffect } from "react";
 import { Course, Assignment, Activity, ActivityData, AssignmentData, ActivityType, Question } from '@prisma/client'
 import { WebGazerManager } from '~/providers/WebGazerManager';
 import PDFViewer from './pdf-viewer';
+import TaskDrawer from './task-drawer';
 
 type ReadingActivityProps = {
   course: Course
@@ -46,6 +47,7 @@ export default function ReadingActivity(props: ReadingActivityProps) {
     <>
       <div className="w-full flex justify-center items-center">
         <PDFViewer/>
+        <TaskDrawer/>
       </div>
     </>
   )
