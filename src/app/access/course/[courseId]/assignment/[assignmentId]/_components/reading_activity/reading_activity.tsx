@@ -5,6 +5,7 @@ import { Course, Assignment, Activity, ActivityData, AssignmentData, ActivityTyp
 import { WebGazerManager } from '~/providers/WebGazerManager';
 import PDFViewer from './pdf-viewer';
 import TaskDrawer from './task-drawer';
+import QuestionActivity from "../question_activity/question_activity";
 
 type ReadingActivityProps = {
   course: Course
@@ -47,7 +48,11 @@ export default function ReadingActivity(props: ReadingActivityProps) {
     <>
       <div className="w-full flex justify-center items-center">
         <PDFViewer/>
-        <TaskDrawer/>
+        <TaskDrawer>
+          <div className="mt-20 w-full">
+            <QuestionActivity {...props}/>
+          </div>
+        </TaskDrawer>
       </div>
     </>
   )
