@@ -50,7 +50,7 @@ export default function Readings(props: ReadingProps) {
   async function uploadFile(file: File) {
     // Create the File in the database
     const path = `${props.readingActivity.id}/${generateUUID()}.pdf`;
-    const { data, error } = await supabase.storage.from('readings').upload(path, file);
+    const { data, error } = await supabase.storage.from('activity_reading_file').upload(path, file);
     if (error) {
       console.log(error);
       return;
@@ -142,7 +142,7 @@ export default function Readings(props: ReadingProps) {
     // Ref: https://github.com/orgs/supabase/discussions/2466
 
     // Delete the file in the storage
-    const { data, error } = await supabase.storage.from('readings').remove([props.files[idx]!.filepath]);
+    const { data, error } = await supabase.storage.from('activity_reading_file').remove([props.files[idx]!.filepath]);
     
     if (error) {
       console.log(error);

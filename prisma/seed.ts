@@ -1,6 +1,20 @@
+// Load .env file
+// import dotenv from 'dotenv'
+// dotenv.config()
 
-import { PrismaClient, Role, Prisma, Profile, Course, Assignment, Activity, ActivityType, Question, QuestionType } from '@prisma/client'
-import { get } from 'http';
+const fs = require('fs')
+const path = require('path')
+import { Blob } from "buffer"
+
+import { PrismaClient, Role, Prisma, Profile, Course, Assignment, Activity, ActivityType, Question, QuestionType, ReadingFile } from '@prisma/client'
+
+// Create Supabase client
+import { createClient } from '@supabase/supabase-js'
+const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+)
+
 const client = new PrismaClient()
 
 const today = new Date();
@@ -179,6 +193,51 @@ const getActivities = (assignments: Assignment[]): Prisma.ActivityCreateInput[] 
   return activities
 }
 
+const uploadFiles = async (activities: Activity[]) => {
+
+  const filePath = path.join(__dirname, "tests/dummy.pdf")
+  const buffer = fs.readFileSync(filePath)
+
+  let filepaths: string[] = []
+  for (let i = 0; i < activities.length; i++) {
+    if (activities[i]?.type !== ActivityType.READING) continue
+    // Load local PDF file
+    const new_path = `tests/dummy${i}.pdf`
+
+    // Let's actually upload a file within the seed, to supabase
+    const { data, error } = await supabase.storage.from("activity_reading_file").upload(new_path, buffer, {
+      contentType: "application/pdf",
+    })
+
+    filepaths.push(new_path)
+  }
+
+  return filepaths
+}
+
+const getReadingFiles = (activities: Activity[], filepaths: string[]): Prisma.ReadingFileCreateInput[] => {
+  let readingFiles = []
+  let j = 0;
+  for (let i = 0; i < activities.length; i++) {
+    if (activities[i]?.type !== ActivityType.READING) continue
+    
+    const filepath = filepaths[j]
+    j++
+
+    readingFiles.push(
+      {
+        id: generateUUID(),
+        title: `Reading File`,
+        filepath: filepath!,
+        size: 100,
+        index: 0,
+        activity: { connect: { id: activities[i]?.id }},
+      }
+    )
+  }
+  return readingFiles
+}
+
 const getReadingActivities = (activities: Activity[]): Prisma.ReadingActivityCreateInput[] => {
   let rActivities = []
   for (let i = 0; i < activities.length; i++) {
@@ -293,8 +352,6 @@ const main = async () => {
       }))
   )
 
-  console.log(activities.length)
-
   const readingActivities = await Promise.all(
     getReadingActivities(activities).map((readingActivity) => client.readingActivity.upsert(
       {
@@ -303,6 +360,17 @@ const main = async () => {
         create: { ...readingActivity },
       }
       ))
+  )
+
+  const filepaths = await uploadFiles(activities)
+
+  const readingFiles = await Promise.all(
+    getReadingFiles(activities, filepaths).map((readingFile) => client.readingFile.upsert(
+      {
+        where: { id: readingFile.id },
+        update: { ...readingFile },
+        create: { ...readingFile },
+      }))
   )
 
   const questions = await Promise.all(
