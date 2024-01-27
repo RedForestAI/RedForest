@@ -19,32 +19,41 @@ type QuestionActivityProps = {
 }
 
 function ActivityCompletion(props: {assignmentComplete: boolean, next: () => void}) {
+  
+  function getPage() {
+    if (props.assignmentComplete) {
+      return (
+        <>
+          <div className="self-stretch text-4xl mt-4 max-md:max-w-full">
+            You have completed this assignment!
+          </div>
+          <div className="self-stretch text-xs mt-2.5 max-md:max-w-full">
+            Press continue to return to Dashboard.
+          </div>
+          <div className="flex justify-end w-full items-center mt-4">
+            <button className="btn btn-primary" onClick={props.next}>Continue</button>
+          </div>
+        </>
+      )
+    }
+    return (
+      <>
+        <div className="self-stretch text-4xl mt-4 max-md:max-w-full">
+          You have completed this activity!
+        </div>
+        <div className="self-stretch text-xs mt-2.5 max-md:max-w-full">
+          Press continue when ready.
+        </div>
+        <div className="flex justify-end w-full items-center mt-4">
+          <button className="btn btn-primary" onClick={props.next}>Continue</button>
+        </div>
+      </>
+    )
+  }
+  
   return (
     <div className="w-full">
-      {!props.assignmentComplete
-        ? <>
-            <div className="self-stretch text-4xl mt-4 max-md:max-w-full">
-              You have completed this activity!
-            </div>
-            <div className="self-stretch text-xs mt-2.5 max-md:max-w-full">
-              Press continue when ready.
-            </div>
-            <div className="flex justify-end w-full items-center mt-4">
-              <button className="btn btn-primary" onClick={props.next}>Continue</button>
-            </div>
-          </>
-        : <>
-            <div className="self-stretch text-4xl mt-4 max-md:max-w-full">
-              You have completed this assignment!
-            </div>
-            <div className="self-stretch text-xs mt-2.5 max-md:max-w-full">
-              Press continue to return to Dashboard.
-            </div>
-            <div className="flex justify-end w-full items-center mt-4">
-              <button className="btn btn-primary" onClick={props.next}>Continue</button>
-            </div>
-          </>
-      }
+      {getPage()}
     </div>
   )
 }
@@ -92,8 +101,10 @@ export default function QuestionActivity(props: QuestionActivityProps) {
       setCurrentQuestionId(currentQuestionId + 1)
       setComplete(true)
 
+      console.log(props.currentActId, props.ammountOfActivities - 1)
+
       // Check if assignment is complete
-      if (props.currentActId <= props.ammountOfActivities - 1){
+      if (props.currentActId == props.ammountOfActivities - 1){
         await assignmentCompleteMutation.mutateAsync({id: props.assignmentData.id})
         setAssignmentComplete(true)
       }
