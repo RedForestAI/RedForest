@@ -1,80 +1,54 @@
-"use client";
+import React, { useRef, useState, useEffect, useContext } from 'react';
+import DocViewer, { DocViewerRenderers } from '@cyntler/react-doc-viewer';
+import { useNavBarContext } from '~/providers/navbar-provider';
+import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
-// components/pdfviewer.tsx
-import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/20/solid";
-import { useEffect, useRef, useState } from "react";
-import { Document, Page, pdfjs } from "react-pdf";
-import 'react-pdf/dist/esm/Page/AnnotationLayer.css';
-import 'react-pdf/dist/esm/Page/TextLayer.css';
+import "./pdf-viewer.css"
 
-// pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`;
+export default function PDFViewer() {
+  const { setNavBarContent } = useContext(useNavBarContext);
+  const docViewerRef = useRef(null);
+  const [zoomLevel, setZoomLevel] = useState(1); // Starting zoom level
 
-pdfjs.GlobalWorkerOptions.workerSrc = new URL(
-  'pdfjs-dist/build/pdf.worker.min.js',
-  import.meta.url,
-).toString();
+  useEffect(() => {
+    // Define the content you want to add to the navbar
+    const navBarExtras = (
+      <div className="flex flex-row gap-2 items-center ">
+        <button className="btn btn-ghost" onClick={() => setZoomLevel((prev) => (prev-0.1))}>-</button>
+          <FontAwesomeIcon icon={faMagnifyingGlass}/>
+        <button className="btn btn-ghost" onClick={() => setZoomLevel((prev) => (prev+0.1))}>+</button>
+      </div>
+    );
 
-pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.js`;
+    // Update the navbar content
+    setNavBarContent(navBarExtras);
 
-type PDFViewerProps = {
-  file: string;
-};
+    // Reset the navbar content when the component unmounts
+    return () => setNavBarContent(null);
+  }, []);
 
-export default function PDFViewer(props: PDFViewerProps) {
-  const [numPages, setNumPages] = useState<number>(0);
-  const [loading, setLoading] = useState(true);
-  const [pageWidth, setPageWidth] = useState(0);
-
-  function onDocumentLoadSuccess({
-    numPages: nextNumPages,
-  }: {
-    numPages: number;
-  }) {
-    setNumPages(nextNumPages);
-  }
-
-  function onPageLoadSuccess() {
-    setPageWidth(window.innerWidth);
-    setLoading(false);
-  }
-
-  const options = {
-    cMapUrl: "cmaps/",
-    cMapPacked: true,
-    standardFontDataUrl: "standard_fonts/",
-  };
+  const docs = [
+    { uri: "https://arxiv.org/pdf/1708.08021.pdf" } // Remote file
+  ];
 
   return (
-    <>
-      <div
-        hidden={loading}
-        style={{ height: "calc(100vh - 64px)" }}
-        className="flex items-center"
-      >
-
-        <div className="h-full flex justify-center mx-auto">
-          <Document
-            file={props.file}
-            onLoadSuccess={onDocumentLoadSuccess}
-            options={options}
-            renderMode="canvas"
-            className=""
-          >
-            {Array.from(new Array(numPages), (el, index) => (
-              <Page
-              className="mb-4"
-              key={`page_${index + 1}`}
-              pageNumber={index+1}
-              renderAnnotationLayer={true}
-              renderTextLayer={true}
-              onLoadSuccess={onPageLoadSuccess}
-              onRenderError={() => setLoading(false)}
-              width={Math.max(pageWidth * 0.5, 390)}
-            />
-            ))}
-          </Document>
-        </div>
-      </div>
-    </>
+      <DocViewer
+        documents={docs}
+        pluginRenderers={DocViewerRenderers}
+        style={{ width: `${70*zoomLevel}%`, height: `100%` }}
+        config={{
+          header: {
+            disableHeader: true,
+            disableFileName: true,
+            retainURLParams: true
+          },
+          pdfVerticalScrollByDefault: true,
+          pdfZoom: {
+            defaultZoom: zoomLevel,
+            zoomJump: 0.1
+          }
+        }}
+      />
   );
-}
+};

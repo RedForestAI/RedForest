@@ -1,6 +1,5 @@
 "use client";
 
-import { type } from "os";
 import React, { useState } from "react";
 
 type SlotProps = {

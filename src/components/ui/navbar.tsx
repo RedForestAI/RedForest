@@ -2,9 +2,10 @@
 
 import Link from "next/link";
 import { Profile } from "@prisma/client";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 import { useRouter } from 'next/navigation'
+import { NavBarContext } from '~/providers/navbar-provider';
 
 type Breadcrum = {
   name: string
@@ -17,6 +18,7 @@ type NavbarProps = {
 }
 
 export default function Navbar(props: NavbarProps) {
+  const navBarContent = useContext(NavBarContext);
   const router = useRouter();
   const supabase = createClientComponentClient();
 
@@ -78,7 +80,7 @@ export default function Navbar(props: NavbarProps) {
   }
 
   return (
-    <div className="navbar bg-base shadow-xl border-b">
+    <div className="navbar bg-base-100 shadow-xl border-b z-50 relative">
       <div className="navbar-start">
         {props.profile &&
         <div className="dropdown">
@@ -110,6 +112,10 @@ export default function Navbar(props: NavbarProps) {
             ))}
           </ul>
         </div>
+      </div>
+
+      <div className="navbar-center">
+        {navBarContent}
       </div>
 
       <div className="navbar-end">

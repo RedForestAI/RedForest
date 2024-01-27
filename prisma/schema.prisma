@@ -23,6 +23,7 @@ model Profile {
 
   // STUDENT
   enrollCourses     courseEnrollment[]
+  userAssignmentData AssignmentData[]
 
   @@map("profile")
 }
@@ -76,9 +77,33 @@ model Assignment {
 
   activities        Activity[]
 
+  // Student data
+  assignmentData    AssignmentData[]
+
   published         Boolean     @default(false)
   publishedDate     DateTime    @default(now())
   @@map("assignment")
+}
+
+model AssignmentData {
+  id                String      @id @default(uuid()) @db.Uuid
+  createdAt         DateTime    @default(now())
+  completed         Boolean     @default(false)
+  completedAt       DateTime?
+  currentActId      Int         @default(0)
+  totalActs         Int         @default(0)
+  score             Int         @default(0)
+  
+  student           Profile     @relation(fields: [studentId], references: [id])
+  studentId         String      @db.Uuid
+
+  assignment        Assignment  @relation(fields: [assignmentId], references: [id])
+  assignmentId      String      @db.Uuid
+
+  activityData      ActivityData[]
+
+  @@map("user_assignment_data")
+
 }
 
 enum ActivityType {
@@ -100,6 +125,40 @@ model Activity {
   @@map("activity")
 }
 
+model ActivityData {
+  id                String      @id @default(uuid()) @db.Uuid
+  createdAt         DateTime    @default(now())
+  startedAt         DateTime?
+
+  answers           Int[]
+  answersAt         DateTime[]
+  currentQuestionId Int         @default(0)
+
+  completed         Boolean     @default(false)
+  completedAt       DateTime?
+  score             Int         @default(0)
+  
+  activityId        String      @db.Uuid
+  assignmentData    AssignmentData @relation(fields: [assignmentDataId], references: [id])
+  assignmentDataId  String      @db.Uuid
+
+  traceLogFiles     TraceLogFile[]
+
+  @@map("user_activity_data")
+}
+
+model TraceLogFile {
+  id                String      @id @default(uuid()) @db.Uuid
+  createdAt         DateTime    @default(now())
+  filepath          String
+
+  // User Activity
+  activityData  ActivityData @relation(fields: [activityDataId], references: [id])
+  activityDataId String      @db.Uuid
+  @@map("tracelog_file")
+
+}
+
 model ReadingFile {
   id                String      @id @default(uuid()) @db.Uuid
   title             String
@@ -110,7 +169,7 @@ model ReadingFile {
   // ReadingActivity
   activity          ReadingActivity @relation(fields: [activityId], references: [id])
   activityId        String      @db.Uuid
-  @@map("file")
+  @@map("activity_reading_file")
 }
 
 model ReadingActivity {

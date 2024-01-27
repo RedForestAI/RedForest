@@ -1,47 +1,74 @@
 "use server";
-
+import { Role, ActivityData, Question } from "@prisma/client"
+import AssignmentBase from "./_components/assignment-base";
 import NavBar from "~/components/ui/navbar";
-import PDFViewer from "./_components/reading_activity/pdf-viewer";
-import { WebGazerManager } from '~/providers/WebGazerManager';
 
-export default async function Page() {
-  const pdfUrl = 'https://arxiv.org/pdf/1708.08021.pdf'; // Replace with your PDF URL
-  let webGazer = new WebGazerManager();
+import { api } from '~/trpc/server';
 
-  const handleStart = () => {
-    webGazer.start();
-  };
-  
-  const handleHide = () => {
-    webGazer.hide();
-  };
-  
-  const handleShow = () => {
-    webGazer.show();
-  };
+export default async function Page({params}: {params: { courseId: string, assignmentId: string, activityId: string}}) {
 
-  const handleStop = () => {
-    webGazer.stop();
-  };
-  
-  const handleEnd = () => {
-    webGazer.end();
-    webGazer = new WebGazerManager();
-  };
+  // Fetch the activity data
+  const profile = await api.auth.getProfile.query();
+
+  // If teacher, redirect to course page
+  if (profile.role === Role.TEACHER) {
+    return {
+      redirect: {
+        destination: `/access/course/${params.courseId}`,
+        permanent: false,
+      },
+    }
+  }
+
+  const course = await api.course.getOne.query({courseId: params.courseId, profileId: profile.id});
+  const assignment = await api.assignment.getOne.query({id: params.assignmentId})
+  const activities = await api.activity.getMany.query({assignmentId: params.assignmentId})
+  let assignmentData = await api.assignmentData.getOne.query({studentId: profile.id, assignmentId: params.assignmentId})
+
+  // If no assignment data exists, create it
+  if (!assignmentData) {
+    assignmentData = await api.assignmentData.create.mutate({studentId: profile.id, assignmentId: params.assignmentId, totalActs: activities.length})
+  }
+
+  // Get the activity data for each activity
+  let activityDatas: ActivityData[] = []
+  for (const activity of activities) {
+    let activityData = await api.activityData.getOne.query({activityId: activity.id, assignmentDataId: assignmentData.id})
+    if (!activityData) {
+      activityData = await api.activityData.create.mutate({activityId: activity.id, assignmentDataId: assignmentData.id})
+    }
+    activityDatas.push(activityData)
+  }
+
+  // Sorts the activities by their index
+  activities.sort((a, b) => a.index - b.index)
+
+  // Get all questions for each activity
+  let questions: Question[][] = []
+  for (const activity of activities) {
+    const question = await api.question.getMany.query({activityId: activity.id})
+    // Sort the questions by their index
+    question.sort((a, b) => a.index - b.index)
+    questions.push(question)
+  }
+
+  const data = {
+    course,
+    assignment,
+    activities,
+    activityDatas,
+    questions,
+    assignmentData
+  }
+
+  // console.log(data)
 
   return (
-    <div>
-      <NavBar/>
-      <div className="pt-20">
-      <div className="pb-4 flex flex-row items-center justify-center">
-        <button className="bg-blue-500 text-white font-bold py-2 px-4 rounded hover:bg-blue-700 m-2" onClick={handleStart}>Start WebGazer</button>
-        <button className="bg-green-500 text-white font-bold py-2 px-4 rounded hover:bg-green-700 m-2" onClick={handleShow}>Show WebGazer</button>
-        <button className="bg-yellow-500 text-white font-bold py-2 px-4 rounded hover:bg-yellow-700 m-2" onClick={handleHide}>Hide WebGazer</button>
-        <button className="bg-red-500 text-white font-bold py-2 px-4 rounded hover:bg-red-700 m-2" onClick={handleStop}>Stop WebGazer</button>
-        <button className="bg-purple-500 text-white font-bold py-2 px-4 rounded hover:bg-purple-700 m-2" onClick={handleEnd}>End WebGazer</button>
-      </div>
-        <PDFViewer file={pdfUrl}/>
-      </div>
+    <>
+    <NavBar profile={profile} breadcrumbs={[{name: "\\", url: `/access`}, {name: course.name, url: `/access/course/${params.courseId}`}]}/>
+    <div className="mt-4 ml-8 mr-8">
+      <AssignmentBase {...data}/>
     </div>
+  </>
   )
 }
