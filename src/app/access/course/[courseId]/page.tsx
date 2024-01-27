@@ -30,11 +30,10 @@ export default async function Page({params}: {params: { courseId: string }}) {
   if (profile.role == Role.STUDENT) {
     assignments = assignments.filter((assignment) => assignment.published);
     assignmentsDatas = await api.assignmentData.getMany.query({studentId: profile.id});
+  }
 
-    // Order assignmentData to match the assignments order
-    assignmentsDatas.sort((a, b) => {
-      return assignments.findIndex((assignment) => assignment.id == a.assignmentId) - assignments.findIndex((assignment) => assignment.id == b.assignmentId);
-    });
+  const getAssignmentData = (assignmentId: string) => {
+    return assignmentsDatas.find((assignmentData) => assignmentData.assignmentId == assignmentId);
   }
 
   return (
@@ -45,12 +44,12 @@ export default async function Page({params}: {params: { courseId: string }}) {
           ? <div>
               <div>
                 {assignments.map((assignment, index) => (
-                  <>
+                  <div key={index}>
                     {profile.role == Role.STUDENT
-                      ? <AssignmentCard assignment={assignment} course={course!} editable={false} key={index} assignmentData={assignmentsDatas[index]}/>
-                      : <AssignmentCard assignment={assignment} course={course!} editable={true} key={index}/>
+                      ? <AssignmentCard assignment={assignment} course={course!} editable={false} assignmentData={getAssignmentData(assignment.id)}/>
+                      : <AssignmentCard assignment={assignment} course={course!} editable={true}/>
                     }
-                  </>
+                  </div>
                 ))}
               </div>
               {profile?.role == Role.TEACHER && <AssignmentCreate profile={profile} course={course}/>}

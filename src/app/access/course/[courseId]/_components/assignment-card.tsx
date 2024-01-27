@@ -54,7 +54,13 @@ const AssignmentCard = ( props : AssignmentCardProps) => {
     // Student
     if (props.assignmentData?.completed) return `/access/course/${props.course.id}/assignment_report/${props.assignment.id}`
     return `/access/course/${props.course.id}/assignment/${props.assignment.id}`
+  }
 
+  const getProgress = () => {
+    const total = props.assignmentData?.totalActs;
+    const completed = props.assignmentData?.currentActId;
+    if (!total || !completed) return 0;
+    return Math.round((completed/total)*100);
   }
 
   return (
@@ -76,7 +82,7 @@ const AssignmentCard = ( props : AssignmentCardProps) => {
         </span>
         {!props.assignmentData?.completed &&
           <div className="bg-neutral self-stretch flex flex-col justify-center items-stretch pr-5 rounded-2xl max-md:max-w-full max-md:pr-5 mt-5">
-            <div className="bg-primary text-xs font-medium text-primary-content text-center p-0.5 leading-none rounded-full" style={{width: "0%"}}> 0%</div>
+            <div className="bg-primary text-xs font-medium text-primary-content text-center p-0.5 leading-none rounded-full" style={{width: `${getProgress()}%`}}>{`${getProgress()}%`}</div>
           </div>
         }
       </div>

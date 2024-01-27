@@ -27,7 +27,7 @@ export default async function Page({params}: {params: { courseId: string, assign
 
   // If no assignment data exists, create it
   if (!assignmentData) {
-    assignmentData = await api.assignmentData.create.mutate({studentId: profile.id, assignmentId: params.assignmentId})
+    assignmentData = await api.assignmentData.create.mutate({studentId: profile.id, assignmentId: params.assignmentId, totalActs: activities.length})
   }
 
   // Get the activity data for each activity
