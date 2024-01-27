@@ -1,11 +1,12 @@
 "use client";
 
-import { useEffect } from "react";
-import { Course, Assignment, Activity, ActivityData, AssignmentData, ActivityType, Question } from '@prisma/client'
+import { useEffect, useState } from "react";
+import { Course, Assignment, Activity, ActivityData, AssignmentData, ReadingFile, Question } from '@prisma/client'
 import { WebGazerManager } from '~/providers/WebGazerManager';
 import PDFViewer from './pdf-viewer';
 import TaskDrawer from './task-drawer';
 import QuestionActivity from "../question_activity/question_activity";
+import { api } from "~/trpc/react";
 
 type ReadingActivityProps = {
   course: Course
@@ -21,7 +22,8 @@ type ReadingActivityProps = {
 
 export default function ReadingActivity(props: ReadingActivityProps) {
 
-  const pdfUrl = 'https://arxiv.org/pdf/1708.08021.pdf'; // Replace with your PDF URL
+  const [readingFiles, setReadingFiles] = useState<ReadingFile[]>([]);
+  const readingActivityQuery = api.readingFile.getMany.useQuery({activityId: props.activity.id}, {enabled: false});
   let webGazer = new WebGazerManager();
 
   const handleStart = () => {
@@ -44,11 +46,29 @@ export default function ReadingActivity(props: ReadingActivityProps) {
     webGazer.end();
     webGazer = new WebGazerManager();
   };
+
+  useEffect(() => {
+    const getReadingActivity = async () => {
+      const result = await readingActivityQuery.refetch();
+
+      if (result.error || !result.data) {
+        console.log(result.error)
+        return;
+      }
+
+      // Sort the files by their index
+      result.data.sort((a, b) => a.index - b.index);
+
+      setReadingFiles(result.data);
+
+    };
+    getReadingActivity();
+  }, []);
   
   return (
     <>
       <div className="w-full flex justify-center items-center">
-        <PDFViewer/>
+        <PDFViewer files={readingFiles}/>
         <TaskDrawer>
           <div className="mt-20 w-full">
             <QuestionActivity {...props}/>

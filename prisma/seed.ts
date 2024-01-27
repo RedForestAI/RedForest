@@ -159,16 +159,16 @@ const getAssignments = (courses: Course[]): Prisma.AssignmentCreateInput[] => [
 const getActivities = (assignments: Assignment[]): Prisma.ActivityCreateInput[] => {
   let activities = []
   for (let i = 0; i < assignments.length; i++) {
-    activities.push(
-      {
-        id: generateUUID(),
-        index: 0,
-        name: "Pretest",
-        description: `Pretest description`,
-        type: ActivityType.QUESTIONING,
-        assignment: { connect: { id: assignments[i]?.id }},
-      }
-    )
+    // activities.push(
+    //   {
+    //     id: generateUUID(),
+    //     index: 0,
+    //     name: "Pretest",
+    //     description: `Pretest description`,
+    //     type: ActivityType.QUESTIONING,
+    //     assignment: { connect: { id: assignments[i]?.id }},
+    //   }
+    // )
     activities.push(
       {
         id: generateUUID(),
@@ -179,16 +179,16 @@ const getActivities = (assignments: Assignment[]): Prisma.ActivityCreateInput[] 
         assignment: { connect: { id: assignments[i]?.id }},
       }
     )
-    activities.push(
-      {
-        id: generateUUID(),
-        index: 2,
-        name: `Posttest`,
-        description: `Posttest description`,
-        type: ActivityType.QUESTIONING,
-        assignment: { connect: { id: assignments[i]?.id }},
-      }
-    )
+    // activities.push(
+    //   {
+    //     id: generateUUID(),
+    //     index: 2,
+    //     name: `Posttest`,
+    //     description: `Posttest description`,
+    //     type: ActivityType.QUESTIONING,
+    //     assignment: { connect: { id: assignments[i]?.id }},
+    //   }
+    // )
   }
   return activities
 }
