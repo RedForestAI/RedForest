@@ -5,7 +5,7 @@ import { assignmentRouter } from "./routers/assignment";
 import { activityRouter } from "./routers/activity";
 import { readingActivityRouter } from "./routers/activities/reading";
 import { questionRouter } from "./routers/question";
-import { readingFileRouter } from "./routers/activities/reading_file";
+import { readingFileRouter } from "./routers/activities/readingFile";
 import { assignmentDataRouter } from "./routers/assignmentData";
 import { activityDataRouter } from "./routers/activityData";
 

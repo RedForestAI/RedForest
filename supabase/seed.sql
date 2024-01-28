@@ -76,24 +76,24 @@ INSERT INTO
         avif_autodetection
     )
 VALUES
-    ('readings', 'readings', true, null, false);
+    ('activity_reading_file', 'activity_reading_file', true, null, false);
 
 
 -- Storage policies
 -- Select
 CREATE POLICY "Allow authenticated select" ON storage.objects FOR
   SELECT USING (
-    bucket_id = 'readings' AND auth.role() = 'authenticated'
+    bucket_id = 'activity_reading_file'
   );
 
 -- Uploads
 CREATE POLICY "Allow authenticated uploads" ON storage.objects FOR
   INSERT WITH CHECK (
-    bucket_id = 'readings' AND auth.role() = 'authenticated'
+    bucket_id = 'activity_reading_file'
   );
 
 -- Deletes
 CREATE POLICY "Allow authenticated deletes" ON storage.objects FOR
   DELETE USING (
-    bucket_id = 'readings' AND auth.role() = 'authenticated'
+    bucket_id = 'activity_reading_file'
   );
