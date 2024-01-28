@@ -1,16 +1,47 @@
 import { ReadingFile } from '@prisma/client'
 import React, { useRef, useState, useEffect, useContext } from 'react';
-import DocViewer, { DocViewerRenderers } from '@cyntler/react-doc-viewer';
+import DocViewer, { DocViewerRenderers, IDocument } from '@cyntler/react-doc-viewer';
 import { useNavBarContext } from '~/providers/navbar-provider';
 import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 
 import "./pdf-viewer.css"
-import { set } from 'zod';
+
+function DocumentDrawer(props: {files: ReadingFile[], docs: {uri: string}[], activeDocument: IDocument | undefined, setActiveDocument: (doc: IDocument) => void}){
+  const [open, setOpen] = useState(true)
+
+  function openDrawer() {
+    setOpen(!open)
+  }
+
+  return (
+    <div className={`h-screen bg-base-300 w-1/4 fixed top-0 left-0 border-r border-t z-10 transition ease-in-out duration-200 ${open ? "-translate-x-[24rem]" : ""}`}>
+        <div className="flex flex-row w-full">
+          <div className="w-full mt-20 flex flex-col gap-4 p-2">
+            <div className="flex flex-col">
+              <h1 className="text-2xl font-bold">Documents</h1>
+              <div className="h-1 bg-base-200"></div>
+            </div>
+            {props.files.map((file, index) => (
+              <button 
+                key={index} 
+                className={`text-left btn-ghost ${props.activeDocument?.uri == props.docs[index]?.uri ? "text-primary" : "text-base"}`} 
+                onClick={() => props.setActiveDocument(props.docs[index]!)}>
+                  {file.title}
+              </button>
+            ))}
+          </div>
+          <button className="bg-base-200 h-screen border-l w-6 cursor-pointer" onClick={openDrawer}>{open ? "+" : "-"}</button>
+        </div>
+    </div>
+  )
+}
+
 
 export default function PDFViewer(props: {files: ReadingFile[]}) {
   const supabase = createClientComponentClient();
+  const [ activeDocument, setActiveDocument ] = useState<IDocument>();
   const [ docs, setDocs ] = useState<{uri: string}[]>([]);
   const { setNavBarContent } = useContext(useNavBarContext);
   const docViewerRef = useRef(null);
@@ -62,27 +93,33 @@ export default function PDFViewer(props: {files: ReadingFile[]}) {
         uri: url
       }
     });
+    console.log(newDocs);
     setDocs(newDocs);
 
   }, [props.files])
 
   return (
-      <DocViewer
-        documents={docs}
-        pluginRenderers={DocViewerRenderers}
-        style={{ width: `${70*zoomLevel}%`, height: `100%` }}
-        config={{
-          header: {
-            disableHeader: true,
-            disableFileName: true,
-            retainURLParams: true
-          },
-          pdfVerticalScrollByDefault: true,
-          pdfZoom: {
-            defaultZoom: zoomLevel,
-            zoomJump: 0.1
-          }
-        }}
-      />
+      <>
+        <DocumentDrawer files={props.files} docs={docs} activeDocument={activeDocument} setActiveDocument={setActiveDocument}/>
+        <DocViewer
+          documents={docs}
+          activeDocument={activeDocument}
+          onDocumentChange={(newDoc) => {setActiveDocument(newDoc)}}
+          pluginRenderers={DocViewerRenderers}
+          style={{ width: `${70*zoomLevel}%`, height: `100%` }}
+          config={{
+            header: {
+              disableHeader: true,
+              disableFileName: true,
+              retainURLParams: true
+            },
+            pdfVerticalScrollByDefault: true,
+            pdfZoom: {
+              defaultZoom: zoomLevel,
+              zoomJump: 0.1
+            }
+          }}
+        />
+      </>
   );
 };

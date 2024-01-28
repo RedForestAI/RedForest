@@ -4,7 +4,6 @@
 
 const fs = require('fs')
 const path = require('path')
-import { Blob } from "buffer"
 
 import { PrismaClient, Role, Prisma, Profile, Course, Assignment, Activity, ActivityType, Question, QuestionType, ReadingFile } from '@prisma/client'
 
@@ -195,27 +194,33 @@ const getActivities = (assignments: Assignment[]): Prisma.ActivityCreateInput[] 
 
 const uploadFiles = async (activities: Activity[]) => {
 
-  const filePath = path.join(__dirname, "tests/dummy.pdf")
-  const buffer = fs.readFileSync(filePath)
+  const dummyFilePath = path.join(__dirname, "tests/dummy.pdf")
+  const sampleFilePath = path.join(__dirname, "tests/sample.pdf")
+  const dummy = fs.readFileSync(dummyFilePath)
+  const sample = fs.readFileSync(sampleFilePath)
 
-  let filepaths: string[] = []
+  let filepaths: string[][] = []
   for (let i = 0; i < activities.length; i++) {
     if (activities[i]?.type !== ActivityType.READING) continue
     // Load local PDF file
     const new_path = `tests/dummy${i}.pdf`
+    const new_path2 = `tests/sample${i}.pdf`
 
     // Let's actually upload a file within the seed, to supabase
-    const { data, error } = await supabase.storage.from("activity_reading_file").upload(new_path, buffer, {
+    const data = await supabase.storage.from("activity_reading_file").upload(new_path, dummy, {
+      contentType: "application/pdf",
+    })
+    const data2 = await supabase.storage.from("activity_reading_file").upload(new_path2, sample, {
       contentType: "application/pdf",
     })
 
-    filepaths.push(new_path)
+    filepaths.push([new_path, new_path2])
   }
 
   return filepaths
 }
 
-const getReadingFiles = (activities: Activity[], filepaths: string[]): Prisma.ReadingFileCreateInput[] => {
+const getReadingFiles = (activities: Activity[], filepaths: string[][]): Prisma.ReadingFileCreateInput[] => {
   let readingFiles = []
   let j = 0;
   for (let i = 0; i < activities.length; i++) {
@@ -224,16 +229,18 @@ const getReadingFiles = (activities: Activity[], filepaths: string[]): Prisma.Re
     const filepath = filepaths[j]
     j++
 
-    readingFiles.push(
-      {
-        id: generateUUID(),
-        title: `Reading File`,
-        filepath: filepath!,
-        size: 100,
-        index: 0,
-        activity: { connect: { id: activities[i]?.id }},
-      }
-    )
+    for (let k = 0; k < filepath!.length; k++) {
+      readingFiles.push(
+        {
+          id: generateUUID(),
+          title: `Reading File ${k}`,
+          filepath: filepath![k]!,
+          size: 100,
+          index: k,
+          activity: { connect: { id: activities[i]?.id }},
+        }
+      )
+    }
   }
   return readingFiles
 }
