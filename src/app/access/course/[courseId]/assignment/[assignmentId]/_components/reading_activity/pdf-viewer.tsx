@@ -1,7 +1,7 @@
 import { ReadingFile } from '@prisma/client'
 import React, { useRef, useState, useEffect, useContext } from 'react';
 import DocViewer, { DocViewerRenderers, IDocument } from '@cyntler/react-doc-viewer';
-import { useNavBarContext } from '~/providers/navbar-provider';
+import { useMiddleNavBarContext } from '~/providers/navbar-provider';
 import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
@@ -43,7 +43,7 @@ export default function PDFViewer(props: {files: ReadingFile[]}) {
   const supabase = createClientComponentClient();
   const [ activeDocument, setActiveDocument ] = useState<IDocument>();
   const [ docs, setDocs ] = useState<{uri: string}[]>([]);
-  const { setNavBarContent } = useContext(useNavBarContext);
+  const { setMiddleNavBarContent } = useContext(useMiddleNavBarContext);
   const docViewerRef = useRef(null);
   const [zoomLevel, setZoomLevel] = useState(1); // Starting zoom level
 
@@ -58,10 +58,10 @@ export default function PDFViewer(props: {files: ReadingFile[]}) {
     );
 
     // Update the navbar content
-    setNavBarContent(navBarExtras);
+    setMiddleNavBarContent(navBarExtras);
 
     // Reset the navbar content when the component unmounts
-    return () => setNavBarContent(null);
+    return () => setMiddleNavBarContent(null);
   }, []);
 
   useEffect(() => {

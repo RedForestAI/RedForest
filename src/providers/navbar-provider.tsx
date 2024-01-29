@@ -1,17 +1,17 @@
 import React, { useState, createContext } from 'react';
 
-export const NavBarContext = createContext<React.ReactNode>(<></>);
-export const useNavBarContext = createContext<any>(undefined);
+export const middleNavBarContext = createContext<React.ReactNode>(<></>);
+export const useMiddleNavBarContext = createContext<any>(undefined);
 
-export const NavBarProvider = (props: { children: any }) => {
-  const [navBarContent, setNavBarContent] = useState<React.ReactNode>(<></>);
+export const MiddleNavBarProvider = (props: { children: any }) => {
+  const [middleNavBarContent, setMiddleNavBarContent] = useState<React.ReactNode>(<></>);
 
   return (
-    <NavBarContext.Provider value={navBarContent}>
+    <middleNavBarContext.Provider value={middleNavBarContent}>
       {/* @ts-ignore */}
-      <useNavBarContext.Provider value={{ setNavBarContent }}>
+      <useMiddleNavBarContext.Provider value={{ setMiddleNavBarContent }}>
         {props.children}
-      </useNavBarContext.Provider>
-    </NavBarContext.Provider>
+      </useMiddleNavBarContext.Provider>
+    </middleNavBarContext.Provider>
   );
 };
