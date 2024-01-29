@@ -20,14 +20,6 @@ export default function EyeTrackingController() {
     webGazer.start();
     setRunningET(true);
   };
-  
-  const wgHandleHide = () => {
-    webGazer.hide();
-  };
-  
-  const wgHandleShow = () => {
-    webGazer.show();
-  };
 
   const wgHandleStop = () => {
     webGazer.stop();
@@ -36,30 +28,22 @@ export default function EyeTrackingController() {
     setRunningET(false);
   };
 
-  function closeModal() {
-    if (runningET) {
-      wgHandleHide();
-    }
-  }
-
   function openModal() {
     // @ts-ignore
     document?.getElementById('eye-tracker-controller')?.showModal()
-    switch (option) {
-      case "WebGazer":
-        wgHandleShow();
-        break;
-      case "Spark":
-        break;
-    }
+    webGazer.show();
   }
 
   function updateOption(e: any) {
     setOption(e.target.value);
   }
 
-  useEffect(() => {
+  function closeModal() {
+    // @ts-ignore
+    webGazer.hide()
+  }
 
+  useEffect(() => {
     const endNavBarExtras = (
       <div className="pr-2">
         <button className="btn btn-ghost" onClick={openModal}>
@@ -167,7 +151,7 @@ export default function EyeTrackingController() {
             Eye-Tracking Controller
             <form method="dialog">
               <button className="btn btn-ghost">
-                <FontAwesomeIcon icon={faClose} className="fa-2x" onClick={closeModal} />
+                <FontAwesomeIcon icon={faClose} className="fa-2x" onClick={closeModal}/>
               </button>
             </form>
           </div>

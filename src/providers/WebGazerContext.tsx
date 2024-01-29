@@ -11,6 +11,8 @@ export const WebGazerProvider = (props: { children: any }) => {
   const [webGazer, setWebGazer] = React.useState<WebGazerManager>(new WebGazerManager());
 
   function restartWebGazer() {
+    webGazer.stop();
+    webGazer.end();
     setWebGazer(new WebGazerManager());
   }
 
