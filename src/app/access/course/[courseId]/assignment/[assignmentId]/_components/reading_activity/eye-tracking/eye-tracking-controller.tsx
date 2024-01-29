@@ -46,7 +46,8 @@ export default function EyeTrackingController() {
 
   function openModal() {
     setIsOpen(true)
-    console.log("showing")
+    // @ts-ignore
+    document?.getElementById('eye-tracker-controller')?.showModal()
     switch (option) {
       case "WebGazer":
         wgHandleShow();
@@ -151,7 +152,9 @@ export default function EyeTrackingController() {
   function calibrate() {
     switch (option) {
       case "WebGazer":
-        setIsOpenCalibration(true);
+        // setIsOpenCalibration(true);
+        // @ts-ignore
+        document?.getElementById('wgcalibration')?.showModal()
         setIsOpen(false)
         break;
       case "Spark":
@@ -161,15 +164,17 @@ export default function EyeTrackingController() {
 
   return (
     <>
-      <WGCalibration isOpenCalibration={isOpenCalibration} setIsOpen={setIsOpen} setIsOpenCalibration={setIsOpenCalibration}/>
+      <WGCalibration isOpenCalibration={isOpenCalibration} setIsOpenCalibration={setIsOpenCalibration}/>
       
-      <dialog id="eye-tracker-controller" className={`modal ${isOpen ? "modal-open" : ""}`}>
+      <dialog id="eye-tracker-controller" className="modal">
         <div className="modal-box">
           <div className="flex flex-row justify-between items-center">
             Eye-Tracking Controller
-            <button className="btn btn-ghost">
-              <FontAwesomeIcon icon={faClose} className="fa-2x" onClick={closeModal} />
-            </button>
+            <form method="dialog">
+              <button className="btn btn-ghost">
+                <FontAwesomeIcon icon={faClose} className="fa-2x" onClick={closeModal} />
+              </button>
+            </form>
           </div>
 
           <div className="flex flex-col gap-2 mt-4">
