@@ -91,12 +91,23 @@ export class WebGazerManager {
 
   show() {
     // @ts-ignore
+    console.log("show", this.isActive, window.webgazer)
     if (this.isActive && window.webgazer) {
+      console.log("show")
       // @ts-ignore
       window.webgazer
         .showPredictionPoints(true)
-        // .showVideo(true);
+        .showVideo(true);
     }
+    const array = ["webgazerFaceFeedbackBox", "webgazerFaceOverlay", "webgazerVideoFeed"]
+    array.forEach((e) => {
+      var element = document.getElementById(e);
+      if (element) {
+        // element.style.display = "visible";
+        element.style.display = "inline";
+
+      }
+    })
   }
 
   hide() {

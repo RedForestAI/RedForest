@@ -1,13 +1,15 @@
 "use client";
 
-import { MiddleNavBarProvider } from "./navbar-provider";
+import { MiddleNavBarProvider, EndNavBarProvider } from "./navbar-provider";
 import React, { type PropsWithChildren } from "react";
 
 export function Providers({ children }: PropsWithChildren) {
   return (
     <>
       <MiddleNavBarProvider>
-        {children}
+        <EndNavBarProvider>
+          {children}
+        </EndNavBarProvider>
       </MiddleNavBarProvider>
     </>
   );
