@@ -10,7 +10,7 @@ function ClickButton(props: {buttonCounter: number, setButtonCounter: (buttonCou
   function handleClick() {
     setCounter(counter + 1);
 
-    if (counter == 5) {
+    if (counter >= 4) {
       setEnabled(false);
       props.setButtonCounter(props.buttonCounter + 1)
     }
@@ -26,7 +26,7 @@ function ClickButton(props: {buttonCounter: number, setButtonCounter: (buttonCou
   )
 }
 
-export default function WGCalibration(props: {isOpenCalibration: boolean, setIsOpenCalibration: (isOpenCalibration: boolean) => void}) {
+export default function WGCalibration() {
   const [complete, setComplete] = useState(false);
   const [buttonCounter, setButtonCounter] = useState(0);
 
@@ -45,7 +45,6 @@ export default function WGCalibration(props: {isOpenCalibration: boolean, setIsO
   }, [buttonCounter])
 
   function closeModal() {
-    // props.setIsOpenCalibration(false)
     // @ts-ignore
     document?.getElementById('eye-tracker-controller')?.showModal()
   }
@@ -56,7 +55,7 @@ export default function WGCalibration(props: {isOpenCalibration: boolean, setIsO
         <div className="flex flex-row justify-between items-center">
           <h3 className="font-bold text-lg">Calibration</h3>
           <form method="dialog">
-            <button className="btn btn-ghost">
+            <button className={`btn btn-ghost ${complete ? "animate-ping" : ""}`}>
               <FontAwesomeIcon icon={faClose} className="fa-2x" onClick={closeModal} />
             </button>
           </form>

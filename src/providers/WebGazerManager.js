@@ -91,9 +91,7 @@ export class WebGazerManager {
 
   show() {
     // @ts-ignore
-    console.log("show", this.isActive, window.webgazer)
     if (this.isActive && window.webgazer) {
-      console.log("show")
       // @ts-ignore
       window.webgazer
         .showPredictionPoints(true)

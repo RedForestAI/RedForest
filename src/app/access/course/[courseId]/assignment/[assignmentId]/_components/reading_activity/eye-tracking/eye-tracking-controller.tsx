@@ -11,8 +11,6 @@ export default function EyeTrackingController() {
   const [option, setOption] = useState<string>("WebGazer");
   const [connected, setConnected] = useState<boolean>(false);
   const [runningET, setRunningET] = useState<boolean>(false);
-  const [isOpen, setIsOpen] = useState<boolean>(false)
-  const [isOpenCalibration, setIsOpenCalibration] = useState<boolean>(false)
 
   const { setEndNavBarContent } = useContext(useEndNavBarContext);
   let webGazer = new WebGazerManager();
@@ -38,14 +36,12 @@ export default function EyeTrackingController() {
   };
 
   function closeModal() {
-    setIsOpen(false)
     if (runningET) {
       wgHandleHide();
     }
   }
 
   function openModal() {
-    setIsOpen(true)
     // @ts-ignore
     document?.getElementById('eye-tracker-controller')?.showModal()
     switch (option) {
@@ -155,7 +151,6 @@ export default function EyeTrackingController() {
         // setIsOpenCalibration(true);
         // @ts-ignore
         document?.getElementById('wgcalibration')?.showModal()
-        setIsOpen(false)
         break;
       case "Spark":
         return () => {};
@@ -164,7 +159,7 @@ export default function EyeTrackingController() {
 
   return (
     <>
-      <WGCalibration isOpenCalibration={isOpenCalibration} setIsOpenCalibration={setIsOpenCalibration}/>
+      <WGCalibration/>
       
       <dialog id="eye-tracker-controller" className="modal">
         <div className="modal-box">
@@ -194,8 +189,8 @@ export default function EyeTrackingController() {
                 {getButton()}
             </div>
 
-            {/* <button className="btn btn-primary" disabled={!runningET} onClick={calibrate}>Calibrate</button> */}
-            <button className="btn btn-primary" onClick={calibrate}>Calibrate</button>
+            <button className="btn btn-primary" disabled={!runningET} onClick={calibrate}>Calibrate</button>
+            {/* <button className="btn btn-primary" onClick={calibrate}>Calibrate</button> */}
 
           </div>
         </div>
