@@ -1,5 +1,3 @@
-import "./WebGazer.css"
-
 // @ts-ignore
 let instance = null;
 
@@ -66,6 +64,7 @@ export class WebGazerManager {
         if (data) {
           // @ts-ignore
           this.gazeData = window.webgazer.util.bound(data);
+          console.log(this.gazeData);
         }
       }).begin();
       this.hide();

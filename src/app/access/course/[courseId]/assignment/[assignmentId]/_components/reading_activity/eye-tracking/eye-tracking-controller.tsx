@@ -1,19 +1,20 @@
 
 import React, { useContext, useEffect, useState } from 'react';
 import { useEndNavBarContext } from '~/providers/navbar-provider';
+import { webGazerContext, restartWebGazerContext } from '~/providers/WebGazerContext';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEye, faClose } from '@fortawesome/free-solid-svg-icons';
 
 import WGCalibration from './wgcalibration';
-import { WebGazerManager } from '~/providers/WebGazerManager';
 
 export default function EyeTrackingController() {
   const [option, setOption] = useState<string>("WebGazer");
   const [connected, setConnected] = useState<boolean>(false);
   const [runningET, setRunningET] = useState<boolean>(false);
 
-  const { setEndNavBarContent } = useContext(useEndNavBarContext);
-  let webGazer = new WebGazerManager();
+  const setEndNavBarContent = useContext(useEndNavBarContext);
+  const webGazer = useContext(webGazerContext);
+  const restartWebGazer = useContext(restartWebGazerContext);
 
   const wgHandleStart = () => {
     webGazer.start();
@@ -31,7 +32,7 @@ export default function EyeTrackingController() {
   const wgHandleStop = () => {
     webGazer.stop();
     webGazer.end();
-    webGazer = new WebGazerManager();
+    restartWebGazer();
     setRunningET(false);
   };
 
@@ -160,7 +161,6 @@ export default function EyeTrackingController() {
   return (
     <>
       <WGCalibration/>
-      
       <dialog id="eye-tracker-controller" className="modal">
         <div className="modal-box">
           <div className="flex flex-row justify-between items-center">
@@ -175,7 +175,6 @@ export default function EyeTrackingController() {
           <div className="flex flex-col gap-2 mt-4">
             <div className="text-xl">Eye-Tracker</div>
             <select value={option} onChange={updateOption} disabled={runningET} className="select select-bordered w-full">
-              <option disabled selected>Eye-Tracker</option>
               <option value="WebGazer">WebGazer</option>
               <option value="Spark">Tobii Pro Spark</option>
             </select>

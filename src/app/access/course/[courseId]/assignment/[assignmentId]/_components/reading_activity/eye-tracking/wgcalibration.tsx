@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { faClose } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import GazeDot from "~/components/webgazer/GazeDot"
 
 
 function ClickButton(props: {buttonCounter: number, setButtonCounter: (buttonCounter: number) => void}) {
@@ -51,6 +52,7 @@ export default function WGCalibration() {
 
   return (
     <dialog id="wgcalibration" className="modal overflow-hidden">
+      <GazeDot />
       <div className="modal-box w-[97vw] max-w-full h-[97vh] max-h-full">
         <div className="flex flex-row justify-between items-center">
           <h3 className="font-bold text-lg">Calibration</h3>
@@ -64,19 +66,19 @@ export default function WGCalibration() {
         <div className="flex flex-col justify-between h-[87vh]">
           <div className="flex flex-row justify-between">
             {[...Array(3)].map((_, i) => (
-              <ClickButton buttonCounter={buttonCounter} setButtonCounter={setButtonCounter}/>
+              <ClickButton key={i} buttonCounter={buttonCounter} setButtonCounter={setButtonCounter}/>
             ))}
           </div>
 
           <div className="flex flex-row justify-between">
             {[...Array(3)].map((_, i) => (
-              <ClickButton buttonCounter={buttonCounter} setButtonCounter={setButtonCounter}/>
+              <ClickButton key={i} buttonCounter={buttonCounter} setButtonCounter={setButtonCounter}/>
             ))}
           </div>
 
           <div className="flex flex-row justify-between">
             {[...Array(3)].map((_, i) => (
-              <ClickButton buttonCounter={buttonCounter} setButtonCounter={setButtonCounter}/>
+              <ClickButton key={i} buttonCounter={buttonCounter} setButtonCounter={setButtonCounter}/>
             ))}
           </div>
         </div>

@@ -12,7 +12,7 @@ export const MiddleNavBarProvider = (props: { children: any }) => {
   return (
     <middleNavBarContext.Provider value={middleNavBarContent}>
       {/* @ts-ignore */}
-      <useMiddleNavBarContext.Provider value={{ setMiddleNavBarContent }}>
+      <useMiddleNavBarContext.Provider value={setMiddleNavBarContent}>
         {props.children}
       </useMiddleNavBarContext.Provider>
     </middleNavBarContext.Provider>
@@ -25,7 +25,7 @@ export const EndNavBarProvider = (props: { children: any }) => {
   return (
     <endNavBarContext.Provider value={endNavBarContent}>
       {/* @ts-ignore */}
-      <useEndNavBarContext.Provider value={{ setEndNavBarContent }}>
+      <useEndNavBarContext.Provider value={setEndNavBarContent}>
         {props.children}
       </useEndNavBarContext.Provider>
     </endNavBarContext.Provider>

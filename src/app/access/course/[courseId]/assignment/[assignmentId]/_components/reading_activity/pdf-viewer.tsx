@@ -43,7 +43,7 @@ export default function PDFViewer(props: {files: ReadingFile[]}) {
   const supabase = createClientComponentClient();
   const [ activeDocument, setActiveDocument ] = useState<IDocument>();
   const [ docs, setDocs ] = useState<{uri: string}[]>([]);
-  const { setMiddleNavBarContent } = useContext(useMiddleNavBarContext);
+  const setMiddleNavBarContent = useContext(useMiddleNavBarContext);
   const [zoomLevel, setZoomLevel] = useState(1); // Starting zoom level
 
   useEffect(() => {
@@ -79,12 +79,10 @@ export default function PDFViewer(props: {files: ReadingFile[]}) {
     let urls: string[] = []
     for (let i = 0; i < filepaths.length; i++) {
       const { data: {publicUrl} } = supabase.storage.from('activity_reading_file').getPublicUrl(filepaths[i]!); 
-      console.log(publicUrl)
       urls.push(publicUrl);
     }
 
     if (urls.length == 0) {
-      console.log(urls);
       return;
     }
 
@@ -94,7 +92,6 @@ export default function PDFViewer(props: {files: ReadingFile[]}) {
         uri: url
       }
     });
-    console.log(newDocs);
     setDocs(newDocs);
 
   }, [props.files])
