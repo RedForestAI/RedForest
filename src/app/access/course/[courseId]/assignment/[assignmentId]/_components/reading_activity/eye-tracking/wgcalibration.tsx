@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { faClose } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import GazeDot from "~/components/webgazer/GazeDot"
@@ -30,6 +30,7 @@ function ClickButton(props: {buttonCounter: number, setButtonCounter: (buttonCou
 export default function WGCalibration() {
   const [complete, setComplete] = useState(false);
   const [buttonCounter, setButtonCounter] = useState(0);
+  const [gaze, setGaze] = useState({x: 0, y: 0});
 
   function getMessage() {
     if (complete) {
@@ -45,6 +46,22 @@ export default function WGCalibration() {
     }
   }, [buttonCounter])
 
+  useEffect(() => {
+    const handleCustomEvent = (event: any) => {
+      // Handle the event
+      let newData = {x: event.detail.x, y: event.detail.y}
+      setGaze(newData)
+    };
+  
+    // Add event listener
+    document.addEventListener("gazeUpdate", handleCustomEvent);
+  
+    // Cleanup function to remove the event listener
+    return () => {
+      document.removeEventListener("gazeUpdate", handleCustomEvent);
+    };
+  }, []); // Empty dependency array means this effect runs once on mount
+
   function closeModal() {
     // @ts-ignore
     document?.getElementById('eye-tracker-controller')?.showModal()
@@ -52,7 +69,7 @@ export default function WGCalibration() {
 
   return (
     <dialog id="wgcalibration" className="modal overflow-hidden">
-      <GazeDot />
+      <GazeDot {...gaze}/>
       <div className="modal-box w-[97vw] max-w-full h-[97vh] max-h-full">
         <div className="flex flex-row justify-between items-center">
           <h3 className="font-bold text-lg">Calibration</h3>

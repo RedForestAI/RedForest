@@ -1,20 +1,19 @@
 import React from 'react';
 
-const CustomGazeDot: React.FC = () => {
+export default function GazeDot(props: {x: number, y: number}){
+  
   const style: React.CSSProperties = {
     position: 'fixed',
     zIndex: 99999,
-    left: '50%',
-    top: '50%',
+    left: '-5px',
+    top: '-5px',
     background: 'red',
     borderRadius: '50%',
     opacity: 0.7,
     width: 20,
     height: 20,
-    transform: 'translate(-50%, -50%)',
+    transform: `translate(${props.x}px, ${props.y}px)`,
   };
 
-  return <div id="customGazeDot" style={style}></div>;
+  return <div id="GazeDot" style={style}></div>;
 };
-
-export default CustomGazeDot;

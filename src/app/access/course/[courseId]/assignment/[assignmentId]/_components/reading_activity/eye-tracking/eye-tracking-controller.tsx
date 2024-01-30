@@ -172,8 +172,8 @@ export default function EyeTrackingController() {
                 {getButton()}
             </div>
 
-            <button className="btn btn-primary" disabled={!runningET} onClick={calibrate}>Calibrate</button>
-            {/* <button className="btn btn-primary" onClick={calibrate}>Calibrate</button> */}
+            {/* <button className="btn btn-primary" disabled={!runningET} onClick={calibrate}>Calibrate</button> */}
+            <button className="btn btn-primary" onClick={calibrate}>Calibrate</button>
 
           </div>
         </div>

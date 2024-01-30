@@ -7,7 +7,6 @@ export const webGazerContext = createContext<any>({});
 export const restartWebGazerContext = createContext<any>({});
 
 export const WebGazerProvider = (props: { children: any }) => {
-  // let webGazer = new WebGazerManager();
   const [webGazer, setWebGazer] = React.useState<WebGazerManager>(new WebGazerManager());
 
   function restartWebGazer() {

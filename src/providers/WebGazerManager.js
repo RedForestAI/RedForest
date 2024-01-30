@@ -1,6 +1,13 @@
 // @ts-ignore
 let instance = null;
 
+const tiggerGazeUpdate = (eventName, detail) => {
+  // Create a custom event with a given name and detail object
+  const event = new CustomEvent(eventName, { detail });
+  // Dispatch the event on the document
+  document.dispatchEvent(event);
+};
+
 export class WebGazerManager {
   constructor() {
     // @ts-ignore
@@ -58,17 +65,17 @@ export class WebGazerManager {
   async setupWebGazer() {
     try {
       await this.loadScript();
-
       // @ts-ignore
       window.webgazer.setGazeListener((data, elapsedTime) => {
         if (data) {
           // @ts-ignore
-          this.gazeData = window.webgazer.util.bound(data);
-          console.log(this.gazeData);
+          let gazeData = window.webgazer.util.bound(data);
+          tiggerGazeUpdate("gazeUpdate", gazeData);
         }
       }).begin();
       this.hide();
       this.isActive = true;
+      window.webgazer.params.showGazeDot = false;
     } catch (error) {
       console.error('Error setting up WebGazer:', error);
     }
