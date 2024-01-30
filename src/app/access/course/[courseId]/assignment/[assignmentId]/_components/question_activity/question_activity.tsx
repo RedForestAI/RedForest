@@ -5,6 +5,7 @@ import { useState } from 'react'
 import { api } from "~/trpc/react"
 import { useForm } from "react-hook-form"
 import { useRouter } from "next/navigation"
+import ActivityCompletion from "../activity-completion"
 
 type QuestionActivityProps = {
   course: Course
@@ -18,58 +19,15 @@ type QuestionActivityProps = {
   setCurrentActId: (id: number) => void
 }
 
-function ActivityCompletion(props: {assignmentComplete: boolean, next: () => void}) {
-  
-  function getPage() {
-    if (props.assignmentComplete) {
-      return (
-        <>
-          <div className="self-stretch text-4xl mt-4 max-md:max-w-full">
-            You have completed this assignment!
-          </div>
-          <div className="self-stretch text-xs mt-2.5 max-md:max-w-full">
-            Press continue to return to Dashboard.
-          </div>
-          <div className="flex justify-end w-full items-center mt-4">
-            <button className="btn btn-primary" onClick={props.next}>Continue</button>
-          </div>
-        </>
-      )
-    }
-    return (
-      <>
-        <div className="self-stretch text-4xl mt-4 max-md:max-w-full">
-          You have completed this activity!
-        </div>
-        <div className="self-stretch text-xs mt-2.5 max-md:max-w-full">
-          Press continue when ready.
-        </div>
-        <div className="flex justify-end w-full items-center mt-4">
-          <button className="btn btn-primary" onClick={props.next}>Continue</button>
-        </div>
-      </>
-    )
-  }
-  
-  return (
-    <div className="w-full">
-      {getPage()}
-    </div>
-  )
-}
-
 export default function QuestionActivity(props: QuestionActivityProps) {
   // State
   const router = useRouter()
   const { register, handleSubmit, clearErrors, reset, formState: { errors } } = useForm();
   const [ currentQuestionId, setCurrentQuestionId ] = useState<number>(props.activityData.currentQuestionId)
   const [ complete, setComplete ] = useState<boolean>(false)
-  const [ assignmentComplete, setAssignmentComplete ] = useState<boolean>(false)
 
   // Mutations
   const appendAnswerMutation = api.activityData.appendAnswer.useMutation()
-  const markAsCompleteMutation = api.activityData.markAsComplete.useMutation()
-  const assignmentCompleteMutation = api.assignmentData.markAsComplete.useMutation()
 
   function getProgress() {
     const totalQuestions = props.questions.length;
@@ -77,7 +35,6 @@ export default function QuestionActivity(props: QuestionActivityProps) {
   }
 
   async function onSubmit(data: any) {
-    console.log(data)
 
     // Update choice in the database
     try {
@@ -91,39 +48,12 @@ export default function QuestionActivity(props: QuestionActivityProps) {
       setCurrentQuestionId(currentQuestionId + 1)
     } else {
 
-      // Mark as complete
-      try {
-        await markAsCompleteMutation.mutateAsync({id: props.activityData.id})
-      } catch (error) {
-        console.log(error)
-        return
-      }
+      // Check for assignment complete
       setCurrentQuestionId(currentQuestionId + 1)
       setComplete(true)
-
-      console.log(props.currentActId, props.ammountOfActivities - 1)
-
-      // Check if assignment is complete
-      if (props.currentActId == props.ammountOfActivities - 1){
-        await assignmentCompleteMutation.mutateAsync({id: props.assignmentData.id})
-        setAssignmentComplete(true)
-      }
     }
 
     reset()
-  }
-
-  async function next() {
-
-    // Next activity
-    if (props.currentActId < props.ammountOfActivities - 1){
-      props.setCurrentActId(props.currentActId + 1)
-      return;
-    }
-
-    // Return to dashboard
-    router.push(`/access/course/${props.course.id}`)
-    router.refresh()
   }
 
   return (
@@ -156,7 +86,7 @@ export default function QuestionActivity(props: QuestionActivityProps) {
             </div>
           </form>
         </>
-        : <ActivityCompletion assignmentComplete={assignmentComplete} next={next}/>
+        : <ActivityCompletion {...props} complete={complete}/>
       }
 
     {errors.answer && 
