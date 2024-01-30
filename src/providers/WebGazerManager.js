@@ -1,7 +1,12 @@
-import "./WebGazer.css"
-
 // @ts-ignore
 let instance = null;
+
+const tiggerGazeUpdate = (eventName, detail) => {
+  // Create a custom event with a given name and detail object
+  const event = new CustomEvent(eventName, { detail });
+  // Dispatch the event on the document
+  document.dispatchEvent(event);
+};
 
 export class WebGazerManager {
   constructor() {
@@ -60,16 +65,17 @@ export class WebGazerManager {
   async setupWebGazer() {
     try {
       await this.loadScript();
-
       // @ts-ignore
       window.webgazer.setGazeListener((data, elapsedTime) => {
         if (data) {
           // @ts-ignore
-          this.gazeData = window.webgazer.util.bound(data);
+          let gazeData = window.webgazer.util.bound(data);
+          tiggerGazeUpdate("gazeUpdate", gazeData);
         }
       }).begin();
       this.hide();
       this.isActive = true;
+      window.webgazer.params.showGazeDot = false;
     } catch (error) {
       console.error('Error setting up WebGazer:', error);
     }
@@ -95,8 +101,17 @@ export class WebGazerManager {
       // @ts-ignore
       window.webgazer
         .showPredictionPoints(true)
-        // .showVideo(true);
+        .showVideo(true);
     }
+    const array = ["webgazerFaceFeedbackBox", "webgazerFaceOverlay", "webgazerVideoFeed"]
+    array.forEach((e) => {
+      var element = document.getElementById(e);
+      if (element) {
+        // element.style.display = "visible";
+        element.style.display = "inline";
+
+      }
+    })
   }
 
   hide() {

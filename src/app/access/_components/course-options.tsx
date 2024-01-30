@@ -1,8 +1,8 @@
 "use client";
 
-import { Course, CoursePassword } from "@prisma/client";
+import { Course } from "@prisma/client";
 import { Dialog, Transition } from '@headlessui/react'
-import { Fragment, useEffect, useState } from 'react'
+import { Fragment, useState } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faGear } from '@fortawesome/free-solid-svg-icons';
 import { useRouter } from "next/navigation";

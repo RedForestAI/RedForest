@@ -4,6 +4,7 @@ import { Course, Assignment, Activity, ActivityData, AssignmentData, ActivityTyp
 import { useState } from 'react'
 import QuestionActivity from "./question_activity/question_activity"
 import ReadingActivity from "./reading_activity/reading_activity"
+import DataLoggerProvider from "~/providers/DataLoggingContext"
 
 type AssignmentBaseProps = {
   course: Course
@@ -18,6 +19,8 @@ export default function AssignmentBase(props: AssignmentBaseProps) {
   const [ currentActId, setCurrentActId ] = useState<number>(props.assignmentData.currentActId)
 
   function getActivity() {
+
+    console.log(currentActId)
 
     const activityData = {
       course: props.course,
@@ -45,8 +48,10 @@ export default function AssignmentBase(props: AssignmentBaseProps) {
   }
 
   return (
-    <>
-      {getActivity()}
-    </>
+    <DataLoggerProvider>
+      <div key={currentActId}>
+        {getActivity()}
+      </div>
+    </DataLoggerProvider>
   )
 }

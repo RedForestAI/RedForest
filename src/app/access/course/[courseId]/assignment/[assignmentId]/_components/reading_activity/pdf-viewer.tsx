@@ -1,8 +1,8 @@
 import { ReadingFile } from '@prisma/client'
 import React, { useRef, useState, useEffect, useContext } from 'react';
 import DocViewer, { DocViewerRenderers, IDocument } from '@cyntler/react-doc-viewer';
-import { useNavBarContext } from '~/providers/navbar-provider';
-import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
+import { useMiddleNavBarContext, useEndNavBarContext } from '~/providers/navbar-provider';
+import { faMagnifyingGlass, faEye } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 
@@ -43,13 +43,12 @@ export default function PDFViewer(props: {files: ReadingFile[]}) {
   const supabase = createClientComponentClient();
   const [ activeDocument, setActiveDocument ] = useState<IDocument>();
   const [ docs, setDocs ] = useState<{uri: string}[]>([]);
-  const { setNavBarContent } = useContext(useNavBarContext);
-  const docViewerRef = useRef(null);
+  const setMiddleNavBarContent = useContext(useMiddleNavBarContext);
   const [zoomLevel, setZoomLevel] = useState(1); // Starting zoom level
 
   useEffect(() => {
     // Define the content you want to add to the navbar
-    const navBarExtras = (
+    const middleNavBarExtras = (
       <div className="flex flex-row gap-2 items-center ">
         <button className="btn btn-ghost" onClick={() => setZoomLevel((prev) => (prev-0.1))}>-</button>
           <FontAwesomeIcon icon={faMagnifyingGlass}/>
@@ -58,10 +57,12 @@ export default function PDFViewer(props: {files: ReadingFile[]}) {
     );
 
     // Update the navbar content
-    setNavBarContent(navBarExtras);
+    setMiddleNavBarContent(middleNavBarExtras);
 
     // Reset the navbar content when the component unmounts
-    return () => setNavBarContent(null);
+    return () => {
+      setMiddleNavBarContent(null);
+    }
   }, []);
 
   useEffect(() => {
@@ -78,12 +79,10 @@ export default function PDFViewer(props: {files: ReadingFile[]}) {
     let urls: string[] = []
     for (let i = 0; i < filepaths.length; i++) {
       const { data: {publicUrl} } = supabase.storage.from('activity_reading_file').getPublicUrl(filepaths[i]!); 
-      console.log(publicUrl)
       urls.push(publicUrl);
     }
 
     if (urls.length == 0) {
-      console.log(urls);
       return;
     }
 
@@ -93,7 +92,6 @@ export default function PDFViewer(props: {files: ReadingFile[]}) {
         uri: url
       }
     });
-    console.log(newDocs);
     setDocs(newDocs);
 
   }, [props.files])
