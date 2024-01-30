@@ -7,7 +7,8 @@ import { api } from "~/trpc/react";
 import EyeTrackingController from "./eye-tracking/eye-tracking-controller";
 import PDFViewer from './pdf-viewer';
 import TaskDrawer from './task-drawer';
-import QuestionActivity from "../question_activity/question_activity";
+import Questions from "../question_activity/questions";
+import ActivityCompletion from "../activity-completion"
 
 type ReadingActivityProps = {
   course: Course
@@ -23,6 +24,7 @@ type ReadingActivityProps = {
 
 export default function ReadingActivity(props: ReadingActivityProps) {
 
+  const [ complete, setComplete ] = useState<boolean>(false);
   const [readingFiles, setReadingFiles] = useState<ReadingFile[]>([]);
   const readingActivityQuery = api.readingFile.getMany.useQuery({activityId: props.activity.id}, {enabled: false});
 
@@ -51,7 +53,10 @@ export default function ReadingActivity(props: ReadingActivityProps) {
         <PDFViewer files={readingFiles}/>
         <TaskDrawer>
           <div className="mt-20 w-full">
-            <QuestionActivity {...props}/>
+          {!complete  
+            ? <Questions {...props} complete={complete} setComplete={setComplete}/> 
+            : <ActivityCompletion {...props} complete={complete}/>
+          }
           </div>
         </TaskDrawer>
       </div>

@@ -1,6 +1,6 @@
 
 import { api } from "~/trpc/react"
-import { Course, Assignment, Activity, ActivityData, AssignmentData, Question } from '@prisma/client'
+import { Course, Assignment, Activity, ActivityData, AssignmentData, Question, ActivityType } from '@prisma/client'
 import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 
@@ -34,6 +34,10 @@ export default function ActivityCompletion(props: ActivityCompletionProps) {
       } catch (error) {
         console.log(error)
         return
+      }
+
+      // If activity is READING
+      if (props.activity.type == ActivityType.READING) {
       }
 
       // Check if assignment is complete
@@ -94,7 +98,10 @@ export default function ActivityCompletion(props: ActivityCompletionProps) {
   }
   
   return (
-    <div className="w-full">
+    <div className="w-full pt-3 pb-12 px-4">
+      <div className="bg-neutral self-stretch flex flex-col justify-center items-stretch rounded-2xl max-md:max-w-full mt-5">
+        <div className="bg-primary text-xs font-medium text-primary-content text-center p-0.5 leading-none rounded-full" style={{width: "100%"}}> 100%</div>
+      </div>
       {getPage()}
     </div>
   )
