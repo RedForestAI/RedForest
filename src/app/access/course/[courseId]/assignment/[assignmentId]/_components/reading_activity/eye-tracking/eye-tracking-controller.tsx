@@ -11,6 +11,7 @@ export default function EyeTrackingController() {
   const [option, setOption] = useState<string>("WebGazer");
   const [connected, setConnected] = useState<boolean>(false);
   const [runningET, setRunningET] = useState<boolean>(false);
+  const [calibration, setCalibration] = useState<boolean>(false);
 
   const setEndNavBarContent = useContext(useEndNavBarContext);
   const webGazer = useContext(webGazerContext);
@@ -133,9 +134,9 @@ export default function EyeTrackingController() {
   function calibrate() {
     switch (option) {
       case "WebGazer":
-        // setIsOpenCalibration(true);
         // @ts-ignore
         document?.getElementById('wgcalibration')?.showModal()
+        setCalibration(true);
         break;
       case "Spark":
         return () => {};
@@ -144,7 +145,7 @@ export default function EyeTrackingController() {
 
   return (
     <>
-      <WGCalibration/>
+      <WGCalibration calibration={calibration} setCalibration={setCalibration}/>
       <dialog id="eye-tracker-controller" className="modal">
         <div className="modal-box">
           <div className="flex flex-row justify-between items-center">

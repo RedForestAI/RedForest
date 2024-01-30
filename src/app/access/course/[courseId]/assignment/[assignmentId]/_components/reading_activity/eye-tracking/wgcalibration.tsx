@@ -27,10 +27,11 @@ function ClickButton(props: {buttonCounter: number, setButtonCounter: (buttonCou
   )
 }
 
-export default function WGCalibration() {
+export default function WGCalibration(props: {calibration: boolean, setCalibration: (calibration: boolean) => void}) {
   const [complete, setComplete] = useState(false);
   const [buttonCounter, setButtonCounter] = useState(0);
   const [gaze, setGaze] = useState({x: 0, y: 0});
+  const [listening, setListening] = useState(false);
 
   function getMessage() {
     if (complete) {
@@ -54,17 +55,27 @@ export default function WGCalibration() {
     };
   
     // Add event listener
-    document.addEventListener("gazeUpdate", handleCustomEvent);
+    if (props.calibration) {
+      document.addEventListener("gazeUpdate", handleCustomEvent);
+      setListening(true);
+    }
+    else {
+      document.removeEventListener("gazeUpdate", handleCustomEvent);
+      setListening(false);
+    }
   
     // Cleanup function to remove the event listener
     return () => {
-      document.removeEventListener("gazeUpdate", handleCustomEvent);
+      if (listening) {
+        document.removeEventListener("gazeUpdate", handleCustomEvent);
+      }
     };
-  }, []); // Empty dependency array means this effect runs once on mount
+  }, [props.calibration]); // Empty dependency array means this effect runs once on mount
 
   function closeModal() {
     // @ts-ignore
     document?.getElementById('eye-tracker-controller')?.showModal()
+    props.setCalibration(false);
   }
 
   return (
