@@ -1,24 +1,29 @@
 import React, { createContext, useContext, useState } from 'react';
 
-const DataLogger = () => {
-  const data: any[] = []
+class DataLogger {
+  data: any[]
+  
+  constructor() {
+    this.data = []
+    console.log("HELLO")
+  }
 
-  function log() {
+  log() {
     console.log("Hello World")
   }
 
-  function returnData() {
-    return data
+  returnData() {
+    return this.data
   }
 }
 
-const DataLoggerContext = createContext<any>(undefined);
+const dataLogger = new DataLogger()
+const DataLoggerContext = createContext<DataLogger>(dataLogger);
 
 export default function DataLoggerProvider(props: { children: any }) {
-  const dataLogger = DataLogger();
 
   return (
-    <DataLoggerContext.Provider value={ dataLogger }>
+    <DataLoggerContext.Provider value={dataLogger}>
       {props.children}
     </DataLoggerContext.Provider>
   );

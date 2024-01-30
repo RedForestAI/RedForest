@@ -20,8 +20,6 @@ export default function AssignmentBase(props: AssignmentBaseProps) {
 
   function getActivity() {
 
-    console.log(currentActId)
-
     const activityData = {
       course: props.course,
       assignment: props.assignment,
