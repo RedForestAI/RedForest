@@ -16,7 +16,7 @@ function DocumentDrawer(props: {files: ReadingFile[], docs: {uri: string}[], act
   }
 
   return (
-    <div className={`h-screen bg-base-300 w-1/4 fixed top-0 left-0 border-r border-t z-10 transition ease-in-out duration-200 ${open ? "-translate-x-[24rem]" : ""}`}>
+    <div className={`h-screen bg-base-300 w-1/4 fixed top-0 left-0 border-r border-t z-10 transition ease-in-out duration-200 ${open ? "-translate-x-[23vw]" : ""}`}>
         <div className="flex flex-row w-full">
           <div className="w-full mt-20 flex flex-col gap-4 p-2">
             <div className="flex flex-col">
@@ -32,7 +32,7 @@ function DocumentDrawer(props: {files: ReadingFile[], docs: {uri: string}[], act
               </button>
             ))}
           </div>
-          <button className="bg-base-200 h-screen border-l w-6 cursor-pointer" onClick={openDrawer}>{open ? "+" : "-"}</button>
+          <button className="bg-base-200 h-screen border-l w-[2vw] cursor-pointer" onClick={openDrawer}>{open ? "+" : "-"}</button>
         </div>
     </div>
   )
