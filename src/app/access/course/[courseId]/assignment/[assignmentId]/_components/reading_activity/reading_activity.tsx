@@ -5,6 +5,7 @@ import { Course, Assignment, Activity, ActivityData, AssignmentData, ReadingFile
 import { api } from "~/trpc/react";
 
 import EyeTrackingController from "./eye-tracking/eye-tracking-controller";
+import GazeLogger from "./eye-tracking/gaze-logger"
 import PDFViewer from './pdf-viewer';
 import TaskDrawer from './task-drawer';
 import Questions from "../question_activity/questions";
@@ -49,6 +50,7 @@ export default function ReadingActivity(props: ReadingActivityProps) {
   return (
     <>
       <div className="w-full flex justify-center items-center">
+        <GazeLogger />
         <EyeTrackingController />
         <PDFViewer files={readingFiles}/>
         <TaskDrawer>
