@@ -41,9 +41,7 @@ export class WebGazerManager {
   }
 
   restart() {
-    // window.webgazer.pause()
     window.webgazer.end()
-    // window.webgazer.stopVideo()
   }
 
 }

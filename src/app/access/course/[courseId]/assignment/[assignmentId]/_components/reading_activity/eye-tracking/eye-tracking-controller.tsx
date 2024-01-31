@@ -8,7 +8,7 @@ import { faEye, faClose } from '@fortawesome/free-solid-svg-icons';
 
 import WGCalibration from './wgcalibration';
 
-export default function EyeTrackingController() {
+export default function EyeTrackingController(props: {complete: boolean}) {
   const [option, setOption] = useState<string>("WebGazer");
   const [connected, setConnected] = useState<boolean>(false);
   const [runningET, setRunningET] = useState<boolean>(false);
@@ -54,6 +54,12 @@ export default function EyeTrackingController() {
 
     return () => setEndNavBarContent(null);
   }, []);
+
+  useEffect(() => {
+    if (props.complete) {
+      webGazer.restart()
+    }
+  }, [props.complete])
 
   function getWebGazerStatus() {
     if (runningET) {

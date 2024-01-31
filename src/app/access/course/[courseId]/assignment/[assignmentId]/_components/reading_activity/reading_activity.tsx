@@ -28,6 +28,7 @@ export default function ReadingActivity(props: ReadingActivityProps) {
   const [ complete, setComplete ] = useState<boolean>(false);
   const [readingFiles, setReadingFiles] = useState<ReadingFile[]>([]);
   const readingActivityQuery = api.readingFile.getMany.useQuery({activityId: props.activity.id}, {enabled: false});
+  const gazeLogger = new GazeLogger();
 
   useEffect(() => {
     const getReadingActivity = async () => {
@@ -40,18 +41,23 @@ export default function ReadingActivity(props: ReadingActivityProps) {
 
       // Sort the files by their index
       result.data.sort((a, b) => a.index - b.index);
-
       setReadingFiles(result.data);
-
     };
     getReadingActivity();
+
   }, []);
+
+  useEffect(() => {
+    if (complete) {
+      console.log("Upload data")
+      console.log(gazeLogger.loggedData)
+    }
+  }, [complete])
   
   return (
     <>
       <div className="w-full flex justify-center items-center">
-        <GazeLogger />
-        <EyeTrackingController />
+        <EyeTrackingController complete={complete}/>
         <PDFViewer files={readingFiles}/>
         <TaskDrawer>
           <div className="mt-20 w-full">

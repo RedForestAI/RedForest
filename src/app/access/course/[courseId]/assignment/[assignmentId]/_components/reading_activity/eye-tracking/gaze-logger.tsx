@@ -1,22 +1,35 @@
 import { useEffect } from "react";
 
-export default function GazeLogger() {
+/** Convert a 2D array into a CSV string
+ */
+function arrayToCsv(data: any[]){
+  return data.map(row =>
+    row
+    .map(String)  // convert every value to String
+    .map((v: any) => v.replaceAll('"', '""'))  // escape double quotes
+    .map((v: any) => `"${v}"`)  // quote it
+    .join(',')  // comma-separated
+  ).join('\r\n');  // rows starting on new lines
+}
 
-  useEffect(() => {
-    const handleCustomEvent = (event: any) => {
-      // Handle the event
-      let newData = {x: event.detail.x, y: event.detail.y}
-      console.log(newData)
-    };
-  
-    // Add event listener
-    document.addEventListener("gazeUpdate", handleCustomEvent);
-  
-    // Cleanup function to remove the event listener
-    return () => {
-      document.removeEventListener("gazeUpdate", handleCustomEvent);
-    };
-  }, []); // Empty dependency array means this effect runs once on mount
+type GazeData = {
+  x: number
+  y: number
+  timestamp: string
+}
 
-  return (<></>)
+export default class GazeLogger {
+  loggedData: GazeData[]
+
+  constructor() {
+    this.loggedData = []
+    document.addEventListener("gazeUpdate", (e) => {this.log(e)})
+  }
+
+  log(event: any) {
+    this.loggedData.push({x: event.detail.x, y: event.detail.y, timestamp: new Date().toISOString()})
+  }
+
+  getBlob() {
+  }
 }
