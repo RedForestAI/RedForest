@@ -1,7 +1,7 @@
 
 import React, { useContext, useEffect, useState } from 'react';
 import { useEndNavBarContext } from '~/providers/navbar-provider';
-import { webGazerContext, restartWebGazerContext } from '~/providers/WebGazerContext';
+import { webGazerContext } from '~/providers/WebGazerContext';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEye, faClose } from '@fortawesome/free-solid-svg-icons';
 
@@ -15,7 +15,6 @@ export default function EyeTrackingController() {
 
   const setEndNavBarContent = useContext(useEndNavBarContext);
   const webGazer = useContext(webGazerContext);
-  const restartWebGazer = useContext(restartWebGazerContext);
 
   const wgHandleStart = () => {
     webGazer.start();
@@ -23,9 +22,7 @@ export default function EyeTrackingController() {
   };
 
   const wgHandleStop = () => {
-    webGazer.stop();
-    webGazer.end();
-    restartWebGazer();
+    webGazer.restart()
     setRunningET(false);
   };
 

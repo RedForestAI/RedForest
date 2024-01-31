@@ -1,25 +1,20 @@
-import React, { createContext } from 'react';
+import React, { createContext, useRef } from 'react';
 import { WebGazerManager } from './WebGazerManager';
 
 import "./WebGazer.css"
 
 export const webGazerContext = createContext<any>({});
-export const restartWebGazerContext = createContext<any>({});
 
 export const WebGazerProvider = (props: { children: any }) => {
-  const [webGazer, setWebGazer] = React.useState<WebGazerManager>(new WebGazerManager());
+  const webGazerRef = useRef<WebGazerManager | null>(null)
 
-  function restartWebGazer() {
-    webGazer.stop();
-    webGazer.end();
-    setWebGazer(new WebGazerManager());
+  if (!webGazerRef.current) {
+    webGazerRef.current = new WebGazerManager();
   }
 
   return (
-    <webGazerContext.Provider value={webGazer}>
-      <restartWebGazerContext.Provider value={restartWebGazer}>
+    <webGazerContext.Provider value={webGazerRef.current}>
         {props.children}
-      </restartWebGazerContext.Provider>
     </webGazerContext.Provider>
   );
 };

@@ -13,15 +13,19 @@ export class WebGazerManager {
     // @ts-ignore
     if (!instance) {
       instance = this;
-      this.scriptId = 'webgazer-script';
-      this.scriptLoaded = false;
-      this.isActive = false;
-      // Only load script if in the browser environment
-      if (typeof window !== "undefined") {
-        this.loadScript();
-      }
+      this.init()
     }
     return instance;
+  }
+
+  init() {
+    this.scriptId = 'webgazer-script';
+    this.scriptLoaded = false;
+    this.isActive = false;
+    // Only load script if in the browser environment
+    if (typeof window !== "undefined") {
+      this.loadScript();
+    }
   }
 
   removeExistingScript() {
@@ -154,5 +158,11 @@ export class WebGazerManager {
     } catch (error) {
       console.error('Error in ending WebGazer:', error);
     }
+  }
+
+  restart() {
+    this.stop()
+    this.end()
+    this.init()
   }
 }
