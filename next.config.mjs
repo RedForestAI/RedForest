@@ -7,10 +7,11 @@ await import("./src/env.mjs");
 /** @type {import("next").NextConfig} */
 const config = {
   webpack: (config) => {
+    // react-doc-viewer
     config.resolve.alias.canvas = false;
     return config;
   },
-  reactStrictMode: true,
+  reactStrictMode: false,
 
   /**
    * If you are using `appDir` then you must comment the below `i18n` config out.

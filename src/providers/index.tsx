@@ -7,13 +7,13 @@ import React, { type PropsWithChildren } from "react";
 export function Providers({ children }: PropsWithChildren) {
   return (
     <>
-      <WebGazerProvider>
+      {/* <WebGazerProvider> */}
         <MiddleNavBarProvider>
           <EndNavBarProvider>
                 {children}
           </EndNavBarProvider>
         </MiddleNavBarProvider>
-      </WebGazerProvider>
+      {/* </WebGazerProvider> */}
     </>
   );
 }
