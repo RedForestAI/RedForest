@@ -59,7 +59,7 @@ export default function ReadingActivity(props: ReadingActivityProps) {
 
       // Create a path
       try {
-        const filepath = `${props.profile.id}_${props.activityData.id}_${generateUUID()}.csv`
+        const filepath = `${props.activityData.id}/${props.profile.id}/${generateUUID()}.csv`
         const result = await createTracelogFile.mutateAsync({activityDataId: props.activityData.id, filepath: filepath})
   
         // Upload the file
