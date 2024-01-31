@@ -11,7 +11,7 @@ const config = {
     config.resolve.alias.canvas = false;
     return config;
   },
-  reactStrictMode: false,
+  reactStrictMode: true,
 
   /**
    * If you are using `appDir` then you must comment the below `i18n` config out.
