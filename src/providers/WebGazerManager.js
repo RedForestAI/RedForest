@@ -10,6 +10,9 @@ const tiggerGazeUpdate = (eventName, detail) => {
 
 export class WebGazerManager {
   constructor() {
+
+    this.webgazerVideoContainer = null
+
     // @ts-ignore
     if (!instance) {
       instance = this;
@@ -102,37 +105,19 @@ export class WebGazerManager {
   show() {
     // @ts-ignore
     if (this.isActive && window.webgazer) {
-      // @ts-ignore
-      window.webgazer
-        .showPredictionPoints(true)
-        .showVideo(true);
-    }
-    const array = ["webgazerFaceFeedbackBox", "webgazerFaceOverlay", "webgazerVideoFeed"]
-    array.forEach((e) => {
-      var element = document.getElementById(e);
-      if (element) {
-        // element.style.display = "visible";
-        element.style.display = "inline";
-
+      if (this.webgazerVideoContainer) {
+        document.body.appendChild(this.webgazerVideoContainer)
+        this.webgazerVideoContainer = null
       }
-    })
+    }
   }
 
   hide() {
     // @ts-ignore
     if (this.isActive && window.webgazer) {
-      // @ts-ignore
-      window.webgazer
-        .showPredictionPoints(false)
-        .showVideo(false);
+      this.webgazerVideoContainer = document.getElementById("webgazerVideoContainer")
+      document.body.removeChild(this.webgazerVideoContainer)
     }
-    const array = ["webgazerFaceFeedbackBox", "webgazerFaceOverlay", "webgazerVideoFeed"]
-    array.forEach((e) => {
-      var element = document.getElementById(e);
-      if (element) {
-        element.style.display = "none";
-      }
-    })
   }
 
   stop() {
