@@ -26,12 +26,13 @@ type ReadingActivityProps = {
   setCurrentActId: (id: number) => void
 }
 
+const gazeLogger = new GazeLogger();
+
 export default function ReadingActivity(props: ReadingActivityProps) {
 
   const [ complete, setComplete ] = useState<boolean>(false);
   const [readingFiles, setReadingFiles] = useState<ReadingFile[]>([]);
   const readingActivityQuery = api.readingFile.getMany.useQuery({activityId: props.activity.id}, {enabled: false});
-  const gazeLogger = new GazeLogger();
   const supabase = createClientComponentClient();
   const createTracelogFile = api.traceLogFile.create.useMutation()
 

@@ -19,11 +19,13 @@ export default class GazeLogger {
 
   constructor() {
     this.loggedData = [["x", "y", "timestamp"]]
-    document.addEventListener("gazeUpdate", (e) => {this.log(e)})
+    // document.addEventListener("gazeUpdate", (e) => {this.log(e)})
+    this.log = this.log.bind(this);
+    document.addEventListener("gazeUpdate", this.log)
   }
 
   log(event: any) {
-    this.loggedData.push([event.detail.x.toString(), event.detail.y.toString(), new Date().toISOString()])
+    this.loggedData.push([event.detail.x.toFixed(3), event.detail.y.toFixed(3), new Date().toISOString()])
     console.log(this.loggedData)
   }
 
