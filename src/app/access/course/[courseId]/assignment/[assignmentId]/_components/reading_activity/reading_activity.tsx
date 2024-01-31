@@ -1,17 +1,20 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Course, Assignment, Activity, ActivityData, AssignmentData, ReadingFile, Question } from '@prisma/client'
+import { Profile, Course, Assignment, Activity, ActivityData, AssignmentData, ReadingFile, Question } from '@prisma/client';
 import { api } from "~/trpc/react";
 
 import EyeTrackingController from "./eye-tracking/eye-tracking-controller";
-import GazeLogger from "./eye-tracking/gaze-logger"
+import GazeLogger from "./eye-tracking/gaze-logger";
 import PDFViewer from './pdf-viewer';
 import TaskDrawer from './task-drawer';
 import Questions from "../question_activity/questions";
-import ActivityCompletion from "../activity-completion"
+import ActivityCompletion from "../activity-completion";
+import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
+import { generateUUID } from "~/utils/uuid";
 
 type ReadingActivityProps = {
+  profile: Profile
   course: Course
   assignment: Assignment
   activity: Activity
@@ -29,6 +32,8 @@ export default function ReadingActivity(props: ReadingActivityProps) {
   const [readingFiles, setReadingFiles] = useState<ReadingFile[]>([]);
   const readingActivityQuery = api.readingFile.getMany.useQuery({activityId: props.activity.id}, {enabled: false});
   const gazeLogger = new GazeLogger();
+  const supabase = createClientComponentClient();
+  const createTracelogFile = api.traceLogFile.create.useMutation()
 
   useEffect(() => {
     const getReadingActivity = async () => {
@@ -48,9 +53,23 @@ export default function ReadingActivity(props: ReadingActivityProps) {
   }, []);
 
   useEffect(() => {
+    const uploadGazeLogs = async () => {
+      const file = gazeLogger.getBlob()
+
+      // Create a path
+      try {
+        const filepath = `${props.profile.id}_${props.activityData.id}_${generateUUID()}.csv`
+        const result = await createTracelogFile.mutateAsync({activityDataId: props.activityData.id, filepath: filepath})
+  
+        // Upload the file
+        const { data, error } = await supabase.storage.from('gaze_logs').upload(filepath, file);
+      } catch (error) {
+        console.error("Failed to upload tracelogs")
+      }
+    }
+
     if (complete) {
-      console.log("Upload data")
-      console.log(gazeLogger.loggedData)
+      uploadGazeLogs()
     }
   }, [complete])
   

@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 
 /** Convert a 2D array into a CSV string
+ * https://stackoverflow.com/a/68146412/13231446
  */
 function arrayToCsv(data: any[]){
   return data.map(row =>
@@ -12,24 +13,28 @@ function arrayToCsv(data: any[]){
   ).join('\r\n');  // rows starting on new lines
 }
 
-type GazeData = {
-  x: number
-  y: number
-  timestamp: string
-}
 
 export default class GazeLogger {
-  loggedData: GazeData[]
+  loggedData: [string[]]
 
   constructor() {
-    this.loggedData = []
+    this.loggedData = [["x", "y", "timestamp"]]
     document.addEventListener("gazeUpdate", (e) => {this.log(e)})
   }
 
   log(event: any) {
-    this.loggedData.push({x: event.detail.x, y: event.detail.y, timestamp: new Date().toISOString()})
+    this.loggedData.push([event.detail.x.toString(), event.detail.y.toString(), new Date().toISOString()])
+    console.log(this.loggedData)
   }
 
-  getBlob() {
+  getBlob(): Blob {
+    console.log(this.loggedData)
+    let content = arrayToCsv(this.loggedData)
+    console.log(content)
+    let blob = new Blob([content], { type: "text/csv;charset=utf-8"})
+    console.log(blob)
+    this.loggedData = [["x", "y", "timestamp"]]
+    console.log(blob)
+    return blob
   }
 }

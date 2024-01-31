@@ -76,7 +76,9 @@ INSERT INTO
         avif_autodetection
     )
 VALUES
-    ('activity_reading_file', 'activity_reading_file', true, null, false);
+    ('activity_reading_file', 'activity_reading_file', true, null, false),
+    ('gaze_logs', 'gaze_logs', true, null, false);
+
 
 
 -- Storage policies
@@ -96,4 +98,22 @@ CREATE POLICY "Allow authenticated uploads" ON storage.objects FOR
 CREATE POLICY "Allow authenticated deletes" ON storage.objects FOR
   DELETE USING (
     bucket_id = 'activity_reading_file'
+  );
+
+-- Select
+CREATE POLICY "Allow authenticated select (gaze_logs)" ON storage.objects FOR
+  SELECT USING (
+    bucket_id = 'gaze_logs'
+  );
+
+-- Uploads
+CREATE POLICY "Allow authenticated uploads (gaze_logs)" ON storage.objects FOR
+  INSERT WITH CHECK (
+    bucket_id = 'gaze_logs'
+  );
+
+-- Deletes
+CREATE POLICY "Allow authenticated deletes (gaze_logs)" ON storage.objects FOR
+  DELETE USING (
+    bucket_id = 'gaze_logs'
   );
