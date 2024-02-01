@@ -5,7 +5,20 @@ import { useState } from 'react'
 import { api } from "~/trpc/react"
 import { useForm } from "react-hook-form"
 import { useRouter } from "next/navigation"
-import ActivityCompletion from "../activity-completion"
+
+const triggerQuestionSubmission = (eventName: string, detail: any) => {
+  // Create a custom event with a given name and detail object
+  const event = new CustomEvent(eventName, { detail });
+  // Dispatch the event on the document
+  document.dispatchEvent(event);
+};
+
+const triggerActivitySubmission = (eventName: string, detail: any) => {
+  // Create a custom event with a given name and detail object
+  const event = new CustomEvent(eventName, { detail });
+  // Dispatch the event on the document
+  document.dispatchEvent(event);
+};
 
 type QuestionsProps = {
   course: Course
@@ -45,14 +58,17 @@ export default function Questions(props: QuestionsProps) {
       console.log(error)
       return;
     }
+
+    triggerQuestionSubmission("questionSubmit", {type: "questionSubmit", value: {currentQuestionId: currentQuestionId, option: data.answer}});
     
     if (currentQuestionId < props.questions.length - 1) {
       setCurrentQuestionId(currentQuestionId + 1)
     } else {
 
-      // Check for assignment complete
+      // Check for activity complete
       setCurrentQuestionId(currentQuestionId + 1)
       props.setComplete(true)
+      triggerActivitySubmission("activityComplete", {type: "activityComplete", value: {complete: true}})
     }
 
     reset()

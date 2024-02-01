@@ -275,39 +275,38 @@ const getQuestions = (activities: Activity[]): Prisma.QuestionCreateInput[] => {
         pts: 2,
         activity: { connect: { id: activities[i]?.id }},
       });
+      questions.push({
+        id: generateUUID(),
+        content: '2 What is the answer to this question?',
+        options: ['A2', 'B2', 'C2', 'D2'],
+        type: QuestionType.MULTIPLE_CHOICE,
+        answer: 0,
+        index: 1,
+        pts: 2,
+        activity: { connect: { id: activities[i]?.id }},
+      });
 
-      // questions.push({
-      //   id: generateUUID(),
-      //   content: '2 What is the answer to this question?',
-      //   options: ['A2', 'B2', 'C2', 'D2'],
-      //   type: QuestionType.MULTIPLE_CHOICE,
-      //   answer: 0,
-      //   index: 1,
-      //   pts: 2,
-      //   activity: { connect: { id: activities[i]?.id }},
-      // });
+      questions.push({
+        id: generateUUID(),
+        content: '3 What is the answer to this question?',
+        options: ['A3', 'B3', 'C3', 'D3'],
+        type: QuestionType.MULTIPLE_CHOICE,
+        answer: 0,
+        index: 2,
+        pts: 2,
+        activity: { connect: { id: activities[i]?.id }},
+      });
 
-      // questions.push({
-      //   id: generateUUID(),
-      //   content: '3 What is the answer to this question?',
-      //   options: ['A3', 'B3', 'C3', 'D3'],
-      //   type: QuestionType.MULTIPLE_CHOICE,
-      //   answer: 0,
-      //   index: 2,
-      //   pts: 2,
-      //   activity: { connect: { id: activities[i]?.id }},
-      // });
-
-      // questions.push({
-      //   id: generateUUID(),
-      //   content: '4 What is the answer to this question?',
-      //   options: ['A4', 'B4', 'C4', 'D4'],
-      //   type: QuestionType.MULTIPLE_CHOICE,
-      //   answer: 0,
-      //   index: 3,
-      //   pts: 2,
-      //   activity: { connect: { id: activities[i]?.id }},
-      // });
+      questions.push({
+        id: generateUUID(),
+        content: '4 What is the answer to this question?',
+        options: ['A4', 'B4', 'C4', 'D4'],
+        type: QuestionType.MULTIPLE_CHOICE,
+        answer: 0,
+        index: 3,
+        pts: 2,
+        activity: { connect: { id: activities[i]?.id }},
+      });
     }
   }
   return questions;

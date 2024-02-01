@@ -1,12 +1,18 @@
 
 import React, { useContext, useEffect, useState } from 'react';
 import { useEndNavBarContext } from '~/providers/navbar-provider';
-// import { webGazerContext } from '~/providers/WebGazerContext';
 import { WebGazerManager } from "~/providers/WebGazerManager"
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEye, faClose } from '@fortawesome/free-solid-svg-icons';
 
 import WGCalibration from './wgcalibration';
+
+const triggerEyeTrackerUpdate = (eventName: string, detail: any) => {
+  // Create a custom event with a given name and detail object
+  const event = new CustomEvent(eventName, { detail });
+  // Dispatch the event on the document
+  document.dispatchEvent(event);
+};
 
 export default function EyeTrackingController(props: {complete: boolean}) {
   const [option, setOption] = useState<string>("WebGazer");
@@ -20,11 +26,13 @@ export default function EyeTrackingController(props: {complete: boolean}) {
   const wgHandleStart = () => {
     webGazer.start();
     setRunningET(true);
+    triggerEyeTrackerUpdate("eyeTracker", {type: "eyeTracker", value: {action: "start", type: option}});
   };
 
   const wgHandleStop = () => {
     webGazer.restart()
     setRunningET(false);
+    triggerEyeTrackerUpdate("eyeTracker", {type: "eyeTracker", value: {action: "stop", type: option}});
   };
 
   function openModal() {
@@ -59,9 +67,20 @@ export default function EyeTrackingController(props: {complete: boolean}) {
     if (props.complete) {
       if (runningET) {
         webGazer.restart()
+        triggerEyeTrackerUpdate("eyeTracker", {type: "eyeTracker", value: {action: "end", type: option}});
       }
     }
   }, [props.complete])
+
+  useEffect(() => {
+    if (runningET) {
+      if (calibration) {
+        triggerEyeTrackerUpdate("eyeTracker", {type: "eyeTracker", value: {action: "calibrate-start", type: option}});
+      } else {
+        triggerEyeTrackerUpdate("eyeTracker", {type: "eyeTracker", value: {action: "calibrate-end", type: option}});
+      }
+    }
+  }, [calibration])
 
   function getWebGazerStatus() {
     if (runningET) {

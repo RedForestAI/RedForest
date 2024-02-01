@@ -14,6 +14,7 @@ import { generateUUID } from "~/utils/uuid";
 
 import GazeLogger from "~/loggers/gaze-logger";
 import ScrollLogger from "~/loggers/scroll-logger";
+import ActionsLogger from "~/loggers/actions-logger";
 
 type ReadingActivityProps = {
   profile: Profile
@@ -28,8 +29,10 @@ type ReadingActivityProps = {
   setCurrentActId: (id: number) => void
 }
 
+// Loggers
 const gazeLogger = new GazeLogger();
 const scrollLogger = new ScrollLogger();
+const actionsLogger = new ActionsLogger()
 
 export default function ReadingActivity(props: ReadingActivityProps) {
 
@@ -85,8 +88,15 @@ export default function ReadingActivity(props: ReadingActivityProps) {
           console.error("Failed to upload scroll data")
         }
 
-        // QA
+        // Actions (QA & PDF)
+        const actions_file = actionsLogger.getBlob()
+        const actions_filepath = `${session_fp}/actions.csv`
+        const actions_result = await createTracelogFile.mutateAsync({activityDataId: props.activityData.id, filepath: actions_filepath})
+        const actions_storage_result = await supabase.storage.from('tracelogs').upload(actions_filepath, actions_file);
 
+        if (actions_storage_result.error){
+          console.error("Failed to upload actions data")
+        }
 
       } catch (error) {
         console.error("Failed to upload tracelogs")
