@@ -5,13 +5,15 @@ import { Profile, Course, Assignment, Activity, ActivityData, AssignmentData, Re
 import { api } from "~/trpc/react";
 
 import EyeTrackingController from "./eye-tracking/eye-tracking-controller";
-import GazeLogger from "./eye-tracking/gaze-logger";
 import PDFViewer from './pdf-viewer';
 import TaskDrawer from './task-drawer';
 import Questions from "../question_activity/questions";
 import ActivityCompletion from "../activity-completion";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import { generateUUID } from "~/utils/uuid";
+
+import GazeLogger from "~/loggers/gaze-logger";
+import ScrollLogger from "~/loggers/scroll-logger";
 
 type ReadingActivityProps = {
   profile: Profile
@@ -27,6 +29,7 @@ type ReadingActivityProps = {
 }
 
 const gazeLogger = new GazeLogger();
+const scrollLogger = new ScrollLogger();
 
 export default function ReadingActivity(props: ReadingActivityProps) {
 
@@ -54,23 +57,44 @@ export default function ReadingActivity(props: ReadingActivityProps) {
   }, []);
 
   useEffect(() => {
-    const uploadGazeLogs = async () => {
-      const file = gazeLogger.getBlob()
+    const uploadLogs = async () => {
+
+      // Generate a session ID
+      const session_id = generateUUID()
+      const session_fp = `${props.activityData.id}/${props.profile.id}/${session_id}`
 
       // Create a path
       try {
-        const filepath = `${props.activityData.id}/${props.profile.id}/${generateUUID()}.csv`
-        const result = await createTracelogFile.mutateAsync({activityDataId: props.activityData.id, filepath: filepath})
-  
-        // Upload the file
-        const { data, error } = await supabase.storage.from('gaze_logs').upload(filepath, file);
+        // Gaze
+        const gaze_file = gazeLogger.getBlob()
+        const gaze_filepath = `${session_fp}/gaze.csv`
+        const gaze_result = await createTracelogFile.mutateAsync({activityDataId: props.activityData.id, filepath: gaze_filepath})
+        const gaze_storage_result = await supabase.storage.from('tracelogs').upload(gaze_filepath, gaze_file);
+
+        if (gaze_storage_result.error) {
+          console.error("Failed to upload gaze data")
+        }
+
+        // Scroll
+        const scroll_file = scrollLogger.getBlob()
+        const scroll_filepath = `${session_fp}/scroll.csv`
+        const scroll_result = await createTracelogFile.mutateAsync({activityDataId: props.activityData.id, filepath: scroll_filepath})
+        const scroll_storage_result = await supabase.storage.from('tracelogs').upload(scroll_filepath, scroll_file);
+
+        if (scroll_storage_result.error) {
+          console.error("Failed to upload scroll data")
+        }
+
+        // QA
+
+
       } catch (error) {
         console.error("Failed to upload tracelogs")
       }
     }
 
     if (complete) {
-      uploadGazeLogs()
+      uploadLogs()
     }
   }, [complete])
   

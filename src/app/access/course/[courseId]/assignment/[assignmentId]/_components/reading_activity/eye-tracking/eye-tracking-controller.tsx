@@ -57,7 +57,9 @@ export default function EyeTrackingController(props: {complete: boolean}) {
 
   useEffect(() => {
     if (props.complete) {
-      webGazer.restart()
+      if (runningET) {
+        webGazer.restart()
+      }
     }
   }, [props.complete])
 

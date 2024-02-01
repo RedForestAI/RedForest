@@ -77,7 +77,7 @@ INSERT INTO
     )
 VALUES
     ('activity_reading_file', 'activity_reading_file', true, null, false),
-    ('gaze_logs', 'gaze_logs', true, null, false);
+    ('tracelogs', 'tracelogs', true, null, false);
 
 
 
@@ -101,19 +101,19 @@ CREATE POLICY "Allow authenticated deletes" ON storage.objects FOR
   );
 
 -- Select
-CREATE POLICY "Allow authenticated select (gaze_logs)" ON storage.objects FOR
+CREATE POLICY "Allow authenticated select (tracelogs)" ON storage.objects FOR
   SELECT USING (
-    bucket_id = 'gaze_logs'
+    bucket_id = 'tracelogs'
   );
 
 -- Uploads
-CREATE POLICY "Allow authenticated uploads (gaze_logs)" ON storage.objects FOR
+CREATE POLICY "Allow authenticated uploads (tracelogs)" ON storage.objects FOR
   INSERT WITH CHECK (
-    bucket_id = 'gaze_logs'
+    bucket_id = 'tracelogs'
   );
 
 -- Deletes
-CREATE POLICY "Allow authenticated deletes (gaze_logs)" ON storage.objects FOR
+CREATE POLICY "Allow authenticated deletes (tracelogs)" ON storage.objects FOR
   DELETE USING (
-    bucket_id = 'gaze_logs'
+    bucket_id = 'tracelogs'
   );
