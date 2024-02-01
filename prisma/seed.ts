@@ -213,6 +213,7 @@ const uploadFiles = async (activities: Activity[]) => {
     const data2 = await supabase.storage.from("activity_reading_file").upload(new_path2, sample, {
       contentType: "application/pdf",
     })
+    console.log({data, data2})
 
     filepaths.push([new_path, new_path2])
   }
@@ -274,7 +275,6 @@ const getQuestions = (activities: Activity[]): Prisma.QuestionCreateInput[] => {
         pts: 2,
         activity: { connect: { id: activities[i]?.id }},
       });
-
       questions.push({
         id: generateUUID(),
         content: '2 What is the answer to this question?',

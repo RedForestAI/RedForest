@@ -8,6 +8,7 @@ import { questionRouter } from "./routers/question";
 import { readingFileRouter } from "./routers/activities/readingFile";
 import { assignmentDataRouter } from "./routers/assignmentData";
 import { activityDataRouter } from "./routers/activityData";
+import { traceLogFileRouter } from "./routers/traceLogFile"
 
 /**
  * This is the primary router for your server.
@@ -24,6 +25,7 @@ export const appRouter = createTRPCRouter({
   readingFile: readingFileRouter,
   assignmentData: assignmentDataRouter,
   activityData: activityDataRouter,
+  traceLogFile: traceLogFileRouter
 });
 
 // export type definition of API

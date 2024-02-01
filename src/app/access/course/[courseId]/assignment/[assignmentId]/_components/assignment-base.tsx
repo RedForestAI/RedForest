@@ -1,12 +1,12 @@
 "use client";
 
-import { Course, Assignment, Activity, ActivityData, AssignmentData, ActivityType, Question } from '@prisma/client'
+import { Profile, Course, Assignment, Activity, ActivityData, AssignmentData, ActivityType, Question } from '@prisma/client'
 import { useState } from 'react'
 import QuestionActivity from "./question_activity/question_activity"
 import ReadingActivity from "./reading_activity/reading_activity"
-import DataLoggerProvider from "~/providers/DataLoggingContext"
 
 type AssignmentBaseProps = {
+  profile: Profile
   course: Course
   assignment: Assignment
   activities: Activity[]
@@ -20,9 +20,8 @@ export default function AssignmentBase(props: AssignmentBaseProps) {
 
   function getActivity() {
 
-    console.log(currentActId)
-
     const activityData = {
+      profile: props.profile,
       course: props.course,
       assignment: props.assignment,
       activity: props.activities[currentActId],
@@ -48,10 +47,8 @@ export default function AssignmentBase(props: AssignmentBaseProps) {
   }
 
   return (
-    <DataLoggerProvider>
-      <div key={currentActId}>
-        {getActivity()}
-      </div>
-    </DataLoggerProvider>
+    <div key={currentActId}>
+      {getActivity()}
+    </div>
   )
 }

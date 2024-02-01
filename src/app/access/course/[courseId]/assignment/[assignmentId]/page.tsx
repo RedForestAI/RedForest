@@ -53,6 +53,7 @@ export default async function Page({params}: {params: { courseId: string, assign
   }
 
   const data = {
+    profile,
     course,
     assignment,
     activities,

@@ -76,7 +76,9 @@ INSERT INTO
         avif_autodetection
     )
 VALUES
-    ('activity_reading_file', 'activity_reading_file', true, null, false);
+    ('activity_reading_file', 'activity_reading_file', true, null, false),
+    ('tracelogs', 'tracelogs', true, null, false);
+
 
 
 -- Storage policies
@@ -96,4 +98,22 @@ CREATE POLICY "Allow authenticated uploads" ON storage.objects FOR
 CREATE POLICY "Allow authenticated deletes" ON storage.objects FOR
   DELETE USING (
     bucket_id = 'activity_reading_file'
+  );
+
+-- Select
+CREATE POLICY "Allow authenticated select (tracelogs)" ON storage.objects FOR
+  SELECT USING (
+    bucket_id = 'tracelogs'
+  );
+
+-- Uploads
+CREATE POLICY "Allow authenticated uploads (tracelogs)" ON storage.objects FOR
+  INSERT WITH CHECK (
+    bucket_id = 'tracelogs'
+  );
+
+-- Deletes
+CREATE POLICY "Allow authenticated deletes (tracelogs)" ON storage.objects FOR
+  DELETE USING (
+    bucket_id = 'tracelogs'
   );

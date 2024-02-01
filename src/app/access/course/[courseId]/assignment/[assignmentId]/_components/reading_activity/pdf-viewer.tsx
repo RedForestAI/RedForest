@@ -2,17 +2,29 @@ import { ReadingFile } from '@prisma/client'
 import React, { useRef, useState, useEffect, useContext } from 'react';
 import DocViewer, { DocViewerRenderers, IDocument } from '@cyntler/react-doc-viewer';
 import { useMiddleNavBarContext, useEndNavBarContext } from '~/providers/navbar-provider';
-import { faMagnifyingGlass, faEye } from '@fortawesome/free-solid-svg-icons';
+import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 
 import "./pdf-viewer.css"
+
+const triggerPDFSelect = (eventName: string, detail: any) => {
+  // Create a custom event with a given name and detail object
+  const event = new CustomEvent(eventName, { detail });
+  // Dispatch the event on the document
+  document.dispatchEvent(event);
+};
 
 function DocumentDrawer(props: {files: ReadingFile[], docs: {uri: string}[], activeDocument: IDocument | undefined, setActiveDocument: (doc: IDocument) => void}){
   const [open, setOpen] = useState(true)
 
   function openDrawer() {
     setOpen(!open)
+  }
+
+  function changeDocument(index: number) {
+    props.setActiveDocument(props.docs[index]!)
+    triggerPDFSelect("pdfChange", {type: "pdfChange", value: {index: index}});
   }
 
   return (
@@ -27,7 +39,7 @@ function DocumentDrawer(props: {files: ReadingFile[], docs: {uri: string}[], act
               <button 
                 key={index} 
                 className={`text-left btn-ghost ${props.activeDocument?.uri == props.docs[index]?.uri ? "text-primary" : "text-base"}`} 
-                onClick={() => props.setActiveDocument(props.docs[index]!)}>
+                onClick={() => {changeDocument(index)}}>
                   {file.title}
               </button>
             ))}

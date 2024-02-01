@@ -7,6 +7,7 @@ await import("./src/env.mjs");
 /** @type {import("next").NextConfig} */
 const config = {
   webpack: (config) => {
+    // react-doc-viewer
     config.resolve.alias.canvas = false;
     return config;
   },
