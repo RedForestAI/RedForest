@@ -128,10 +128,14 @@ export class WebGazeEyeTracker extends AbstractEyeTracker {
 
 export class TobiiProSDKEyeTracker extends AbstractEyeTracker {
   tobii: TobiiClient;
+  serial_number: string | null;
+  ws: WebSocket | null;
 
   constructor(props: EyeTrackerProps) {
     super(props);
     this.tobii = new TobiiClient();
+    this.serial_number = null;
+    this.ws = null;
   }
 
   async getOption(): Promise<string[]> {
@@ -174,17 +178,53 @@ export class TobiiProSDKEyeTracker extends AbstractEyeTracker {
     return <></>
   }
 
-  start() {
-    console.log("Starting Tobii")
+  async start() {
+    console.log(`Starting Tobii - ${this.serial_number}`)
     this.props.setRunningET(true);
+
+    // Check for the serial number
+    if (this.serial_number == null) {
+      console.error("No serial number set for Tobii")
+      return;
+    }
+
+    // Start the tobii
+    // @ts-ignore
+    this.ws = await this.tobii.connectToEyeTracker(this.serial_number!);
+
+    // Correct way to set event listeners on WebSocket
+    this.ws!.onmessage = (event: any) => {
+      let event_data = JSON.parse(event.data)
+      let gaze = JSON.parse(event_data).value.gaze_data.left
+
+      // Convert the relative gaze position to absolute position
+      let x = window.innerWidth * gaze[0]
+      let y = window.innerHeight * gaze[1]
+      console.log({x, y})
+    };
+
+    this.ws!.onerror = (event: any) => {
+        console.error("WebSocket error:", event);
+    };
+
+    this.ws!.onopen = () => {
+        console.log("WebSocket connection established");
+    };
+
+    this.ws!.onclose = () => {
+        console.log("WebSocket connection closed");
+    };
   }
 
   stop() {
     console.log("Stopping Tobii")
     this.props.setRunningET(false);
+    this.ws!.close();
   }
 
   config(config: any | null) {
+    // Get the serial number by itself
+    this.serial_number = config.split(" - ")[1];
     return null
   }
 

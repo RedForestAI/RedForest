@@ -113,7 +113,7 @@ export default function EyeTrackingController(props: {complete: boolean}) {
   }, [runningET])
 
   useEffect(() => {
-    console.log("Option: ", option)
+    // console.log("Option: ", option)
     if (eyeTracker) {
       setStatus(eyeTracker.getStatus(runningET));
       setButton(eyeTracker.getButton(runningET));
@@ -149,9 +149,6 @@ export default function EyeTrackingController(props: {complete: boolean}) {
                 </>
               ))}
 
-              {/* {options.map((option, index) => (
-                <option key={index} value={option}>{option}</option>
-              ))} */}
             </select>
 
             <div className="text-xl mt-4">Status</div>
