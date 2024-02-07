@@ -1,11 +1,11 @@
 
 import React, { useContext, useEffect, useState } from 'react';
 import { useEndNavBarContext } from '~/providers/navbar-provider';
-import { WebGazerManager } from "~/providers/WebGazerManager"
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEye, faClose } from '@fortawesome/free-solid-svg-icons';
 
 import WGCalibration from './wgcalibration';
+import { AbstractEyeTracker, WebGazeEyeTracker, TobiiProSDKEyeTracker } from './eye-tracker-interface';
 
 const triggerEyeTrackerUpdate = (eventName: string, detail: any) => {
   // Create a custom event with a given name and detail object
@@ -16,29 +16,41 @@ const triggerEyeTrackerUpdate = (eventName: string, detail: any) => {
 
 export default function EyeTrackingController(props: {complete: boolean}) {
   const [option, setOption] = useState<string>("WebGazer");
+  const [options, setOptions] = useState<string[]>([]);
   const [connected, setConnected] = useState<boolean>(false);
   const [runningET, setRunningET] = useState<boolean>(false);
   const [calibration, setCalibration] = useState<boolean>(false);
+  const [eyeTracker, setEyeTracker] = useState<AbstractEyeTracker | null>(null);
 
+  const etProps = {
+    connected,
+    runningET,
+    setConnected,
+    setRunningET
+  }
+
+  const eyeTrackers: { [key: string]: AbstractEyeTracker } = {
+    "WebGazer": new WebGazeEyeTracker(etProps),
+    "Tobii Pro SDK": new TobiiProSDKEyeTracker(etProps)
+  }
   const setEndNavBarContent = useContext(useEndNavBarContext);
-  const webGazer = new WebGazerManager();
 
-  const wgHandleStart = () => {
-    webGazer.start();
-    setRunningET(true);
-    triggerEyeTrackerUpdate("eyeTracker", {type: "eyeTracker", value: {action: "start", type: option}});
-  };
-
-  const wgHandleStop = () => {
-    webGazer.restart()
-    setRunningET(false);
-    triggerEyeTrackerUpdate("eyeTracker", {type: "eyeTracker", value: {action: "stop", type: option}});
-  };
-
-  function openModal() {
+  async function openModal() {
     // @ts-ignore
     document?.getElementById('eye-tracker-controller')?.showModal()
-    webGazer.show();
+    eyeTracker?.show();
+
+    await getOptions()
+  }
+
+  async function getOptions() {
+    // Fetch the eye tracker options, iterate over all eyetrackers
+    let options: string[] = [];
+    for (let key in eyeTrackers) {
+      let etOptions = await eyeTrackers[key]!.getOption(); 
+      options = [...options, ...etOptions]
+    }
+    setOptions(options);
   }
 
   function updateOption(e: any) {
@@ -46,7 +58,7 @@ export default function EyeTrackingController(props: {complete: boolean}) {
   }
 
   function closeModal() {
-    webGazer.hide()
+    eyeTracker?.hide()
   }
 
   useEffect(() => {
@@ -58,15 +70,16 @@ export default function EyeTrackingController(props: {complete: boolean}) {
       </div>
     )
 
-    setEndNavBarContent(endNavBarExtras);
+    getOptions();
 
+    setEndNavBarContent(endNavBarExtras);
     return () => setEndNavBarContent(null);
   }, []);
 
   useEffect(() => {
     if (props.complete) {
       if (runningET) {
-        webGazer.restart()
+        eyeTracker?.end();
         triggerEyeTrackerUpdate("eyeTracker", {type: "eyeTracker", value: {action: "end", type: option}});
       }
     }
@@ -82,89 +95,24 @@ export default function EyeTrackingController(props: {complete: boolean}) {
     }
   }, [calibration])
 
-  function getWebGazerStatus() {
+  useEffect(() => {
+    let value = "stop"
     if (runningET) {
-      return (
-        <p className="ml-2 text-success">Running</p>
-      )
+      value = "start"
     }
-    return (
-      <p className="ml-2">Ready</p>
-    )
-  }
-
-  function getSparkStatus() {
-    if (runningET) {
-      return (
-        <p className="ml-2 text-success">Running</p>
-      )
-    }
-    if (connected) {
-      return (
-        <p className="ml-2">Connected</p>
-      )
-    }
-    return (
-      <p className="ml-2 text-error">Not Found</p>
-    )
-  }
+    triggerEyeTrackerUpdate("eyeTracker", {type: "eyeTracker", value: {action: value, type: option}});
+  }, [runningET])
 
   function getStatus() {
-
-    switch (option) {
-      case "WebGazer":
-        return getWebGazerStatus();
-      case "Spark":
-        return getSparkStatus();
-    }
-  }
-
-  function getWebGazerButton() {
-    if (runningET) {
-      return (
-        <button className="btn btn-error w-5/12" onClick={wgHandleStop}>Stop</button>
-      )
-    }
-    return (
-      <button className="btn btn-primary w-5/12" onClick={wgHandleStart}>Start</button>
-    )
-  }
-
-  function getSparkButton() {
-    if (runningET) {
-      return (
-        <button className="btn btn-error w-5/12">Stop</button>
-      )
-    }
-    if (connected) {
-      return (
-        <button className="btn btn-primary w-5/12">Start</button>
-      )
-    }
-    return (
-      <button className="btn btn-secondary w-5/12">Connect</button>
-    )
+    return eyeTracker?.getStatus();
   }
 
   function getButton() {
-    switch (option) {
-      case "WebGazer":
-        return getWebGazerButton();
-      case "Spark":
-        return getSparkButton();
-    }
+    return eyeTracker?.getButton();
   }
 
   function calibrate() {
-    switch (option) {
-      case "WebGazer":
-        // @ts-ignore
-        document?.getElementById('wgcalibration')?.showModal()
-        setCalibration(true);
-        break;
-      case "Spark":
-        return () => {};
-    }
+    eyeTracker?.calibrate();
   }
 
   return (
@@ -184,8 +132,9 @@ export default function EyeTrackingController(props: {complete: boolean}) {
           <div className="flex flex-col gap-2 mt-4">
             <div className="text-xl">Eye-Tracker</div>
             <select value={option} onChange={updateOption} disabled={runningET} className="select select-bordered w-full">
-              <option value="WebGazer">WebGazer</option>
-              <option value="Spark">Tobii Pro Spark</option>
+              {options.map((option, index) => (
+                <option key={index} value={option}>{option}</option>
+              ))}
             </select>
 
             <div className="text-xl mt-4">Status</div>
