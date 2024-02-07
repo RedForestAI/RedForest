@@ -3,7 +3,6 @@ import { faClose } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import GazeDot from "./GazeDot"
 
-
 function ClickButton(props: {buttonCounter: number, setButtonCounter: (buttonCounter: number) => void}) {
   const [counter, setCounter] = useState(0);
   const [enabled, setEnabled] = useState(true);

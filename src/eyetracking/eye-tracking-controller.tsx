@@ -3,9 +3,11 @@ import React, { useContext, useEffect, useState } from 'react';
 import { useEndNavBarContext } from '~/providers/navbar-provider';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEye, faClose } from '@fortawesome/free-solid-svg-icons';
+import GazeDot from '~/eyetracking/GazeDot';
 
 import WGCalibration from './wgcalibration';
 import { AbstractEyeTracker, WebGazeEyeTracker, TobiiProSDKEyeTracker } from './eye-tracker-interface';
+import { set } from 'zod';
 
 const triggerEyeTrackerUpdate = (eventName: string, detail: any) => {
   // Create a custom event with a given name and detail object
@@ -15,11 +17,18 @@ const triggerEyeTrackerUpdate = (eventName: string, detail: any) => {
 };
 
 export default function EyeTrackingController(props: {complete: boolean}) {
+  const [open, setOpen] = useState<boolean>(false);
   const [option, setOption] = useState<string>("");
   const [options, setOptions] = useState<{ [id: string]: string[]}>({});
   const [runningET, setRunningET] = useState<boolean>(false);
   const [calibration, setCalibration] = useState<boolean>(false);
   const [eyeTracker, setEyeTracker] = useState<AbstractEyeTracker | null>(null);
+  
+  // Gaze
+  const [listening, setListening] = useState(false);
+  const [gaze, setGaze] = useState({x: -100, y: -100});
+
+  // UI
   const [status, setStatus] = useState<React.ReactNode>();
   const [button, setButton] = useState<React.ReactNode>();
   const [calibrationButton, setCalibrationButton] = useState<React.ReactNode>();
@@ -39,7 +48,9 @@ export default function EyeTrackingController(props: {complete: boolean}) {
     // @ts-ignore
     document?.getElementById('eye-tracker-controller')?.showModal()
     eyeTracker?.show();
+    setOpen(true);
 
+    // Get the options for the eye tracker
     await getOptions()
   }
 
@@ -68,6 +79,7 @@ export default function EyeTrackingController(props: {complete: boolean}) {
 
   function closeModal() {
     eyeTracker?.hide()
+    setOpen(false);
   }
 
   useEffect(() => {
@@ -84,6 +96,35 @@ export default function EyeTrackingController(props: {complete: boolean}) {
 
     return () => setEndNavBarContent(null);
   }, []);
+
+  useEffect(() => {
+    const handleCustomEvent = (event: any) => {
+      // Handle the event
+      console.log(event)
+      let newData = {x: event.detail.x, y: event.detail.y}
+      setGaze(newData)
+    };
+  
+    // Add event listener
+    if (!listening) {
+      if (open) {
+        document.addEventListener("gazeUpdate", handleCustomEvent);
+        setListening(true);
+        console.log("Added listener")
+      }
+      else {
+        document.removeEventListener("gazeUpdate", handleCustomEvent);
+        setListening(false);
+      }
+    }
+  
+    // Cleanup function to remove the event listener
+    return () => {
+      if (listening) {
+        document.removeEventListener("gazeUpdate", handleCustomEvent);
+      }
+    };
+  }, [open]);
 
   useEffect(() => {
     if (props.complete) {
@@ -110,10 +151,12 @@ export default function EyeTrackingController(props: {complete: boolean}) {
       value = "start"
     }
     triggerEyeTrackerUpdate("eyeTracker", {type: "eyeTracker", value: {action: value, type: option}});
+
+    // Reset the gaze point value
+    setGaze({x: -100, y: -100});
   }, [runningET])
 
   useEffect(() => {
-    // console.log("Option: ", option)
     if (eyeTracker) {
       setStatus(eyeTracker.getStatus(runningET));
       setButton(eyeTracker.getButton(runningET));
@@ -125,6 +168,10 @@ export default function EyeTrackingController(props: {complete: boolean}) {
     <>
       <WGCalibration calibration={calibration} setCalibration={setCalibration}/>
       <dialog id="eye-tracker-controller" className="modal">
+        {open &&
+          <GazeDot {...gaze}/>
+        }
+        
         <div className="modal-box">
           <div className="flex flex-row justify-between items-center">
             Eye-Tracking Controller
@@ -160,8 +207,6 @@ export default function EyeTrackingController(props: {complete: boolean}) {
                 {button}
             </div>
 
-            {/* <button className="btn btn-primary" disabled={!runningET} onClick={calibrate}>Calibrate</button> */}
-            {/* <button className="btn btn-primary" onClick={calibrate}>Calibrate</button> */}
             {calibrationButton}
 
           </div>
