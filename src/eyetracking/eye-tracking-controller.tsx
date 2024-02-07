@@ -198,16 +198,19 @@ export default function EyeTrackingController(props: {complete: boolean}) {
 
             </select>
 
-            <div className="text-xl mt-4">Status</div>
-            <div className="flex flex justify-between items-center">
-              <div className="flex flex-row">
-                <p>State:</p>
-                {status}
-              </div>
-                {button}
-            </div>
-
-            {calibrationButton}
+            {eyeTracker &&
+              <>
+              <div className="text-xl mt-4">Status</div>
+                <div className="flex flex justify-between items-center">
+                  <div className="flex flex-row">
+                    <p>State:</p>
+                    {status}
+                  </div>
+                    {button}
+                </div>
+                {calibrationButton}
+              </> 
+            }
 
           </div>
         </div>
