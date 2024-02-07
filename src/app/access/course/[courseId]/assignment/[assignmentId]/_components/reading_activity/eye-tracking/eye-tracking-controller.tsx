@@ -16,16 +16,15 @@ const triggerEyeTrackerUpdate = (eventName: string, detail: any) => {
 
 export default function EyeTrackingController(props: {complete: boolean}) {
   const [option, setOption] = useState<string>("");
-  const [options, setOptions] = useState<string[]>([]);
-  const [connected, setConnected] = useState<boolean>(false);
+  const [options, setOptions] = useState<{ [id: string]: string[]}>({});
   const [runningET, setRunningET] = useState<boolean>(false);
   const [calibration, setCalibration] = useState<boolean>(false);
   const [eyeTracker, setEyeTracker] = useState<AbstractEyeTracker | null>(null);
   const [status, setStatus] = useState<React.ReactNode>();
   const [button, setButton] = useState<React.ReactNode>();
+  const [calibrationButton, setCalibrationButton] = useState<React.ReactNode>();
 
   const etProps = {
-    setConnected,
     setRunningET,
     setCalibration
   }
@@ -46,17 +45,25 @@ export default function EyeTrackingController(props: {complete: boolean}) {
 
   async function getOptions() {
     // Fetch the eye tracker options, iterate over all eyetrackers
-    let options: string[] = [];
+    let options: { [id: string]: string[] } = {};
     for (let key in eyeTrackers) {
       let etOptions = await eyeTrackers[key]!.getOption(); 
-      options = [...options, ...etOptions]
+      options[key] = etOptions;
     }
     setOptions(options);
   }
 
   function updateOption(e: any) {
     setOption(e.target.value);
-    setEyeTracker(eyeTrackers[e.target.value]!)
+
+    // Split the value by the special character to get the key and the option value
+    const value = e.target.value;
+    const [key, optionValue] = value.split('|');
+
+    // Set the eye tracker
+    let et = eyeTrackers[key];
+    et!.config(optionValue);
+    setEyeTracker(et!)
   }
 
   function closeModal() {
@@ -106,16 +113,13 @@ export default function EyeTrackingController(props: {complete: boolean}) {
   }, [runningET])
 
   useEffect(() => {
-    console.log("runningET", runningET)
+    console.log("Option: ", option)
     if (eyeTracker) {
-      setStatus(eyeTracker.getStatus(connected, runningET));
-      setButton(eyeTracker.getButton(connected, runningET));
+      setStatus(eyeTracker.getStatus(runningET));
+      setButton(eyeTracker.getButton(runningET));
+      setCalibrationButton(eyeTracker.getCalibrationButton(runningET));
     }
   }, [eyeTracker, runningET])
-
-  function calibrate() {
-    eyeTracker?.calibrate();
-  }
 
   return (
     <>
@@ -135,9 +139,19 @@ export default function EyeTrackingController(props: {complete: boolean}) {
             <div className="text-xl">Eye-Tracker</div>
             <select value={option} onChange={updateOption} disabled={runningET} className="select select-bordered w-full">
               <option value="" disabled>Select an Eye-Tracker</option>
-              {options.map((option, index) => (
-                <option key={index} value={option}>{option}</option>
+
+              {/* Iterate over the keys and then iterate of their string[] */}
+              {Object.keys(options).map((key, index) => (
+                <>
+                  {options[key]!.map((option, index) => (
+                    <option key={index} value={`${key}|${option}`}>{option}</option>
+                  ))}
+                </>
               ))}
+
+              {/* {options.map((option, index) => (
+                <option key={index} value={option}>{option}</option>
+              ))} */}
             </select>
 
             <div className="text-xl mt-4">Status</div>
@@ -149,8 +163,9 @@ export default function EyeTrackingController(props: {complete: boolean}) {
                 {button}
             </div>
 
-            <button className="btn btn-primary" disabled={!runningET} onClick={calibrate}>Calibrate</button>
+            {/* <button className="btn btn-primary" disabled={!runningET} onClick={calibrate}>Calibrate</button> */}
             {/* <button className="btn btn-primary" onClick={calibrate}>Calibrate</button> */}
+            {calibrationButton}
 
           </div>
         </div>

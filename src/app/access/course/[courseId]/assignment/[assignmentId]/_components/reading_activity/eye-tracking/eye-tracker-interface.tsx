@@ -2,7 +2,6 @@ import { TobiiClient } from "tobiiprosdk-js";
 import { WebGazerManager } from "~/providers/WebGazerManager"
 
 type EyeTrackerProps = {
-  setConnected: (connected: boolean) => void;
   setRunningET: (runningET: boolean) => void;
   setCalibration: (calibration: boolean) => void;
 }
@@ -26,12 +25,20 @@ export class AbstractEyeTracker {
     return [];
   }
 
-  getStatus(connected: boolean, runningET: boolean) {
+  getStatus(runningET: boolean) {
     return <></>;
   }
 
-  getButton(connected: boolean, runningET: boolean) {
+  getButton(runningET: boolean) {
     return <></>;
+  }
+
+  getCalibrationButton(runningET: boolean) {
+    return <></>
+  }
+
+  config(config: any | null) {
+    return null
   }
 
   calibrate() {
@@ -63,8 +70,7 @@ export class WebGazeEyeTracker extends AbstractEyeTracker {
     return ["WebGazer"]
   }
 
-  getStatus(connected: boolean, runningET: boolean) {
-    console.log(runningET)
+  getStatus(runningET: boolean) {
     if (runningET) {
       return (
         <p className="ml-2 text-success">Running</p>
@@ -73,6 +79,21 @@ export class WebGazeEyeTracker extends AbstractEyeTracker {
     return (
       <p className="ml-2">Ready</p>
     )
+  }
+
+  getButton(runningET: boolean) {
+    if (runningET) {
+      return (
+        <button className="btn btn-error w-5/12" onClick={() => {this.stop()}}>Stop</button>
+      )
+    }
+    return (
+      <button className="btn btn-primary w-5/12" onClick={() => {this.start()}}>Start</button>
+    )
+  }
+
+  getCalibrationButton(runningET: boolean) {
+    return <button className="btn btn-primary" disabled={!runningET} onClick={() => {this.calibrate()}}>Calibrate</button>
   }
 
   start() {
@@ -85,15 +106,8 @@ export class WebGazeEyeTracker extends AbstractEyeTracker {
     this.props.setRunningET(false);
   };
 
-  getButton(connected: boolean, runningET: boolean) {
-    if (runningET) {
-      return (
-        <button className="btn btn-error w-5/12" onClick={() => {this.stop()}}>Stop</button>
-      )
-    }
-    return (
-      <button className="btn btn-primary w-5/12" onClick={() => {this.start()}}>Start</button>
-    )
+  config(config: any | null) {
+    return null
   }
 
   calibrate() {
@@ -125,7 +139,6 @@ export class TobiiProSDKEyeTracker extends AbstractEyeTracker {
     try {
       ets = await this.tobii.getEyeTrackers();
     } catch (e) {
-      console.error(e);
       return [];
     }
 
@@ -135,36 +148,44 @@ export class TobiiProSDKEyeTracker extends AbstractEyeTracker {
     });
   }
 
-  getStatus(connected: boolean, runningET: boolean) {
+  getStatus(runningET: boolean) {
     if (runningET) {
       return (
         <p className="ml-2 text-success">Running</p>
       )
     }
-    if (connected) {
-      return (
-        <p className="ml-2">Connected</p>
-      )
-    }
     return (
-      <p className="ml-2 text-error">Not Found</p>
+      <p className="ml-2">Ready</p>
     )
   }
 
-  getButton(connected: boolean, runningET: boolean) {
+  getButton(runningET: boolean) {
     if (runningET) {
       return (
-        <button className="btn btn-error w-5/12">Stop</button>
-      )
-    }
-    if (connected) {
-      return (
-        <button className="btn btn-primary w-5/12">Start</button>
+        <button className="btn btn-error w-5/12" onClick={() => {this.stop()}}>Stop</button>
       )
     }
     return (
-      <button className="btn btn-secondary w-5/12">Connect</button>
+      <button className="btn btn-primary w-5/12" onClick={() => {this.start()}}>Start</button>
     )
+  }
+
+  getCalibrationButton(runningET: boolean) {
+    return <></>
+  }
+
+  start() {
+    console.log("Starting Tobii")
+    this.props.setRunningET(true);
+  }
+
+  stop() {
+    console.log("Stopping Tobii")
+    this.props.setRunningET(false);
+  }
+
+  config(config: any | null) {
+    return null
   }
 
   calibrate() {
