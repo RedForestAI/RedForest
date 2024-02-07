@@ -21,10 +21,10 @@ export default function EyeTrackingController(props: {complete: boolean}) {
   const [runningET, setRunningET] = useState<boolean>(false);
   const [calibration, setCalibration] = useState<boolean>(false);
   const [eyeTracker, setEyeTracker] = useState<AbstractEyeTracker | null>(null);
+  const [status, setStatus] = useState<React.ReactNode>();
+  const [button, setButton] = useState<React.ReactNode>();
 
   const etProps = {
-    connected,
-    runningET,
     setConnected,
     setRunningET,
     setCalibration
@@ -73,8 +73,8 @@ export default function EyeTrackingController(props: {complete: boolean}) {
     )
 
     getOptions();
-
     setEndNavBarContent(endNavBarExtras);
+
     return () => setEndNavBarContent(null);
   }, []);
 
@@ -105,13 +105,13 @@ export default function EyeTrackingController(props: {complete: boolean}) {
     triggerEyeTrackerUpdate("eyeTracker", {type: "eyeTracker", value: {action: value, type: option}});
   }, [runningET])
 
-  function getStatus() {
-    return eyeTracker?.getStatus();
-  }
-
-  function getButton() {
-    return eyeTracker?.getButton();
-  }
+  useEffect(() => {
+    console.log("runningET", runningET)
+    if (eyeTracker) {
+      setStatus(eyeTracker.getStatus(connected, runningET));
+      setButton(eyeTracker.getButton(connected, runningET));
+    }
+  }, [eyeTracker, runningET])
 
   function calibrate() {
     eyeTracker?.calibrate();
@@ -144,9 +144,9 @@ export default function EyeTrackingController(props: {complete: boolean}) {
             <div className="flex flex justify-between items-center">
               <div className="flex flex-row">
                 <p>State:</p>
-                {getStatus()}
+                {status}
               </div>
-                {getButton()}
+                {button}
             </div>
 
             <button className="btn btn-primary" disabled={!runningET} onClick={calibrate}>Calibrate</button>

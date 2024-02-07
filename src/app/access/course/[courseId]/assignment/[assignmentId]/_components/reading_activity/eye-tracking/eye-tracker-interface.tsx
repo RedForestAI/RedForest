@@ -2,8 +2,6 @@ import { TobiiClient } from "tobiiprosdk-js";
 import { WebGazerManager } from "~/providers/WebGazerManager"
 
 type EyeTrackerProps = {
-  connected: boolean;
-  runningET: boolean;
   setConnected: (connected: boolean) => void;
   setRunningET: (runningET: boolean) => void;
   setCalibration: (calibration: boolean) => void;
@@ -28,11 +26,11 @@ export class AbstractEyeTracker {
     return [];
   }
 
-  getStatus() {
+  getStatus(connected: boolean, runningET: boolean) {
     return <></>;
   }
 
-  getButton() {
+  getButton(connected: boolean, runningET: boolean) {
     return <></>;
   }
 
@@ -65,8 +63,9 @@ export class WebGazeEyeTracker extends AbstractEyeTracker {
     return ["WebGazer"]
   }
 
-  getStatus() {
-    if (this.props.runningET) {
+  getStatus(connected: boolean, runningET: boolean) {
+    console.log(runningET)
+    if (runningET) {
       return (
         <p className="ml-2 text-success">Running</p>
       )
@@ -86,8 +85,8 @@ export class WebGazeEyeTracker extends AbstractEyeTracker {
     this.props.setRunningET(false);
   };
 
-  getButton() {
-    if (this.props.runningET) {
+  getButton(connected: boolean, runningET: boolean) {
+    if (runningET) {
       return (
         <button className="btn btn-error w-5/12" onClick={() => {this.stop()}}>Stop</button>
       )
@@ -136,13 +135,13 @@ export class TobiiProSDKEyeTracker extends AbstractEyeTracker {
     });
   }
 
-  getStatus() {
-    if (this.props.runningET) {
+  getStatus(connected: boolean, runningET: boolean) {
+    if (runningET) {
       return (
         <p className="ml-2 text-success">Running</p>
       )
     }
-    if (this.props.connected) {
+    if (connected) {
       return (
         <p className="ml-2">Connected</p>
       )
@@ -152,13 +151,13 @@ export class TobiiProSDKEyeTracker extends AbstractEyeTracker {
     )
   }
 
-  getButton() {
-    if (this.props.runningET) {
+  getButton(connected: boolean, runningET: boolean) {
+    if (runningET) {
       return (
         <button className="btn btn-error w-5/12">Stop</button>
       )
     }
-    if (this.props.connected) {
+    if (connected) {
       return (
         <button className="btn btn-primary w-5/12">Start</button>
       )
