@@ -1,5 +1,5 @@
 import { TobiiClient } from "tobiiprosdk-js";
-import { WebGazerManager } from "~/providers/WebGazerManager"
+import { WebGazerManager } from "./WebGazerManager"
 
 type EyeTrackerProps = {
   setRunningET: (runningET: boolean) => void;
@@ -195,12 +195,17 @@ export class TobiiProSDKEyeTracker extends AbstractEyeTracker {
     // Correct way to set event listeners on WebSocket
     this.ws!.onmessage = (event: any) => {
       let event_data = JSON.parse(event.data)
-      let gaze = JSON.parse(event_data).value.gaze_data.left
+      try {
+        let gaze = JSON.parse(event_data).value.gaze_data.left
 
-      // Convert the relative gaze position to absolute position
-      let x = window.innerWidth * gaze[0]
-      let y = window.innerHeight * gaze[1]
-      console.log({x, y})
+        // Convert the relative gaze position to absolute position
+        let x = window.innerWidth * gaze[0]
+        let y = window.innerHeight * gaze[1]
+        console.log({x, y})
+
+      } catch (e) {
+        return
+      }
     };
 
     this.ws!.onerror = (event: any) => {
