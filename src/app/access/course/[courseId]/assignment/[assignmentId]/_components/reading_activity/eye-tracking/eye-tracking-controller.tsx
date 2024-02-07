@@ -15,7 +15,7 @@ const triggerEyeTrackerUpdate = (eventName: string, detail: any) => {
 };
 
 export default function EyeTrackingController(props: {complete: boolean}) {
-  const [option, setOption] = useState<string>("WebGazer");
+  const [option, setOption] = useState<string>("");
   const [options, setOptions] = useState<string[]>([]);
   const [connected, setConnected] = useState<boolean>(false);
   const [runningET, setRunningET] = useState<boolean>(false);
@@ -26,7 +26,8 @@ export default function EyeTrackingController(props: {complete: boolean}) {
     connected,
     runningET,
     setConnected,
-    setRunningET
+    setRunningET,
+    setCalibration
   }
 
   const eyeTrackers: { [key: string]: AbstractEyeTracker } = {
@@ -55,6 +56,7 @@ export default function EyeTrackingController(props: {complete: boolean}) {
 
   function updateOption(e: any) {
     setOption(e.target.value);
+    setEyeTracker(eyeTrackers[e.target.value]!)
   }
 
   function closeModal() {
@@ -132,6 +134,7 @@ export default function EyeTrackingController(props: {complete: boolean}) {
           <div className="flex flex-col gap-2 mt-4">
             <div className="text-xl">Eye-Tracker</div>
             <select value={option} onChange={updateOption} disabled={runningET} className="select select-bordered w-full">
+              <option value="" disabled>Select an Eye-Tracker</option>
               {options.map((option, index) => (
                 <option key={index} value={option}>{option}</option>
               ))}
@@ -146,8 +149,8 @@ export default function EyeTrackingController(props: {complete: boolean}) {
                 {getButton()}
             </div>
 
-            {/* <button className="btn btn-primary" disabled={!runningET} onClick={calibrate}>Calibrate</button> */}
-            <button className="btn btn-primary" onClick={calibrate}>Calibrate</button>
+            <button className="btn btn-primary" disabled={!runningET} onClick={calibrate}>Calibrate</button>
+            {/* <button className="btn btn-primary" onClick={calibrate}>Calibrate</button> */}
 
           </div>
         </div>

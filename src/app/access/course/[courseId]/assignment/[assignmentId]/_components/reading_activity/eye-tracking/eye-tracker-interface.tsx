@@ -6,6 +6,7 @@ type EyeTrackerProps = {
   runningET: boolean;
   setConnected: (connected: boolean) => void;
   setRunningET: (runningET: boolean) => void;
+  setCalibration: (calibration: boolean) => void;
 }
 
 type EyeTracker = {
@@ -81,25 +82,25 @@ export class WebGazeEyeTracker extends AbstractEyeTracker {
   };
 
   stop() {
-    this.webGazer.restart()
+    this.webGazer.restart();
     this.props.setRunningET(false);
   };
 
   getButton() {
     if (this.props.runningET) {
       return (
-        <button className="btn btn-error w-5/12" onClick={stop}>Stop</button>
+        <button className="btn btn-error w-5/12" onClick={() => {this.stop()}}>Stop</button>
       )
     }
     return (
-      <button className="btn btn-primary w-5/12" onClick={stop}>Start</button>
+      <button className="btn btn-primary w-5/12" onClick={() => {this.start()}}>Start</button>
     )
   }
 
   calibrate() {
     // @ts-ignore
     document?.getElementById('wgcalibration')?.showModal()
-    // setCalibration(true);
+    this.props.setCalibration(true);
     return null;
   }
 
