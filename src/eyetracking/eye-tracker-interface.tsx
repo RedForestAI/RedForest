@@ -134,7 +134,13 @@ export class TobiiProSDKEyeTracker extends AbstractEyeTracker {
 
   constructor(props: EyeTrackerProps) {
     super(props);
-    this.tobii = new TobiiClient();
+
+    // If production, use the real Tobii client
+    if (process.env.NODE_ENV === "production") {
+      this.tobii = new TobiiClient(9999, 'https://localhost', 'wss://localhost')
+    } else {
+      this.tobii = new TobiiClient();
+    }
     this.serial_number = null;
     this.ws = null;
   }
