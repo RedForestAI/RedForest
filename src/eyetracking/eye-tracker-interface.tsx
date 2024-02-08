@@ -122,6 +122,7 @@ export class WebGazeEyeTracker extends AbstractEyeTracker {
   }
 
   end() {
+    this.webGazer.restart();
     return null;
   }
 }
@@ -246,6 +247,9 @@ export class TobiiProSDKEyeTracker extends AbstractEyeTracker {
   }
 
   end() {
+    if (this.ws) {
+      this.ws.close();
+    }
     return null;
   }
 }
