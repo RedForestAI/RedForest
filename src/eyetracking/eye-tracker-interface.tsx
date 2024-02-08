@@ -134,7 +134,13 @@ export class TobiiProSDKEyeTracker extends AbstractEyeTracker {
 
   constructor(props: EyeTrackerProps) {
     super(props);
-    this.tobii = new TobiiClient();
+
+    // If production, use the real Tobii client
+    if (window.location.protocol === 'https:') {
+      this.tobii = new TobiiClient(9999, 'https://localhost', 'wss://localhost')
+    } else {
+      this.tobii = new TobiiClient();
+    }
     this.serial_number = null;
     this.ws = null;
   }
@@ -203,6 +209,10 @@ export class TobiiProSDKEyeTracker extends AbstractEyeTracker {
         let x = window.innerWidth * gaze[0]
         let y = window.innerHeight * gaze[1]
         // console.log({x, y})
+
+        if ((x == 0) && (y == 0)) {
+          return
+        }
 
         // Create custom event & dispatch
         const event = new CustomEvent("gazeUpdate", {detail: {x, y}});
