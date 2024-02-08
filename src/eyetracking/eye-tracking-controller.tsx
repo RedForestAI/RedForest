@@ -100,7 +100,6 @@ export default function EyeTrackingController(props: {complete: boolean}) {
   useEffect(() => {
     const handleCustomEvent = (event: any) => {
       // Handle the event
-      console.log(event)
       let newData = {x: event.detail.x, y: event.detail.y}
       setGaze(newData)
     };
