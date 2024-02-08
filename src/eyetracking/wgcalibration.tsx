@@ -1,8 +1,7 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, {useEffect, useState } from 'react';
 import { faClose } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import GazeDot from "~/components/webgazer/GazeDot"
-
+import GazeDot from "./GazeDot"
 
 function ClickButton(props: {buttonCounter: number, setButtonCounter: (buttonCounter: number) => void}) {
   const [counter, setCounter] = useState(0);

@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { Profile, Course, Assignment, Activity, ActivityData, AssignmentData, ReadingFile, Question } from '@prisma/client';
 import { api } from "~/trpc/react";
 
-import EyeTrackingController from "./eye-tracking/eye-tracking-controller";
+import EyeTrackingController from "~/eyetracking/eye-tracking-controller";
 import PDFViewer from './pdf-viewer';
 import TaskDrawer from './task-drawer';
 import Questions from "../question_activity/questions";
