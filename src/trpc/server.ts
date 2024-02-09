@@ -12,6 +12,7 @@ import { createTRPCContext } from "~/server/api/trpc";
 import { observable } from "@trpc/server/observable";
 import { callProcedure } from "@trpc/server";
 import { type TRPCErrorResponse } from "@trpc/server/rpc";
+import { redirect } from "next/navigation";
 
 /**
  * This wraps the `createTRPCContext` helper and provides the required context for the tRPC API when
@@ -66,7 +67,17 @@ export const api = createTRPCProxyClient<typeof appRouter>({
               observer.complete();
             })
             .catch((cause: TRPCErrorResponse) => {
-              observer.error(TRPCClientError.from(cause));
+
+              // If the error is caused by "User is not authenticated, then we redirect to the login page"
+              if (TRPCClientError.from(cause).message === "User is not authenticated") {
+                try {
+                  //
+                } catch (error) {
+                  redirect("/api/auth/login")
+                }
+              } else {
+                observer.error(TRPCClientError.from(cause));
+              }
             });
         }),
   ],
