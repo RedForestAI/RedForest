@@ -76,8 +76,8 @@ INSERT INTO
         avif_autodetection
     )
 VALUES
-    ('activity_reading_file', 'activity_reading_file', true, null, false),
-    ('tracelogs', 'tracelogs', true, null, false);
+    ('activity_reading_file', 'activity_reading_file', false, null, false),
+    ('tracelogs', 'tracelogs', false, null, false);
 
 
 -- Storage policies
