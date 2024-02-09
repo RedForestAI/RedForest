@@ -79,24 +79,23 @@ VALUES
     ('activity_reading_file', 'activity_reading_file', false, null, false),
     ('tracelogs', 'tracelogs', false, null, false);
 
-
 -- Storage policies
 -- Select
 CREATE POLICY "Allow authenticated select" ON storage.objects FOR
   SELECT USING (
-    bucket_id = 'activity_reading_file'
+    bucket_id = 'activity_reading_file' AND (auth.role() = 'authenticated')
   );
 
 -- Uploads
 CREATE POLICY "Allow authenticated uploads" ON storage.objects FOR
   INSERT WITH CHECK (
-    bucket_id = 'activity_reading_file'
+    bucket_id = 'activity_reading_file'  AND (auth.role() = 'authenticated')
   );
 
 -- Deletes
 CREATE POLICY "Allow authenticated deletes" ON storage.objects FOR
   DELETE USING (
-    bucket_id = 'activity_reading_file'
+    bucket_id = 'activity_reading_file'  AND (auth.role() = 'authenticated')
   );
 
 -- Select

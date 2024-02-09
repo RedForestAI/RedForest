@@ -57,6 +57,7 @@ export default function PDFViewer(props: {files: ReadingFile[]}) {
   const [ docs, setDocs ] = useState<{uri: string}[]>([]);
   const setMiddleNavBarContent = useContext(useMiddleNavBarContext);
   const [zoomLevel, setZoomLevel] = useState(1); // Starting zoom level
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     // Define the content you want to add to the navbar
@@ -90,27 +91,25 @@ export default function PDFViewer(props: {files: ReadingFile[]}) {
 
       // For each file, get the public URL
       let urls: string[] = []
-      // for (let i = 0; i < filepaths.length; i++) {
-      //   const { data: {publicUrl}, error } = supabase.storage.from('activity_reading_file').createSignedUrl(filepaths[i]!, 60); 
-      //   urls.push(publicUrl);
-      // }
       const { data, error } = await supabase
         .storage
         .from('activity_reading_file')
         .createSignedUrls(filepaths, 60);
-
-      if (error) {
+      
+        if (error) {
         console.error(error);
+        setError(error.message);
         return;
       }
 
-      console.log(data)
-
-      // Get the data
-      urls = data!.map((file) => file.signedUrl);
-      console.log(urls)
+      // Get the data, remove if null
+      urls = data!.map((file) => file.signedUrl as string).filter((url) => url != null);
 
       // Iterate through the files and add them to the docs array
+      if (urls.length == 0) {
+        setError("Failed to fetch URLs for the files. Please logout and try again.");
+        return;
+      }
       const newDocs = urls.map((url: any) => {
         return {
           uri: url,
@@ -127,6 +126,7 @@ export default function PDFViewer(props: {files: ReadingFile[]}) {
   return (
       <>
         <DocumentDrawer files={props.files} docs={docs} activeDocument={activeDocument} setActiveDocument={setActiveDocument}/>
+        {error && <div className="text-red-500">{error}</div>}
         <DocViewer
           documents={docs}
           activeDocument={activeDocument}
