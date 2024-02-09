@@ -57,6 +57,7 @@ export default function PDFViewer(props: {files: ReadingFile[]}) {
   const [ docs, setDocs ] = useState<{uri: string}[]>([]);
   const setMiddleNavBarContent = useContext(useMiddleNavBarContext);
   const [zoomLevel, setZoomLevel] = useState(1); // Starting zoom level
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     // Define the content you want to add to the navbar
@@ -79,38 +80,53 @@ export default function PDFViewer(props: {files: ReadingFile[]}) {
 
   useEffect(() => {
 
-    // If there are no files, return
-    if (props.files == undefined || props.files.length == 0) {
-      return;
-    }
-
-    // Get the public URLs for the files
-    const filepaths = props.files.map((file) => file.filepath);
-
-    // For each file, get the public URL
-    let urls: string[] = []
-    for (let i = 0; i < filepaths.length; i++) {
-      const { data: {publicUrl} } = supabase.storage.from('activity_reading_file').getPublicUrl(filepaths[i]!); 
-      urls.push(publicUrl);
-    }
-
-    if (urls.length == 0) {
-      return;
-    }
-
-    // Iterate through the files and add them to the docs array
-    const newDocs = urls.map((url: any) => {
-      return {
-        uri: url
+    async function fetchUrls() {
+      // If there are no files, return
+      if (props.files == undefined || props.files.length == 0) {
+        return;
       }
-    });
-    setDocs(newDocs);
+
+      // Get the public URLs for the files
+      const filepaths = props.files.map((file) => file.filepath);
+
+      // For each file, get the public URL
+      let urls: string[] = []
+      const { data, error } = await supabase
+        .storage
+        .from('activity_reading_file')
+        .createSignedUrls(filepaths, 60);
+      
+        if (error) {
+        console.error(error);
+        setError(error.message);
+        return;
+      }
+
+      // Get the data, remove if null
+      urls = data!.map((file) => file.signedUrl as string).filter((url) => url != null);
+
+      // Iterate through the files and add them to the docs array
+      if (urls.length == 0) {
+        setError("Failed to fetch URLs for the files. Please logout and try again.");
+        return;
+      }
+      const newDocs = urls.map((url: any) => {
+        return {
+          uri: url,
+          fileType: "pdf"
+        }
+      });
+      setDocs(newDocs);
+    }
+
+    fetchUrls();
 
   }, [props.files])
 
   return (
       <>
         <DocumentDrawer files={props.files} docs={docs} activeDocument={activeDocument} setActiveDocument={setActiveDocument}/>
+        {error && <div className="text-red-500">{error}</div>}
         <DocViewer
           documents={docs}
           activeDocument={activeDocument}

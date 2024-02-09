@@ -36,7 +36,7 @@ const actionsLogger = new ActionsLogger()
 
 export default function ReadingActivity(props: ReadingActivityProps) {
 
-  const [ complete, setComplete ] = useState<boolean>(false);
+  const [complete, setComplete ] = useState<boolean>(false);
   const [readingFiles, setReadingFiles] = useState<ReadingFile[]>([]);
   const readingActivityQuery = api.readingFile.getMany.useQuery({activityId: props.activity.id}, {enabled: false});
   const supabase = createClientComponentClient();

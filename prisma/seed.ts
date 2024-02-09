@@ -313,6 +313,17 @@ const getQuestions = (activities: Activity[]): Prisma.QuestionCreateInput[] => {
 }
 
 const main = async () => {
+
+  // Login the supabase client
+  const { data, error } = await supabase.auth.signInWithPassword({
+    email: "user3@example.com",
+    password: "password123",
+  })
+  if (error) {
+    console.error(error)
+    return
+  }
+
   const profiles = await Promise.all(
     getProfiles().map((profile) => client.profile.upsert(
       {
