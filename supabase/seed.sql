@@ -101,17 +101,17 @@ CREATE POLICY "Allow authenticated deletes" ON storage.objects FOR
 -- Select
 CREATE POLICY "Allow authenticated select (tracelogs)" ON storage.objects FOR
   SELECT USING (
-    bucket_id = 'tracelogs'
+    bucket_id = 'tracelogs' AND (auth.role() = 'authenticated')
   );
 
 -- Uploads
 CREATE POLICY "Allow authenticated uploads (tracelogs)" ON storage.objects FOR
   INSERT WITH CHECK (
-    bucket_id = 'tracelogs'
+    bucket_id = 'tracelogs' AND (auth.role() = 'authenticated')
   );
 
 -- Deletes
 CREATE POLICY "Allow authenticated deletes (tracelogs)" ON storage.objects FOR
   DELETE USING (
-    bucket_id = 'tracelogs'
+    bucket_id = 'tracelogs' AND (auth.role() = 'authenticated')
   );
