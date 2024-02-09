@@ -79,32 +79,48 @@ export default function PDFViewer(props: {files: ReadingFile[]}) {
 
   useEffect(() => {
 
-    // If there are no files, return
-    if (props.files == undefined || props.files.length == 0) {
-      return;
-    }
-
-    // Get the public URLs for the files
-    const filepaths = props.files.map((file) => file.filepath);
-
-    // For each file, get the public URL
-    let urls: string[] = []
-    for (let i = 0; i < filepaths.length; i++) {
-      const { data: {publicUrl} } = supabase.storage.from('activity_reading_file').getPublicUrl(filepaths[i]!); 
-      urls.push(publicUrl);
-    }
-
-    if (urls.length == 0) {
-      return;
-    }
-
-    // Iterate through the files and add them to the docs array
-    const newDocs = urls.map((url: any) => {
-      return {
-        uri: url
+    async function fetchUrls() {
+      // If there are no files, return
+      if (props.files == undefined || props.files.length == 0) {
+        return;
       }
-    });
-    setDocs(newDocs);
+
+      // Get the public URLs for the files
+      const filepaths = props.files.map((file) => file.filepath);
+
+      // For each file, get the public URL
+      let urls: string[] = []
+      // for (let i = 0; i < filepaths.length; i++) {
+      //   const { data: {publicUrl}, error } = supabase.storage.from('activity_reading_file').createSignedUrl(filepaths[i]!, 60); 
+      //   urls.push(publicUrl);
+      // }
+      const { data, error } = await supabase
+        .storage
+        .from('activity_reading_file')
+        .createSignedUrls(filepaths, 60);
+
+      if (error) {
+        console.error(error);
+        return;
+      }
+
+      console.log(data)
+
+      // Get the data
+      urls = data!.map((file) => file.signedUrl);
+      console.log(urls)
+
+      // Iterate through the files and add them to the docs array
+      const newDocs = urls.map((url: any) => {
+        return {
+          uri: url,
+          fileType: "pdf"
+        }
+      });
+      setDocs(newDocs);
+    }
+
+    fetchUrls();
 
   }, [props.files])
 

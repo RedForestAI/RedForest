@@ -80,7 +80,6 @@ VALUES
     ('tracelogs', 'tracelogs', true, null, false);
 
 
-
 -- Storage policies
 -- Select
 CREATE POLICY "Allow authenticated select" ON storage.objects FOR
