@@ -28,7 +28,7 @@ function DocumentDrawer(props: {files: ReadingFile[], docs: {uri: string}[], act
   }
 
   return (
-    <div className={`h-screen bg-base-300 w-1/4 fixed top-0 left-0 border-r border-t z-10 transition ease-in-out duration-200 ${open ? "-translate-x-[23vw]" : ""}`}>
+    <div id="DocumentPane" className={`h-screen bg-base-300 w-1/4 fixed top-0 left-0 border-r border-t z-10 transition ease-in-out duration-200 ${open ? "-translate-x-[23vw]" : ""}`}>
         <div className="flex flex-row w-full">
           <div className="w-full mt-20 flex flex-col gap-4 p-2">
             <div className="flex flex-col">
@@ -132,7 +132,7 @@ export default function PDFViewer(props: {files: ReadingFile[]}) {
           activeDocument={activeDocument}
           onDocumentChange={(newDoc) => {setActiveDocument(newDoc)}}
           pluginRenderers={DocViewerRenderers}
-          style={{ width: `${70*zoomLevel}%`, height: `100%` }}
+          style={{ width: `${70*zoomLevel}%`, height: `100%`, backgroundColor: "transparent" }}
           config={{
             header: {
               disableHeader: true,

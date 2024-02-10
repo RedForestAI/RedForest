@@ -1,6 +1,9 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
+import { generateUUID } from "~/utils/uuid";
+
 import { Profile, Course, Assignment, Activity, ActivityData, AssignmentData, ReadingFile, Question } from '@prisma/client';
 import { api } from "~/trpc/react";
 
@@ -9,8 +12,7 @@ import PDFViewer from './pdf-viewer';
 import TaskDrawer from './task-drawer';
 import Questions from "../question_activity/questions";
 import ActivityCompletion from "../activity-completion";
-import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
-import { generateUUID } from "~/utils/uuid";
+import { AOIEncoding } from "~/eyetracking/aoi-encoding";
 
 import GazeLogger from "~/loggers/gaze-logger";
 import ScrollLogger from "~/loggers/scroll-logger";
@@ -58,6 +60,24 @@ export default function ReadingActivity(props: ReadingActivityProps) {
     getReadingActivity();
 
   }, []);
+
+  // Debugging
+  useEffect(() => {
+    // Define the click event handler function
+    const handleClickAnywhere = (e: any) => {
+      // console.log('You clicked somewhere on the page!');
+      const aoi = AOIEncoding(e.clientX, e.clientY)
+      console.log(aoi)
+    };
+
+    // Attach the event listener to the window object
+    window.addEventListener('click', handleClickAnywhere);
+
+    // Cleanup function to remove the event listener
+    return () => {
+      window.removeEventListener('click', handleClickAnywhere);
+    };
+  }, []); // Empty dependency array means this effect runs only once after the initial render
 
   useEffect(() => {
     const uploadLogs = async () => {
@@ -114,7 +134,7 @@ export default function ReadingActivity(props: ReadingActivityProps) {
         <EyeTrackingController complete={complete}/>
         <PDFViewer files={readingFiles}/>
         <TaskDrawer>
-          <div className="mt-20 w-full">
+          <div id="QuestionPane" className="mt-20 w-full">
           {!complete  
             ? <Questions {...props} complete={complete} setComplete={setComplete}/> 
             : <ActivityCompletion {...props} complete={complete}/>
