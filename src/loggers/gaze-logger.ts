@@ -23,7 +23,6 @@ export default class GazeLogger extends BaseLogger {
   }
 
   log(event: any) {
-    console.log(event)
     this.loggedData.push([
       event.detail.t,
       event.detail.x.toFixed(3), 
