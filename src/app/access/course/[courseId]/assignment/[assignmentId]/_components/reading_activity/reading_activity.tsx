@@ -1,6 +1,9 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
+import { generateUUID } from "~/utils/uuid";
+
 import { Profile, Course, Assignment, Activity, ActivityData, AssignmentData, ReadingFile, Question } from '@prisma/client';
 import { api } from "~/trpc/react";
 
@@ -9,8 +12,7 @@ import PDFViewer from './pdf-viewer';
 import TaskDrawer from './task-drawer';
 import Questions from "../question_activity/questions";
 import ActivityCompletion from "../activity-completion";
-import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
-import { generateUUID } from "~/utils/uuid";
+import { AOIEncoding } from "~/eyetracking/aoi-encoding";
 
 import GazeLogger from "~/loggers/gaze-logger";
 import ScrollLogger from "~/loggers/scroll-logger";
@@ -58,6 +60,52 @@ export default function ReadingActivity(props: ReadingActivityProps) {
     getReadingActivity();
 
   }, []);
+
+  // Debugging
+  useEffect(() => {
+    // Define the click event handler function
+    const aoiEncoding = (e: any) => {
+      // console.log('You clicked somewhere on the page!');
+      const aoi = AOIEncoding(e.detail.x, e.detail.y)
+      // console.log(aoi)
+
+      // Create the event data
+      let data = {}
+      if (aoi != null) {
+        data = {
+          t: e.detail.t,
+          x: e.detail.x,
+          y: e.detail.y,
+          aoiType: aoi.aoiType,
+          aoiInfo: aoi.aoiInfo,
+          rX: aoi.rX,
+          rY: aoi.rY,
+        }
+      } else {
+        data = {
+          t: e.detail.t,
+          x: e.detail.x,
+          y: e.detail.y,
+          aoiType: "",
+          aoiInfo: "",
+          rX: 0,
+          rY: 0,
+        }
+      }
+      const event = new CustomEvent("processedGazeUpdate", { detail: data });
+      
+      // Dispatch the event on the document
+      document.dispatchEvent(event);
+    };
+
+    // Attach the event listener to the window object
+    document.addEventListener('gazeUpdate', aoiEncoding);
+
+    // Cleanup function to remove the event listener
+    return () => {
+      document.removeEventListener('gazeUpdate', aoiEncoding);
+    };
+  }, []); // Empty dependency array means this effect runs only once after the initial render
 
   useEffect(() => {
     const uploadLogs = async () => {
@@ -114,7 +162,7 @@ export default function ReadingActivity(props: ReadingActivityProps) {
         <EyeTrackingController complete={complete}/>
         <PDFViewer files={readingFiles}/>
         <TaskDrawer>
-          <div className="mt-20 w-full">
+          <div id="QuestionPane" className="mt-20 w-full">
           {!complete  
             ? <Questions {...props} complete={complete} setComplete={setComplete}/> 
             : <ActivityCompletion {...props} complete={complete}/>
