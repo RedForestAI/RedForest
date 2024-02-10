@@ -11,16 +11,24 @@ export class WebGazerManager {
   }
 
   async start() {
+
+    // Clear the data
+    window.webgazer.clearData();
+
     await window.webgazer.setRegression('ridge') /* currently must set regression and tracker */
-      //.setTracker('clmtrackr')
       window.webgazer.setGazeListener((data, elapsedTime) => {
         if (data) {
           // @ts-ignore
           let gazeData = window.webgazer.util.bound(data);
-          triggerGazeUpdate("gazeUpdate", gazeData);
+          const gazeUpdate = {
+            x: gazeData.x,
+            y: gazeData.y,
+            t: new Date().toISOString()
+          }
+          triggerGazeUpdate("gazeUpdate", gazeUpdate);
         }
       })
-      .saveDataAcrossSessions(true)
+      .saveDataAcrossSessions(false)
       .begin();
     window.webgazer
       .showVideoPreview(true) /* shows all video previews */
@@ -41,6 +49,8 @@ export class WebGazerManager {
   }
 
   restart() {
+    // Clear the data
+    window.webgazer.clearData();
     window.webgazer.end()
   }
 

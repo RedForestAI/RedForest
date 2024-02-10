@@ -208,14 +208,22 @@ export class TobiiProSDKEyeTracker extends AbstractEyeTracker {
         // Convert the relative gaze position to absolute position
         let x = window.innerWidth * gaze[0]
         let y = window.innerHeight * gaze[1]
-        // console.log({x, y})
 
         if ((x == 0) && (y == 0)) {
           return
         }
 
+        // Create a timestamp
+        let t = new Date().toISOString()
+
+        const gazeUpdate = {
+          x: x,
+          y: y,
+          t: t
+        }
+
         // Create custom event & dispatch
-        const event = new CustomEvent("gazeUpdate", {detail: {x, y}});
+        const event = new CustomEvent("gazeUpdate", { detail: gazeUpdate });
         document.dispatchEvent(event);
 
       } catch (e) {

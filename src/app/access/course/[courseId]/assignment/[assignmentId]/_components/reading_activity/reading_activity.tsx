@@ -64,18 +64,46 @@ export default function ReadingActivity(props: ReadingActivityProps) {
   // Debugging
   useEffect(() => {
     // Define the click event handler function
-    const handleClickAnywhere = (e: any) => {
+    const aoiEncoding = (e: any) => {
       // console.log('You clicked somewhere on the page!');
-      const aoi = AOIEncoding(e.clientX, e.clientY)
-      console.log(aoi)
+      const aoi = AOIEncoding(e.detail.x, e.detail.y)
+      // console.log(aoi)
+
+      // Create the event data
+      let data = {}
+      if (aoi != null) {
+        data = {
+          t: e.detail.t,
+          x: e.detail.x,
+          y: e.detail.y,
+          aoiType: aoi.aoiType,
+          aoiInfo: aoi.aoiInfo,
+          rX: aoi.rX,
+          rY: aoi.rY,
+        }
+      } else {
+        data = {
+          t: e.detail.t,
+          x: e.detail.x,
+          y: e.detail.y,
+          aoiType: "",
+          aoiInfo: "",
+          rX: 0,
+          rY: 0,
+        }
+      }
+      const event = new CustomEvent("processedGazeUpdate", { detail: data });
+      
+      // Dispatch the event on the document
+      document.dispatchEvent(event);
     };
 
     // Attach the event listener to the window object
-    window.addEventListener('click', handleClickAnywhere);
+    document.addEventListener('gazeUpdate', aoiEncoding);
 
     // Cleanup function to remove the event listener
     return () => {
-      window.removeEventListener('click', handleClickAnywhere);
+      document.removeEventListener('gazeUpdate', aoiEncoding);
     };
   }, []); // Empty dependency array means this effect runs only once after the initial render
 
