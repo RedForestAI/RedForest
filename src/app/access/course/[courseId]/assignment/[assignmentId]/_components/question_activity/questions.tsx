@@ -1,24 +1,12 @@
 "use client";
 
 import { Course, Assignment, Activity, ActivityData, AssignmentData, Question } from '@prisma/client'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { api } from "~/trpc/react"
 import { useForm } from "react-hook-form"
 import { useRouter } from "next/navigation"
 
-const triggerQuestionSubmission = (eventName: string, detail: any) => {
-  // Create a custom event with a given name and detail object
-  const event = new CustomEvent(eventName, { detail });
-  // Dispatch the event on the document
-  document.dispatchEvent(event);
-};
-
-const triggerActivitySubmission = (eventName: string, detail: any) => {
-  // Create a custom event with a given name and detail object
-  const event = new CustomEvent(eventName, { detail });
-  // Dispatch the event on the document
-  document.dispatchEvent(event);
-};
+import { triggerActionLog } from "~/loggers/actions-logger"
 
 type QuestionConfig = {
   beforeStartPrompt: boolean
@@ -47,6 +35,14 @@ const defaultConfig: QuestionConfig = {
   beforeStartPrompt: false
 }
 
+type ScoreTrack = {
+  answer: string
+  correct: boolean
+  pts: number
+}
+
+let scores: ScoreTrack[] = []
+
 export default function Questions(props: QuestionsProps) {
 
   // Configs
@@ -57,6 +53,7 @@ export default function Questions(props: QuestionsProps) {
   const { register, handleSubmit, clearErrors, reset, formState: { errors } } = useForm();
   const [ currentQuestionId, setCurrentQuestionId ] = useState<number>(props.activityData.currentQuestionId)
   const [ startQuestions, setStartQuestions ] = useState<boolean>(false)
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false)
 
   // Mutations
   const appendAnswerMutation = api.activityData.appendAnswer.useMutation()
@@ -66,30 +63,70 @@ export default function Questions(props: QuestionsProps) {
     return Math.floor((currentQuestionId / totalQuestions) * 100);
   }
 
+  function startQuestionsAction() {
+    setStartQuestions(true)
+    triggerActionLog({type: "questionStart", value: {start: true}})
+  }
+
   async function onSubmit(data: any) {
+    if (isSubmitting) return;
+    setIsSubmitting(true)
 
     // Update choice in the database
+    let response = {correct: false, pts: 0}
     try {
-      await appendAnswerMutation.mutateAsync({id: props.activityData.id, answer: Number(data.answer)})
+      response = await appendAnswerMutation.mutateAsync({
+        activityDataId: props.activityData.id, 
+        activityId: props.activity.id,
+        index: currentQuestionId,
+        answer: Number(data.answer)
+      })
     } catch (error) {
       console.log(error)
       return;
     }
 
-    triggerQuestionSubmission("questionSubmit", {type: "questionSubmit", value: {currentQuestionId: currentQuestionId, option: data.answer}});
+    // Add to the score
+    scores.push({answer: data.answer, correct: response.correct, pts: response.pts})
+
+    triggerActionLog({type: "questionSubmit", value: {
+      currentQuestionId: currentQuestionId, 
+      option: data.answer,
+      correct: response.correct,
+      pts: response.pts
+    }});
     
     if (currentQuestionId < props.questions.length - 1) {
       setCurrentQuestionId(currentQuestionId + 1)
+      triggerActionLog({type: "questionLoad", value: {upcomingQuestionId: currentQuestionId + 1}});
     } else {
 
       // Check for activity complete
       setCurrentQuestionId(currentQuestionId + 1)
       props.setComplete(true)
-      triggerActivitySubmission("activityComplete", {type: "activityComplete", value: {complete: true}})
+
+      // Compute the score and log again for redundancy
+      let totalPtsEarned = 0
+      let totalPtsPossible = 0
+      scores.forEach(score => {
+        if (score.correct) {
+          totalPtsEarned += score.pts
+        }
+        totalPtsPossible += score.pts
+      })
+      let scorePercentage = (totalPtsEarned / totalPtsPossible) * 100
+      triggerActionLog({type: "activityComplete", value: {complete: true, score: scorePercentage.toFixed(1), scores: scores}});
     }
 
     reset()
+    setIsSubmitting(false)
   }
+
+  useEffect(() => {
+    if (!finalConfig.beforeStartPrompt) {
+      triggerActionLog({type: "questionLoad", value: {upcomingQuestionId: currentQuestionId}});
+    }
+  }, [])
 
   return (
     <div className="items-start flex flex-col pt-3 pb-12 px-4">
@@ -100,7 +137,7 @@ export default function Questions(props: QuestionsProps) {
         <p className="text-xl pb-8">
           Before starting questions, make sure to complete reading the passages. Once you have completed, then press Continue.
         </p>
-        <button className="btn btn-primary" onClick={() => setStartQuestions(true)}>Continue</button>
+        <button className="btn btn-primary" onClick={startQuestionsAction}>Continue</button>
       </>
       : <>
 
@@ -127,7 +164,7 @@ export default function Questions(props: QuestionsProps) {
           })
         }
         <div className="flex justify-end w-full items-center mt-4">
-          <button className="btn btn-primary" type="submit">Continue</button>
+          <button className="btn btn-primary" type="submit" disabled={isSubmitting}>Continue</button>
         </div>
       </form>
 

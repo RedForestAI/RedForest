@@ -1,5 +1,17 @@
 import BaseLogger from "./base-logger"
 
+export type ActionLog = {
+  type: string,
+  value: any
+}
+
+export const triggerActionLog = (detail: ActionLog) => {
+  // Create a custom event with a given name and detail object
+  const event = new CustomEvent("actionLog", { detail });
+  // Dispatch the event on the document
+  document.dispatchEvent(event);
+};
+
 export default class ActionsLogger extends BaseLogger {
   loggedData!: [string[]]
 
@@ -7,10 +19,7 @@ export default class ActionsLogger extends BaseLogger {
     super()
     this.init()
     this.log = this.log.bind(this);
-    document.addEventListener("questionSubmit", this.log)
-    document.addEventListener("pdfChange", this.log)
-    document.addEventListener("eyeTracker", this.log)
-    document.addEventListener("activityComplete", this.log)
+    document.addEventListener("actionLog", this.log)
   }
 
   init(){
