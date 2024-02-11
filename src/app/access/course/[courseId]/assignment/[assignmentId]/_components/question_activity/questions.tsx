@@ -35,6 +35,14 @@ const defaultConfig: QuestionConfig = {
   beforeStartPrompt: false
 }
 
+type ScoreTrack = {
+  answer: string
+  correct: boolean
+  pts: number
+}
+
+let scores: ScoreTrack[] = []
+
 export default function Questions(props: QuestionsProps) {
 
   // Configs
@@ -45,6 +53,7 @@ export default function Questions(props: QuestionsProps) {
   const { register, handleSubmit, clearErrors, reset, formState: { errors } } = useForm();
   const [ currentQuestionId, setCurrentQuestionId ] = useState<number>(props.activityData.currentQuestionId)
   const [ startQuestions, setStartQuestions ] = useState<boolean>(false)
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false)
 
   // Mutations
   const appendAnswerMutation = api.activityData.appendAnswer.useMutation()
@@ -60,6 +69,8 @@ export default function Questions(props: QuestionsProps) {
   }
 
   async function onSubmit(data: any) {
+    if (isSubmitting) return;
+    setIsSubmitting(true)
 
     // Update choice in the database
     let response = {correct: false, pts: 0}
@@ -74,6 +85,9 @@ export default function Questions(props: QuestionsProps) {
       console.log(error)
       return;
     }
+
+    // Add to the score
+    scores.push({answer: data.answer, correct: response.correct, pts: response.pts})
 
     triggerActionLog({type: "questionSubmit", value: {
       currentQuestionId: currentQuestionId, 
@@ -90,10 +104,22 @@ export default function Questions(props: QuestionsProps) {
       // Check for activity complete
       setCurrentQuestionId(currentQuestionId + 1)
       props.setComplete(true)
-      triggerActionLog({type: "activityComplete", value: {complete: true}})
+
+      // Compute the score and log again for redundancy
+      let totalPtsEarned = 0
+      let totalPtsPossible = 0
+      scores.forEach(score => {
+        if (score.correct) {
+          totalPtsEarned += score.pts
+        }
+        totalPtsPossible += score.pts
+      })
+      let scorePercentage = (totalPtsEarned / totalPtsPossible) * 100
+      triggerActionLog({type: "activityComplete", value: {complete: true, score: scorePercentage.toFixed(1), scores: scores}});
     }
 
     reset()
+    setIsSubmitting(false)
   }
 
   useEffect(() => {
@@ -138,7 +164,7 @@ export default function Questions(props: QuestionsProps) {
           })
         }
         <div className="flex justify-end w-full items-center mt-4">
-          <button className="btn btn-primary" type="submit">Continue</button>
+          <button className="btn btn-primary" type="submit" disabled={isSubmitting}>Continue</button>
         </div>
       </form>
 
