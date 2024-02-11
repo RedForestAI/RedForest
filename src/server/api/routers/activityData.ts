@@ -14,16 +14,33 @@ export const activityDataRouter = createTRPCRouter({
     }),
 
   appendAnswer: privateProcedure
-    .input(z.object({ id: z.string(), answer: z.number() }))
+    .input(z.object({ activityDataId: z.string(), activityId: z.string(), index: z.number(), answer: z.number() }))
     .mutation(async ({ input, ctx }) => {
-      return await ctx.db.activityData.update({
-        where: { id: input.id },
+      
+      // Get the question related to the answer to get a score
+      const questions = await ctx.db.question.findMany({
+        where: { activityId: input.activityId },
+      });
+
+      // Get the question that matches the index
+      const question = questions.find((question) => question.index === input.index);
+
+      // If the question is not found, throw an error
+      if (!question) {
+        throw new Error("Question not found");
+      }
+      
+      await ctx.db.activityData.update({
+        where: { id: input.activityDataId },
         data: { 
           answers: { push: input.answer }, 
           answersAt: { push: new Date()},
           currentQuestionId: { increment: 1 } 
         },
       });
+
+      // Return if correct and how many points
+      return { correct: question?.answer === input.answer, pts: question?.pts };
     }),
 
   markAsComplete: privateProcedure

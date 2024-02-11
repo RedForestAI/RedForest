@@ -62,14 +62,25 @@ export default function Questions(props: QuestionsProps) {
   async function onSubmit(data: any) {
 
     // Update choice in the database
+    let response = {correct: false, pts: 0}
     try {
-      await appendAnswerMutation.mutateAsync({id: props.activityData.id, answer: Number(data.answer)})
+      response = await appendAnswerMutation.mutateAsync({
+        activityDataId: props.activityData.id, 
+        activityId: props.activity.id,
+        index: currentQuestionId,
+        answer: Number(data.answer)
+      })
     } catch (error) {
       console.log(error)
       return;
     }
 
-    triggerActionLog({type: "questionSubmit", value: {currentQuestionId: currentQuestionId, option: data.answer}});
+    triggerActionLog({type: "questionSubmit", value: {
+      currentQuestionId: currentQuestionId, 
+      option: data.answer,
+      correct: response.correct,
+      pts: response.pts
+    }});
     
     if (currentQuestionId < props.questions.length - 1) {
       setCurrentQuestionId(currentQuestionId + 1)
