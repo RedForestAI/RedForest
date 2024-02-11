@@ -20,6 +20,10 @@ const triggerActivitySubmission = (eventName: string, detail: any) => {
   document.dispatchEvent(event);
 };
 
+type QuestionConfig = {
+  beforeStartPrompt: boolean
+}
+
 type QuestionsProps = {
   course: Course
   assignment: Assignment
@@ -33,13 +37,26 @@ type QuestionsProps = {
 
   complete: boolean
   setComplete: (complete: boolean) => void
+
+  // Configs
+  config?: Partial<QuestionConfig>
+}
+
+// Default configs
+const defaultConfig: QuestionConfig = {
+  beforeStartPrompt: false
 }
 
 export default function Questions(props: QuestionsProps) {
+
+  // Configs
+  const finalConfig = {...defaultConfig, ...props.config}
+
   // State
   const router = useRouter()
   const { register, handleSubmit, clearErrors, reset, formState: { errors } } = useForm();
   const [ currentQuestionId, setCurrentQuestionId ] = useState<number>(props.activityData.currentQuestionId)
+  const [ startQuestions, setStartQuestions ] = useState<boolean>(false)
 
   // Mutations
   const appendAnswerMutation = api.activityData.appendAnswer.useMutation()
@@ -76,32 +93,46 @@ export default function Questions(props: QuestionsProps) {
 
   return (
     <div className="items-start flex flex-col pt-3 pb-12 px-4">
+    
+    {finalConfig.beforeStartPrompt && !startQuestions
+      ? <>
+        <h1 className="text-2xl font-bold pb-8 text-5xl">Before starting!</h1>
+        <p className="text-xl pb-8">
+          Before starting questions, make sure to complete reading the passages. Once you have completed, then press Continue.
+        </p>
+        <button className="btn btn-primary" onClick={() => setStartQuestions(true)}>Continue</button>
+      </>
+      : <>
+
       <div className="bg-neutral self-stretch flex flex-col justify-center items-stretch rounded-2xl max-md:max-w-full mt-5">
         <div className="bg-primary text-xs font-medium text-primary-content text-center p-0.5 leading-none rounded-full" style={{width: `${getProgress()}%`}}> {getProgress()}%</div>
       </div>
-      
-    <div className="self-stretch text-4xl mt-2.5 max-md:max-w-full">
-      Question {currentQuestionId + 1}
-    </div>
-    <div className="self-stretch text-xs mt-2.5 max-md:max-w-full">
-      {props.questions[currentQuestionId]?.content}
-    </div>
-    <form className="w-full" onSubmit={handleSubmit(onSubmit)}>
-      {props.questions[currentQuestionId]?.type === "MULTIPLE_CHOICE" &&
-        // Iterate through each choice
-        props.questions[currentQuestionId]?.options.map((choice, index) => {
-          return (
-            <div key={index} className="flex justify-start items-center w-full mt-4">
-              <input {...register(`answer`, {required: true})} value={index} type="radio" className="radio mr-4" />
-              <label className="text-xs">{choice}</label>
-            </div>
-          )
-        })
-      }
-      <div className="flex justify-end w-full items-center mt-4">
-        <button className="btn btn-primary" type="submit">Continue</button>
+
+      <div className="self-stretch text-4xl mt-2.5 max-md:max-w-full">
+        Question {currentQuestionId + 1}
       </div>
-    </form>
+      <div className="self-stretch text mt-2.5 max-md:max-w-full">
+        {props.questions[currentQuestionId]?.content}
+      </div>
+      <form className="w-full" onSubmit={handleSubmit(onSubmit)}>
+        {props.questions[currentQuestionId]?.type === "MULTIPLE_CHOICE" &&
+          // Iterate through each choice
+          props.questions[currentQuestionId]?.options.map((choice, index) => {
+            return (
+              <div key={index} className="flex justify-start items-center w-full mt-4">
+                <input {...register(`answer`, {required: true})} value={index} type="radio" className="radio mr-4 radio-primary" />
+                <label className="text">{choice}</label>
+              </div>
+            )
+          })
+        }
+        <div className="flex justify-end w-full items-center mt-4">
+          <button className="btn btn-primary" type="submit">Continue</button>
+        </div>
+      </form>
+
+      </>
+    }
 
     {errors.answer && 
       <div className="toast toast-end">

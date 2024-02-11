@@ -1,7 +1,7 @@
 import { ReadingFile } from '@prisma/client'
 import React, { useMemo, useState, useEffect, useContext } from 'react';
 import DocViewer, { DocViewerRenderers, IDocument } from '@cyntler/react-doc-viewer';
-import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
+import { faMagnifyingGlass, faPlus, faMinus } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 
@@ -45,7 +45,11 @@ function DocumentDrawer(props: {files: ReadingFile[], docs: {uri: string}[], act
               </button>
             ))}
           </div>
-          <button className="bg-base-200 h-screen border-l w-[2vw] cursor-pointer" onClick={openDrawer}>{open ? "+" : "-"}</button>
+          <button className="bg-base-200 h-screen border-l w-[2vw] cursor-pointer" onClick={openDrawer}>{
+            open ? <FontAwesomeIcon icon={faPlus}/> 
+                 : <FontAwesomeIcon icon={faMinus}/>
+          }
+          </button>
         </div>
     </div>
   )
