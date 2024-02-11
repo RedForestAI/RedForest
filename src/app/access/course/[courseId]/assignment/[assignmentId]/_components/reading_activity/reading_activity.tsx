@@ -164,7 +164,7 @@ export default function ReadingActivity(props: ReadingActivityProps) {
         <TaskDrawer>
           <div id="QuestionPane" className="mt-20 w-full">
           {!complete  
-            ? <Questions {...props} complete={complete} setComplete={setComplete}/> 
+            ? <Questions {...props} complete={complete} setComplete={setComplete} config={{beforeStartPrompt: true}}/> 
             : <ActivityCompletion {...props} complete={complete}/>
           }
           </div>
