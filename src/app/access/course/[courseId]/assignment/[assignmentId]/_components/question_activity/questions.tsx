@@ -1,24 +1,12 @@
 "use client";
 
 import { Course, Assignment, Activity, ActivityData, AssignmentData, Question } from '@prisma/client'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { api } from "~/trpc/react"
 import { useForm } from "react-hook-form"
 import { useRouter } from "next/navigation"
 
-const triggerQuestionSubmission = (eventName: string, detail: any) => {
-  // Create a custom event with a given name and detail object
-  const event = new CustomEvent(eventName, { detail });
-  // Dispatch the event on the document
-  document.dispatchEvent(event);
-};
-
-const triggerActivitySubmission = (eventName: string, detail: any) => {
-  // Create a custom event with a given name and detail object
-  const event = new CustomEvent(eventName, { detail });
-  // Dispatch the event on the document
-  document.dispatchEvent(event);
-};
+import { triggerActionLog } from "~/loggers/actions-logger"
 
 type QuestionConfig = {
   beforeStartPrompt: boolean
@@ -66,6 +54,11 @@ export default function Questions(props: QuestionsProps) {
     return Math.floor((currentQuestionId / totalQuestions) * 100);
   }
 
+  function startQuestionsAction() {
+    setStartQuestions(true)
+    triggerActionLog({type: "questionStart", value: {start: true}})
+  }
+
   async function onSubmit(data: any) {
 
     // Update choice in the database
@@ -76,20 +69,27 @@ export default function Questions(props: QuestionsProps) {
       return;
     }
 
-    triggerQuestionSubmission("questionSubmit", {type: "questionSubmit", value: {currentQuestionId: currentQuestionId, option: data.answer}});
+    triggerActionLog({type: "questionSubmit", value: {currentQuestionId: currentQuestionId, option: data.answer}});
     
     if (currentQuestionId < props.questions.length - 1) {
       setCurrentQuestionId(currentQuestionId + 1)
+      triggerActionLog({type: "questionLoad", value: {upcomingQuestionId: currentQuestionId + 1}});
     } else {
 
       // Check for activity complete
       setCurrentQuestionId(currentQuestionId + 1)
       props.setComplete(true)
-      triggerActivitySubmission("activityComplete", {type: "activityComplete", value: {complete: true}})
+      triggerActionLog({type: "activityComplete", value: {complete: true}})
     }
 
     reset()
   }
+
+  useEffect(() => {
+    if (!finalConfig.beforeStartPrompt) {
+      triggerActionLog({type: "questionLoad", value: {upcomingQuestionId: currentQuestionId}});
+    }
+  }, [])
 
   return (
     <div className="items-start flex flex-col pt-3 pb-12 px-4">
@@ -100,7 +100,7 @@ export default function Questions(props: QuestionsProps) {
         <p className="text-xl pb-8">
           Before starting questions, make sure to complete reading the passages. Once you have completed, then press Continue.
         </p>
-        <button className="btn btn-primary" onClick={() => setStartQuestions(true)}>Continue</button>
+        <button className="btn btn-primary" onClick={startQuestionsAction}>Continue</button>
       </>
       : <>
 

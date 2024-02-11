@@ -7,14 +7,7 @@ import GazeDot from '~/eyetracking/GazeDot';
 
 import WGCalibration from './wgcalibration';
 import { AbstractEyeTracker, WebGazeEyeTracker, TobiiProSDKEyeTracker } from './eye-tracker-interface';
-import { set } from 'zod';
-
-const triggerEyeTrackerUpdate = (eventName: string, detail: any) => {
-  // Create a custom event with a given name and detail object
-  const event = new CustomEvent(eventName, { detail });
-  // Dispatch the event on the document
-  document.dispatchEvent(event);
-};
+import { triggerActionLog } from '~/loggers/actions-logger';
 
 export default function EyeTrackingController(props: {complete: boolean}) {
   const [open, setOpen] = useState<boolean>(false);
@@ -129,7 +122,7 @@ export default function EyeTrackingController(props: {complete: boolean}) {
     if (props.complete) {
       if (runningET) {
         eyeTracker?.end();
-        triggerEyeTrackerUpdate("eyeTracker", {type: "eyeTracker", value: {action: "end", type: option}});
+        triggerActionLog({type: "eyeTracker", value: {action: "end", type: option}});
       }
     }
   }, [props.complete])
@@ -137,19 +130,21 @@ export default function EyeTrackingController(props: {complete: boolean}) {
   useEffect(() => {
     if (runningET) {
       if (calibration) {
-        triggerEyeTrackerUpdate("eyeTracker", {type: "eyeTracker", value: {action: "calibrate-start", type: option}});
+        triggerActionLog({type: "eyeTracker", value: {action: "calibrate-start", type: option}});
       } else {
-        triggerEyeTrackerUpdate("eyeTracker", {type: "eyeTracker", value: {action: "calibrate-end", type: option}});
+        triggerActionLog({type: "eyeTracker", value: {action: "calibrate-end", type: option}});
       }
     }
   }, [calibration])
 
   useEffect(() => {
-    let value = "stop"
-    if (runningET) {
-      value = "start"
+    if (option != "") {
+      let value = "stop"
+      if (runningET) {
+        value = "start"
+      }
+      triggerActionLog({type: "eyeTracker", value: {action: value, type: option}});
     }
-    triggerEyeTrackerUpdate("eyeTracker", {type: "eyeTracker", value: {action: value, type: option}});
 
     // Reset the gaze point value
     setGaze({x: -100, y: -100});

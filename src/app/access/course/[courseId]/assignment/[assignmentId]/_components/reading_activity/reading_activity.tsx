@@ -65,9 +65,7 @@ export default function ReadingActivity(props: ReadingActivityProps) {
   useEffect(() => {
     // Define the click event handler function
     const aoiEncoding = (e: any) => {
-      // console.log('You clicked somewhere on the page!');
       const aoi = AOIEncoding(e.detail.x, e.detail.y)
-      // console.log(aoi)
 
       // Create the event data
       let data = {}

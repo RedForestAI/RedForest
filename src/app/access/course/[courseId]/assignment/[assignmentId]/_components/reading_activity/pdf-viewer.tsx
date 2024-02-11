@@ -8,13 +8,7 @@ import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import BlurModal from './blur-modal';
 import { useMiddleNavBarContext, useEndNavBarContext } from '~/providers/navbar-provider';
 import "./pdf-viewer.css"
-
-const triggerPDFSelect = (eventName: string, detail: any) => {
-  // Create a custom event with a given name and detail object
-  const event = new CustomEvent(eventName, { detail });
-  // Dispatch the event on the document
-  document.dispatchEvent(event);
-};
+import { triggerActionLog } from "~/loggers/actions-logger";
 
 function DocumentDrawer(props: {files: ReadingFile[], docs: {uri: string}[], activeDocument: IDocument | undefined, setActiveDocument: (doc: IDocument) => void}){
   const [open, setOpen] = useState(true)
@@ -25,7 +19,7 @@ function DocumentDrawer(props: {files: ReadingFile[], docs: {uri: string}[], act
 
   function changeDocument(index: number) {
     props.setActiveDocument(props.docs[index]!)
-    triggerPDFSelect("pdfChange", {type: "pdfChange", value: {index: index}});
+    triggerActionLog({type: "pdfLoad", value: {index: index}});
   }
 
   return (
@@ -70,7 +64,9 @@ export default function PDFViewer(props: {files: ReadingFile[]}) {
     return (<DocViewer
       documents={docs}
       activeDocument={activeDocument}
-      onDocumentChange={(newDoc) => {setActiveDocument(newDoc)}}
+      onDocumentChange={(newDoc) => {
+        setActiveDocument(newDoc)
+      }}
       pluginRenderers={DocViewerRenderers}
       style={{ width: `${70*zoomLevel}%`, height: `100%`, backgroundColor: "transparent"}}
       prefetchMethod="GET"
@@ -148,6 +144,7 @@ export default function PDFViewer(props: {files: ReadingFile[]}) {
         }
       });
       setDocs(newDocs);
+      triggerActionLog({type: "pdfLoad", value: {index: 0}});
     }
 
     if (docs.length == 0){
@@ -158,6 +155,7 @@ export default function PDFViewer(props: {files: ReadingFile[]}) {
 
   function onReadingStart() {
     setReadingStart(true);
+    triggerActionLog({type: "readingStart", value: {start: true}});
   }
 
   return (
