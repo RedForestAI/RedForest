@@ -9,6 +9,9 @@ import BlurModal from './blur-modal';
 import { useMiddleNavBarContext, useEndNavBarContext } from '~/providers/navbar-provider';
 import "./pdf-viewer.css"
 import { triggerActionLog } from "~/loggers/actions-logger";
+import { set } from 'zod';
+
+const signedUrlTTL = 60;
 
 function DocumentDrawer(props: {files: ReadingFile[], docs: {uri: string}[], activeDocument: IDocument | undefined, setActiveDocument: (doc: IDocument) => void}){
   const [open, setOpen] = useState(true)
@@ -71,6 +74,11 @@ export default function PDFViewer(props: {files: ReadingFile[]}) {
       style={{ width: `${70*zoomLevel}%`, height: `100%`, backgroundColor: "transparent"}}
       prefetchMethod="GET"
       config={{
+        loadingRenderer: {
+          overrideComponent: () => {
+            return <span className="loading loading-spinner loading-lg"></span>
+          }
+        },
         header: {
           disableHeader: true,
           disableFileName: true,
@@ -107,7 +115,7 @@ export default function PDFViewer(props: {files: ReadingFile[]}) {
 
   useEffect(() => {
 
-    async function fetchUrls() {
+    async function fetchPDFs() {
       // If there are no files, return
       if (props.files == undefined || props.files.length == 0) {
         return;
@@ -116,30 +124,39 @@ export default function PDFViewer(props: {files: ReadingFile[]}) {
       // Get the public URLs for the files
       const filepaths = props.files.map((file) => file.filepath);
 
-      // For each file, get the public URL
-      let urls: string[] = []
-      const { data, error } = await supabase
-        .storage
-        .from('activity_reading_file')
-        .createSignedUrls(filepaths, 60);
-      
+      // For each file, download the file
+      let files: Blob[] = []
+
+      for (let i = 0; i < filepaths.length; i++) {
+        const filepath = filepaths[i];
+        if (filepath == null) {
+          setError("Failed to fetch URLs for the files. Please logout and try again.");
+          return;
+        }
+        const { data, error } = await supabase
+          .storage
+          .from('activity_reading_file')
+          .download(filepath)
+        
         if (error) {
-        console.error(error);
-        setError(error.message);
-        return;
+          console.error(error);
+          setError(error.message);
+          return;
+        }
+
+        files.push(data as Blob);
       }
 
-      // Get the data, remove if null
-      urls = data!.map((file) => file.signedUrl as string).filter((url) => url != null);
-
       // Iterate through the files and add them to the docs array
-      if (urls.length == 0) {
+      if (files.length == 0) {
         setError("Failed to fetch URLs for the files. Please logout and try again.");
         return;
       }
-      const newDocs = urls.map((url: any) => {
+
+      // Create URLs for the files
+      const newDocs = files.map((file: any) => {
         return {
-          uri: url,
+          uri: URL.createObjectURL(file),
           fileType: "pdf"
         }
       });
@@ -148,7 +165,7 @@ export default function PDFViewer(props: {files: ReadingFile[]}) {
     }
 
     if (docs.length == 0){
-      fetchUrls();
+      fetchPDFs();
     }
 
   }, [props.files])
