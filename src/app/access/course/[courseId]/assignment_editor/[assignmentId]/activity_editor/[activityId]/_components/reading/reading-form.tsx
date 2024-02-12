@@ -139,10 +139,6 @@ export default function ReadingForm(props: ReadingFormProps) {
       router.refresh();
       return;
     }
-    else if (action === "Publish") {
-      publishFunction()
-      return;
-    }
     else {
       return;
     }
@@ -166,7 +162,6 @@ export default function ReadingForm(props: ReadingFormProps) {
         <div className="flex flex-row gap-2.5">
           <button className="btn btn-info" name="action" value="Save">Save</button>
           <button className="btn btn-info" name="action" value="Save&Close">Save & Close</button>
-          <button className="btn btn-success" name="action" value="Publish">Publish</button>
         </div>
       </div>
     </form>

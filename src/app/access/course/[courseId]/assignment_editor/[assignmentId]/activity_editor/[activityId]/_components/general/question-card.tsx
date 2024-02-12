@@ -4,7 +4,7 @@ import { useState, useRef, useEffect } from "react";
 import { generateUUID } from "~/utils/uuid";
 import { api } from "~/trpc/react";
 
-import { faTrash } from '@fortawesome/free-solid-svg-icons';
+import { faTrash, faPlus, faMinus } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 type QuestionCardProps = {
@@ -18,31 +18,45 @@ type AnswerCardProps = {
   index: number
   answerText: string
   answer: number
+  setOptions: any
   setQuestions: any
 }
 
 function AnswerCard(props: AnswerCardProps) {
 
+  // const deleteAnswer = () => {
+  //   props.setQuestions((prev: any) => prev.map((question: Question) => {
+  //     if (question.index === props.question_index) {
+  //       return {...question, options: question.options.filter((answer: string, index: number) => index !== props.index)}
+  //     }
+  //     return question
+  //   }))
+  // }
+
+  // const setText = (event: any) => {
+  //   props.setQuestions((prev: any) => prev.map((question: Question) => {
+  //     if (question.index === props.question_index) {
+  //       return {...question, options: question.options.map((answer: string, index: number) => {
+  //         if (index === props.index) {
+  //           return event.target.value
+  //         }
+  //         return answer
+  //       })}
+  //     }
+  //     return question
+  //   }))
+  // }
+
   const deleteAnswer = () => {
-    props.setQuestions((prev: any) => prev.map((question: Question) => {
-      if (question.index === props.question_index) {
-        return {...question, options: question.options.filter((answer: string, index: number) => index !== props.index)}
-      }
-      return question
-    }))
+    props.setOptions((prev: string[]) => prev.filter((answer: string, index: number) => index !== props.index))
   }
 
   const setText = (event: any) => {
-    props.setQuestions((prev: any) => prev.map((question: Question) => {
-      if (question.index === props.question_index) {
-        return {...question, options: question.options.map((answer: string, index: number) => {
-          if (index === props.index) {
-            return event.target.value
-          }
-          return answer
-        })}
+    props.setOptions((prev: string[]) => prev.map((answer: string, index: number) => {
+      if (index === props.index) {
+        return event.target.value
       }
-      return question
+      return answer
     }))
   }
 
@@ -69,25 +83,10 @@ function AnswerCard(props: AnswerCardProps) {
 }
 
 
-function EmptyAnswerCard(props: {question_index: number, setQuestions: any}) {
+function EmptyAnswerCard(props: {question_index: number, setOptions: any}) {
   const createAnswer = () => {
     // If no prior answers, mark this as the correct answer
-    props.setQuestions((prev: any) => prev.map((question: Question) => {
-      if (question.index === props.question_index) {
-        if (question.options.length === 0) {
-          return {...question, answer: 0}
-        }
-        return question
-      }
-      return question
-    }))
-
-    props.setQuestions((prev: any) => prev.map((question: Question) => {
-      if (question.index === props.question_index) {
-        return {...question, options: [...question.options, ""]}
-      }
-      return question
-    }))
+    props.setOptions((prev: string[]) => [...prev, ""])
   }
 
   return (
@@ -107,8 +106,18 @@ export function QuestionCard(props: QuestionCardProps) {
   const [open, setOpen] = useState<boolean>(false)
   const contentRef = useRef(null)
   const [contentHeight, setContentHeight] = useState(0);
+  const [options, setOptions] = useState<string[]>(props.question.options)
 
   const deleteMutation = api.question.delete.useMutation();
+
+  useEffect(() => {
+    props.setQuestions((prev: Question[]) => prev.map((question: Question) => {
+      if (question.id === props.question.id) {
+        return {...question, options: options}
+      }
+      return question
+    }))
+  }, [options])
 
   const setNumberInput = (event: any) => {
     props.setQuestions((prev: Question[]) => prev.map((question: Question) => {
@@ -127,15 +136,6 @@ export function QuestionCard(props: QuestionCardProps) {
       return question
     }))
   }
-
-  const setAnswers = (newAnswers: any) => {
-    props.setQuestions((prev: Question[]) => prev.map((question: Question) => {
-      if (question.id === props.question.id) {
-        return { ...question, options: newAnswers(question.options) };
-      }
-      return question;
-    }));
-  };
 
   const setMC = () => {
     props.setQuestions((prev: Question[]) => prev.map((question: Question) => {
@@ -186,7 +186,10 @@ export function QuestionCard(props: QuestionCardProps) {
           <button className="btn btn-ghost btn-sm mr-4" onClick={deleteQuestion}>
             <FontAwesomeIcon icon={faTrash} className='h-4' />
           </button>
-          <button className="btn btn-ghost btn-sm" onClick={() => {setOpen(!open)}}>{open ? "+" : "-"}</button>
+          <button className="btn btn-ghost btn-sm" onClick={() => {setOpen(!open)}}>{
+            !open ? <FontAwesomeIcon icon={faPlus}/> 
+                 : <FontAwesomeIcon icon={faMinus}/>
+            }</button>
         </div>
       </div>
       <div className="collapse-content">
@@ -231,19 +234,15 @@ export function QuestionCard(props: QuestionCardProps) {
           ref={contentRef}
           style={{maxHeight: `${contentHeight}px`}}
           className={`form-control mt-4 transition-all duration-500 ${props.question.type === QuestionType.MULTIPLE_CHOICE ? 'max-h-screen' : 'max-h-0 overflow-hidden'}`}>
-            <div className="form-control mt-4">
-              <label className="label">
-                <span className="label-text">Question Options</span>
-              </label> 
-              <Reorder.Group axis="y" values={props.question.options} onReorder={setAnswers}>
-                {props.question.options.map((item, index) => (
-                  <Reorder.Item key={index} value={item}>
-                    <AnswerCard question_index={props.index} index={index} answer={props.question.answer} answerText={item} setQuestions={props.setQuestions}/>
-                  </Reorder.Item>
-                ))}
-              </Reorder.Group>
-              <EmptyAnswerCard question_index={props.index} setQuestions={props.setQuestions}/>
-            </div>
+          <div className="form-control mt-4">
+            <label className="label">
+              <span className="label-text">Question Options</span>
+            </label> 
+              {options.map((item, index) => (
+                <AnswerCard question_index={props.index} index={index} answer={props.question.answer} answerText={item} setOptions={setOptions} setQuestions={props.setQuestions}/>
+              ))}
+            <EmptyAnswerCard question_index={props.index} setOptions={setOptions}/>
+          </div>
         </div>
       </div>
     </div>
