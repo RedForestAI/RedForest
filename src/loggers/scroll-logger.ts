@@ -30,6 +30,10 @@ export default class ScrollLogger extends BaseLogger {
     this.loggedData = [["timestamp", "scrollYAbsolute", "scrollYPercentage"]]
   }
 
+  clear() {
+    this.init()
+  }
+
   log(event: any) {
     const scrollY = window.scrollY;
     const windowHeight = window.innerHeight;

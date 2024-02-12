@@ -22,6 +22,10 @@ export default class GazeLogger extends BaseLogger {
     ]]
   }
 
+  clear() {
+    this.init()
+  }
+
   log(event: any) {
     this.loggedData.push([
       event.detail.t,

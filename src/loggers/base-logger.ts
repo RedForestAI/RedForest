@@ -13,6 +13,10 @@ export default class BaseLogger {
   log(event: any) {
   }
 
+  clear() {
+    this.init()
+  }
+
   getBlob() {
     let content = arrayToCsv(this.loggedData)
     let blob = new Blob([content], { type: "text/csv;charset=utf-8"})

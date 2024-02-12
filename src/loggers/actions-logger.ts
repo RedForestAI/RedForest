@@ -25,6 +25,10 @@ export default class ActionsLogger extends BaseLogger {
   init(){
     this.loggedData = [["timestamp", "type", "value"]]
   }
+  
+  clear() {
+    this.init()
+  }
 
   log(event: any) {
     this.loggedData.push([new Date().toISOString(), event.detail.type.toString(), JSON.stringify(event.detail.value)])
