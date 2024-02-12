@@ -110,7 +110,7 @@ export default function ReadingActivity(props: ReadingActivityProps) {
 
       // Generate a session ID
       const session_id = generateUUID()
-      const session_fp = `${props.activityData.id}/${props.profile.id}/${session_id}`
+      const session_fp = `course_${props.course.id}/activity_${props.activity.id}/profile_${props.profile.id}/session_${session_id}`
 
       // Create a path
       try {
@@ -142,6 +142,28 @@ export default function ReadingActivity(props: ReadingActivityProps) {
 
         if (actions_storage_result.error){
           console.error("Failed to upload actions data")
+        }
+
+        // Meta data
+        const meta_file = new Blob([JSON.stringify({
+          tracelog_date_uploaded: new Date().toISOString(),
+          session_id: session_id, 
+          course_id: props.course.id, 
+          assignment_id: props.assignment.id,
+          assignment_data_id: props.assignmentData.id,
+          activity_id: props.activity.id, 
+          activity_data_id: props.activityData.id,
+          profile_id: props.profile.id,
+          activityType: "reading",
+          totalQuestions: props.questions.length,
+          totalFiles: readingFiles.length,
+        })], { type: "application/json;charset=utf-8"})
+        const meta_filepath = `${session_fp}/meta.json`
+        const meta_result = await createTracelogFile.mutateAsync({activityDataId: props.activityData.id, filepath: meta_filepath})
+        const meta_storage_result = await supabase.storage.from('tracelogs').upload(meta_filepath, meta_file);
+
+        if (meta_storage_result.error){
+          console.error("Failed to upload meta data")
         }
 
       } catch (error) {
