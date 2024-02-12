@@ -61,12 +61,18 @@ export default function PDFViewer(props: {files: ReadingFile[]}) {
   const [zoomLevel, setZoomLevel] = useState(1); // Starting zoom level
   const [error, setError] = useState<string | null>(null);
   const [readingStart, setReadingStart] = useState<boolean>(false);
+  const [viewerKey, setViewerKey] = React.useState(0); //Viewer key state
 
   // Memo
   const docViewer = useMemo(() => {
+
+    // Required to force the viewer to re-render when the active document changes
+    setViewerKey((prev) => prev + 1);
+
     return (<DocViewer
       documents={docs}
       activeDocument={activeDocument}
+      key={viewerKey}
       onDocumentChange={(newDoc) => {
         setActiveDocument(newDoc)
       }}
@@ -91,7 +97,7 @@ export default function PDFViewer(props: {files: ReadingFile[]}) {
         }
       }}
     />)
-  }, [docs, activeDocument])
+  }, [docs, activeDocument, zoomLevel])
 
   useEffect(() => {
     
@@ -161,6 +167,7 @@ export default function PDFViewer(props: {files: ReadingFile[]}) {
         }
       });
       setDocs(newDocs);
+      setActiveDocument(newDocs[0]);
       triggerActionLog({type: "pdfLoad", value: {index: 0}});
     }
 
