@@ -59,6 +59,12 @@ export default function ReadingActivity(props: ReadingActivityProps) {
     };
     getReadingActivity();
 
+    // Clear logs
+    gazeLogger.clear()
+    scrollLogger.clear()
+    actionsLogger.clear()
+    
+
   }, []);
 
   // Debugging
