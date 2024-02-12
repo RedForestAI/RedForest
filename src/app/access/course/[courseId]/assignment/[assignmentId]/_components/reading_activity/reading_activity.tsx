@@ -116,7 +116,7 @@ export default function ReadingActivity(props: ReadingActivityProps) {
 
       // Generate a session ID
       const session_id = generateUUID()
-      const session_fp = `course_${props.course.id}/activity_${props.activity.id}/profile_${props.profile.id}/session_${session_id}`
+      const session_fp = `course_${props.course.id}/assignment_${props.assignment.id}/activity_${props.activity.id}/profile_${props.profile.id}/session_${session_id}`
 
       // Create a path
       try {
