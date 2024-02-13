@@ -143,6 +143,7 @@ model ActivityData {
   assignmentDataId  String      @db.Uuid
 
   traceLogFiles     TraceLogFile[]
+  highlights        Highlight[]
 
   @@map("user_activity_data")
 }
@@ -166,10 +167,28 @@ model ReadingFile {
   size              Int
   index             Int
 
+  // Highlights
+  highlights        Highlight[]
+
   // ReadingActivity
   activity          ReadingActivity @relation(fields: [activityId], references: [id])
   activityId        String      @db.Uuid
   @@map("activity_reading_file")
+}
+
+model Highlight {
+  id                String      @id @default(uuid()) @db.Uuid
+  content           String
+  position          Json  // x1, y1, x2, y2, width, height
+
+  // PDF File
+  file              ReadingFile @relation(fields: [fileId], references: [id])
+  fileId            String      @db.Uuid
+
+  // User Activity
+  activityData      ActivityData @relation(fields: [activityDataId], references: [id])
+  activityDataId    String      @db.Uuid
+  @@map("highlight")
 }
 
 model ReadingActivity {
