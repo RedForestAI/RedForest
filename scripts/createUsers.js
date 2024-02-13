@@ -4,7 +4,13 @@ This script creates users from a CSV file. The CSV file should have the followin
 
 Two columns: 
   (1) id, string
-  (2) password, string 
+  (2) password, string
+
+HOW TO USE:
+
+```
+node scripts/createUsers.js -c path/to/csvFile.csv
+```
 
 */
 
@@ -13,6 +19,7 @@ const path = require('path')
 const { parse } = require('csv-parse');
 const { createClient } = require('@supabase/supabase-js')
 const { ArgumentParser } = require('argparse')
+
 require('dotenv').config()
 
 // Parse arguments
@@ -46,7 +53,27 @@ async function createUser(email, password) {
    })
 }
 
+function arrayToCsv(data){
+  return data.map(row =>
+    row
+    .map(String)  // convert every value to String
+    .map((v) => v.replaceAll('"', '""'))  // escape double quotes
+    .map((v) => `"${v}"`)  // quote it
+    .join(',')  // comma-separated
+  ).join('\r\n');  // rows starting on new lines
+}
+
+function writeCsv(dataToWrite, filePath){
+  fs.writeFile(filePath, dataToWrite, 'utf8', function (err) {
+    if (err) {
+      console.error(err);
+    }
+  });
+}
+
 const main = async () => {
+  let resultingData = [['email']]
+  
   let total = 0;
   fs.createReadStream(csvFilePath)
     .pipe(parse({delimiter: ','}))
@@ -62,11 +89,16 @@ const main = async () => {
           console.error('CSV file must have two columns: id, password')
           process.exit(1)
         }
+        total++;
+        return;
       };
 
       // Construct email
       let email = csvrow[0].toString() + 'study1@redforest.app'
       console.log('Creating user: ' + email)
+
+      // Push
+      resultingData.push([email])
 
       // Create user
       const { data, error } = await createUser(email, csvrow[1])
@@ -74,10 +106,16 @@ const main = async () => {
         console.error(error)
       }
 
-      total++;   
+      total++;
     })
     .on('end',function() {
       console.log('Complete! Total users created: ' + total);
+
+      // Save resulting data to CSV
+      let csvData = arrayToCsv(resultingData)
+      let timestamp = new Date().toISOString().replace(/:/g, '-')
+      let csvFilePath = path.join(__dirname, `resultingData_${timestamp}.csv`)
+      writeCsv(csvData, csvFilePath)
     });
 };
 
