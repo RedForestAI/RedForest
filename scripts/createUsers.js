@@ -16,7 +16,6 @@ node scripts/createUsers.js -c path/to/csvFile.csv
 
 const fs = require('fs')
 const path = require('path')
-const { parse } = require('csv-parse');
 const { createClient } = require('@supabase/supabase-js')
 const { ArgumentParser } = require('argparse')
 const { PrismaClient, Role } = require('@prisma/client')
@@ -127,6 +126,7 @@ const main = async () => {
 
     // Create user
     asyncCalls.push(createUser(email, csvrow[1]))
+    total++;
   }
 
   const users = await Promise.all(

@@ -61,7 +61,6 @@
     "@typescript-eslint/parser": "^6.13.1",
     "argparse": "^2.0.1",
     "autoprefixer": "^10.4.16",
-    "csv-parse": "^5.5.3",
     "daisyui": "^4.6.0",
     "eslint": "^8.54.0",
     "eslint-config-next": "^13.5.6",

@@ -15,8 +15,6 @@ node scripts/registerUsersToCourse.js -c path/to/csvFile.csv
 
 const fs = require('fs')
 const path = require('path')
-const { parse } = require('csv-parse');
-const { createClient } = require('@supabase/supabase-js')
 const { ArgumentParser } = require('argparse')
 const { PrismaClient } = require('@prisma/client')
 require('dotenv').config()
@@ -50,16 +48,46 @@ function generateUUID() {
   });
 }
 
-const getCourseEnrollments = (profile_id, course_id) => [
-  {
+const getCourseEnrollment = (profile_id, course_id) => {
+  return {
     id: generateUUID(),
     student: { connect: { id: profile_id }},
     course: { connect: { id: course_id }},
-  },
-];
+  }
+}
+
+async function registerStudent(profile_id, course_id) {
+  // Create course enrollment
+  let enrollment = getCourseEnrollment(profile_id, course_id);
+
+  // First check if the enrollment already exists
+  const existingEnrollment = await client.courseEnrollment.findFirst({
+    where: {
+      studentId: profile_id,
+      courseId: course_id
+    }
+  })
+
+  if (existingEnrollment) {
+    console.warn(`Enrollment already exists for student: ${profile_id} in course: ${course_id}`)
+    return existingEnrollment
+  }
+
+  // Create course enrollment
+  return client.courseEnrollment.upsert(
+    {
+      where: { id: enrollment.id },
+      update: { ...enrollment },
+      create: { ...enrollment },
+    }
+  )
+}
 
 const main = async () => {
+
+  // Containers
   let total = 0;
+  let asyncCalls = [];
 
   // First check that the course exists
   const course = await client.course.findUniqueOrThrow({
@@ -87,20 +115,20 @@ const main = async () => {
 
     // Get the profile_id and course_id
     let profile_id = csvrow[1];
+    let course_id = course.id;
 
-    // Create course enrollment
-    const courseEnrollments = await Promise.all(
-      getCourseEnrollments(profile_id, course.id).map((courseEnrollment) => client.courseEnrollment.upsert(
-        {
-          where: { id: courseEnrollment.id },
-          update: { ...courseEnrollment },
-          create: { ...courseEnrollment },
-        }))
-    )
-    console.log(courseEnrollments)
+    // Register student
+    asyncCalls.push(registerStudent(profile_id, course_id))
 
     total++;
   }
+
+  // Execute all the async calls
+  const enrollments = await Promise.all(asyncCalls)
+
+  // Log
+  console.log(enrollments)
+  console.log(`Registered ${enrollments.length} users to course: ${course.name}`)
 };
 
 main()
