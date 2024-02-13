@@ -19,6 +19,10 @@ const path = require('path')
 const { parse } = require('csv-parse');
 const { createClient } = require('@supabase/supabase-js')
 const { ArgumentParser } = require('argparse')
+const { PrismaClient, Role } = require('@prisma/client')
+
+// Create Prisma client
+const client = new PrismaClient()
 
 require('dotenv').config()
 
@@ -46,11 +50,29 @@ const supabase = createClient(
 )
 
 async function createUser(email, password) {
-  return await supabase.auth.admin.createUser({ 
+  const {data, error} = await supabase.auth.admin.createUser({ 
     email: email, 
     password: password,
     email_confirm: true
-   })
+  })
+  if (error) {
+    console.error('Error creating user: ' + email)
+    return {email: email, id: null}
+  }
+   
+  // Create profile
+  const profile = await client.profile.upsert(
+    {
+      where: { id: data.user.id },
+      update: { id: data.user.id, role: Role.STUDENT },
+      create: { id: data.user.id, role: Role.STUDENT },
+    }
+  )
+
+  // Push
+  console.log('Creating user: ' + email)
+
+  return {email: email, id: data.user.id}
 }
 
 function arrayToCsv(data){
@@ -76,6 +98,8 @@ const main = async () => {
   
   let total = 0;
   let array = fs.readFileSync(csvFilePath).toString().split("\n");
+  let asyncCalls = []
+
   for (let i = 0; i < array.length; i++) {
 
     let csvrow = array[i].split(",");
@@ -95,21 +119,26 @@ const main = async () => {
     };
 
     // Construct email
-    let email = csvrow[0].toString() + 'study1@redforest.app'
-    console.log('Creating user: ' + email)
+    let name = csvrow[0].toString()
+    if (name == "") {
+      continue;
+    }
+    let email = name + 'study1@redforest.app'
 
     // Create user
-    const { data, error } = await createUser(email, csvrow[1])
-    if (error) {
-      console.error(error)
-    }
-
-    // Push
-    resultingData.push([email, data.user.id])
-    total++;
+    asyncCalls.push(createUser(email, csvrow[1]))
   }
 
-  console.log('Complete! Total users created: ' + total);
+  const users = await Promise.all(
+    asyncCalls
+  )
+
+  // Push to resulting data
+  users.forEach(user => {
+    resultingData.push([user.email, user.id])
+  })
+
+  console.log('Complete! Total users created: ' + users.length);
 
   // Save resulting data to CSV
   let csvData = arrayToCsv(resultingData)
@@ -120,4 +149,12 @@ const main = async () => {
 }
 
 main()
+  .then(async () => {
+    await client.$disconnect()
+  })
+  .catch(async (e) => {
+    console.error(e)
+    await client.$disconnect()
+    process.exit(1)
+  })
 

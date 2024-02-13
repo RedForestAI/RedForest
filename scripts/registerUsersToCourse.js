@@ -18,7 +18,7 @@ const path = require('path')
 const { parse } = require('csv-parse');
 const { createClient } = require('@supabase/supabase-js')
 const { ArgumentParser } = require('argparse')
-const { PrismaClient, Role, Prisma, Profile, Course, Assignment, Activity, ActivityType, Question, QuestionType, ReadingFile } = require('@prisma/client')
+const { PrismaClient } = require('@prisma/client')
 require('dotenv').config()
 
 // Create Prisma client
@@ -42,35 +42,65 @@ if (!fs.existsSync(csvFilePath)) {
   process.exit(1)
 }
 
-// Create Supabase client
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL,
-  process.env.SUPABASE_SERVICE_KEY
-)
+function generateUUID() {
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+      const r = Math.random() * 16 | 0;
+      const v = c == 'x' ? r : (r & 0x3 | 0x8);
+      return v.toString(16);
+  });
+}
+
+const getCourseEnrollments = (profile_id, course_id) => [
+  {
+    id: generateUUID(),
+    student: { connect: { id: profile_id }},
+    course: { connect: { id: course_id }},
+  },
+];
 
 const main = async () => {
   let total = 0;
-  fs.createReadStream(csvFilePath)
-    .pipe(parse({delimiter: ','}))
-    .on('data', async function(csvrow) {
 
-      // Check that header has two columns (id, password)
-      if (total == 0) {
-        if (csvrow.length != 1) {
-          console.error('CSV file must have 1 column: email')
-          process.exit(1)
-        }
-      };
+  // First check that the course exists
+  const course = await client.course.findUniqueOrThrow({
+    where: { id: args.courseId }
+  })
 
-      // Get the ID of the user
-      let email = csvrow[0];
-      
+  let array = fs.readFileSync(csvFilePath).toString().split("\n");
+  for (let i = 0; i < array.length; i++) {
 
-      total++;   
-    })
-    .on('end',function() {
-      console.log('Complete! Total users created: ' + total);
-    });
+    let csvrow = array[i].replaceAll('"', '').replaceAll('\r','').split(",");
+
+    // Check that header has two columns (email, id)
+    if (total == 0) {
+      if (csvrow.length != 2) {
+        console.error('CSV file must have two columns: email, id')
+        process.exit(1)
+      }
+      if (csvrow[0] != 'email' || csvrow[1] != 'id') {
+        console.error('CSV file must have two columns: email, id')
+        process.exit(1)
+      }
+      total++;
+      continue;
+    };
+
+    // Get the profile_id and course_id
+    let profile_id = csvrow[1];
+
+    // Create course enrollment
+    const courseEnrollments = await Promise.all(
+      getCourseEnrollments(profile_id, course.id).map((courseEnrollment) => client.courseEnrollment.upsert(
+        {
+          where: { id: courseEnrollment.id },
+          update: { ...courseEnrollment },
+          create: { ...courseEnrollment },
+        }))
+    )
+    console.log(courseEnrollments)
+
+    total++;
+  }
 };
 
 main()
