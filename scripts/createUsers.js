@@ -72,52 +72,52 @@ function writeCsv(dataToWrite, filePath){
 }
 
 const main = async () => {
-  let resultingData = [['email']]
+  let resultingData = [['email', 'id']]
   
   let total = 0;
-  fs.createReadStream(csvFilePath)
-    .pipe(parse({delimiter: ','}))
-    .on('data', async function(csvrow) {
+  let array = fs.readFileSync(csvFilePath).toString().split("\n");
+  for (let i = 0; i < array.length; i++) {
 
-      // Check that header has two columns (id, password)
-      if (total == 0) {
-        if (csvrow.length != 2) {
-          console.error('CSV file must have two columns: id, password')
-          process.exit(1)
-        }
-        if (csvrow[0] != 'id' || csvrow[1] != 'password') {
-          console.error('CSV file must have two columns: id, password')
-          process.exit(1)
-        }
-        total++;
-        return;
-      };
+    let csvrow = array[i].split(",");
 
-      // Construct email
-      let email = csvrow[0].toString() + 'study1@redforest.app'
-      console.log('Creating user: ' + email)
-
-      // Push
-      resultingData.push([email])
-
-      // Create user
-      const { data, error } = await createUser(email, csvrow[1])
-      if (error) {
-        console.error(error)
+    // Check that header has two columns (id, password)
+    if (total == 0) {
+      if (csvrow.length != 2) {
+        console.error('CSV file must have two columns: id, password')
+        process.exit(1)
       }
-
+      if (csvrow[0] != 'id' || csvrow[1] != 'password') {
+        console.error('CSV file must have two columns: id, password')
+        process.exit(1)
+      }
       total++;
-    })
-    .on('end',function() {
-      console.log('Complete! Total users created: ' + total);
+      continue;
+    };
 
-      // Save resulting data to CSV
-      let csvData = arrayToCsv(resultingData)
-      let timestamp = new Date().toISOString().replace(/:/g, '-')
-      let csvFilePath = path.join(__dirname, `resultingData_${timestamp}.csv`)
-      writeCsv(csvData, csvFilePath)
-    });
-};
+    // Construct email
+    let email = csvrow[0].toString() + 'study1@redforest.app'
+    console.log('Creating user: ' + email)
+
+    // Create user
+    const { data, error } = await createUser(email, csvrow[1])
+    if (error) {
+      console.error(error)
+    }
+
+    // Push
+    resultingData.push([email, data.user.id])
+    total++;
+  }
+
+  console.log('Complete! Total users created: ' + total);
+
+  // Save resulting data to CSV
+  let csvData = arrayToCsv(resultingData)
+  let timestamp = new Date().toISOString().replace(/:/g, '-')
+  let newCsvFilePath = path.join(__dirname, `resultingData_${timestamp}.csv`)
+  writeCsv(csvData, newCsvFilePath)
+
+}
 
 main()
 

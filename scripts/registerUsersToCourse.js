@@ -18,8 +18,11 @@ const path = require('path')
 const { parse } = require('csv-parse');
 const { createClient } = require('@supabase/supabase-js')
 const { ArgumentParser } = require('argparse')
-import { PrismaClient, Role, Prisma, Profile, Course, Assignment, Activity, ActivityType, Question, QuestionType, ReadingFile } from '@prisma/client'
+const { PrismaClient, Role, Prisma, Profile, Course, Assignment, Activity, ActivityType, Question, QuestionType, ReadingFile } = require('@prisma/client')
 require('dotenv').config()
+
+// Create Prisma client
+const client = new PrismaClient()
 
 // Parse arguments
 const parser = new ArgumentParser({
@@ -59,6 +62,10 @@ const main = async () => {
         }
       };
 
+      // Get the ID of the user
+      let email = csvrow[0];
+      
+
       total++;   
     })
     .on('end',function() {
@@ -67,4 +74,12 @@ const main = async () => {
 };
 
 main()
+  .then(async () => {
+    await client.$disconnect()
+  })
+  .catch(async (e) => {
+    console.error(e)
+    await client.$disconnect()
+    process.exit(1)
+  })
 
