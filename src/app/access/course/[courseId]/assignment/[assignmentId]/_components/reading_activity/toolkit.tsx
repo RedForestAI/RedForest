@@ -23,7 +23,6 @@ export const ToolKit = (props: ToolKitProps) => {
       
       // Now you have width (offsetWidth) and height (offsetHeight) of the toolkit
       // Adjust x and y if needed based on these dimensions
-      console.log(props)
       setPosition({x: props.x - offsetWidth/2 + props.w/2, y: props.y - offsetHeight - 5});
     }
     else {
