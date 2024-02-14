@@ -7,11 +7,10 @@ import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 
 import BlurModal from './blur-modal';
 import { useMiddleNavBarContext, useEndNavBarContext } from '~/providers/navbar-provider';
-import "./pdf-viewer.css"
 import { triggerActionLog } from "~/loggers/actions-logger";
+import { ToolKit } from './toolkit';
+import "./pdf-viewer.css"
 import { set } from 'zod';
-
-const signedUrlTTL = 60;
 
 function DocumentDrawer(props: {files: ReadingFile[], docs: {uri: string}[], activeDocument: IDocument | undefined, setActiveDocument: (doc: IDocument) => void}){
   const [open, setOpen] = useState(true)
@@ -60,8 +59,16 @@ export default function PDFViewer(props: {files: ReadingFile[]}) {
   const setMiddleNavBarContent = useContext(useMiddleNavBarContext);
   const [zoomLevel, setZoomLevel] = useState(1); // Starting zoom level
   const [error, setError] = useState<string | null>(null);
-  const [readingStart, setReadingStart] = useState<boolean>(false);
+  const [readingStart, setReadingStart] = useState<boolean>(true);
   const [viewerKey, setViewerKey] = React.useState(0); //Viewer key state
+  const [toolkitPosition, setToolkitPosition] = useState({
+    x: 0,
+    y: 0,
+    w: 0,
+    h: 0, 
+    isVisible: false, 
+    selectedText: "" 
+  });
 
   // Memo
   const docViewer = useMemo(() => {
@@ -99,6 +106,50 @@ export default function PDFViewer(props: {files: ReadingFile[]}) {
     />)
   }, [docs, activeDocument, zoomLevel])
 
+  const handleTextSelection = () => {
+    const selection = window.getSelection();
+    if (selection == null) {
+      return;
+    }
+  
+    if (selection.toString().trim().length > 0) {
+      const range = selection.getRangeAt(0);
+      const rects = range.getClientRects(); // Get all rects for each line
+  
+      // You can now handle each rect individually
+      // For example, logging each rect or showing toolkit for each line (though you'd typically show one toolkit for the whole selection)
+      for (const rect of rects) {
+        console.log(rect);
+        // Depending on your implementation, you might want to show the toolkit
+        // near the first rect, last rect, or based on some other logic
+      }
+  
+      if (rects.length > 0) {
+        // Example: Show the toolkit near the first line of selection
+        const firstRect = rects[0];
+        if (firstRect == undefined) return;
+        setToolkitPosition({
+          x: firstRect.x, 
+          y: firstRect.y, 
+          w: firstRect.width, 
+          h: firstRect.height, 
+          isVisible: true,
+          selectedText: selection.toString()
+        });
+      }
+    } else {
+      setToolkitPosition({
+        x: 0,
+        y: 0,
+        w: 0,
+        h: 0, 
+        isVisible: false, 
+        selectedText: "" 
+      });
+    }
+  };
+
+
   useEffect(() => {
     
     // Define the content you want to add to the navbar
@@ -113,9 +164,13 @@ export default function PDFViewer(props: {files: ReadingFile[]}) {
     // Update the navbar content
     setMiddleNavBarContent(middleNavBarExtras);
 
+    // Add toolkits
+    document.addEventListener('mouseup', handleTextSelection);
+
     // Reset the navbar content when the component unmounts
     return () => {
       setMiddleNavBarContent(null);
+      document.removeEventListener('mouseup', handleTextSelection);
     }
   }, []);
 
@@ -182,11 +237,31 @@ export default function PDFViewer(props: {files: ReadingFile[]}) {
     triggerActionLog({type: "readingStart", value: {start: true}});
   }
 
+  async function onHighlight() {
+  }
+
+  async function onAnnotate() {
+  }
+
+  async function onLookup() {
+  }
+
   return (
       <>
         {!readingStart && 
           <BlurModal onContinue={onReadingStart}/>
         }
+
+        <ToolKit 
+          x={toolkitPosition.x} 
+          y={toolkitPosition.y}
+          w={toolkitPosition.w}
+          h={toolkitPosition.h}
+          isVisible={toolkitPosition.isVisible} 
+          onHighlight={onHighlight} 
+          onAnnotate={onAnnotate} 
+          onLookup={onLookup}
+        />
         
         <DocumentDrawer files={props.files} docs={docs} activeDocument={activeDocument} setActiveDocument={setActiveDocument}/>
         {error && <div className="text-red-500">{error}</div>}
