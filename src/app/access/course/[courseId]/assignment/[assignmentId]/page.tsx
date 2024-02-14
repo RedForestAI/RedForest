@@ -62,8 +62,6 @@ export default async function Page({params}: {params: { courseId: string, assign
     assignmentData
   }
 
-  // console.log(data)
-
   return (
     <>
     <NavBar profile={profile} breadcrumbs={[{name: "\\", url: `/access`}, {name: course.name, url: `/access/course/${params.courseId}`}]}/>

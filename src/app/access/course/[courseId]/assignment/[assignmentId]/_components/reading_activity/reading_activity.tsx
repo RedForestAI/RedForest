@@ -63,7 +63,6 @@ export default function ReadingActivity(props: ReadingActivityProps) {
     gazeLogger.clear()
     scrollLogger.clear()
     actionsLogger.clear()
-    
 
   }, []);
 
@@ -186,7 +185,7 @@ export default function ReadingActivity(props: ReadingActivityProps) {
     <>
       <div className="w-full flex justify-center items-center">
         <EyeTrackingController complete={complete}/>
-        <PDFViewer files={readingFiles}/>
+        <PDFViewer files={readingFiles} highlights={[]}/> 
         <TaskDrawer>
           <div id="QuestionPane" className="mt-20 w-full">
           {!complete  

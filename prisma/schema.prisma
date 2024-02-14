@@ -179,7 +179,7 @@ model ReadingFile {
 model Highlight {
   id                String      @id @default(uuid()) @db.Uuid
   content           String
-  position          Json  // x1, y1, x2, y2, width, height
+  rects             Json  // x1, y1, x2, y2, width, height
 
   // PDF File
   file              ReadingFile @relation(fields: [fileId], references: [id])
