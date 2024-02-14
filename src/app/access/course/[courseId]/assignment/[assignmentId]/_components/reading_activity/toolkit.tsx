@@ -1,4 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faHighlighter, faNoteSticky, faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
 
 type ToolKitProps = {
   x: number
@@ -32,10 +34,16 @@ export const ToolKit = (props: ToolKitProps) => {
   return (
     <>
     {props.isVisible &&
-      <div ref={toolkitRef} className={`toolkit bg-primary w-[24] fixed flex flex-row gap-4 z-50`} style={{top: `${position.y}px`, left: `${position.x}px`}}>
-        <button className="btn btn-ghost" onClick={props.onHighlight}>H</button>
-        <button className="btn btn-ghost" onClick={props.onAnnotate}>A</button>
-        <button className="btn btn-ghost" onClick={props.onLookup}>L</button>
+      <div ref={toolkitRef} className={`toolkit bg-base-300 w-[24] absolute flex overflow-hidden flex-row gap-4 z-50`} style={{top: `${position.y}px`, left: `${position.x}px`, borderRadius: "12px"}}>
+        <button className="btn btn-ghost" onClick={props.onHighlight}>
+          <FontAwesomeIcon icon={faHighlighter}/>
+        </button>
+        <button className="btn btn-ghost" onClick={props.onAnnotate}>
+          <FontAwesomeIcon icon={faNoteSticky}/>
+        </button>
+        <button className="btn btn-ghost" onClick={props.onLookup}>
+          <FontAwesomeIcon icon={faMagnifyingGlass}/>
+        </button>
       </div>
     }
     </>

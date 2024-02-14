@@ -115,11 +115,13 @@ export default function PDFViewer(props: {files: ReadingFile[]}) {
     if (selection.toString().trim().length > 0) {
       const range = selection.getRangeAt(0);
       const rects = range.getClientRects(); // Get all rects for each line
+
+      // Filter out rects that are not within the PDFViewer (id="react-doc-viewer")
   
       // You can now handle each rect individually
       // For example, logging each rect or showing toolkit for each line (though you'd typically show one toolkit for the whole selection)
       for (const rect of rects) {
-        console.log(rect);
+        // console.log(rect);
         // Depending on your implementation, you might want to show the toolkit
         // near the first rect, last rect, or based on some other logic
       }
