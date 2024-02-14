@@ -11,8 +11,8 @@ import { triggerActionLog } from "~/loggers/actions-logger";
 import { ToolKit } from './toolkit';
 import { DocumentDrawer } from './document-drawer';
 import { generateUUID } from "~/utils/uuid";
+import { parsePrisma } from "~/utils/prisma";
 import "./pdf-viewer.css"
-import { get } from 'http';
 
 
 export default function PDFViewer(props: {files: ReadingFile[], highlights: Highlight[]}) {
@@ -32,7 +32,7 @@ export default function PDFViewer(props: {files: ReadingFile[], highlights: High
     isVisible: false, 
   });
   const [toolkitText, setToolkitText] = useState("");
-  const [toolkitRects, setToolkitRects] = useState<DOMRectList>();
+  const [toolkitRects, setToolkitRects] = useState<DOMRect[]>([]);
   const [highlights, setHighlights] = useState<Highlight[]>(props.highlights);
 
   // Memo
@@ -93,7 +93,12 @@ export default function PDFViewer(props: {files: ReadingFile[], highlights: High
           isVisible: true,
         });
         setToolkitText(selection.toString());
-        setToolkitRects(rects);
+
+        let rectList: DOMRect[] = []
+        for (const [key, value] of Object.entries(rects)) {
+          rectList.push(value)
+        }
+        setToolkitRects(rectList);
       }
     } else {
       setToolkitPosition({
@@ -104,7 +109,7 @@ export default function PDFViewer(props: {files: ReadingFile[], highlights: High
         isVisible: false, 
       });
       setToolkitText("");
-      setToolkitRects(undefined);
+      setToolkitRects([]);
     }
   };
 
@@ -209,15 +214,44 @@ export default function PDFViewer(props: {files: ReadingFile[], highlights: High
     setHighlights([...highlights, newHighlight]);
   }
 
-  function getHighlights() {
-    
-  }
-
   async function onAnnotate() {
   }
 
   async function onLookup() {
   }
+
+  const highlightRects = useMemo(() => {
+
+    let rects: DOMRect[] = []
+
+    // Iterate through each highlight
+    for (const high of highlights) {
+
+      // Parse the JSON
+      const datas = parsePrisma(high.rects)
+      for (const data of datas) {
+        rects.push(data)
+      }
+    }
+
+    console.log(rects)
+
+    return (
+    <>
+      {rects.map(function(rect: DOMRect, index) {
+         <div key={index} className="highlights" style={{
+          position: 'absolute',
+          left: `${rect.left}px`,
+          top: `${rect.top}px`,
+          width: `${rect.width}px`,
+          height: `${rect.height}px`,
+          zIndex: 100,
+          backgroundColor: 'rgba(255, 225, 0, 0.4)', // Example highlight color
+        }} />
+      })}
+    </>  
+    )
+  }, [highlights])
 
   return (
       <>
@@ -237,22 +271,7 @@ export default function PDFViewer(props: {files: ReadingFile[], highlights: High
         />
 
         <div id="highlight-layer" className="absolute top-0 left-0 w-full h-full">
-          {highlights.map((highlight, index) => (
-
-            // TODO
-            // A highlight can have multiple rects
-            highlight?.rects?.map((rect: {top: number, left: number, width: number, height: number}, index) => (
-              <div key={index} style={{
-                position: 'absolute',
-                left: `${rect.left}px`,
-                top: `${rect.top}px`,
-                width: `${rect.width}px`,
-                height: `${rect.height}px`,
-                backgroundColor: 'rgba(255, 225, 0, 0.4)', // Example highlight color
-              }} />
-            
-            ))
-          ))}
+          {highlightRects}
         </div>
         
         <DocumentDrawer files={props.files} docs={docs} activeDocument={activeDocument} setActiveDocument={setActiveDocument}/>
