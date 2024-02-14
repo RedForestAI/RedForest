@@ -3,3 +3,9 @@
 #pdf-controls {
   display: none;
 }
+
+.react-pdf__Page__textContent span::selection,
+.react-pdf__Page__textContent span::-moz-selection {
+  background: rgba(245, 161, 66, 0.5); /* Background color of the selection */
+  color: rgba(0,0,0,0);
+}
