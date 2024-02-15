@@ -79,57 +79,6 @@ export default function PDFViewer(props: {files: ReadingFile[], highlights: High
     />)
   }, [docs, activeDocument, zoomLevel])
 
-  const handleTextSelection = () => {
-    const selection = window.getSelection();
-    if (selection == null) {
-      return;
-    }
-  
-    if (selection.toString().trim().length > 0) {
-      const range = selection.getRangeAt(0);
-      const rects = range.getClientRects(); // Get all rects for each line
-  
-      if (rects.length > 0) {
-        // Example: Show the toolkit near the first line of selection
-        const firstRect = rects[0];
-        if (firstRect == undefined) return;
-
-        // Include scroll offsets in the position calculation
-        const x = firstRect.left + window.scrollX;
-        const y = firstRect.top + window.scrollY;
-        setToolkitPosition({
-          x: x, 
-          y: y, 
-          w: firstRect.width, 
-          h: firstRect.height, 
-          isVisible: true,
-        });
-        setToolkitText(selection.toString());
-
-        let rectList: DOMRect[] = []
-        for (const [key, value] of Object.entries(rects)) {
-
-          // Include scroll offsets in the position calculation
-          value.x += window.scrollX;
-          value.y += window.scrollY;
-
-          rectList.push(value)
-        }
-        setToolkitRects(rectList);
-      }
-    } else {
-      setToolkitPosition({
-        x: 0,
-        y: 0,
-        w: 0,
-        h: 0, 
-        isVisible: false, 
-      });
-      setToolkitText("");
-      setToolkitRects([]);
-    }
-  };
-
   useEffect(() => {
     const container = document.querySelector('#pdf-viewer-container');
     if (!container) return;
@@ -298,89 +247,6 @@ export default function PDFViewer(props: {files: ReadingFile[], highlights: High
 
   }, [props.files])
 
-  function onReadingStart() {
-    setReadingStart(true);
-    triggerActionLog({type: "readingStart", value: {start: true}});
-  }
-
-  async function onHighlight() {
-
-    // Determine the index of the active document
-    const index = docs.findIndex((doc) => doc.uri == activeDocument?.uri);
-
-    // Get the file ID (matching the index of the file)
-    const file = props.files[index];
-    if (file == undefined) {
-      return;
-    }
-
-    console.log(pages);
-
-    // Translate the rects to the pages
-    let relativeRects = [];
-    for (const rect of toolkitRects) {
-      for (const page of pages) {
-        const pageRect = page.getBoundingClientRect();
-        if (rect.y >= pageRect.top && rect.y <= pageRect.bottom) {
-          let relativeRect = {
-            page: page.getAttribute("data-page-number"),
-            x: (rect.x - pageRect.x) / pageRect.width,
-            y: (rect.y - pageRect.y) / pageRect.height,
-            width: rect.width / pageRect.width,
-            height: rect.height / pageRect.height,
-          }
-          relativeRects.push(relativeRect);
-        }
-      }
-    }
-    console.log(relativeRects);
-
-    // Create a highlight via mutation and add it
-    // const highlight = await createHighlight.mutateAsync({
-    //   rects: JSON.stringify(toolkitRects),
-    //   content: toolkitText,
-    //   fileId: file.id,
-    //   activityDataId: props.activityDataId
-    // });
-    const highlight = {
-      id: generateUUID(),
-      rects: JSON.stringify(relativeRects),
-      content: toolkitText,
-      fileId: file.id,
-      activityDataId: props.activityDataId
-    }
-    
-    props.setHighlights([...props.highlights, highlight]);
-
-    // Manually add the highligh to the children of the PDF Page it belongs to
-    for (const rRect of relativeRects) {
-    
-      // @ts-ignore
-      const page = pages[parseInt(rRect.page) - 1];
-      if (page == undefined) {
-        continue;
-      }
-
-      // Adding the highlight
-      const highlight = document.createElement("div");
-      highlight.id = highlight.id;
-      highlight.className = "absolute";
-      highlight.style.top = `${rRect.y * 100}%`;
-      highlight.style.left = `${rRect.x * 100}%`;
-      highlight.style.width = `${rRect.width * 100}%`;
-      highlight.style.height = `${rRect.height * 100}%`;
-      highlight.style.backgroundColor = "rgba(245, 161, 66, 0.5)";
-      highlight.style.zIndex = "45";
-      page.appendChild(highlight);
-    }
-  }
-
-  async function onAnnotate() {
-  }
-
-  async function onLookup() {
-  }
-
   useEffect(() => {
 
     let rects = []
@@ -418,6 +284,184 @@ export default function PDFViewer(props: {files: ReadingFile[], highlights: High
     }
 
   }, [props.highlights, docViewer])
+
+  const handleTextSelection = () => {
+    const selection = window.getSelection();
+    if (selection == null) {
+      return;
+    }
+  
+    if (selection.toString().trim().length > 0) {
+      const range = selection.getRangeAt(0);
+      const rects = range.getClientRects(); // Get all rects for each line
+  
+      if (rects.length > 0) {
+        // Example: Show the toolkit near the first line of selection
+        const firstRect = rects[0];
+        if (firstRect == undefined) return;
+
+        // Include scroll offsets in the position calculation
+        const x = firstRect.left + window.scrollX;
+        const y = firstRect.top + window.scrollY;
+        setToolkitPosition({
+          x: x, 
+          y: y, 
+          w: firstRect.width, 
+          h: firstRect.height, 
+          isVisible: true,
+        });
+        setToolkitText(selection.toString());
+
+        let rectList: DOMRect[] = []
+        for (const [key, value] of Object.entries(rects)) {
+
+          // Include scroll offsets in the position calculation
+          value.x += window.scrollX;
+          value.y += window.scrollY;
+
+          rectList.push(value)
+        }
+        setToolkitRects(rectList);
+      }
+    } else {
+      setToolkitPosition({
+        x: 0,
+        y: 0,
+        w: 0,
+        h: 0, 
+        isVisible: false, 
+      });
+      setToolkitText("");
+      setToolkitRects([]);
+    }
+  };
+
+  function onReadingStart() {
+    setReadingStart(true);
+    triggerActionLog({type: "readingStart", value: {start: true}});
+  }
+
+  async function onHighlight() {
+
+    // Determine the index of the active document
+    const index = docs.findIndex((doc) => doc.uri == activeDocument?.uri);
+
+    // Get the file ID (matching the index of the file)
+    const file = props.files[index];
+    if (file == undefined) {
+      return;
+    }
+
+    // Translate the rects to the pages
+    let relativeRects = [];
+    for (const rect of toolkitRects) {
+      for (const page of pages) {
+        const pageRect = page.getBoundingClientRect();
+        if (rect.y >= pageRect.top && rect.y <= pageRect.bottom) {
+          let relativeRect = {
+            page: page.getAttribute("data-page-number"),
+            x: (rect.x - pageRect.x) / pageRect.width,
+            y: (rect.y - pageRect.y) / pageRect.height,
+            width: rect.width / pageRect.width,
+            height: rect.height / pageRect.height,
+          }
+          relativeRects.push(relativeRect);
+        }
+      }
+    }
+
+    // If colliding with another highlight, delete the highlight
+    for (const highlight of props.highlights) {
+      const rects = parsePrisma(highlight.rects);
+      for (const rRect of relativeRects) {
+        for (const rect of rects) {
+          if (rRect.page == rect.page) {
+            const r1 = {
+              x: rRect.x,
+              y: rRect.y,
+              width: rRect.width,
+              height: rRect.height
+            }
+            const r2 = {
+              x: rect.x,
+              y: rect.y,
+              width: rect.width,
+              height: rect.height
+            }
+            if (r1.x < r2.x + r2.width &&
+              r1.x + r1.width > r2.x &&
+              r1.y < r2.y + r2.height &&
+              r1.y + r1.height > r2.y) {
+
+                // Remove the highlight
+                console.log("Colliding with another highlight")
+
+                // Remove the highlight from the state
+                console.log("Remove", highlight)
+                const newHighlights = props.highlights.filter((h) => h.id != highlight.id);
+                props.setHighlights(newHighlights);
+
+                // Remove the highlight from the DOM
+                const highlightElements = document.querySelectorAll(`.highlight_${highlight.id}`);
+                console.log(highlightElements)
+                for (const highlightElement of highlightElements) {
+                  highlightElement.remove();
+                }
+
+                return;
+              }
+          }
+        }
+      }
+    }
+
+    // Create a highlight via mutation and add it
+    // const highlight = await createHighlight.mutateAsync({
+    //   rects: JSON.stringify(toolkitRects),
+    //   content: toolkitText,
+    //   fileId: file.id,
+    //   activityDataId: props.activityDataId
+    // });
+    const highlight = {
+      id: generateUUID(),
+      rects: JSON.stringify(relativeRects),
+      content: toolkitText,
+      fileId: file.id,
+      activityDataId: props.activityDataId
+    }
+
+    // console.log("Added", highlight)
+    
+    props.setHighlights([...props.highlights, highlight]);
+
+    // Manually add the highligh to the children of the PDF Page it belongs to
+    for (const rRect of relativeRects) {
+    
+      // @ts-ignore
+      const page = pages[parseInt(rRect.page) - 1];
+      if (page == undefined) {
+        continue;
+      }
+
+      // Adding the highlight
+      console.log("Adding highlight", highlight)
+      const highlightElement = document.createElement("div");
+      highlightElement.className = `highlight_${highlight.id} absolute`;
+      highlightElement.style.top = `${rRect.y * 100}%`;
+      highlightElement.style.left = `${rRect.x * 100}%`;
+      highlightElement.style.width = `${rRect.width * 100}%`;
+      highlightElement.style.height = `${rRect.height * 100}%`;
+      highlightElement.style.backgroundColor = "rgba(245, 161, 66, 0.5)";
+      highlightElement.style.zIndex = "45";
+      page.appendChild(highlightElement);
+    }
+  }
+
+  async function onAnnotate() {
+  }
+
+  async function onLookup() {
+  }
 
   return (
       <>
