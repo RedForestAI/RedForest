@@ -43,6 +43,7 @@ export default function PDFViewer(props: {files: ReadingFile[], highlights: High
 
   // Mutation
   const createHighlight = api.highlight.create.useMutation();
+  const deleteHighlight = api.highlight.delete.useMutation();
 
   const docViewer = useMemo(() => {
 
@@ -125,7 +126,6 @@ export default function PDFViewer(props: {files: ReadingFile[], highlights: High
     return () => {
       setMiddleNavBarContent(null);
       document.removeEventListener('mouseup', handleTextSelection);
-
       observer.disconnect();
     }
   }, []);
@@ -172,16 +172,15 @@ export default function PDFViewer(props: {files: ReadingFile[], highlights: High
         for (const highlight of pageHighlights) {
           const rects = parsePrisma(highlight.rects);
           for (const rect of rects) {
-            const highlight = document.createElement("div");
-            highlight.id = highlight.id;
-            highlight.className = "absolute";
-            highlight.style.top = `${rect.y * 100}%`;
-            highlight.style.left = `${rect.x * 100}%`;
-            highlight.style.width = `${rect.width * 100}%`;
-            highlight.style.height = `${rect.height * 100}%`;
-            highlight.style.backgroundColor = "rgba(245, 161, 66, 0.5)";
-            highlight.style.zIndex = "45";
-            page.appendChild(highlight);
+            const highlightElement = document.createElement("div");
+            highlightElement.className = `highlight_${highlight.id} absolute`;
+            highlightElement.style.top = `${rect.y * 100}%`;
+            highlightElement.style.left = `${rect.x * 100}%`;
+            highlightElement.style.width = `${rect.width * 100}%`;
+            highlightElement.style.height = `${rect.height * 100}%`;
+            highlightElement.style.backgroundColor = "rgba(245, 161, 66, 0.5)";
+            highlightElement.style.zIndex = "45";
+            page.appendChild(highlightElement);
           }
         }
       }
@@ -371,7 +370,14 @@ export default function PDFViewer(props: {files: ReadingFile[], highlights: High
     }
 
     // If colliding with another highlight, delete the highlight
+    let collision = false;
     for (const highlight of props.highlights) {
+
+      // Only parse the JSON if the file ID matches the active document
+      if (highlight.fileId != file.id) {
+        continue;
+      }
+
       const rects = parsePrisma(highlight.rects);
       for (const rRect of relativeRects) {
         for (const rect of rects) {
@@ -393,17 +399,18 @@ export default function PDFViewer(props: {files: ReadingFile[], highlights: High
               r1.y < r2.y + r2.height &&
               r1.y + r1.height > r2.y) {
 
-                // Remove the highlight
-                console.log("Colliding with another highlight")
+                // Set collision to true
+                collision = true;
+
+                // Delete the highlight from the database
+                await deleteHighlight.mutateAsync({id: highlight.id});
 
                 // Remove the highlight from the state
-                console.log("Remove", highlight)
                 const newHighlights = props.highlights.filter((h) => h.id != highlight.id);
                 props.setHighlights(newHighlights);
 
                 // Remove the highlight from the DOM
                 const highlightElements = document.querySelectorAll(`.highlight_${highlight.id}`);
-                console.log(highlightElements)
                 for (const highlightElement of highlightElements) {
                   highlightElement.remove();
                 }
@@ -415,23 +422,25 @@ export default function PDFViewer(props: {files: ReadingFile[], highlights: High
       }
     }
 
+    // If there is a collision, return
+    if (collision) {
+      return;
+    }
+
     // Create a highlight via mutation and add it
-    // const highlight = await createHighlight.mutateAsync({
-    //   rects: JSON.stringify(toolkitRects),
-    //   content: toolkitText,
-    //   fileId: file.id,
-    //   activityDataId: props.activityDataId
-    // });
-    const highlight = {
-      id: generateUUID(),
+    const highlight = await createHighlight.mutateAsync({
       rects: JSON.stringify(relativeRects),
       content: toolkitText,
       fileId: file.id,
       activityDataId: props.activityDataId
-    }
-
-    // console.log("Added", highlight)
-    
+    });
+    // const highlight = {
+    //   id: generateUUID(),
+    //   rects: JSON.stringify(relativeRects),
+    //   content: toolkitText,
+    //   fileId: file.id,
+    //   activityDataId: props.activityDataId
+    // }
     props.setHighlights([...props.highlights, highlight]);
 
     // Manually add the highligh to the children of the PDF Page it belongs to
@@ -444,7 +453,6 @@ export default function PDFViewer(props: {files: ReadingFile[], highlights: High
       }
 
       // Adding the highlight
-      console.log("Adding highlight", highlight)
       const highlightElement = document.createElement("div");
       highlightElement.className = `highlight_${highlight.id} absolute`;
       highlightElement.style.top = `${rRect.y * 100}%`;

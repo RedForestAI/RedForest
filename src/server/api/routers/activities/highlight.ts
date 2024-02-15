@@ -10,6 +10,7 @@ export const highlightRouter = createTRPCRouter({
         where: {activityDataId: input.activityDataId},
       });
     }),
+    
   create: privateProcedure
     .input(z.object({ activityDataId: z.string(), rects: z.string(), content: z.string(), fileId: z.string() }))
     .mutation( async ({ input, ctx }) => {
@@ -20,6 +21,14 @@ export const highlightRouter = createTRPCRouter({
           content: input.content,
           fileId: input.fileId,
         }
+      });
+    }),
+
+  delete: privateProcedure
+    .input(z.object({ id: z.string() }))
+    .mutation( async ({ input, ctx }) => {
+      return await ctx.db.highlight.delete({
+        where: {id: input.id}
       });
     }),
 })
