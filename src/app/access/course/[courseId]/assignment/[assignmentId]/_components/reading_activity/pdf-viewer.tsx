@@ -89,9 +89,13 @@ export default function PDFViewer(props: {files: ReadingFile[], highlights: High
         // Example: Show the toolkit near the first line of selection
         const firstRect = rects[0];
         if (firstRect == undefined) return;
+
+        // Include scroll offsets in the position calculation
+        const x = firstRect.left + window.scrollX;
+        const y = firstRect.top + window.scrollY;
         setToolkitPosition({
-          x: firstRect.x, 
-          y: firstRect.y, 
+          x: x, 
+          y: y, 
           w: firstRect.width, 
           h: firstRect.height, 
           isVisible: true,
@@ -100,6 +104,11 @@ export default function PDFViewer(props: {files: ReadingFile[], highlights: High
 
         let rectList: DOMRect[] = []
         for (const [key, value] of Object.entries(rects)) {
+
+          // Include scroll offsets in the position calculation
+          value.x += window.scrollX;
+          value.y += window.scrollY;
+
           rectList.push(value)
         }
         setToolkitRects(rectList);
@@ -237,8 +246,15 @@ export default function PDFViewer(props: {files: ReadingFile[], highlights: High
         rects.push(data)
       }
     }
-    
+
     setHighlightRects(rects);
+
+    // Deselect text after highlighting
+    if (window.getSelection) {
+      window?.getSelection()?.removeAllRanges();
+    } else if (document.getSelection()) {  // For IE
+      document.getSelection()?.empty();
+    }
 
   }, [highlights])
 
