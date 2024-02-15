@@ -15,6 +15,24 @@ import { generateUUID } from "~/utils/uuid";
 import { parsePrisma } from "~/utils/prisma";
 import "./pdf-viewer.css"
 
+function debounce<F extends (...args: any[]) => void>(func: F, wait: number): (...args: Parameters<F>) => void {
+  let timeout: ReturnType<typeof setTimeout> | null = null;
+
+  return function(...args: Parameters<F>): void {
+    const later = () => {
+      clearTimeout(timeout as ReturnType<typeof setTimeout>);
+      func(...args);
+    };
+
+    if (timeout !== null) {
+      clearTimeout(timeout);
+    }
+    
+    timeout = setTimeout(later, wait);
+  };
+}
+
+
 
 export default function PDFViewer(props: {files: ReadingFile[], highlights: Highlight[], setHighlights: any, activityDataId: string}) {
   const supabase = createClientComponentClient();
@@ -39,7 +57,6 @@ export default function PDFViewer(props: {files: ReadingFile[], highlights: High
 
   // Highlights
   const [pages, setPages] = useState<Element[]>([]);
-  const [highlightRects, setHighlightRects] = useState<DOMRect[]>([]);
 
   // Mutation
   const createHighlight = api.highlight.create.useMutation();
@@ -110,9 +127,8 @@ export default function PDFViewer(props: {files: ReadingFile[], highlights: High
 
             // @ts-ignore
             if (page.className.includes('endOfContent')) {
-              const pages = document.querySelectorAll('.react-pdf__Page');
-              setPages(Array.from(pages));
-              console.log("PDF Loaded")
+              // console.log("endOfContent detected")
+              handlePDFLoad();
             }
           }
         }
@@ -273,8 +289,6 @@ export default function PDFViewer(props: {files: ReadingFile[], highlights: High
       }
     }
 
-    setHighlightRects(rects);
-
     // Deselect text after highlighting
     if (window.getSelection) {
       window?.getSelection()?.removeAllRanges();
@@ -283,6 +297,11 @@ export default function PDFViewer(props: {files: ReadingFile[], highlights: High
     }
 
   }, [props.highlights, docViewer])
+
+  const handlePDFLoad  = debounce(() => {
+    const pages = document.querySelectorAll('.react-pdf__Page');
+    setPages(Array.from(pages));
+  }, 100)
 
   const handleTextSelection = () => {
     const selection = window.getSelection();
@@ -312,6 +331,7 @@ export default function PDFViewer(props: {files: ReadingFile[], highlights: High
         setToolkitText(selection.toString());
 
         let rectList: DOMRect[] = []
+
         for (const [key, value] of Object.entries(rects)) {
 
           // Include scroll offsets in the position calculation
@@ -320,6 +340,26 @@ export default function PDFViewer(props: {files: ReadingFile[], highlights: High
 
           rectList.push(value)
         }
+
+
+        // Remove any rects that collide with each other
+        let i = 0;
+        while (i < rectList.length) {
+          let j = i + 1;
+          while (j < rectList.length) {
+            // @ts-ignore
+            if (rectList[i].y < rectList[j].y + rectList[j].height &&
+              // @ts-ignore
+              rectList[i].y + rectList[i].height > rectList[j].y) {
+                rectList.splice(j, 1);
+            } else {
+              j++;
+            }
+          }
+          i++;
+        }
+
+
         setToolkitRects(rectList);
       }
     } else {
@@ -434,13 +474,6 @@ export default function PDFViewer(props: {files: ReadingFile[], highlights: High
       fileId: file.id,
       activityDataId: props.activityDataId
     });
-    // const highlight = {
-    //   id: generateUUID(),
-    //   rects: JSON.stringify(relativeRects),
-    //   content: toolkitText,
-    //   fileId: file.id,
-    //   activityDataId: props.activityDataId
-    // }
     props.setHighlights([...props.highlights, highlight]);
 
     // Manually add the highligh to the children of the PDF Page it belongs to
@@ -487,21 +520,6 @@ export default function PDFViewer(props: {files: ReadingFile[], highlights: High
           onAnnotate={onAnnotate} 
           onLookup={onLookup}
         />
-
-        {/* <div id="highlight-layer" className="absolute top-0 left-0 w-full h-full">
-          {highlightRects.map((rect, index) => {
-            return (
-              <div key={index} className="absolute" style={{
-                top: `${rect.y}px`,
-                left: `${rect.x}px`,
-                width: `${rect.width}px`,
-                height: `${rect.height}px`,
-                backgroundColor: "rgba(245, 161, 66, 0.5)",
-                zIndex: 45,
-              }}></div>
-            )
-          })}
-        </div> */}
         
         <DocumentDrawer files={props.files} docs={docs} activeDocument={activeDocument} setActiveDocument={setActiveDocument}/>
         {error && <div className="text-red-500">{error}</div>}
