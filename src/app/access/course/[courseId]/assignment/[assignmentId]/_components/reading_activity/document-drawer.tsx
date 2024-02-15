@@ -19,7 +19,7 @@ export function DocumentDrawer(props: {files: ReadingFile[], docs: {uri: string}
   }
 
   return (
-    <div id="DocumentPane" className={`h-screen bg-base-300 w-1/4 fixed top-0 left-0 border-r border-t z-10 transition ease-in-out duration-200 ${open ? "-translate-x-[23vw]" : ""}`}>
+    <div id="DocumentPane" className={`h-screen bg-base-300 w-1/4 fixed top-0 left-0 border-r border-t z-50 transition ease-in-out duration-200 ${open ? "-translate-x-[23vw]" : ""}`}>
         <div className="flex flex-row w-full">
           <div className="w-full mt-20 flex flex-col gap-4 p-2">
             <div className="flex flex-col">

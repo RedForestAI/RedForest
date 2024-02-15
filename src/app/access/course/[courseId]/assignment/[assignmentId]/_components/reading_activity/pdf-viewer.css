@@ -9,3 +9,7 @@
   background: rgba(245, 161, 66, 0.5); /* Background color of the selection */
   color: rgba(0,0,0,0);
 }
+
+.textLayer {
+  z-index: 49;
+}

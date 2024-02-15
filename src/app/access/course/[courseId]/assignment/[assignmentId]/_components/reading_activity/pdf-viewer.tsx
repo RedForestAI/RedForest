@@ -24,6 +24,8 @@ export default function PDFViewer(props: {files: ReadingFile[], highlights: High
   const [error, setError] = useState<string | null>(null);
   const [readingStart, setReadingStart] = useState<boolean>(true);
   const [viewerKey, setViewerKey] = React.useState(0); //Viewer key state
+
+  // Toolkit
   const [toolkitPosition, setToolkitPosition] = useState({
     x: 0,
     y: 0,
@@ -33,9 +35,11 @@ export default function PDFViewer(props: {files: ReadingFile[], highlights: High
   });
   const [toolkitText, setToolkitText] = useState("");
   const [toolkitRects, setToolkitRects] = useState<DOMRect[]>([]);
-  const [highlights, setHighlights] = useState<Highlight[]>(props.highlights);
 
-  // Memo
+  // Highlights
+  const [highlights, setHighlights] = useState<Highlight[]>(props.highlights);
+  const [highlightRects, setHighlightRects] = useState<DOMRect[]>([]);
+
   const docViewer = useMemo(() => {
 
     // Required to force the viewer to re-render when the active document changes
@@ -220,7 +224,7 @@ export default function PDFViewer(props: {files: ReadingFile[], highlights: High
   async function onLookup() {
   }
 
-  const highlightRects = useMemo(() => {
+  useEffect(() => {
 
     let rects: DOMRect[] = []
 
@@ -235,22 +239,8 @@ export default function PDFViewer(props: {files: ReadingFile[], highlights: High
     }
 
     console.log(rects)
+    setHighlightRects(rects);
 
-    return (
-    <>
-      {rects.map(function(rect: DOMRect, index) {
-         <div key={index} className="highlights" style={{
-          position: 'absolute',
-          left: `${rect.left}px`,
-          top: `${rect.top}px`,
-          width: `${rect.width}px`,
-          height: `${rect.height}px`,
-          zIndex: 100,
-          backgroundColor: 'rgba(255, 225, 0, 0.4)', // Example highlight color
-        }} />
-      })}
-    </>  
-    )
   }, [highlights])
 
   return (
@@ -271,7 +261,18 @@ export default function PDFViewer(props: {files: ReadingFile[], highlights: High
         />
 
         <div id="highlight-layer" className="absolute top-0 left-0 w-full h-full">
-          {highlightRects}
+          {highlightRects.map((rect, index) => {
+            return (
+              <div key={index} className="absolute" style={{
+                top: `${rect.y}px`,
+                left: `${rect.x}px`,
+                width: `${rect.width}px`,
+                height: `${rect.height}px`,
+                backgroundColor: "rgba(245, 161, 66, 0.5)",
+                zIndex: 45,
+              }}></div>
+            )
+          })}
         </div>
         
         <DocumentDrawer files={props.files} docs={docs} activeDocument={activeDocument} setActiveDocument={setActiveDocument}/>
