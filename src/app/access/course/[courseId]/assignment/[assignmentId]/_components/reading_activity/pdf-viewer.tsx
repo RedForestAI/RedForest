@@ -38,6 +38,7 @@ export default function PDFViewer(props: {files: ReadingFile[], highlights: High
   const [toolkitRects, setToolkitRects] = useState<DOMRect[]>([]);
 
   // Highlights
+  const [pages, setPages] = useState<Element[]>([]);
   const [highlightRects, setHighlightRects] = useState<DOMRect[]>([]);
 
   // Mutation
@@ -129,7 +130,6 @@ export default function PDFViewer(props: {files: ReadingFile[], highlights: High
     }
   };
 
-
   useEffect(() => {
     const container = document.querySelector('#pdf-viewer-container');
     if (!container) return;
@@ -153,7 +153,6 @@ export default function PDFViewer(props: {files: ReadingFile[], highlights: High
     const observer = new MutationObserver((mutationsList) => {
       for (const mutation of mutationsList) {
         if (mutation.type === 'childList') {
-          // console.log(mutation.addedNodes);
 
           // There is a ``div.endOfContent`` that helps us know when the PDF is loaded
           const addedPages = Array.from(mutation.addedNodes).filter((node) => node.nodeName === 'DIV');
@@ -161,18 +160,14 @@ export default function PDFViewer(props: {files: ReadingFile[], highlights: High
 
             // @ts-ignore
             if (page.className.includes('endOfContent')) {
-              handlePagesLoaded();
+              const pages = document.querySelectorAll('.react-pdf__Page');
+              setPages(Array.from(pages));
+              console.log("PDF Loaded")
             }
           }
-
-          // if (addedPages.length > 0) {
-          //   // Run your callback function here, e.g., to get rects of pages
-          //   handlePagesLoaded(addedPages);
-          // }
         }
       }
     });
-    
 
     const config = { childList: true, subtree: true };
     observer.observe(container, config);
@@ -186,10 +181,45 @@ export default function PDFViewer(props: {files: ReadingFile[], highlights: High
     }
   }, []);
 
-  const handlePagesLoaded = () => {
-    // Do something with the pages
-    console.log('Pages loaded:');
-  };
+  useEffect(() => {
+
+    // Once the PDF is loaded, let's draw all the highlights
+    if (pages.length > 0) {
+      for (const page of pages) {
+        const pageNumber = page.getAttribute("data-page-number");
+        if (pageNumber == null) {
+          continue;
+        }
+
+        const pageHighlights = props.highlights.filter((highlight) => {
+          const rects = parsePrisma(highlight.rects);
+          for (const rect of rects) {
+            if (rect.page == pageNumber) {
+              return true;
+            }
+          }
+          return false;
+        });
+
+        for (const highlight of pageHighlights) {
+          const rects = parsePrisma(highlight.rects);
+          for (const rect of rects) {
+            const highlight = document.createElement("div");
+            highlight.id = highlight.id;
+            highlight.className = "absolute";
+            highlight.style.top = `${rect.y * 100}%`;
+            highlight.style.left = `${rect.x * 100}%`;
+            highlight.style.width = `${rect.width * 100}%`;
+            highlight.style.height = `${rect.height * 100}%`;
+            highlight.style.backgroundColor = "rgba(245, 161, 66, 0.5)";
+            highlight.style.zIndex = "45";
+            page.appendChild(highlight);
+          }
+        }
+      }
+    }
+
+  }, [pages])
 
   useEffect(() => {
 
@@ -265,6 +295,27 @@ export default function PDFViewer(props: {files: ReadingFile[], highlights: High
       return;
     }
 
+    console.log(pages);
+
+    // Translate the rects to the pages
+    let relativeRects = [];
+    for (const rect of toolkitRects) {
+      for (const page of pages) {
+        const pageRect = page.getBoundingClientRect();
+        if (rect.y >= pageRect.top && rect.y <= pageRect.bottom) {
+          let relativeRect = {
+            page: page.getAttribute("data-page-number"),
+            x: (rect.x - pageRect.x) / pageRect.width,
+            y: (rect.y - pageRect.y) / pageRect.height,
+            width: rect.width / pageRect.width,
+            height: rect.height / pageRect.height,
+          }
+          relativeRects.push(relativeRect);
+        }
+      }
+    }
+    console.log(relativeRects);
+
     // Create a highlight via mutation and add it
     // const highlight = await createHighlight.mutateAsync({
     //   rects: JSON.stringify(toolkitRects),
@@ -273,13 +324,36 @@ export default function PDFViewer(props: {files: ReadingFile[], highlights: High
     //   activityDataId: props.activityDataId
     // });
     const highlight = {
-      rects: JSON.stringify(toolkitRects),
+      id: generateUUID(),
+      rects: JSON.stringify(relativeRects),
       content: toolkitText,
       fileId: file.id,
       activityDataId: props.activityDataId
     }
     
     props.setHighlights([...props.highlights, highlight]);
+
+    // Manually add the highligh to the children of the PDF Page it belongs to
+    for (const rRect of relativeRects) {
+    
+      // @ts-ignore
+      const page = pages[parseInt(rRect.page) - 1];
+      if (page == undefined) {
+        continue;
+      }
+
+      // Adding the highlight
+      const highlight = document.createElement("div");
+      highlight.id = highlight.id;
+      highlight.className = "absolute";
+      highlight.style.top = `${rRect.y * 100}%`;
+      highlight.style.left = `${rRect.x * 100}%`;
+      highlight.style.width = `${rRect.width * 100}%`;
+      highlight.style.height = `${rRect.height * 100}%`;
+      highlight.style.backgroundColor = "rgba(245, 161, 66, 0.5)";
+      highlight.style.zIndex = "45";
+      page.appendChild(highlight);
+    }
   }
 
   async function onAnnotate() {
@@ -290,7 +364,7 @@ export default function PDFViewer(props: {files: ReadingFile[], highlights: High
 
   useEffect(() => {
 
-    let rects: DOMRect[] = []
+    let rects = []
 
     // Determine the index of the active document
     const index = docs.findIndex((doc) => doc.uri == activeDocument?.uri);
@@ -343,7 +417,7 @@ export default function PDFViewer(props: {files: ReadingFile[], highlights: High
           onLookup={onLookup}
         />
 
-        <div id="highlight-layer" className="absolute top-0 left-0 w-full h-full">
+        {/* <div id="highlight-layer" className="absolute top-0 left-0 w-full h-full">
           {highlightRects.map((rect, index) => {
             return (
               <div key={index} className="absolute" style={{
@@ -356,7 +430,7 @@ export default function PDFViewer(props: {files: ReadingFile[], highlights: High
               }}></div>
             )
           })}
-        </div>
+        </div> */}
         
         <DocumentDrawer files={props.files} docs={docs} activeDocument={activeDocument} setActiveDocument={setActiveDocument}/>
         {error && <div className="text-red-500">{error}</div>}
