@@ -4,6 +4,7 @@ import DocViewer, { DocViewerRenderers, IDocument } from '@cyntler/react-doc-vie
 import { faMagnifyingGlass, faPlus, faMinus } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
+import { api } from "~/trpc/react";
 
 import BlurModal from './blur-modal';
 import { useMiddleNavBarContext, useEndNavBarContext } from '~/providers/navbar-provider';
@@ -15,7 +16,7 @@ import { parsePrisma } from "~/utils/prisma";
 import "./pdf-viewer.css"
 
 
-export default function PDFViewer(props: {files: ReadingFile[], highlights: Highlight[]}) {
+export default function PDFViewer(props: {files: ReadingFile[], highlights: Highlight[], setHighlights: any, activityDataId: string}) {
   const supabase = createClientComponentClient();
   const [activeDocument, setActiveDocument ] = useState<IDocument>();
   const [docs, setDocs] = useState<{uri: string}[]>([]);
@@ -37,8 +38,10 @@ export default function PDFViewer(props: {files: ReadingFile[], highlights: High
   const [toolkitRects, setToolkitRects] = useState<DOMRect[]>([]);
 
   // Highlights
-  const [highlights, setHighlights] = useState<Highlight[]>(props.highlights);
   const [highlightRects, setHighlightRects] = useState<DOMRect[]>([]);
+
+  // Mutation
+  const createHighlight = api.highlight.create.useMutation();
 
   const docViewer = useMemo(() => {
 
@@ -222,19 +225,18 @@ export default function PDFViewer(props: {files: ReadingFile[], highlights: High
     // Get the file ID (matching the index of the file)
     const file = props.files[index];
     if (file == undefined) {
-      setError("Failed to get the file ID. Please logout and try again.");
       return;
     }
 
-    // Create a highlight and add it
-    const newHighlight: Highlight = {
-      id: generateUUID(),
+    // Create a highlight via mutation and add it
+    const highlight = await createHighlight.mutateAsync({
       rects: JSON.stringify(toolkitRects),
       content: toolkitText,
-      fileId: file.id, // TODO
-      activityDataId: "0", // TODO: Get the activity ID
-    }
-    setHighlights([...highlights, newHighlight]);
+      fileId: file.id,
+      activityDataId: props.activityDataId
+    });
+    
+    props.setHighlights([...props.highlights, highlight]);
   }
 
   async function onAnnotate() {
@@ -251,11 +253,15 @@ export default function PDFViewer(props: {files: ReadingFile[], highlights: High
     const index = docs.findIndex((doc) => doc.uri == activeDocument?.uri);
     const file = props.files[index];
 
+    if (file == undefined) {
+      return;
+    }
+
     // Iterate through each highlight
-    for (const high of highlights) {
+    for (const high of props.highlights) {
 
       // Only parse the JSON if the file ID matches the active document
-      if (high.fileId != file!.id) {
+      if (high.fileId != file.id) {
         continue;
       }
 
@@ -275,7 +281,7 @@ export default function PDFViewer(props: {files: ReadingFile[], highlights: High
       document.getSelection()?.empty();
     }
 
-  }, [highlights, docViewer])
+  }, [props.highlights, docViewer])
 
   return (
       <>
