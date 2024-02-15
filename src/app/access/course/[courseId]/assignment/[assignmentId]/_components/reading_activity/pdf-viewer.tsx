@@ -237,8 +237,7 @@ export default function PDFViewer(props: {files: ReadingFile[], highlights: High
         rects.push(data)
       }
     }
-
-    console.log(rects)
+    
     setHighlightRects(rects);
 
   }, [highlights])
