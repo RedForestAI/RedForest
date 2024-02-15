@@ -192,6 +192,25 @@ export default function PDFViewer(props: {files: ReadingFile[], highlights: High
         }
 
         const pageHighlights = props.highlights.filter((highlight) => {
+
+          // Check if the highlight is on the current page via ID,
+          // Skip if the highlight already exists
+          let existingHighlight = document.getElementById(highlight.id);
+          if (existingHighlight) {
+            return false;
+          }
+
+          // Check the file ID
+          const index = docs.findIndex((doc) => doc.uri == activeDocument?.uri);
+          const file = props.files[index];
+          if (file == undefined) {
+            return false;
+          }
+          if (highlight.fileId != file.id) {
+            return false;
+          }
+
+          // Page Check
           const rects = parsePrisma(highlight.rects);
           for (const rect of rects) {
             if (rect.page == pageNumber) {
