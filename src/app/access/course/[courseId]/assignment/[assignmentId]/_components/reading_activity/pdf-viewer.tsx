@@ -215,13 +215,23 @@ export default function PDFViewer(props: {files: ReadingFile[], highlights: High
   }
 
   async function onHighlight() {
-    console.log("Highlighting", toolkitText, toolkitRects)
+
+    // Determine the index of the active document
+    const index = docs.findIndex((doc) => doc.uri == activeDocument?.uri);
+
+    // Get the file ID (matching the index of the file)
+    const file = props.files[index];
+    if (file == undefined) {
+      setError("Failed to get the file ID. Please logout and try again.");
+      return;
+    }
+
     // Create a highlight and add it
     const newHighlight: Highlight = {
       id: generateUUID(),
       rects: JSON.stringify(toolkitRects),
       content: toolkitText,
-      fileId: "0", // TODO
+      fileId: file.id, // TODO
       activityDataId: "0", // TODO: Get the activity ID
     }
     setHighlights([...highlights, newHighlight]);
@@ -237,8 +247,17 @@ export default function PDFViewer(props: {files: ReadingFile[], highlights: High
 
     let rects: DOMRect[] = []
 
+    // Determine the index of the active document
+    const index = docs.findIndex((doc) => doc.uri == activeDocument?.uri);
+    const file = props.files[index];
+
     // Iterate through each highlight
     for (const high of highlights) {
+
+      // Only parse the JSON if the file ID matches the active document
+      if (high.fileId != file!.id) {
+        continue;
+      }
 
       // Parse the JSON
       const datas = parsePrisma(high.rects)
@@ -256,7 +275,7 @@ export default function PDFViewer(props: {files: ReadingFile[], highlights: High
       document.getSelection()?.empty();
     }
 
-  }, [highlights])
+  }, [highlights, docViewer])
 
   return (
       <>
