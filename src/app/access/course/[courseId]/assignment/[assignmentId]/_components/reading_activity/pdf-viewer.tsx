@@ -131,6 +131,8 @@ export default function PDFViewer(props: {files: ReadingFile[], highlights: High
 
 
   useEffect(() => {
+    const container = document.querySelector('#pdf-viewer-container');
+    if (!container) return;
     
     // Define the content you want to add to the navbar
     const middleNavBarExtras = (
@@ -147,12 +149,47 @@ export default function PDFViewer(props: {files: ReadingFile[], highlights: High
     // Add toolkits
     document.addEventListener('mouseup', handleTextSelection);
 
+    // Add observer to determine once the document is loaded
+    const observer = new MutationObserver((mutationsList) => {
+      for (const mutation of mutationsList) {
+        if (mutation.type === 'childList') {
+          // console.log(mutation.addedNodes);
+
+          // There is a ``div.endOfContent`` that helps us know when the PDF is loaded
+          const addedPages = Array.from(mutation.addedNodes).filter((node) => node.nodeName === 'DIV');
+          for (const page of addedPages) {
+
+            // @ts-ignore
+            if (page.className.includes('endOfContent')) {
+              handlePagesLoaded();
+            }
+          }
+
+          // if (addedPages.length > 0) {
+          //   // Run your callback function here, e.g., to get rects of pages
+          //   handlePagesLoaded(addedPages);
+          // }
+        }
+      }
+    });
+    
+
+    const config = { childList: true, subtree: true };
+    observer.observe(container, config);
+
     // Reset the navbar content when the component unmounts
     return () => {
       setMiddleNavBarContent(null);
       document.removeEventListener('mouseup', handleTextSelection);
+
+      observer.disconnect();
     }
   }, []);
+
+  const handlePagesLoaded = () => {
+    // Do something with the pages
+    console.log('Pages loaded:');
+  };
 
   useEffect(() => {
 
@@ -229,12 +266,18 @@ export default function PDFViewer(props: {files: ReadingFile[], highlights: High
     }
 
     // Create a highlight via mutation and add it
-    const highlight = await createHighlight.mutateAsync({
+    // const highlight = await createHighlight.mutateAsync({
+    //   rects: JSON.stringify(toolkitRects),
+    //   content: toolkitText,
+    //   fileId: file.id,
+    //   activityDataId: props.activityDataId
+    // });
+    const highlight = {
       rects: JSON.stringify(toolkitRects),
       content: toolkitText,
       fileId: file.id,
       activityDataId: props.activityDataId
-    });
+    }
     
     props.setHighlights([...props.highlights, highlight]);
   }
@@ -318,7 +361,7 @@ export default function PDFViewer(props: {files: ReadingFile[], highlights: High
         <DocumentDrawer files={props.files} docs={docs} activeDocument={activeDocument} setActiveDocument={setActiveDocument}/>
         {error && <div className="text-red-500">{error}</div>}
         
-        <div className={`w-full h-full flex flex-row justify-center items-center ${readingStart ? "" : "blur-lg"}`}>
+        <div id="pdf-viewer-container" className={`w-full h-full flex flex-row justify-center items-center ${readingStart ? "" : "blur-lg"}`}>
           {docViewer}
         </div>
       </>
