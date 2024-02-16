@@ -54,7 +54,6 @@ export default function PDFViewer(props: PDFViewerProps) {
   const createHighlight = api.highlight.create.useMutation();
   const deleteHighlight = api.highlight.delete.useMutation();
   const createAnnotation = api.annotation.create.useMutation();
-  const deleteAnnotation = api.annotation.delete.useMutation();
 
   const docViewer = useMemo(() => {
 
@@ -604,14 +603,6 @@ export default function PDFViewer(props: PDFViewerProps) {
         <div id="pdf-viewer-container" className={`w-full h-full flex flex-row justify-center items-center ${readingStart ? "" : "blur-lg"}`}>
           {docViewer}
         </div>
-
-        {/* <div id="annotation-layer" className="h-full w-full fixed">
-          {props.annotations.map((annotation) => {
-            return (
-              <AnnotationBox key={annotation.id} annotation={annotation} pages={pages}/>
-            )
-          })}
-        </div> */}
       </>
   );
 };

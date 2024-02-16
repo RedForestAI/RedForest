@@ -181,15 +181,11 @@ export default function EyeTrackingController(props: {complete: boolean}) {
             <select value={option} onChange={updateOption} disabled={runningET} className="select select-bordered w-full">
               <option value="" disabled>Select an Eye-Tracker</option>
 
-              {/* Iterate over the keys and then iterate of their string[] */}
-              {Object.keys(options).map((key, index) => (
-                <>
-                  {options[key]!.map((option, index) => (
-                    <option key={index} value={`${key}|${option}`}>{option}</option>
-                  ))}
-                </>
-              ))}
-
+              {Object.keys(options).flatMap((key) =>
+                options[key]!.map((optionValue, index) => (
+                  <option key={`${key}|${optionValue}|${index}`} value={`${key}|${optionValue}`}>{optionValue}</option>
+                ))
+              )}
             </select>
 
             {eyeTracker &&
