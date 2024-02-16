@@ -1,4 +1,4 @@
-import { ReadingFile, Highlight } from '@prisma/client'
+import { ReadingFile, Highlight, Annotation } from '@prisma/client'
 import React, { useMemo, useState, useEffect, useContext } from 'react';
 import DocViewer, { DocViewerRenderers, IDocument } from '@cyntler/react-doc-viewer';
 import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
@@ -12,27 +12,21 @@ import { useMiddleNavBarContext, useEndNavBarContext } from '~/providers/navbar-
 import { triggerActionLog } from "~/loggers/actions-logger";
 import { ToolKit } from './toolkit';
 import { DocumentDrawer } from './document-drawer';
+import { addAnnotationBox } from './annotation-box';
 import { parsePrisma } from "~/utils/prisma";
+import { debounce } from "~/utils/functional"
 import "./pdf-viewer.css"
 
-function debounce<F extends (...args: any[]) => void>(func: F, wait: number): (...args: Parameters<F>) => void {
-  let timeout: ReturnType<typeof setTimeout> | null = null;
-
-  return function(...args: Parameters<F>): void {
-    const later = () => {
-      clearTimeout(timeout as ReturnType<typeof setTimeout>);
-      func(...args);
-    };
-
-    if (timeout !== null) {
-      clearTimeout(timeout);
-    }
-    
-    timeout = setTimeout(later, wait);
-  };
+type PDFViewerProps = {
+  files: ReadingFile[]
+  highlights: Highlight[]
+  setHighlights: any
+  annotations: Annotation[]
+  setAnnotations: any
+  activityDataId: string
 }
 
-export default function PDFViewer(props: {files: ReadingFile[], highlights: Highlight[], setHighlights: any, activityDataId: string}) {
+export default function PDFViewer(props: PDFViewerProps) {
   const supabase = createClientComponentClient();
   const [activeDocument, setActiveDocument ] = useState<IDocument>();
   const [docs, setDocs] = useState<{uri: string}[]>([]);
@@ -59,6 +53,8 @@ export default function PDFViewer(props: {files: ReadingFile[], highlights: High
   // Mutation
   const createHighlight = api.highlight.create.useMutation();
   const deleteHighlight = api.highlight.delete.useMutation();
+  const createAnnotation = api.annotation.create.useMutation();
+  const deleteAnnotation = api.annotation.delete.useMutation();
 
   const docViewer = useMemo(() => {
 
@@ -289,6 +285,15 @@ export default function PDFViewer(props: {files: ReadingFile[], highlights: High
 
   }, [props.highlights, docViewer])
 
+  const deselect = () => {
+    // Deselect text after highlighting
+    if (window.getSelection) {
+      window?.getSelection()?.removeAllRanges();
+    } else if (document.getSelection()) {  // For IE
+      document.getSelection()?.empty();
+    }
+  }
+
   const handlePDFLoad  = debounce(() => {
     const pages = document.querySelectorAll('.react-pdf__Page');
     setPages(Array.from(pages));
@@ -441,11 +446,7 @@ export default function PDFViewer(props: {files: ReadingFile[], highlights: High
               r1.y + r1.height > r2.y) {
 
                 // Deselect
-                if (window.getSelection) {
-                  window?.getSelection()?.removeAllRanges();
-                } else if (document.getSelection()) {  // For IE
-                  document.getSelection()?.empty();
-                }
+                deselect();
 
                 // Remove the highlight from the state
                 const newHighlights = props.highlights.filter((h) => h.id != highlight.id);
@@ -471,13 +472,7 @@ export default function PDFViewer(props: {files: ReadingFile[], highlights: High
 
     // Generate id
     const id = generateUUID()
-
-    // Deselect text after highlighting
-    if (window.getSelection) {
-      window?.getSelection()?.removeAllRanges();
-    } else if (document.getSelection()) {  // For IE
-      document.getSelection()?.empty();
-    }
+    deselect()
 
     // Manually add the highligh to the children of the PDF Page it belongs to
     for (const rRect of relativeRects) {
@@ -515,6 +510,72 @@ export default function PDFViewer(props: {files: ReadingFile[], highlights: High
   }
 
   async function onAnnotate() {
+
+    // Determine the index of the active document
+    const index = docs.findIndex((doc) => doc.uri == activeDocument?.uri);
+
+    // Get the file ID (matching the index of the file)
+    const file = props.files[index];
+    if (file == undefined) {
+      return;
+    }
+
+    // Get the first rect
+    const rect = toolkitRects[0];
+
+    if (rect == undefined) {
+      return;
+    }
+
+    // Obtain relative position of the annotation
+    let rRect = {
+      page: "",
+      x: rect.x,
+      y: rect.y,
+      width: rect.width,
+      height: rect.height
+    };
+    for (const page of pages) {
+      const pageRect = page.getBoundingClientRect();
+
+      // Convert rect back from absolute to viewport
+      let x = rect.x - window.scrollX
+      let y = rect.y - window.scrollY
+
+      if (y >= pageRect.top && y <= pageRect.bottom) {
+        rRect = {
+          page: page.getAttribute("data-page-number") || "",
+          x: (x - pageRect.x) / pageRect.width,
+          y: (y - pageRect.y) / pageRect.height,
+          width: rect.width / pageRect.width,
+          height: rect.height / pageRect.height,
+        }
+      }
+    }
+
+    // Get the page
+    const page = pages[parseInt(rRect.page) - 1];
+    if (page == undefined) {
+      return;
+    }
+
+    // Generate id
+    const id = generateUUID()
+    deselect()
+
+    // Add the annotation box
+    addAnnotationBox({id: id, rRect: rRect, page: page});
+
+    // Create an annotation via mutation and add it
+    const annotation = {
+      id: id,
+      position: JSON.stringify(rRect),
+      content: toolkitText,
+      fileId: file.id,
+      activityDataId: props.activityDataId
+    }
+    props.setAnnotations([...props.annotations, annotation]);
+
   }
 
   async function onLookup() {
@@ -543,6 +604,14 @@ export default function PDFViewer(props: {files: ReadingFile[], highlights: High
         <div id="pdf-viewer-container" className={`w-full h-full flex flex-row justify-center items-center ${readingStart ? "" : "blur-lg"}`}>
           {docViewer}
         </div>
+
+        {/* <div id="annotation-layer" className="h-full w-full fixed">
+          {props.annotations.map((annotation) => {
+            return (
+              <AnnotationBox key={annotation.id} annotation={annotation} pages={pages}/>
+            )
+          })}
+        </div> */}
       </>
   );
 };

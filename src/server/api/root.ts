@@ -10,6 +10,7 @@ import { assignmentDataRouter } from "./routers/assignmentData";
 import { activityDataRouter } from "./routers/activityData";
 import { traceLogFileRouter } from "./routers/traceLogFile";
 import { highlightRouter } from "./routers/activities/highlight";
+import { annotationRouter } from "./routers/activities/annotation";
 
 /**
  * This is the primary router for your server.
@@ -28,6 +29,7 @@ export const appRouter = createTRPCRouter({
   activityData: activityDataRouter,
   traceLogFile: traceLogFileRouter,
   highlight: highlightRouter,
+  annotation: annotationRouter,
 });
 
 // export type definition of API
