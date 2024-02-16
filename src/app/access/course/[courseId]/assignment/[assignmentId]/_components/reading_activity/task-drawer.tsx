@@ -10,7 +10,7 @@ export default function TaskDrawer(props: {children?: React.ReactNode}) {
   }
 
   return (
-    <div className={`h-screen bg-base-300 w-1/4 fixed top-0 right-0 border-l border-t z-10 transition ease-in-out duration-300 ${open ? "translate-x-[23vw]" : ""}`}>
+    <div className={`h-screen bg-base-300 w-1/4 fixed top-0 right-0 border-l border-t z-50 transition ease-in-out duration-300 ${open ? "translate-x-[23vw]" : ""}`}>
         <div className="flex flex-row w-full">
           <button className="bg-base-200 h-screen border-r w-6 cursor-pointer w-[2vw]" onClick={openDrawer}>{
             open ? <FontAwesomeIcon icon={faPlus}/> 

@@ -1,69 +1,65 @@
-import { ReadingFile } from '@prisma/client'
+import { ReadingFile, Highlight } from '@prisma/client'
 import React, { useMemo, useState, useEffect, useContext } from 'react';
 import DocViewer, { DocViewerRenderers, IDocument } from '@cyntler/react-doc-viewer';
-import { faMagnifyingGlass, faPlus, faMinus } from '@fortawesome/free-solid-svg-icons';
+import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
+import { api } from "~/trpc/react";
 
+import { generateUUID } from "~/utils/uuid";
 import BlurModal from './blur-modal';
 import { useMiddleNavBarContext, useEndNavBarContext } from '~/providers/navbar-provider';
-import "./pdf-viewer.css"
 import { triggerActionLog } from "~/loggers/actions-logger";
-import { set } from 'zod';
+import { ToolKit } from './toolkit';
+import { DocumentDrawer } from './document-drawer';
+import { parsePrisma } from "~/utils/prisma";
+import "./pdf-viewer.css"
 
-const signedUrlTTL = 60;
+function debounce<F extends (...args: any[]) => void>(func: F, wait: number): (...args: Parameters<F>) => void {
+  let timeout: ReturnType<typeof setTimeout> | null = null;
 
-function DocumentDrawer(props: {files: ReadingFile[], docs: {uri: string}[], activeDocument: IDocument | undefined, setActiveDocument: (doc: IDocument) => void}){
-  const [open, setOpen] = useState(true)
+  return function(...args: Parameters<F>): void {
+    const later = () => {
+      clearTimeout(timeout as ReturnType<typeof setTimeout>);
+      func(...args);
+    };
 
-  function openDrawer() {
-    setOpen(!open)
-  }
-
-  function changeDocument(index: number) {
-    props.setActiveDocument(props.docs[index]!)
-    triggerActionLog({type: "pdfLoad", value: {index: index}});
-  }
-
-  return (
-    <div id="DocumentPane" className={`h-screen bg-base-300 w-1/4 fixed top-0 left-0 border-r border-t z-10 transition ease-in-out duration-200 ${open ? "-translate-x-[23vw]" : ""}`}>
-        <div className="flex flex-row w-full">
-          <div className="w-full mt-20 flex flex-col gap-4 p-2">
-            <div className="flex flex-col">
-              <h1 className="text-2xl font-bold">Documents</h1>
-              <div className="h-1 bg-base-200"></div>
-            </div>
-            {props.files.map((file, index) => (
-              <button 
-                key={index} 
-                className={`text-left btn-ghost ${props.activeDocument?.uri == props.docs[index]?.uri ? "text-primary" : "text-base"}`} 
-                onClick={() => {changeDocument(index)}}>
-                  {file.title}
-              </button>
-            ))}
-          </div>
-          <button className="bg-base-200 h-screen border-l w-[2vw] cursor-pointer" onClick={openDrawer}>{
-            open ? <FontAwesomeIcon icon={faPlus}/> 
-                 : <FontAwesomeIcon icon={faMinus}/>
-          }
-          </button>
-        </div>
-    </div>
-  )
+    if (timeout !== null) {
+      clearTimeout(timeout);
+    }
+    
+    timeout = setTimeout(later, wait);
+  };
 }
 
-
-export default function PDFViewer(props: {files: ReadingFile[]}) {
+export default function PDFViewer(props: {files: ReadingFile[], highlights: Highlight[], setHighlights: any, activityDataId: string}) {
   const supabase = createClientComponentClient();
   const [activeDocument, setActiveDocument ] = useState<IDocument>();
   const [docs, setDocs] = useState<{uri: string}[]>([]);
   const setMiddleNavBarContent = useContext(useMiddleNavBarContext);
   const [zoomLevel, setZoomLevel] = useState(1); // Starting zoom level
   const [error, setError] = useState<string | null>(null);
-  const [readingStart, setReadingStart] = useState<boolean>(false);
+  const [readingStart, setReadingStart] = useState<boolean>(true);
   const [viewerKey, setViewerKey] = React.useState(0); //Viewer key state
 
-  // Memo
+  // Toolkit
+  const [toolkitPosition, setToolkitPosition] = useState({
+    x: 0,
+    y: 0,
+    w: 0,
+    h: 0, 
+    isVisible: false, 
+  });
+  const [toolkitText, setToolkitText] = useState("");
+  const [toolkitRects, setToolkitRects] = useState<DOMRect[]>([]);
+
+  // Highlights
+  const [pages, setPages] = useState<Element[]>([]);
+
+  // Mutation
+  const createHighlight = api.highlight.create.useMutation();
+  const deleteHighlight = api.highlight.delete.useMutation();
+
   const docViewer = useMemo(() => {
 
     // Required to force the viewer to re-render when the active document changes
@@ -100,6 +96,8 @@ export default function PDFViewer(props: {files: ReadingFile[]}) {
   }, [docs, activeDocument, zoomLevel])
 
   useEffect(() => {
+    const container = document.querySelector('#pdf-viewer-container');
+    if (!container) return;
     
     // Define the content you want to add to the navbar
     const middleNavBarExtras = (
@@ -113,11 +111,96 @@ export default function PDFViewer(props: {files: ReadingFile[]}) {
     // Update the navbar content
     setMiddleNavBarContent(middleNavBarExtras);
 
+    // Add toolkits
+    document.addEventListener('mouseup', handleTextSelection);
+
+    // Add observer to determine once the document is loaded
+    const observer = new MutationObserver((mutationsList) => {
+      for (const mutation of mutationsList) {
+        if (mutation.type === 'childList') {
+
+          // There is a ``div.endOfContent`` that helps us know when the PDF is loaded
+          const addedPages = Array.from(mutation.addedNodes).filter((node) => node.nodeName === 'DIV');
+          for (const page of addedPages) {
+
+            // @ts-ignore
+            if (page.className.includes('endOfContent')) {
+              // console.log("endOfContent detected")
+              handlePDFLoad();
+            }
+          }
+        }
+      }
+    });
+
+    const config = { childList: true, subtree: true };
+    observer.observe(container, config);
+
     // Reset the navbar content when the component unmounts
     return () => {
       setMiddleNavBarContent(null);
+      document.removeEventListener('mouseup', handleTextSelection);
+      observer.disconnect();
     }
   }, []);
+
+  useEffect(() => {
+
+    // Once the PDF is loaded, let's draw all the highlights
+    if (pages.length > 0) {
+      for (const page of pages) {
+        const pageNumber = page.getAttribute("data-page-number");
+        if (pageNumber == null) {
+          continue;
+        }
+
+        const pageHighlights = props.highlights.filter((highlight) => {
+
+          // Check if the highlight is on the current page via ID,
+          // Skip if the highlight already exists
+          let existingHighlight = document.getElementById(highlight.id);
+          if (existingHighlight) {
+            return false;
+          }
+
+          // Check the file ID
+          const index = docs.findIndex((doc) => doc.uri == activeDocument?.uri);
+          const file = props.files[index];
+          if (file == undefined) {
+            return false;
+          }
+          if (highlight.fileId != file.id) {
+            return false;
+          }
+
+          // Page Check
+          const rects = parsePrisma(highlight.rects);
+          for (const rect of rects) {
+            if (rect.page == pageNumber) {
+              return true;
+            }
+          }
+          return false;
+        });
+
+        for (const highlight of pageHighlights) {
+          const rects = parsePrisma(highlight.rects);
+          for (const rect of rects) {
+            const highlightElement = document.createElement("div");
+            highlightElement.className = `highlight_${highlight.id} absolute`;
+            highlightElement.style.top = `${rect.y * 100}%`;
+            highlightElement.style.left = `${rect.x * 100}%`;
+            highlightElement.style.width = `${rect.width * 100}%`;
+            highlightElement.style.height = `${rect.height * 100}%`;
+            highlightElement.style.backgroundColor = "rgba(245, 161, 66, 0.5)";
+            highlightElement.style.zIndex = "45";
+            page.appendChild(highlightElement);
+          }
+        }
+      }
+    }
+
+  }, [pages])
 
   useEffect(() => {
 
@@ -177,9 +260,264 @@ export default function PDFViewer(props: {files: ReadingFile[]}) {
 
   }, [props.files])
 
+  useEffect(() => {
+
+    let rects = []
+
+    // Determine the index of the active document
+    const index = docs.findIndex((doc) => doc.uri == activeDocument?.uri);
+    const file = props.files[index];
+
+    if (file == undefined) {
+      return;
+    }
+
+    // Iterate through each highlight
+    for (const high of props.highlights) {
+
+      // Only parse the JSON if the file ID matches the active document
+      if (high.fileId != file.id) {
+        continue;
+      }
+
+      // Parse the JSON
+      const datas = parsePrisma(high.rects)
+      for (const data of datas) {
+        rects.push(data)
+      }
+    }
+
+  }, [props.highlights, docViewer])
+
+  const handlePDFLoad  = debounce(() => {
+    const pages = document.querySelectorAll('.react-pdf__Page');
+    setPages(Array.from(pages));
+  }, 100)
+
+  const handleTextSelection = debounce(() => {
+    const selection = window.getSelection();
+    if (selection == null) {
+      return;
+    }
+  
+    if (selection.toString().trim().length > 0) {
+      const range = selection.getRangeAt(0);
+      const rects = range.getClientRects(); // Get all rects for each line
+  
+      if (rects.length > 0) {
+        // Example: Show the toolkit near the first line of selection
+        const firstRect = rects[0];
+        if (firstRect == undefined) return;
+
+        // Include scroll offsets in the position calculation
+        const x = firstRect.left + window.scrollX;
+        const y = firstRect.top + window.scrollY;
+        setToolkitPosition({
+          x: x, 
+          y: y, 
+          w: firstRect.width, 
+          h: firstRect.height, 
+          isVisible: true,
+        });
+        setToolkitText(selection.toString());
+
+        let rectList: DOMRect[] = []
+
+        for (const [key, value] of Object.entries(rects)) {
+
+          // Include scroll offsets in the position calculation
+          value.x += window.scrollX;
+          value.y += window.scrollY;
+
+          rectList.push(value)
+        }
+
+        // Remove any rects that collide with each other
+        let i = 0;
+        while (i < rectList.length) {
+          let j = i + 1;
+          while (j < rectList.length) {
+            // @ts-ignore
+            if (rectList[i].y < rectList[j].y + rectList[j].height &&
+              // @ts-ignore
+              rectList[i].y + rectList[i].height > rectList[j].y) {
+                rectList.splice(j, 1);
+            } else {
+              j++;
+            }
+          }
+          i++;
+        }
+
+        // Set the state
+        setToolkitRects(rectList);
+
+        // Log the information
+        triggerActionLog({type: "selection", value: {
+          text: selection.toString(),
+          rects: rectList
+        }});
+
+      }
+    } else {
+      setToolkitPosition({
+        x: 0,
+        y: 0,
+        w: 0,
+        h: 0, 
+        isVisible: false, 
+      });
+      setToolkitText("");
+      setToolkitRects([]);
+    }
+  }, 100);
+
   function onReadingStart() {
     setReadingStart(true);
     triggerActionLog({type: "readingStart", value: {start: true}});
+  }
+
+  async function onHighlight() {
+
+    // Determine the index of the active document
+    const index = docs.findIndex((doc) => doc.uri == activeDocument?.uri);
+
+    // Get the file ID (matching the index of the file)
+    const file = props.files[index];
+    if (file == undefined) {
+      return;
+    }
+
+    // Translate the rects to the pages
+    let relativeRects = [];
+    for (const rect of toolkitRects) {
+      for (const page of pages) {
+        const pageRect = page.getBoundingClientRect();
+
+        // Convert rect back from absolute to viewport
+        let x = rect.x - window.scrollX
+        let y = rect.y - window.scrollY
+
+        if (y >= pageRect.top && y <= pageRect.bottom) {
+          let relativeRect = {
+            page: page.getAttribute("data-page-number"),
+            x: (x - pageRect.x) / pageRect.width,
+            y: (y - pageRect.y) / pageRect.height,
+            width: rect.width / pageRect.width,
+            height: rect.height / pageRect.height,
+          }
+          relativeRects.push(relativeRect);
+        }
+      }
+    }
+
+    // If colliding with another highlight, delete the highlight
+    for (const highlight of props.highlights) {
+
+      // Only parse the JSON if the file ID matches the active document
+      if (highlight.fileId != file.id) {
+        continue;
+      }
+
+      const rects = parsePrisma(highlight.rects);
+      for (const rRect of relativeRects) {
+        for (const rect of rects) {
+          if (rRect.page == rect.page) {
+            const r1 = {
+              x: rRect.x,
+              y: rRect.y,
+              width: rRect.width,
+              height: rRect.height
+            }
+            const r2 = {
+              x: rect.x,
+              y: rect.y,
+              width: rect.width,
+              height: rect.height
+            }
+            if (r1.x < r2.x + r2.width &&
+              r1.x + r1.width > r2.x &&
+              r1.y < r2.y + r2.height &&
+              r1.y + r1.height > r2.y) {
+
+                // Deselect
+                if (window.getSelection) {
+                  window?.getSelection()?.removeAllRanges();
+                } else if (document.getSelection()) {  // For IE
+                  document.getSelection()?.empty();
+                }
+
+                // Remove the highlight from the state
+                const newHighlights = props.highlights.filter((h) => h.id != highlight.id);
+                props.setHighlights(newHighlights);
+
+                // Remove the highlight from the DOM
+                const highlightElements = document.querySelectorAll(`.highlight_${highlight.id}`);
+                for (const highlightElement of highlightElements) {
+                  highlightElement.remove();
+                }
+
+                // Delete the highlight from the database
+                await deleteHighlight.mutateAsync({id: highlight.id});
+
+                // Log the information
+                triggerActionLog({type: "dehighlight", value: {...highlight}});
+                return;
+              }
+          }
+        }
+      }
+    }
+
+    // Generate id
+    const id = generateUUID()
+
+    // Deselect text after highlighting
+    if (window.getSelection) {
+      window?.getSelection()?.removeAllRanges();
+    } else if (document.getSelection()) {  // For IE
+      document.getSelection()?.empty();
+    }
+
+    // Manually add the highligh to the children of the PDF Page it belongs to
+    for (const rRect of relativeRects) {
+    
+      // @ts-ignore
+      const page = pages[parseInt(rRect.page) - 1];
+      if (page == undefined) {
+        continue;
+      }
+
+      // Adding the highlight
+      const highlightElement = document.createElement("div");
+      highlightElement.className = `highlight_${id} absolute`;
+      highlightElement.style.top = `${rRect.y * 100}%`;
+      highlightElement.style.left = `${rRect.x * 100}%`;
+      highlightElement.style.width = `${rRect.width * 100}%`;
+      highlightElement.style.height = `${rRect.height * 100}%`;
+      highlightElement.style.backgroundColor = "rgba(245, 161, 66, 0.5)";
+      highlightElement.style.zIndex = "45";
+      page.appendChild(highlightElement);
+    }
+
+    // Create a highlight via mutation and add it
+    const highlight = await createHighlight.mutateAsync({
+      id: id,
+      rects: JSON.stringify(relativeRects),
+      content: toolkitText,
+      fileId: file.id,
+      activityDataId: props.activityDataId
+    });
+    props.setHighlights([...props.highlights, highlight]);
+
+    // Log the information
+    triggerActionLog({type: "highlight", value: {...highlight}});
+  }
+
+  async function onAnnotate() {
+  }
+
+  async function onLookup() {
   }
 
   return (
@@ -187,11 +525,22 @@ export default function PDFViewer(props: {files: ReadingFile[]}) {
         {!readingStart && 
           <BlurModal onContinue={onReadingStart}/>
         }
+
+        <ToolKit 
+          x={toolkitPosition.x} 
+          y={toolkitPosition.y}
+          w={toolkitPosition.w}
+          h={toolkitPosition.h}
+          isVisible={toolkitPosition.isVisible}
+          onHighlight={onHighlight} 
+          onAnnotate={onAnnotate} 
+          onLookup={onLookup}
+        />
         
         <DocumentDrawer files={props.files} docs={docs} activeDocument={activeDocument} setActiveDocument={setActiveDocument}/>
         {error && <div className="text-red-500">{error}</div>}
         
-        <div className={`w-full h-full flex flex-row justify-center items-center ${readingStart ? "" : "blur-lg"}`}>
+        <div id="pdf-viewer-container" className={`w-full h-full flex flex-row justify-center items-center ${readingStart ? "" : "blur-lg"}`}>
           {docViewer}
         </div>
       </>

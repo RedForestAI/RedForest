@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import { generateUUID } from "~/utils/uuid";
 
-import { Profile, Course, Assignment, Activity, ActivityData, AssignmentData, ReadingFile, Question } from '@prisma/client';
+import { Profile, Course, Assignment, Activity, ActivityData, AssignmentData, ReadingFile, Question, Highlight } from '@prisma/client';
 import { api } from "~/trpc/react";
 
 import EyeTrackingController from "~/eyetracking/eye-tracking-controller";
@@ -40,9 +40,11 @@ export default function ReadingActivity(props: ReadingActivityProps) {
 
   const [complete, setComplete ] = useState<boolean>(false);
   const [readingFiles, setReadingFiles] = useState<ReadingFile[]>([]);
+  const [highlights, setHighlights] = useState<Highlight[]>([]);
   const readingActivityQuery = api.readingFile.getMany.useQuery({activityId: props.activity.id}, {enabled: false});
-  const supabase = createClientComponentClient();
+  const highlightQuery = api.highlight.getMany.useQuery({activityDataId: props.activityData.id}, {enabled: false});
   const createTracelogFile = api.traceLogFile.create.useMutation()
+  const supabase = createClientComponentClient();
 
   useEffect(() => {
     const getReadingActivity = async () => {
@@ -53,9 +55,17 @@ export default function ReadingActivity(props: ReadingActivityProps) {
         return;
       }
 
+      const highlightsResult = await highlightQuery.refetch();
+
+      if (highlightsResult.error || !highlightsResult.data) {
+        console.log(highlightsResult.error)
+        return;
+      }
+
       // Sort the files by their index
       result.data.sort((a, b) => a.index - b.index);
       setReadingFiles(result.data);
+      setHighlights(highlightsResult.data);
     };
     getReadingActivity();
 
@@ -63,7 +73,6 @@ export default function ReadingActivity(props: ReadingActivityProps) {
     gazeLogger.clear()
     scrollLogger.clear()
     actionsLogger.clear()
-    
 
   }, []);
 
@@ -186,7 +195,12 @@ export default function ReadingActivity(props: ReadingActivityProps) {
     <>
       <div className="w-full flex justify-center items-center">
         <EyeTrackingController complete={complete}/>
-        <PDFViewer files={readingFiles}/>
+        <PDFViewer 
+          files={readingFiles} 
+          highlights={highlights} 
+          setHighlights={setHighlights} 
+          activityDataId={props.activityData.id}
+        /> 
         <TaskDrawer>
           <div id="QuestionPane" className="mt-20 w-full">
           {!complete  
