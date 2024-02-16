@@ -10,12 +10,13 @@ export const highlightRouter = createTRPCRouter({
         where: {activityDataId: input.activityDataId},
       });
     }),
-    
+
   create: privateProcedure
-    .input(z.object({ activityDataId: z.string(), rects: z.string(), content: z.string(), fileId: z.string() }))
+    .input(z.object({ id: z.string(), activityDataId: z.string(), rects: z.string(), content: z.string(), fileId: z.string() }))
     .mutation( async ({ input, ctx }) => {
       return await ctx.db.highlight.create({
         data: {
+          id: input.id,
           activityDataId: input.activityDataId,
           rects: input.rects,
           content: input.content,

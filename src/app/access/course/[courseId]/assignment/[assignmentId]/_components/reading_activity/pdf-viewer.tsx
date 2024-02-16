@@ -6,6 +6,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import { api } from "~/trpc/react";
 
+import { generateUUID } from "~/utils/uuid";
 import BlurModal from './blur-modal';
 import { useMiddleNavBarContext, useEndNavBarContext } from '~/providers/navbar-provider';
 import { triggerActionLog } from "~/loggers/actions-logger";
@@ -286,13 +287,6 @@ export default function PDFViewer(props: {files: ReadingFile[], highlights: High
       }
     }
 
-    // Deselect text after highlighting
-    if (window.getSelection) {
-      window?.getSelection()?.removeAllRanges();
-    } else if (document.getSelection()) {  // For IE
-      document.getSelection()?.empty();
-    }
-
   }, [props.highlights, docViewer])
 
   const handlePDFLoad  = debounce(() => {
@@ -375,11 +369,8 @@ export default function PDFViewer(props: {files: ReadingFile[], highlights: High
       });
       setToolkitText("");
       setToolkitRects([]);
-      
-      // Log the information
-      triggerActionLog({type: "deselection", value: {}});
     }
-  }, 50);
+  }, 100);
 
   function onReadingStart() {
     setReadingStart(true);
@@ -402,11 +393,16 @@ export default function PDFViewer(props: {files: ReadingFile[], highlights: High
     for (const rect of toolkitRects) {
       for (const page of pages) {
         const pageRect = page.getBoundingClientRect();
-        if (rect.y >= pageRect.top && rect.y <= pageRect.bottom) {
+
+        // Convert rect back from absolute to viewport
+        let x = rect.x - window.scrollX
+        let y = rect.y - window.scrollY
+
+        if (y >= pageRect.top && y <= pageRect.bottom) {
           let relativeRect = {
             page: page.getAttribute("data-page-number"),
-            x: (rect.x - pageRect.x) / pageRect.width,
-            y: (rect.y - pageRect.y) / pageRect.height,
+            x: (x - pageRect.x) / pageRect.width,
+            y: (y - pageRect.y) / pageRect.height,
             width: rect.width / pageRect.width,
             height: rect.height / pageRect.height,
           }
@@ -416,7 +412,6 @@ export default function PDFViewer(props: {files: ReadingFile[], highlights: High
     }
 
     // If colliding with another highlight, delete the highlight
-    let collision = false;
     for (const highlight of props.highlights) {
 
       // Only parse the JSON if the file ID matches the active document
@@ -445,11 +440,12 @@ export default function PDFViewer(props: {files: ReadingFile[], highlights: High
               r1.y < r2.y + r2.height &&
               r1.y + r1.height > r2.y) {
 
-                // Set collision to true
-                collision = true;
-
-                // Delete the highlight from the database
-                await deleteHighlight.mutateAsync({id: highlight.id});
+                // Deselect
+                if (window.getSelection) {
+                  window?.getSelection()?.removeAllRanges();
+                } else if (document.getSelection()) {  // For IE
+                  document.getSelection()?.empty();
+                }
 
                 // Remove the highlight from the state
                 const newHighlights = props.highlights.filter((h) => h.id != highlight.id);
@@ -461,6 +457,9 @@ export default function PDFViewer(props: {files: ReadingFile[], highlights: High
                   highlightElement.remove();
                 }
 
+                // Delete the highlight from the database
+                await deleteHighlight.mutateAsync({id: highlight.id});
+
                 // Log the information
                 triggerActionLog({type: "dehighlight", value: {...highlight}});
                 return;
@@ -470,22 +469,15 @@ export default function PDFViewer(props: {files: ReadingFile[], highlights: High
       }
     }
 
-    // If there is a collision, return
-    if (collision) {
-      return;
+    // Generate id
+    const id = generateUUID()
+
+    // Deselect text after highlighting
+    if (window.getSelection) {
+      window?.getSelection()?.removeAllRanges();
+    } else if (document.getSelection()) {  // For IE
+      document.getSelection()?.empty();
     }
-
-    // Create a highlight via mutation and add it
-    const highlight = await createHighlight.mutateAsync({
-      rects: JSON.stringify(relativeRects),
-      content: toolkitText,
-      fileId: file.id,
-      activityDataId: props.activityDataId
-    });
-    props.setHighlights([...props.highlights, highlight]);
-
-    // Log the information
-    triggerActionLog({type: "highlight", value: {...highlight}});
 
     // Manually add the highligh to the children of the PDF Page it belongs to
     for (const rRect of relativeRects) {
@@ -498,7 +490,7 @@ export default function PDFViewer(props: {files: ReadingFile[], highlights: High
 
       // Adding the highlight
       const highlightElement = document.createElement("div");
-      highlightElement.className = `highlight_${highlight.id} absolute`;
+      highlightElement.className = `highlight_${id} absolute`;
       highlightElement.style.top = `${rRect.y * 100}%`;
       highlightElement.style.left = `${rRect.x * 100}%`;
       highlightElement.style.width = `${rRect.width * 100}%`;
@@ -507,6 +499,19 @@ export default function PDFViewer(props: {files: ReadingFile[], highlights: High
       highlightElement.style.zIndex = "45";
       page.appendChild(highlightElement);
     }
+
+    // Create a highlight via mutation and add it
+    const highlight = await createHighlight.mutateAsync({
+      id: id,
+      rects: JSON.stringify(relativeRects),
+      content: toolkitText,
+      fileId: file.id,
+      activityDataId: props.activityDataId
+    });
+    props.setHighlights([...props.highlights, highlight]);
+
+    // Log the information
+    triggerActionLog({type: "highlight", value: {...highlight}});
   }
 
   async function onAnnotate() {
