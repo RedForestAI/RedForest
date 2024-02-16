@@ -1,7 +1,7 @@
 import { ReadingFile, Highlight } from '@prisma/client'
 import React, { useMemo, useState, useEffect, useContext } from 'react';
 import DocViewer, { DocViewerRenderers, IDocument } from '@cyntler/react-doc-viewer';
-import { faMagnifyingGlass, faPlus, faMinus } from '@fortawesome/free-solid-svg-icons';
+import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import { api } from "~/trpc/react";
@@ -11,7 +11,6 @@ import { useMiddleNavBarContext, useEndNavBarContext } from '~/providers/navbar-
 import { triggerActionLog } from "~/loggers/actions-logger";
 import { ToolKit } from './toolkit';
 import { DocumentDrawer } from './document-drawer';
-import { generateUUID } from "~/utils/uuid";
 import { parsePrisma } from "~/utils/prisma";
 import "./pdf-viewer.css"
 
@@ -31,8 +30,6 @@ function debounce<F extends (...args: any[]) => void>(func: F, wait: number): (.
     timeout = setTimeout(later, wait);
   };
 }
-
-
 
 export default function PDFViewer(props: {files: ReadingFile[], highlights: Highlight[], setHighlights: any, activityDataId: string}) {
   const supabase = createClientComponentClient();
@@ -303,7 +300,7 @@ export default function PDFViewer(props: {files: ReadingFile[], highlights: High
     setPages(Array.from(pages));
   }, 100)
 
-  const handleTextSelection = () => {
+  const handleTextSelection = debounce(() => {
     const selection = window.getSelection();
     if (selection == null) {
       return;
@@ -341,7 +338,6 @@ export default function PDFViewer(props: {files: ReadingFile[], highlights: High
           rectList.push(value)
         }
 
-
         // Remove any rects that collide with each other
         let i = 0;
         while (i < rectList.length) {
@@ -359,8 +355,15 @@ export default function PDFViewer(props: {files: ReadingFile[], highlights: High
           i++;
         }
 
-
+        // Set the state
         setToolkitRects(rectList);
+
+        // Log the information
+        triggerActionLog({type: "selection", value: {
+          text: selection.toString(),
+          rects: rectList
+        }});
+
       }
     } else {
       setToolkitPosition({
@@ -372,8 +375,11 @@ export default function PDFViewer(props: {files: ReadingFile[], highlights: High
       });
       setToolkitText("");
       setToolkitRects([]);
+      
+      // Log the information
+      triggerActionLog({type: "deselection", value: {}});
     }
-  };
+  }, 50);
 
   function onReadingStart() {
     setReadingStart(true);
@@ -455,6 +461,8 @@ export default function PDFViewer(props: {files: ReadingFile[], highlights: High
                   highlightElement.remove();
                 }
 
+                // Log the information
+                triggerActionLog({type: "dehighlight", value: {...highlight}});
                 return;
               }
           }
@@ -475,6 +483,9 @@ export default function PDFViewer(props: {files: ReadingFile[], highlights: High
       activityDataId: props.activityDataId
     });
     props.setHighlights([...props.highlights, highlight]);
+
+    // Log the information
+    triggerActionLog({type: "highlight", value: {...highlight}});
 
     // Manually add the highligh to the children of the PDF Page it belongs to
     for (const rRect of relativeRects) {
