@@ -1,6 +1,6 @@
 import ReactDOM from "react-dom";
 import { LegacyRef } from "react";
-import { Annotation } from "@prisma/client";
+import { Annotation, ReadingFile } from "@prisma/client";
 import { useState, useEffect } from "react";
 import { parsePrisma } from "~/utils/prisma";
 import { api } from "~/trpc/react";
@@ -11,6 +11,7 @@ import "./annotation-box.css";
 const dRatio = 0.25;
 const wRatio = 0.95;
 const aHeight = 0.1; // Annotation Height
+const rangeMargin = 0.1;
 
 type aContainerType = {
   id: string;
@@ -19,6 +20,8 @@ type aContainerType = {
 };
 
 type PageNoteAnnotationLayerProps = {
+  fileIndex: number;
+  files: ReadingFile[];
   page: Element;
   annotations: Annotation[];
   setAnnotations: any;
@@ -54,7 +57,6 @@ export function PageNoteAnnotationLayer(props: PageNoteAnnotationLayerProps) {
 
   function detectCollision(
     container: aContainerType,
-    annotation: Annotation,
     aRange: { top: number; bottom: number },
   ): aContainerType | null {
     // For each container, go through all annotations and compute a range
@@ -65,7 +67,7 @@ export function PageNoteAnnotationLayer(props: PageNoteAnnotationLayerProps) {
       if (rRect.y < top) top = rRect.y;
       if (rRect.y + aHeight > bottom) bottom = rRect.y + aHeight;
     }
-    const cRange = { top: top, bottom: bottom };
+    const cRange = { top: top-rangeMargin, bottom: bottom+rangeMargin };
 
     // console.log("New annotation rect", aRange)
     // console.log("Annotation container rect", cRange)
@@ -79,9 +81,16 @@ export function PageNoteAnnotationLayer(props: PageNoteAnnotationLayerProps) {
   }
 
   useEffect(() => {
+
+    // Get the file ID (matching the index of the file)
+    const file = props.files[props.fileIndex];
+    if (file == undefined) {
+      return;
+    }
+
     // Filter the annotations to only include the ones on the current page
     const annotations = props.annotations.filter(
-      (annotation) => parsePrisma(annotation.position).page === pageNumber,
+      (annotation) => parsePrisma(annotation.position).page === pageNumber && annotation.fileId === file.id,
     );
     console.log(annotations);
 
@@ -101,7 +110,6 @@ export function PageNoteAnnotationLayer(props: PageNoteAnnotationLayerProps) {
       for (const annotationContainer of newContainerList) {
         collidingContainer = detectCollision(
           annotationContainer,
-          annotation,
           aRange,
         );
         if (collidingContainer) break;
@@ -126,7 +134,7 @@ export function PageNoteAnnotationLayer(props: PageNoteAnnotationLayerProps) {
 
     // Update the state, by adding the new containers to the old ones
     setAContainers(newContainerList);
-  }, [props.annotations]);
+  }, [props.annotations, props.fileIndex]);
 
   return ReactDOM.createPortal(
     <div
@@ -157,7 +165,7 @@ export function AnnotationContainer(props: AnnotationContainerProps) {
     }
 
     if (tops.length > 0) {
-      return `${Math.min(...tops) * 100 - 2}%`;
+      return `${Math.min(...tops) * 100}%`;
     }
     return "0%";
   }
