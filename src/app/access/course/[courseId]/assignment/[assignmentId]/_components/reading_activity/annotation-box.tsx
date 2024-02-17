@@ -19,14 +19,20 @@ export function addAnnotationBox(props: AnnotationBoxProps) {
 
   // Get the page element
   const page = props.page
+  const pageNumber = props.rRect.page
 
-  // Check if the page already has an annotation layer (id = "noteAnnotationLayer")
-  let noteAnnotationLayer = document.getElementById("noteAnnotationLayer")
+  // Check if the page already has an annotation layer (id = "noteAnnotationLayer_${pageNumber}")
+  let noteAnnotationLayer = document.getElementById(`noteAnnotationLayer_${pageNumber}`)
 
   // If the page does not have an annotation layer, create one
   if (noteAnnotationLayer == null) {
     noteAnnotationLayer = document.createElement('div')
     noteAnnotationLayer.id = "noteAnnotationLayer"
+    noteAnnotationLayer.style.position = "absolute"
+    noteAnnotationLayer.style.top = "0"
+    noteAnnotationLayer.style.left = "0"
+    noteAnnotationLayer.style.width = `${1+100*dRatio}%`
+    noteAnnotationLayer.style.height = "100%"
     page.appendChild(noteAnnotationLayer)
   }
 
@@ -36,14 +42,20 @@ export function addAnnotationBox(props: AnnotationBoxProps) {
   // Get the page element and the new incoming annotation
   const rect = props.page.getBoundingClientRect()
   const newAnnotationRect = {
-    top: props.rRect.y * 100,
-    bottom: props.rRect.y * 100 + rect.width * 0.04,
+    top: props.rRect.y * rect.height,
+    bottom: props.rRect.y * rect.height + 52,
   }
 
   // Check if any of the annotationContainers would overalp with the new annotation, purely from the y-axis
   let collidingContainer: Element | null = null;
   for (const annotationContainer of annotationContainers) {
     const annotationContainerRect = annotationContainer.getBoundingClientRect()
+
+    // Update the annotationContainerRect to be relative to the page
+    annotationContainerRect.y = annotationContainerRect.y - rect.y
+
+    console.log("New annotation rect", newAnnotationRect)
+    console.log("Annotation container rect", annotationContainerRect)
 
     // Check if the new annotation would overlap with the current annotationContainer
     if (newAnnotationRect.top < annotationContainerRect.bottom && newAnnotationRect.bottom > annotationContainerRect.top) {
@@ -54,9 +66,11 @@ export function addAnnotationBox(props: AnnotationBoxProps) {
 
   // If collision, just add the new annotation to colliding container (as it behaves lie a stack)
   if (collidingContainer) {
+    console.log("Colliding container")
     ReactDOM.render(<AnnotationBox {...props}/>, collidingContainer)
   } else {
     // If no collision, create a new annotation container
+    console.log("No colliding container")
     const annotationContainer = document.createElement('div')
     annotationContainer.className = "annotation-container"
     annotationContainer.style.position = "absolute"
@@ -124,7 +138,7 @@ function AnnotationBox(props: AnnotationBoxProps) {
           <svg 
             fill="#ffff88"
             stroke="black"
-            stroke-width="10"
+            strokeWidth="10"
             xmlns="http://www.w3.org/2000/svg"
             viewBox="0 0 448 512">
               <path d="M64 32C28.7 32 0 60.7 0 96V416c0 35.3 28.7 64 64 64H288V368c0-26.5 21.5-48 48-48H448V96c0-35.3-28.7-64-64-64H64zM448 352H402.7 336c-8.8 0-16 7.2-16 16v66.7V480l32-32 64-64 32-32z"/>
