@@ -274,7 +274,8 @@ function AnnotationBox(props: AnnotationBoxProps) {
     <>
       {/* Left-Panel Note */}
       <div
-        className={`annotation_${props.annotation.id} bg-base-100`}
+        id={`annotation_${props.annotation.id}`}
+        className={`annotation-box annotation_${props.annotation.id} bg-base-100`}
         style={{
           width: `${rect.width * dRatio * wRatio}px`,
           zIndex: "45",
