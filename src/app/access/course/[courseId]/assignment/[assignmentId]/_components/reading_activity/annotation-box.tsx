@@ -6,6 +6,9 @@ import { api } from "~/trpc/react";
 
 import "./annotation-box.css"
 
+const dRatio = 0.25
+const wRatio = 0.95
+
 type AnnotationBoxProps = {
   id: string
   rRect: {page: string | null, x: number, y: number, width: number, height: number}
@@ -17,11 +20,58 @@ export function addAnnotationBox(props: AnnotationBoxProps) {
   // Get the page element
   const page = props.page
 
-  // Create a new div element and append it to the page
-  const annotationLayer = document.createElement('div')
-  page.appendChild(annotationLayer)
+  // Check if the page already has an annotation layer (id = "noteAnnotationLayer")
+  let noteAnnotationLayer = document.getElementById("noteAnnotationLayer")
 
-  ReactDOM.render(<AnnotationBox {...props}/>, annotationLayer)
+  // If the page does not have an annotation layer, create one
+  if (noteAnnotationLayer == null) {
+    noteAnnotationLayer = document.createElement('div')
+    noteAnnotationLayer.id = "noteAnnotationLayer"
+    page.appendChild(noteAnnotationLayer)
+  }
+
+  // Now, let's fetch the current annotation containers in the page
+  const annotationContainers  = page.querySelectorAll(".annotation-container")
+
+  // Get the page element and the new incoming annotation
+  const rect = props.page.getBoundingClientRect()
+  const newAnnotationRect = {
+    top: props.rRect.y * 100,
+    bottom: props.rRect.y * 100 + rect.width * 0.04,
+  }
+
+  // Check if any of the annotationContainers would overalp with the new annotation, purely from the y-axis
+  let collidingContainer: Element | null = null;
+  for (const annotationContainer of annotationContainers) {
+    const annotationContainerRect = annotationContainer.getBoundingClientRect()
+
+    // Check if the new annotation would overlap with the current annotationContainer
+    if (newAnnotationRect.top < annotationContainerRect.bottom && newAnnotationRect.bottom > annotationContainerRect.top) {
+      // If it does, then we will move the new annotation to the right of the current annotationContainer
+      collidingContainer = annotationContainer
+    }
+  }
+
+  // If collision, just add the new annotation to colliding container (as it behaves lie a stack)
+  if (collidingContainer) {
+    ReactDOM.render(<AnnotationBox {...props}/>, collidingContainer)
+  } else {
+    // If no collision, create a new annotation container
+    const annotationContainer = document.createElement('div')
+    annotationContainer.className = "annotation-container"
+    annotationContainer.style.position = "absolute"
+    annotationContainer.style.top = `${props.rRect.y * 100 - 2}%`
+    annotationContainer.style.left = `${rect.width * -dRatio}px`
+    annotationContainer.style.width = `${rect.width * dRatio}px`
+    annotationContainer.style.minHeight = "52px"
+    annotationContainer.style.zIndex = "50"
+    annotationContainer.style.display = "flex"
+    annotationContainer.style.flexDirection = "column"
+    annotationContainer.setAttribute("pointer-events", "auto")
+    noteAnnotationLayer.appendChild(annotationContainer)
+
+    ReactDOM.render(<AnnotationBox {...props}/>, annotationContainer)
+  }
 }
 
 function AnnotationBox(props: AnnotationBoxProps) {
@@ -32,6 +82,14 @@ function AnnotationBox(props: AnnotationBoxProps) {
 
   // Get the page element
   const rect = props.page.getBoundingClientRect()
+  console.log(rect, props.rRect)
+
+  useEffect(() => {
+    document.addEventListener('click', function(e) {
+      console.log(e.target); // Log the element that was clicked
+    }, true); // Use capture to ensure the event is captured during the capturing phase
+    
+  }, [])
 
   async function deleteSelf() {
     console.log("Delete annotation")
@@ -52,10 +110,12 @@ function AnnotationBox(props: AnnotationBoxProps) {
 
   return (
     <>
-      <div className={`annotation_${props.id} absolute p-2`} 
+
+      {/* Sticky Note Icon */}
+      <div className={`annotation_${props.id} absolute p-1`} 
         style={{
-          top: `${(props.rRect.y - props.rRect.height) * 100}%`,
-          left: `${(props.rRect.x + (props.rRect.width*0.5)) * 100 - rect.width*0.002}%`,
+          top: `${-rect.height * 0.01}px`,
+          left: `${rect.width * dRatio + (rect.width * (props.rRect.x + props.rRect.width/2)) - rect.width * 0.02}px`,
           width: `${rect.width * 0.04}px`,
           height: `${rect.width * 0.04}px`,
           zIndex: "50",
@@ -73,10 +133,9 @@ function AnnotationBox(props: AnnotationBoxProps) {
       </div>
 
 
-      <div className={`annotation_${props.id} absolute bg-base-100 h-52`} style={{
-        top: `${props.rRect.y * 100}%`,
-        left: `${rect.width * -0.25 - 10}px`,
-        width: `${rect.width * 0.25}px`,
+      {/* Left-Panel Note */}
+      <div className={`annotation_${props.id} bg-base-100 h-52`} style={{
+        width: `${rect.width * dRatio * wRatio}px`,
         zIndex: "45",
       }}>
         <label className="form-control">

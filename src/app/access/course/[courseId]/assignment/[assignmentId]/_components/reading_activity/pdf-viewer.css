@@ -14,7 +14,6 @@
 
 #pdf-renderer {
   overflow-y: visible;
-
 }
 
 .react-pdf__Page__textContent span::-moz-selection {
