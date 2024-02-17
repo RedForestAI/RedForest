@@ -16,6 +16,7 @@ import {
 } from "~/providers/navbar-provider";
 import { triggerActionLog } from "~/loggers/actions-logger";
 import { ToolKit } from "./toolkit";
+import { DictionaryEntry } from "./dictionary-entry";
 import { DocumentDrawer } from "./document-drawer";
 import { PageNoteAnnotationLayer } from "./annotation-box";
 import { parsePrisma } from "~/utils/prisma";
@@ -53,6 +54,10 @@ export default function PDFViewer(props: PDFViewerProps) {
 
   // Highlights
   const [pages, setPages] = useState<Element[]>([]);
+
+  // Dictionary
+  const [dictError, setDictError] = useState<string | null>(null);
+  const [dictEntry, setDictEntry] = useState<any | null>(null);
 
   // Mutation
   const supabase = createClientComponentClient();
@@ -609,7 +614,22 @@ export default function PDFViewer(props: PDFViewerProps) {
 
   }
 
-  async function onLookup() {}
+  async function onLookup() {
+
+    deselect();
+
+    // First, check if the text is a word (no whitespaces)
+    if (/\s/g.test(toolkitText) || toolkitText.length <= 1) {
+      setDictError("Please select a word to lookup");
+      return;
+    }
+
+    const response = await fetch(`https://api.dictionaryapi.dev/api/v2/entries/en_US/${toolkitText}`);
+    const data = await response.json();
+    console.log(data);
+
+    setDictEntry(data);
+  }
 
   return (
     <>
@@ -655,6 +675,19 @@ export default function PDFViewer(props: PDFViewerProps) {
           ))}
         </>
       )}
+
+      <div className="toast toast-end z-[100] w-3/12">
+        {dictError &&
+        <div className="alert alert-error flex flex-row justify-between">
+          <span>{dictError}</span>
+          <button className="btn btn-ghost" onClick={() => setDictError("")}>Dismiss</button>
+        </div>
+        }
+
+        {dictEntry &&
+          <DictionaryEntry dictEntry={dictEntry} setDictEntry={setDictEntry}/>
+        }
+      </div>
     </>
   );
 }
