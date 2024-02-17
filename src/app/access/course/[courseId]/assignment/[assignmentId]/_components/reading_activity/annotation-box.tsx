@@ -1,5 +1,4 @@
 import ReactDOM from "react-dom";
-import { LegacyRef } from "react";
 import { Annotation, ReadingFile } from "@prisma/client";
 import { useState, useEffect } from "react";
 import { parsePrisma } from "~/utils/prisma";
@@ -232,6 +231,7 @@ function AnnotationBox(props: AnnotationBoxProps) {
     );
 
     // Then delete from the database
+    await deleteAnnotation.mutateAsync({ id: props.id });
   }
 
   return (

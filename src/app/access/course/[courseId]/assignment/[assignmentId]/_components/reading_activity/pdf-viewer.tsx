@@ -593,13 +593,13 @@ export default function PDFViewer(props: PDFViewerProps) {
     deselect();
 
     // Create an annotation via mutation and add it
-    const annotation = {
+    const annotation = await createAnnotation.mutateAsync({
       id: id,
       position: JSON.stringify(rRect),
       content: toolkitText,
       fileId: file.id,
       activityDataId: props.activityDataId,
-    };
+    });
     props.setAnnotations([...props.annotations, annotation]);
   }
 
