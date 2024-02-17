@@ -26,7 +26,7 @@ export default function QuestionActivity(props: QuestionActivityProps) {
     <>
       {!complete  
        ? <Questions {...props} complete={complete} setComplete={setComplete}/> 
-       : <ActivityCompletion {...props} complete={complete}/>
+       : <ActivityCompletion {...props} complete={complete} isSubmitting={false}/>
       }
     </>
   )
