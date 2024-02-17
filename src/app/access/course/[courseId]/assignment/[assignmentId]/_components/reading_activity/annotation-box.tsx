@@ -5,6 +5,7 @@ import { useState, useEffect } from "react";
 import { parsePrisma } from "~/utils/prisma";
 import { api } from "~/trpc/react";
 import { generateUUID } from "~/utils/uuid";
+import { useHighlight } from '~/providers/highlight-provider';
 
 import "./annotation-box.css";
 
@@ -215,7 +216,8 @@ function AnnotationContainer(props: AnnotationContainerProps) {
 }
 
 function AnnotationBox(props: AnnotationBoxProps) {
-  const [highlight, setHighlight] = useState(false);
+  const { highlightedId } = useHighlight();
+  const isHighlighted = props.id === highlightedId;
 
   // Mutations
   const deleteAnnotation = api.annotation.delete.useMutation();
@@ -252,7 +254,7 @@ function AnnotationBox(props: AnnotationBoxProps) {
             </span>
           </div>
           <textarea
-            className={`textarea textarea-bordered textarea-primary h-24 ${highlight ? "textarea-highlight" : ""}`}
+            className={`textarea textarea-bordered textarea-primary h-24 ${isHighlighted ? "textarea-highlight" : ""}`}
             placeholder="Your notes"
           ></textarea>
         </label>
@@ -262,10 +264,11 @@ function AnnotationBox(props: AnnotationBoxProps) {
 }
 
 function AnnotationStickyNote(props: AnnotationBoxProps) {
+  const { setHighlightedId } = useHighlight();
 
   function highlightAnnotation() {
-    // setHighlight(true);
-    // setTimeout(() => setHighlight(false), 1000); // Remove highlight after 1 second
+    setHighlightedId(props.id); // Highlight this note
+    setTimeout(() => setHighlightedId(''), 1000); // Remove highlight after 1 second
   }
 
   // Get the page element
@@ -286,6 +289,7 @@ function AnnotationStickyNote(props: AnnotationBoxProps) {
         <button className="h-full w-full" onClick={highlightAnnotation}>
           <svg
             fill="#ffff88"
+            opacity="0.9"
             stroke="black"
             strokeWidth="10"
             xmlns="http://www.w3.org/2000/svg"
