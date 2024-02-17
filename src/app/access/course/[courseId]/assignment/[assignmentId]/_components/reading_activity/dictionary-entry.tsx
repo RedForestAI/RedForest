@@ -15,7 +15,7 @@ export function DictionaryEntry(props: DictionaryEntryProps) {
   const definitions = partOfSpeech.definitions.slice(0, 3)
 
   return (
-    <div className="alert alert-info">
+    <div id="dictionaryEntry" className="alert alert-info">
       <div></div> {/* Empty div required */}
       <div className="flex justify-between w-full">
         <div>

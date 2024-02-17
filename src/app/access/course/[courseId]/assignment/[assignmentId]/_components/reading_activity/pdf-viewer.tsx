@@ -405,7 +405,7 @@ export default function PDFViewer(props: PDFViewerProps) {
       setToolkitText("");
       setToolkitRects([]);
     }
-  }, 100);
+  }, 200);
 
   function onReadingStart() {
     setReadingStart(true);
@@ -621,14 +621,33 @@ export default function PDFViewer(props: PDFViewerProps) {
     // First, check if the text is a word (no whitespaces)
     if (/\s/g.test(toolkitText) || toolkitText.length <= 1) {
       setDictError("Please select a word to lookup");
+      triggerActionLog({
+        type: "dictionaryLookUP",
+        value: { error: "Please select a word to lookup" },
+      });
       return;
     }
 
     const response = await fetch(`https://api.dictionaryapi.dev/api/v2/entries/en_US/${toolkitText}`);
     const data = await response.json();
-    console.log(data);
 
-    setDictEntry(data);
+    console.log(data)
+
+    // Check if the word exists
+    if (!Array.isArray(data)){
+      setDictError("The word does not exist in the dictionary");
+      triggerActionLog({
+        type: "dictionaryLookUP",
+        value: { selection: toolkitText, error: "The word does not exist in the dictionary" },
+      });
+      return;
+    } else {
+      setDictEntry(data);
+      triggerActionLog({
+        type: "dictionaryLookUP",
+        value: { selection: toolkitText, word: data[0].word },
+      });
+    }
   }
 
   return (
