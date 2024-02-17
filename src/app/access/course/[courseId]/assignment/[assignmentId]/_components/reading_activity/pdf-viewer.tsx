@@ -607,7 +607,7 @@ export default function PDFViewer(props: PDFViewerProps) {
         {pages &&
           <>
             {pages.map((page, index) => (
-              <PageNoteAnnotationLayer key={index} page={page} annotations={props.annotations}/>
+              <PageNoteAnnotationLayer key={index} page={page} annotations={props.annotations} setAnnotations={props.setAnnotations}/>
             ))}
           </>
         }
