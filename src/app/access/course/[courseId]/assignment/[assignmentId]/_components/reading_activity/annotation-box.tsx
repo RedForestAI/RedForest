@@ -165,7 +165,7 @@ export function PageNoteAnnotationLayer(props: PageNoteAnnotationLayerProps) {
         .map((annotation) => (
           <AnnotationStickyNote
             key={annotation.id}
-            id={annotation.id}
+            annotation={annotation}
             rRect={parsePrisma(annotation.position)}
             page={props.page}
             setAnnotations={props.setAnnotations}
@@ -308,7 +308,7 @@ function AnnotationStickyNote(props: AnnotationBoxProps) {
   const { setHighlightedId } = useHighlight();
 
   function highlightAnnotation() {
-    setHighlightedId(props.id); // Highlight this note
+    setHighlightedId(props.annotation.id); // Highlight this note
     setTimeout(() => setHighlightedId(''), 1000); // Remove highlight after 1 second
   }
 
@@ -318,7 +318,7 @@ function AnnotationStickyNote(props: AnnotationBoxProps) {
   return (
     <>
       <div
-        className={`annotation_${props.id} absolute p-1`}
+        className={`annotation_${props.annotation.id} absolute p-1`}
         style={{
           top: `${props.rRect.y*100 - 2.5}%`,
           left: `${(props.rRect.x + props.rRect.width/2)*100 - 2}%`,

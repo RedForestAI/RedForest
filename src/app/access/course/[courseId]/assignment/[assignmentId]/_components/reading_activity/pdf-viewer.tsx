@@ -364,6 +364,7 @@ export default function PDFViewer(props: PDFViewerProps) {
           while (j < rectList.length) {
             // @ts-ignore
             if (
+              // @ts-ignore
               rectList[i].y < rectList[j].y + rectList[j].height &&
               // @ts-ignore
               rectList[i].y + rectList[i].height > rectList[j].y
