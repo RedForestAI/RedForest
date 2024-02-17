@@ -17,6 +17,7 @@ import { AOIEncoding } from "~/eyetracking/aoi-encoding";
 import GazeLogger from "~/loggers/gaze-logger";
 import ScrollLogger from "~/loggers/scroll-logger";
 import ActionsLogger from "~/loggers/actions-logger";
+import { set } from "zod";
 
 type ReadingActivityProps = {
   profile: Profile
@@ -42,6 +43,7 @@ export default function ReadingActivity(props: ReadingActivityProps) {
   const [readingFiles, setReadingFiles] = useState<ReadingFile[]>([]);
   const [highlights, setHighlights] = useState<Highlight[]>([]);
   const [annotations, setAnnotations] = useState<Annotation[]>([]);
+  const [ isSubmitting, setIsSubmitting ] = useState<boolean>(false)
   
   const readingActivityQuery = api.readingFile.getMany.useQuery({activityId: props.activity.id}, {enabled: false});
   const highlightQuery = api.highlight.getMany.useQuery({activityDataId: props.activityData.id}, {enabled: false});
@@ -134,6 +136,8 @@ export default function ReadingActivity(props: ReadingActivityProps) {
 
   useEffect(() => {
     const uploadLogs = async () => {
+      if (isSubmitting) return;
+      setIsSubmitting(true)
 
       // Generate a session ID
       const session_id = generateUUID()
@@ -189,6 +193,8 @@ export default function ReadingActivity(props: ReadingActivityProps) {
         const meta_result = await createTracelogFile.mutateAsync({activityDataId: props.activityData.id, filepath: meta_filepath})
         const meta_storage_result = await supabase.storage.from('tracelogs').upload(meta_filepath, meta_file);
 
+        setIsSubmitting(false)
+
         if (meta_storage_result.error){
           console.error("Failed to upload meta data")
         }
@@ -219,7 +225,7 @@ export default function ReadingActivity(props: ReadingActivityProps) {
           <div id="QuestionPane" className="mt-20 w-full">
           {!complete  
             ? <Questions {...props} complete={complete} setComplete={setComplete} config={{beforeStartPrompt: true}}/> 
-            : <ActivityCompletion {...props} complete={complete}/>
+            : <ActivityCompletion {...props} complete={complete} isSubmitting={isSubmitting}/>
           }
           </div>
         </TaskDrawer>
