@@ -10,6 +10,7 @@ import "./annotation-box.css"
 
 const dRatio = 0.25
 const wRatio = 0.95
+const aHeight = 0.1 // Annotation Height
 
 type AnnotationBoxProps = {
   id: string
@@ -21,7 +22,6 @@ type aContainerType = {
   id: string
   page: Element
   annotations: Annotation[]
-  reference: LegacyRef<HTMLDivElement> | undefined
 }
 
 type PageNoteAnnotationLayerProps = {
@@ -43,21 +43,25 @@ export function PageNoteAnnotationLayer(props: PageNoteAnnotationLayerProps) {
   const pageNumber = props.page.getAttribute("data-page-number")
   const rect = props.page.getBoundingClientRect()
 
-  function detectCollision(container: aContainerType, annotation: Annotation, aRect: {top: number, bottom: number}): aContainerType | null {
+  function detectCollision(container: aContainerType, annotation: Annotation, aRange: {top: number, bottom: number}): aContainerType | null {
 
-    // @ts-ignore
-    const element = container.reference?.current
-    if (!element) return null
-    const cRect = element.getBoundingClientRect()
+    console.log("Detecting collision")
 
-    // Update the container rect to be relative to the page
-    cRect.y = cRect.y - rect.y
+    // For each container, go through all annotations and compute a range
+    let top = 100;
+    let bottom = 0;
+    for (const annotation of container.annotations) {
+      const rRect = parsePrisma(annotation.position)
+      if (rRect.y < top) top = rRect.y;
+      if (rRect.y + aHeight > bottom) bottom = rRect.y + aHeight;
+    }
+    const cRange = {top: top, bottom: bottom}
 
-    console.log("New annotation rect", aRect)
-    console.log("Annotation container rect", cRect)
+    console.log("New annotation rect", aRange)
+    console.log("Annotation container rect", cRange)
 
     // Check if the new annotation would overlap with the current a container
-    if (aRect.top < cRect.bottom && aRect.bottom > cRect.top) {
+    if (aRange.top < cRange.bottom && aRange.bottom > cRange.top) {
       return container
     }
 
@@ -75,22 +79,22 @@ export function PageNoteAnnotationLayer(props: PageNoteAnnotationLayerProps) {
     // Aggregate the annotations into annotation containers
     for (const annotation of annotations) {
       const rRect = parsePrisma(annotation.position)
-      const newAnnotationRect = {
-        top: rRect.y * rect.height,
-        bottom: rRect.y * rect.height + 52,
+      const aRange = {
+        top: rRect.y,
+        bottom: rRect.y + 0.1,
       }
 
       // Check against annotation containers
       let collidingContainer: aContainerType | null = null;
       for (const annotationContainer of newContainerList) {
-        collidingContainer = detectCollision(annotationContainer, annotation, newAnnotationRect)
+        collidingContainer = detectCollision(annotationContainer, annotation, aRange)
         if (collidingContainer) break
       }
 
       // If collision, just add the new annotation to colliding container (as it behaves lie a stack)
       if (collidingContainer) {
         console.log("Colliding container")
-        // ReactDOM.render(<AnnotationBox {...props}/>, collidingContainer)
+        collidingContainer.annotations.push(annotation)
       } else {
         // If no collision, create a new annotation container
         console.log("No colliding container")
@@ -99,7 +103,6 @@ export function PageNoteAnnotationLayer(props: PageNoteAnnotationLayerProps) {
           id: generateUUID(),
           page: props.page,
           annotations: [annotation],
-          reference: undefined
         }
         newContainerList.push(newContainer)
       }
@@ -139,7 +142,7 @@ export function AnnotationContainer(props: AnnotationContainerProps) {
   }
 
   return (
-    <div ref={props.container.reference} className="annotation-container" style={{
+    <div id={`annotation-container_${props.container.id}`} style={{
       position: "absolute",
       top: getTop(),
       left: `${props.rect.width * -dRatio}px`,
@@ -153,7 +156,7 @@ export function AnnotationContainer(props: AnnotationContainerProps) {
         <div key={index}>
 
         <AnnotationBox 
-          id={props.container.id}
+          id={annotation.id}
           rRect={parsePrisma(annotation.position)}
           page={props.page}
         />
