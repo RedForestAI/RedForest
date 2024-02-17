@@ -1,0 +1,13 @@
+/* Add this to your global CSS file */
+.textarea-highlight {
+    animation: highlightBorder 1s ease-out;
+  }
+  
+  @keyframes highlightBorder {
+    from {
+      background-color: rgba(0, 68, 255, 0.5) /* Start color */
+    }
+    to {
+      background-color: initial; /* End at the original border color */
+    }
+  }

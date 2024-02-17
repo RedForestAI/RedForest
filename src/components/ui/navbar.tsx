@@ -81,7 +81,7 @@ export default function Navbar(props: NavbarProps) {
   }
 
   return (
-    <div className="navbar bg-base-100 shadow-xl border-b relative" style={{zIndex: "60"}}>
+    <div className="navbar bg-base-100 shadow-xl border-b relative" style={{zIndex: "100"}}>
       <div className="navbar-start">
         {props.profile &&
         <div className="dropdown">

@@ -144,6 +144,7 @@ model ActivityData {
 
   traceLogFiles     TraceLogFile[]
   highlights        Highlight[]
+  annotations       Annotation[]
 
   @@map("user_activity_data")
 }
@@ -169,6 +170,7 @@ model ReadingFile {
 
   // Highlights
   highlights        Highlight[]
+  annotations       Annotation[]
 
   // ReadingActivity
   activity          ReadingActivity @relation(fields: [activityId], references: [id])
@@ -189,6 +191,21 @@ model Highlight {
   activityData      ActivityData @relation(fields: [activityDataId], references: [id])
   activityDataId    String      @db.Uuid
   @@map("highlight")
+}
+
+model Annotation {
+  id                String      @id @default(uuid()) @db.Uuid
+  content           String
+  position          Json
+
+  // PDF File
+  file              ReadingFile @relation(fields: [fileId], references: [id])
+  fileId            String      @db.Uuid
+
+  // User Activity
+  activityData      ActivityData @relation(fields: [activityDataId], references: [id])
+  activityDataId    String      @db.Uuid
+  @@map("annotation")
 }
 
 model ReadingActivity {

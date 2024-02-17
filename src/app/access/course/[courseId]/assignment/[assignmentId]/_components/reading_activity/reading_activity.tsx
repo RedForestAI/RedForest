@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import { generateUUID } from "~/utils/uuid";
 
-import { Profile, Course, Assignment, Activity, ActivityData, AssignmentData, ReadingFile, Question, Highlight } from '@prisma/client';
+import { Profile, Course, Assignment, Activity, ActivityData, AssignmentData, ReadingFile, Question, Highlight, Annotation } from '@prisma/client';
 import { api } from "~/trpc/react";
 
 import EyeTrackingController from "~/eyetracking/eye-tracking-controller";
@@ -41,24 +41,35 @@ export default function ReadingActivity(props: ReadingActivityProps) {
   const [complete, setComplete ] = useState<boolean>(false);
   const [readingFiles, setReadingFiles] = useState<ReadingFile[]>([]);
   const [highlights, setHighlights] = useState<Highlight[]>([]);
+  const [annotations, setAnnotations] = useState<Annotation[]>([]);
+  
   const readingActivityQuery = api.readingFile.getMany.useQuery({activityId: props.activity.id}, {enabled: false});
   const highlightQuery = api.highlight.getMany.useQuery({activityDataId: props.activityData.id}, {enabled: false});
+  const annotationQuery = api.annotation.getMany.useQuery({activityDataId: props.activityData.id}, {enabled: false});
   const createTracelogFile = api.traceLogFile.create.useMutation()
   const supabase = createClientComponentClient();
 
   useEffect(() => {
     const getReadingActivity = async () => {
-      const result = await readingActivityQuery.refetch();
 
+      // Get the reading activity data
+      const result = await readingActivityQuery.refetch();
       if (result.error || !result.data) {
         console.log(result.error)
         return;
       }
 
+      // Get the highlights
       const highlightsResult = await highlightQuery.refetch();
-
       if (highlightsResult.error || !highlightsResult.data) {
         console.log(highlightsResult.error)
+        return;
+      }
+
+      // Get the annotations
+      const annotationsResult = await annotationQuery.refetch();
+      if (annotationsResult.error || !annotationsResult.data) {
+        console.log(annotationsResult.error)
         return;
       }
 
@@ -66,6 +77,7 @@ export default function ReadingActivity(props: ReadingActivityProps) {
       result.data.sort((a, b) => a.index - b.index);
       setReadingFiles(result.data);
       setHighlights(highlightsResult.data);
+      setAnnotations(annotationsResult.data);
     };
     getReadingActivity();
 
@@ -198,7 +210,9 @@ export default function ReadingActivity(props: ReadingActivityProps) {
         <PDFViewer 
           files={readingFiles} 
           highlights={highlights} 
-          setHighlights={setHighlights} 
+          setHighlights={setHighlights}
+          annotations={annotations}
+          setAnnotations={setAnnotations}
           activityDataId={props.activityData.id}
         /> 
         <TaskDrawer>
