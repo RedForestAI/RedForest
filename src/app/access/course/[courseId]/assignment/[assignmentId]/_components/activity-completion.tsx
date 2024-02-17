@@ -16,6 +16,7 @@ type ActivityCompletionProps = {
   setCurrentActId: (id: number) => void
 
   complete: boolean
+  isSubmitting: boolean
 }
 
 export default function ActivityCompletion(props: ActivityCompletionProps) {
@@ -73,11 +74,20 @@ export default function ActivityCompletion(props: ActivityCompletionProps) {
           <div className="self-stretch text-4xl mt-4 max-md:max-w-full">
             You have completed this assignment!
           </div>
-          <div className="self-stretch text-xs mt-2.5 max-md:max-w-full">
-            Press continue to return to Dashboard.
-          </div>
+          {props.isSubmitting
+           ?  <>
+            <div className="self-stretch text-xs mt-2.5 max-md:max-w-full">
+              Please wait while we upload you session files.
+            </div>
+          </>
+           :  <>
+            <div className="self-stretch text-xs mt-2.5 max-md:max-w-full">
+              Press continue to return to Dashboard.
+            </div>
+          </>
+          }
           <div className="flex justify-end w-full items-center mt-4">
-            <button className="btn btn-primary" onClick={finishAssignment}>Continue</button>
+            <button className="btn btn-primary" disabled={props.isSubmitting} onClick={finishAssignment}>Continue</button>
           </div>
         </>
       )
@@ -87,11 +97,20 @@ export default function ActivityCompletion(props: ActivityCompletionProps) {
         <div className="self-stretch text-4xl mt-4 max-md:max-w-full">
           You have completed this activity!
         </div>
-        <div className="self-stretch text-xs mt-2.5 max-md:max-w-full">
-          Press continue when ready.
-        </div>
+        {props.isSubmitting
+           ?  <>
+            <div className="self-stretch text-xs mt-2.5 max-md:max-w-full">
+              Please wait while we upload you session files.
+            </div>
+          </>
+           :  <>
+            <div className="self-stretch text-xs mt-2.5 max-md:max-w-full">
+              Press continue to the next activity when you are ready.
+            </div>
+          </>
+        }
         <div className="flex justify-end w-full items-center mt-4">
-          <button className="btn btn-primary" onClick={nextActivity}>Continue</button>
+          <button className="btn btn-primary" disabled={props.isSubmitting} onClick={nextActivity}>Continue</button>
         </div>
       </>
     )

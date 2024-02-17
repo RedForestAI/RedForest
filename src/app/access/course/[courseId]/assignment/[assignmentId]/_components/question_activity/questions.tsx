@@ -53,7 +53,7 @@ export default function Questions(props: QuestionsProps) {
   const { register, handleSubmit, clearErrors, reset, formState: { errors } } = useForm();
   const [ currentQuestionId, setCurrentQuestionId ] = useState<number>(props.activityData.currentQuestionId)
   const [ startQuestions, setStartQuestions ] = useState<boolean>(false)
-  const [isSubmitting, setIsSubmitting] = useState<boolean>(false)
+  const [ isSubmitting, setIsSubmitting ] = useState<boolean>(false)
 
   // Mutations
   const appendAnswerMutation = api.activityData.appendAnswer.useMutation()
