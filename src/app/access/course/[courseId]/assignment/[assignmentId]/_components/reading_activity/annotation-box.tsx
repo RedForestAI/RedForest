@@ -92,7 +92,6 @@ export function PageNoteAnnotationLayer(props: PageNoteAnnotationLayerProps) {
     const annotations = props.annotations.filter(
       (annotation) => parsePrisma(annotation.position).page === pageNumber && annotation.fileId === file.id,
     );
-    console.log(annotations);
 
     // Create list of new containts
     let newContainerList: aContainerType[] = [];
@@ -117,11 +116,11 @@ export function PageNoteAnnotationLayer(props: PageNoteAnnotationLayerProps) {
 
       // If collision, just add the new annotation to colliding container (as it behaves lie a stack)
       if (collidingContainer) {
-        console.log("Colliding container");
+        // console.log("Colliding container");
         collidingContainer.annotations.push(annotation);
       } else {
         // If no collision, create a new annotation container
-        console.log("No colliding container");
+        // console.log("No colliding container");
 
         const newContainer: aContainerType = {
           id: generateUUID(),
@@ -141,6 +140,7 @@ export function PageNoteAnnotationLayer(props: PageNoteAnnotationLayerProps) {
       id={`noteAnnotationLayer_${pageNumber}`}
       className="absolute left-0 top-0 h-full w-full"
     >
+      {/* Text annotation */}
       {aContainers.map((container) => (
         <AnnotationContainer
           key={container.id}
@@ -150,12 +150,29 @@ export function PageNoteAnnotationLayer(props: PageNoteAnnotationLayerProps) {
           setAnnotations={props.setAnnotations}
         />
       ))}
+
+      {/* Sticky note */}
+      {props.annotations
+        .filter(
+          (annotation) =>
+            parsePrisma(annotation.position).page === pageNumber &&
+            annotation.fileId === props.files[props.fileIndex]!.id,
+        )
+        .map((annotation) => (
+          <AnnotationStickyNote
+            key={annotation.id}
+            id={annotation.id}
+            rRect={parsePrisma(annotation.position)}
+            page={props.page}
+            setAnnotations={props.setAnnotations}
+          />
+        ))}
     </div>,
     props.page,
   );
 }
 
-export function AnnotationContainer(props: AnnotationContainerProps) {
+function AnnotationContainer(props: AnnotationContainerProps) {
   function getTop() {
     // Get the highest annotation in the container
     let tops = [];
@@ -201,7 +218,7 @@ function AnnotationBox(props: AnnotationBoxProps) {
   const [highlight, setHighlight] = useState(false);
 
   // Mutations
-  // const deleteAnnotation = api.annotation.delete.useMutation();
+  const deleteAnnotation = api.annotation.delete.useMutation();
 
   // Get the page element
   const rect = props.page.getBoundingClientRect();
@@ -215,38 +232,8 @@ function AnnotationBox(props: AnnotationBoxProps) {
     // Then delete from the database
   }
 
-  function highlightAnnotation() {
-    console.log("Highlight annotation");
-    setHighlight(true);
-    setTimeout(() => setHighlight(false), 1000); // Remove highlight after 1 second
-  }
-
   return (
     <>
-      {/* Sticky Note Icon */}
-      <div
-        className={`annotation_${props.id} absolute p-1`}
-        style={{
-          top: `${-rect.height * 0.01}px`,
-          left: `${rect.width * dRatio + rect.width * (props.rRect.x + props.rRect.width / 2) - rect.width * 0.02}px`,
-          width: `${rect.width * 0.04}px`,
-          height: `${rect.width * 0.04}px`,
-          zIndex: "50",
-        }}
-      >
-        <button className="h-full w-full" onClick={highlightAnnotation}>
-          <svg
-            fill="#ffff88"
-            stroke="black"
-            strokeWidth="10"
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 448 512"
-          >
-            <path d="M64 32C28.7 32 0 60.7 0 96V416c0 35.3 28.7 64 64 64H288V368c0-26.5 21.5-48 48-48H448V96c0-35.3-28.7-64-64-64H64zM448 352H402.7 336c-8.8 0-16 7.2-16 16v66.7V480l32-32 64-64 32-32z" />
-          </svg>
-        </button>
-      </div>
-
       {/* Left-Panel Note */}
       <div
         className={`annotation_${props.id} bg-base-100`}
@@ -272,4 +259,42 @@ function AnnotationBox(props: AnnotationBoxProps) {
       </div>
     </>
   );
+}
+
+function AnnotationStickyNote(props: AnnotationBoxProps) {
+
+  function highlightAnnotation() {
+    // setHighlight(true);
+    // setTimeout(() => setHighlight(false), 1000); // Remove highlight after 1 second
+  }
+
+  // Get the page element
+  const rect = props.page.getBoundingClientRect();
+
+  return (
+    <>
+      <div
+        className={`annotation_${props.id} absolute p-1`}
+        style={{
+          top: `${props.rRect.y*100 - 2.5}%`,
+          left: `${(props.rRect.x + props.rRect.width/2)*100 - 2}%`,
+          width: `${4}%`,
+          height: `${rect.width * 0.04}px`,
+          zIndex: "50",
+        }}
+      >
+        <button className="h-full w-full" onClick={highlightAnnotation}>
+          <svg
+            fill="#ffff88"
+            stroke="black"
+            strokeWidth="10"
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 448 512"
+          >
+            <path d="M64 32C28.7 32 0 60.7 0 96V416c0 35.3 28.7 64 64 64H288V368c0-26.5 21.5-48 48-48H448V96c0-35.3-28.7-64-64-64H64zM448 352H402.7 336c-8.8 0-16 7.2-16 16v66.7V480l32-32 64-64 32-32z" />
+          </svg>
+        </button>
+      </div>
+    </>
+  )
 }
