@@ -12,7 +12,7 @@ import { useMiddleNavBarContext, useEndNavBarContext } from '~/providers/navbar-
 import { triggerActionLog } from "~/loggers/actions-logger";
 import { ToolKit } from './toolkit';
 import { DocumentDrawer } from './document-drawer';
-import { addAnnotationBox } from './annotation-box';
+import { PageNoteAnnotationLayer, addAnnotationBox } from './annotation-box';
 import { parsePrisma } from "~/utils/prisma";
 import { debounce } from "~/utils/functional"
 import "./pdf-viewer.css"
@@ -563,7 +563,7 @@ export default function PDFViewer(props: PDFViewerProps) {
     deselect()
 
     // Add the annotation box
-    addAnnotationBox({id: id, rRect: rRect, page: page});
+    // addAnnotationBox({id: id, rRect: rRect, page: page});
 
     // Create an annotation via mutation and add it
     const annotation = {
@@ -603,6 +603,14 @@ export default function PDFViewer(props: PDFViewerProps) {
         <div id="pdf-viewer-container" className={`w-full h-full flex flex-row justify-center items-center ${readingStart ? "" : "blur-lg"}`}>
           {docViewer}
         </div>
+
+        {pages &&
+          <>
+            {pages.map((page, index) => (
+              <PageNoteAnnotationLayer key={index} page={page} annotations={props.annotations}/>
+            ))}
+          </>
+        }
       </>
   );
 };

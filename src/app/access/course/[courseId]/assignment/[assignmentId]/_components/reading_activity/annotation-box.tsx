@@ -1,8 +1,10 @@
 import ReactDOM from "react-dom"
+import { LegacyRef } from "react";
 import { Annotation } from "@prisma/client"
 import { useState, useEffect } from "react"
 import { parsePrisma } from "~/utils/prisma";
 import { api } from "~/trpc/react";
+import { generateUUID } from "~/utils/uuid";
 
 import "./annotation-box.css"
 
@@ -15,77 +17,150 @@ type AnnotationBoxProps = {
   page: Element
 }
 
-export function addAnnotationBox(props: AnnotationBoxProps) {
+type aContainerType = {
+  id: string
+  page: Element
+  annotations: Annotation[]
+  reference: LegacyRef<HTMLDivElement> | undefined
+}
 
-  // Get the page element
-  const page = props.page
-  const pageNumber = props.rRect.page
+type PageNoteAnnotationLayerProps = {
+  page: Element
+  annotations: Annotation[]
+}
 
-  // Check if the page already has an annotation layer (id = "noteAnnotationLayer_${pageNumber}")
-  let noteAnnotationLayer = document.getElementById(`noteAnnotationLayer_${pageNumber}`)
+type AnnotationContainerProps = {
+  container: aContainerType
+  rect: DOMRect
+  page: Element
+}
 
-  // If the page does not have an annotation layer, create one
-  if (noteAnnotationLayer == null) {
-    noteAnnotationLayer = document.createElement('div')
-    noteAnnotationLayer.id = "noteAnnotationLayer"
-    noteAnnotationLayer.style.position = "absolute"
-    noteAnnotationLayer.style.top = "0"
-    noteAnnotationLayer.style.left = "0"
-    noteAnnotationLayer.style.width = `${1+100*dRatio}%`
-    noteAnnotationLayer.style.height = "100%"
-    page.appendChild(noteAnnotationLayer)
-  }
+export function PageNoteAnnotationLayer(props: PageNoteAnnotationLayerProps) {
+  // Containers for the annotations
+  const [aContainers, setAContainers] = useState<aContainerType[]>([])
 
-  // Now, let's fetch the current annotation containers in the page
-  const annotationContainers  = page.querySelectorAll(".annotation-container")
-
-  // Get the page element and the new incoming annotation
+  // Get the page number
+  const pageNumber = props.page.getAttribute("data-page-number")
   const rect = props.page.getBoundingClientRect()
-  const newAnnotationRect = {
-    top: props.rRect.y * rect.height,
-    bottom: props.rRect.y * rect.height + 52,
-  }
 
-  // Check if any of the annotationContainers would overalp with the new annotation, purely from the y-axis
-  let collidingContainer: Element | null = null;
-  for (const annotationContainer of annotationContainers) {
-    const annotationContainerRect = annotationContainer.getBoundingClientRect()
+  function detectCollision(container: aContainerType, annotation: Annotation, aRect: {top: number, bottom: number}): aContainerType | null {
 
-    // Update the annotationContainerRect to be relative to the page
-    annotationContainerRect.y = annotationContainerRect.y - rect.y
+    // @ts-ignore
+    const element = container.reference?.current
+    if (!element) return null
+    const cRect = element.getBoundingClientRect()
 
-    console.log("New annotation rect", newAnnotationRect)
-    console.log("Annotation container rect", annotationContainerRect)
+    // Update the container rect to be relative to the page
+    cRect.y = cRect.y - rect.y
 
-    // Check if the new annotation would overlap with the current annotationContainer
-    if (newAnnotationRect.top < annotationContainerRect.bottom && newAnnotationRect.bottom > annotationContainerRect.top) {
-      // If it does, then we will move the new annotation to the right of the current annotationContainer
-      collidingContainer = annotationContainer
+    console.log("New annotation rect", aRect)
+    console.log("Annotation container rect", cRect)
+
+    // Check if the new annotation would overlap with the current a container
+    if (aRect.top < cRect.bottom && aRect.bottom > cRect.top) {
+      return container
     }
+
+    return null
   }
 
-  // If collision, just add the new annotation to colliding container (as it behaves lie a stack)
-  if (collidingContainer) {
-    console.log("Colliding container")
-    ReactDOM.render(<AnnotationBox {...props}/>, collidingContainer)
-  } else {
-    // If no collision, create a new annotation container
-    console.log("No colliding container")
-    const annotationContainer = document.createElement('div')
-    annotationContainer.className = "annotation-container"
-    annotationContainer.style.position = "absolute"
-    annotationContainer.style.top = `${props.rRect.y * 100 - 2}%`
-    annotationContainer.style.left = `${rect.width * -dRatio}px`
-    annotationContainer.style.width = `${rect.width * dRatio}px`
-    annotationContainer.style.minHeight = "52px"
-    annotationContainer.style.zIndex = "50"
-    annotationContainer.style.display = "flex"
-    annotationContainer.style.flexDirection = "column"
-    annotationContainer.setAttribute("pointer-events", "auto")
-    noteAnnotationLayer.appendChild(annotationContainer)
+  useEffect(() => {
+    // Filter the annotations to only include the ones on the current page
+    const annotations = props.annotations.filter(annotation => parsePrisma(annotation.position).page === pageNumber)
+    console.log(annotations)
 
-    ReactDOM.render(<AnnotationBox {...props}/>, annotationContainer)
+    // Create list of new containts
+    let newContainerList: aContainerType[] = []
+
+    // Aggregate the annotations into annotation containers
+    for (const annotation of annotations) {
+      const rRect = parsePrisma(annotation.position)
+      const newAnnotationRect = {
+        top: rRect.y * rect.height,
+        bottom: rRect.y * rect.height + 52,
+      }
+
+      // Check against annotation containers
+      let collidingContainer: aContainerType | null = null;
+      for (const annotationContainer of newContainerList) {
+        collidingContainer = detectCollision(annotationContainer, annotation, newAnnotationRect)
+        if (collidingContainer) break
+      }
+
+      // If collision, just add the new annotation to colliding container (as it behaves lie a stack)
+      if (collidingContainer) {
+        console.log("Colliding container")
+        // ReactDOM.render(<AnnotationBox {...props}/>, collidingContainer)
+      } else {
+        // If no collision, create a new annotation container
+        console.log("No colliding container")
+
+        const newContainer: aContainerType = {
+          id: generateUUID(),
+          page: props.page,
+          annotations: [annotation],
+          reference: undefined
+        }
+        newContainerList.push(newContainer)
+      }
+    }
+
+    // Update the state, by adding the new containers to the old ones
+    setAContainers(newContainerList)
+
+  }, [props.annotations])
+
+  return ReactDOM.createPortal(
+    <div id={`noteAnnotationLayer_${pageNumber}`} className="absolute top-0 left-0 w-full h-full">
+      {aContainers.map((container, index) => (
+        <div key={index}>
+          <AnnotationContainer container={container} rect={rect} page={props.page}/>
+        </div>
+      ))}
+    </div>, 
+    props.page
+  )
+}
+
+export function AnnotationContainer(props: AnnotationContainerProps) {
+
+  function getTop() {
+    // Get the highest annotation in the container
+    let tops = []
+    for (const annotation of props.container.annotations) {
+      const rRect = parsePrisma(annotation.position)
+      tops.push(rRect.y)
+    }
+
+    if (tops.length > 0) {
+      return `${Math.min(...tops) * 100 - 2}%`
+    } 
+    return "0%"
   }
+
+  return (
+    <div ref={props.container.reference} className="annotation-container" style={{
+      position: "absolute",
+      top: getTop(),
+      left: `${props.rect.width * -dRatio}px`,
+      width: `${props.rect.width * dRatio}px`,
+      minHeight: "52px",
+      zIndex: "50",
+      display: "flex",
+      flexDirection: "column",
+    }}>
+      {props.container.annotations.map((annotation, index) => (
+        <div key={index}>
+
+        <AnnotationBox 
+          id={props.container.id}
+          rRect={parsePrisma(annotation.position)}
+          page={props.page}
+        />
+        </div>
+      ))}
+    </div>
+  )
 }
 
 function AnnotationBox(props: AnnotationBoxProps) {
