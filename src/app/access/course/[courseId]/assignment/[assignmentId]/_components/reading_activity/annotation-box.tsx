@@ -96,17 +96,8 @@ function AnnotationBox(props: AnnotationBoxProps) {
 
   // Get the page element
   const rect = props.page.getBoundingClientRect()
-  console.log(rect, props.rRect)
-
-  useEffect(() => {
-    document.addEventListener('click', function(e) {
-      console.log(e.target); // Log the element that was clicked
-    }, true); // Use capture to ensure the event is captured during the capturing phase
-    
-  }, [])
 
   async function deleteSelf() {
-    console.log("Delete annotation")
     
     // First delete from the DOM
     const annotations = document.querySelectorAll(`.annotation_${props.id}`)
