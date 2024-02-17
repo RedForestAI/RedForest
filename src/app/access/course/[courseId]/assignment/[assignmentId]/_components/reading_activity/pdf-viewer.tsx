@@ -13,7 +13,6 @@ import { generateUUID } from "~/utils/uuid";
 import BlurModal from "./blur-modal";
 import {
   useMiddleNavBarContext,
-  useEndNavBarContext,
 } from "~/providers/navbar-provider";
 import { triggerActionLog } from "~/loggers/actions-logger";
 import { ToolKit } from "./toolkit";
@@ -596,11 +595,17 @@ export default function PDFViewer(props: PDFViewerProps) {
     const annotation = await createAnnotation.mutateAsync({
       id: id,
       position: JSON.stringify(rRect),
-      content: toolkitText,
+      content: "",
       fileId: file.id,
       activityDataId: props.activityDataId,
     });
     props.setAnnotations([...props.annotations, annotation]);
+
+    triggerActionLog({
+      type: "annotate",
+      value: { ...annotation },
+    });
+
   }
 
   async function onLookup() {}

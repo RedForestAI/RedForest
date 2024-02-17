@@ -5,6 +5,10 @@ import { parsePrisma } from "~/utils/prisma";
 import { api } from "~/trpc/react";
 import { generateUUID } from "~/utils/uuid";
 import { useHighlight } from '~/providers/highlight-provider';
+import { triggerActionLog } from "~/loggers/actions-logger";
+
+import { faClose, faSave } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import "./annotation-box.css";
 
@@ -35,7 +39,7 @@ type AnnotationContainerProps = {
 };
 
 type AnnotationBoxProps = {
-  id: string;
+  annotation: Annotation;
   rRect: {
     page: string | null;
     x: number;
@@ -204,7 +208,7 @@ function AnnotationContainer(props: AnnotationContainerProps) {
       {props.container.annotations.map((annotation) => (
         <AnnotationBox
           key={annotation.id}
-          id={annotation.id}
+          annotation={annotation}
           rRect={parsePrisma(annotation.position)}
           page={props.page}
           setAnnotations={props.setAnnotations}
@@ -215,11 +219,13 @@ function AnnotationContainer(props: AnnotationContainerProps) {
 }
 
 function AnnotationBox(props: AnnotationBoxProps) {
+  const [content, setContent] = useState<string>(props.annotation.content);
   const { highlightedId } = useHighlight();
-  const isHighlighted = props.id === highlightedId;
+  const isHighlighted = props.annotation.id === highlightedId;
 
   // Mutations
   const deleteAnnotation = api.annotation.delete.useMutation();
+  const updateAnnotation = api.annotation.update.useMutation();
 
   // Get the page element
   const rect = props.page.getBoundingClientRect();
@@ -227,37 +233,72 @@ function AnnotationBox(props: AnnotationBoxProps) {
   async function deleteSelf() {
     // First delete from the DOM
     props.setAnnotations((prev: Annotation[]) =>
-      prev.filter((annotation: Annotation) => annotation.id !== props.id),
+      prev.filter((annotation: Annotation) => annotation.id !== props.annotation.id),
     );
 
     // Then delete from the database
-    await deleteAnnotation.mutateAsync({ id: props.id });
+    await deleteAnnotation.mutateAsync({ id: props.annotation.id });
+
+    triggerActionLog({
+      type: "deannotate",
+      value: { ...props.annotation },
+    });
+  }
+
+  function updateOfflineContent(e: any) {
+    setContent(e.target.value);
+  }
+
+  async function updateOnlineContent(e: any) {
+    e.preventDefault();
+
+    // Update the annotation in the state
+    props.setAnnotations((prev: Annotation[]) =>
+      prev.map((annotation: Annotation) =>
+        annotation.id === props.annotation.id
+          ? { ...annotation, content: content }
+          : annotation,
+      ),
+    );
+
+    // Update the annotation in the database
+    await updateAnnotation.mutateAsync({ id: props.annotation.id, content: content });
+
+    triggerActionLog({
+      type: "editAnnotation",
+      value: { ...props.annotation, content: content },
+    });
   }
 
   return (
     <>
       {/* Left-Panel Note */}
       <div
-        className={`annotation_${props.id} bg-base-100`}
+        className={`annotation_${props.annotation.id} bg-base-100`}
         style={{
           width: `${rect.width * dRatio * wRatio}px`,
           zIndex: "45",
         }}
       >
-        <label className="form-control">
+        <div>
           <div className="label">
-            <span className="label-text">@You</span>
-            <span className="label-text-alt">
+            <span className="label-text w-full">@You</span>
+            <span className="label-text-alt flex flex-row">
+              <button className="btn btn-ghost btn-xs" disabled={content == props.annotation.content} onClick={updateOnlineContent}>
+                <FontAwesomeIcon icon={faSave} className="fa-s" />
+              </button>
               <button className="btn btn-ghost btn-xs" onClick={deleteSelf}>
-                X
+                <FontAwesomeIcon icon={faClose} className="fa-s" />
               </button>
             </span>
           </div>
           <textarea
-            className={`textarea textarea-bordered textarea-primary h-24 ${isHighlighted ? "textarea-highlight" : ""}`}
+            className={`textarea textarea-bordered textarea-primary h-24 w-full ${isHighlighted ? "textarea-highlight" : ""}`}
             placeholder="Your notes"
+            value={content}
+            onChange={updateOfflineContent}
           ></textarea>
-        </label>
+        </div>
       </div>
     </>
   );

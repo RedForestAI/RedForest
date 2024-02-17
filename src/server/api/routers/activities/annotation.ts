@@ -32,4 +32,13 @@ export const annotationRouter = createTRPCRouter({
         where: {id: input.id}
       });
     }),
+
+  update: privateProcedure
+    .input(z.object({ id: z.string(), content: z.string() }))
+    .mutation( async ({ input, ctx }) => {
+      return await ctx.db.annotation.update({
+        where: {id: input.id},
+        data: {content: input.content}
+      });
+    }),
 })
