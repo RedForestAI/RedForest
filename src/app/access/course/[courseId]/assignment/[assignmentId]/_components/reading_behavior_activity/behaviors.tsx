@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { triggerActionLog } from "~/loggers/actions-logger";
 
 type BehaviorProps = {
   behaviorIndex: number;
@@ -15,6 +16,7 @@ export function Linear(props: BehaviorProps) {
   const [started, setStarted] = useState<boolean>(false);
 
   function complete() {
+    triggerActionLog({ type: "behaviorEvent", value: { action: "end", type: "linear" } });
     if (props.behaviorIndex + 1 === props.totalBehaviors) {
       props.setComplete(true);
     } else {
@@ -64,6 +66,7 @@ export function Linear(props: BehaviorProps) {
             className="absolute left-[14%] top-[34%] h-[2.5%] w-[8%] cursor-pointer bg-red-500 opacity-50"
             onClick={() => {
               setStarted(true);
+              triggerActionLog({ type: "behaviorEvent", value: { action: "start", type: "linear" } });
             }}
           ></div>
         </>
@@ -77,6 +80,7 @@ export function Skimming(props: BehaviorProps) {
   const [started, setStarted] = useState<boolean>(false);
 
   function complete() {
+    triggerActionLog({ type: "behaviorEvent", value: { action: "end", type: "skimming" } });
     if (props.behaviorIndex + 1 === props.totalBehaviors) {
       props.setComplete(true);
     } else {
@@ -127,6 +131,7 @@ export function Skimming(props: BehaviorProps) {
             className="absolute left-[14%] top-[62%] h-[2.5%] w-[11%] cursor-pointer bg-red-500 opacity-50"
             onClick={() => {
               setStarted(true);
+              triggerActionLog({ type: "behaviorEvent", value: { action: "start", type: "skimming" } });
             }}
           ></div>
         </>
@@ -140,6 +145,7 @@ export function Deep(props: BehaviorProps) {
   const [started, setStarted] = useState<boolean>(false);
 
   function complete() {
+    triggerActionLog({ type: "behaviorEvent", value: { action: "end", type: "deep" } });
     if (props.behaviorIndex + 1 === props.totalBehaviors) {
       props.setComplete(true);
     } else {
@@ -200,6 +206,7 @@ export function Deep(props: BehaviorProps) {
             className="absolute left-[14%] top-[11%] h-[2.5%] w-[10%] cursor-pointer bg-red-500 opacity-50"
             onClick={() => {
               setStarted(true);
+              triggerActionLog({ type: "behaviorEvent", value: { action: "start", type: "deep" } });
             }}
           ></div>
         </>
@@ -213,6 +220,7 @@ export function Shallow(props: BehaviorProps) {
   const [started, setStarted] = useState<boolean>(false);
 
   function complete() {
+    triggerActionLog({ type: "behaviorEvent", value: { action: "end", type: "shallow" } });
     if (props.behaviorIndex + 1 === props.totalBehaviors) {
       props.setComplete(true);
     } else {
@@ -263,6 +271,7 @@ export function Shallow(props: BehaviorProps) {
             className="absolute left-[14%] top-[27.5%] h-[2.5%] w-[10%] cursor-pointer bg-red-500 opacity-50"
             onClick={() => {
               setStarted(true);
+              triggerActionLog({ type: "behaviorEvent", value: { action: "start", type: "shallow" } });
             }}
           ></div>
         </>
@@ -276,6 +285,7 @@ export function Regular(props: BehaviorProps) {
   const [started, setStarted] = useState<boolean>(false);
 
   function complete() {
+    triggerActionLog({ type: "behaviorEvent", value: { action: "end", type: "regular" } });
     if (props.behaviorIndex + 1 === props.totalBehaviors) {
       props.setComplete(true);
     } else {
@@ -325,6 +335,7 @@ export function Regular(props: BehaviorProps) {
             className="absolute left-[14%] top-[75%] h-[2.5%] w-[9%] cursor-pointer bg-red-500 opacity-50"
             onClick={() => {
               setStarted(true);
+              triggerActionLog({ type: "behaviorEvent", value: { action: "start", type: "regular" } });
             }}
           ></div>
         </>
@@ -340,6 +351,7 @@ export function Skipping(props: BehaviorProps) {
   const [counter, setCounter] = useState<number>(0);
 
   function complete() {
+    triggerActionLog({ type: "behaviorEvent", value: { action: "end", type: "skipping" } });
     if (props.behaviorIndex + 1 === props.totalBehaviors) {
       props.setComplete(true);
     } else {
@@ -353,6 +365,7 @@ export function Skipping(props: BehaviorProps) {
   }, []);
 
   function hide(elementString: string) {
+    triggerActionLog({ type: "behaviorEvent", value: { action: "clickedOn", type: "skipping", id: elementString } });
     const element = document.getElementById(elementString);
     if (element) {
       element.style.display = "none";
@@ -445,6 +458,7 @@ export function Skipping(props: BehaviorProps) {
             className="absolute left-[14%] top-[11%] h-[2.5%] w-[8%] cursor-pointer bg-red-500 opacity-50"
             onClick={() => {
               setStarted(true);
+              triggerActionLog({ type: "behaviorEvent", value: { action: "end", type: "skipping" } });
             }}
           ></div>
         </>
@@ -460,9 +474,8 @@ export function ReReading(props: BehaviorProps) {
   const [counter, setCounter] = useState<number>(0);
 
   function complete() {
-    console.log(props)
+    triggerActionLog({ type: "behaviorEvent", value: { action: "end", type: "rereading" } });
     if (props.behaviorIndex + 1 === props.totalBehaviors) {
-      console.log("COMPLETE")
       props.setComplete(true);
     } else {
       props.setBehaviorIndex(props.behaviorIndex + 1);
@@ -475,12 +488,14 @@ export function ReReading(props: BehaviorProps) {
   }, []);
 
   function hide(elementString: string) {
+    triggerActionLog({ type: "behaviorEvent", value: { action: "clickedOn", type: "rereading", id: elementString } });
     const element = document.getElementById(elementString);
     if (element) {
       element.style.display = "none";
       setCounter(counter + 1);
       if (counter === 2) {
         complete();
+        triggerActionLog({ type: "behaviorEvent", value: { action: "end", type: "rereading" } });
       }
     }
   }
@@ -535,6 +550,7 @@ export function ReReading(props: BehaviorProps) {
               className="absolute left-[57%] top-[59.5%] h-[2.5%] w-[13%] cursor-pointer bg-red-500 opacity-50"
               onClick={() => {
                 setFinishedReading(true);
+                triggerActionLog({ type: "behaviorEvent", value: { action: "finishedReading", type: "rereading" } });
               }}
             ></div>
             </>
@@ -568,6 +584,7 @@ export function ReReading(props: BehaviorProps) {
             className="absolute left-[14%] top-[41%] h-[2.5%] w-[11.5%] cursor-pointer bg-red-500 opacity-50"
             onClick={() => {
               setStarted(true);
+              triggerActionLog({ type: "behaviorEvent", value: { action: "start", type: "rereading" } });
             }}
           ></div>
         </>

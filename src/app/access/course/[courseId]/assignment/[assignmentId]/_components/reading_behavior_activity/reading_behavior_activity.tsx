@@ -14,15 +14,12 @@ import {
   AssignmentData,
   ReadingFile,
   Question,
-  Highlight,
-  Annotation,
 } from "@prisma/client";
 import { api } from "~/trpc/react";
 
 import EyeTrackingController from "~/eyetracking/eye-tracking-controller";
 import PDFViewer from "../reading_activity/pdf-viewer";
 import { AOIEncoding } from "~/eyetracking/aoi-encoding";
-import { triggerActionLog } from "~/loggers/actions-logger";
 import InstructionsModal from "./instructions-modal";
 import {
   Linear,
@@ -279,14 +276,13 @@ export default function BehaviorReadingActivity(props: ReadingActivityProps) {
               tracelog_date_uploaded: new Date().toISOString(),
               session_id: session_id,
               course_id: props.course.id,
-              assignment_id: props.assignment.id,
-              assignment_data_id: props.assignmentData.id,
-              activity_id: props.activity.id,
-              activity_data_id: props.activityData.id,
+              assignment: props.assignment,
+              assignment_data: props.assignmentData,
+              activity: props.activity,
+              activity_data: props.activityData,
               profile_id: props.profile.id,
-              activityType: props.activity.type,
-              totalQuestions: props.questions.length,
-              totalFiles: readingFiles.length,
+              questions: props.questions,
+              readingFiles: readingFiles,
             }),
           ],
           { type: "application/json;charset=utf-8" },
