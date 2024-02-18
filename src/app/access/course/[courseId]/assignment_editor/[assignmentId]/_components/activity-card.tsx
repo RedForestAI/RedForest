@@ -1,6 +1,5 @@
 import { Activity, Assignment, Question, ActivityType } from '@prisma/client';
-import { Dialog, Transition } from '@headlessui/react'
-import { Fragment, useEffect, useState } from 'react'
+import { useState } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { IconDefinition, faGear } from '@fortawesome/free-solid-svg-icons';
 import { useRouter } from "next/navigation";
@@ -64,6 +63,8 @@ export function EmptyActivityCard(props: {assignmentId: string, activities: Acti
       onClick: async () => {
         await createActivity(ActivityType.READING)
         setIsOpen(false)
+        // @ts-ignore 
+        document.getElementById('activity_selection').close()
       }
     },
     {
@@ -73,8 +74,10 @@ export function EmptyActivityCard(props: {assignmentId: string, activities: Acti
       onClick: async () => {
         await createActivity(ActivityType.QUESTIONING)
         setIsOpen(false)
+        // @ts-ignore 
+        document.getElementById('activity_selection').close()
       }
-    },
+    }
   ]
 
   function closeModal() {
@@ -83,6 +86,8 @@ export function EmptyActivityCard(props: {assignmentId: string, activities: Acti
 
   function openModal() {
     setIsOpen(true)
+    // @ts-ignore
+    document.getElementById('activity_selection').showModal()
   }
 
   const createActivity = async (type: ActivityType) => {
@@ -97,67 +102,39 @@ export function EmptyActivityCard(props: {assignmentId: string, activities: Acti
 
   return (
     <>
-    <div className="card w-full border-[2px] shadow-xl m-4 cursor-pointer" onClick={openModal}>
-      <div className="justify-center items-center flex flex-col h-28">
-        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-12 h-12">
-          <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v6m3-3H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
-        </svg>
+      <div className="card w-full border-[2px] shadow-xl m-4 cursor-pointer" onClick={openModal}>
+        <div className="justify-center items-center flex flex-col h-28">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-12 h-12">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v6m3-3H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+          </svg>
+        </div>
       </div>
-    </div>
-    <Transition appear show={isOpen} as={Fragment}>
-        <Dialog as="div" className="relative z-10" onClose={closeModal}>
-          <Transition.Child
-            as={Fragment}
-            enter="ease-out duration-300"
-            enterFrom="opacity-0"
-            enterTo="opacity-100"
-            leave="ease-in duration-200"
-            leaveFrom="opacity-100"
-            leaveTo="opacity-0"
-          >
-            <div className="fixed inset-0 bg-black/25" />
-          </Transition.Child>
 
-          <div className="fixed inset-0 overflow-y-auto">
-            <div className="flex min-h-full items-center justify-center p-4 text-center">
-              <Transition.Child
-                as={Fragment}
-                enter="ease-out duration-300"
-                enterFrom="opacity-0 scale-95"
-                enterTo="opacity-100 scale-100"
-                leave="ease-in duration-200"
-                leaveFrom="opacity-100 scale-100"
-                leaveTo="opacity-0 scale-95"
-              >
-                <Dialog.Panel className="w-full max-w-md transform overflow-hidden bg-base-100 rounded-2xl p-6 text-left align-middle shadow-xl transition-all">
-                  <Dialog.Title
-                    as="h3"
-                    className="text-lg font-medium leading-6 border-b-4 border-inherit pb-2"
-                  >
-                    Activity Selector
-                  </Dialog.Title>
-
-                  {activityOptions.map((activityOption, index) => (
-                    <div key={index} className="card w-full bg-base border-[3px] border-solid shadow-xl mt-2 cursor-pointer" onClick={activityOption.onClick}>
-                      <div className="flex flex-row h-full">
-                        <div className="flex justify-center items-center border-r p-6">
-                          <FontAwesomeIcon icon={getIcon(activityOption.type)} className="fa-3x h-8 w-12"/>
-                        </div>
-                        <div className="flex flex-col w-9/12 p-4">
-                          <h2 className="card-title">{activityOption.name}</h2>
-                          <p className="card-subtitle">{activityOption.description}</p>
-                        </div>
-                      </div>
-                    </div>
-                  ))
-                  }
-
-                </Dialog.Panel>
-              </Transition.Child>
+      <dialog id="activity_selection" className="modal">
+        <div className="modal-box">
+          <h3 className="font-bold text-lg">Activity Selection</h3>
+          <p className="py-4">Press ESC key or click the button below to close</p>
+          
+          {activityOptions.map((activityOption, index) => (
+            <div key={index} className="card h-1/3 w-full bg-base border-[3px] border-solid shadow-xl mt-2 cursor-pointer" onClick={activityOption.onClick}>
+              <div className="flex flex-row h-full">
+                <div className="flex justify-center items-center border-r p-6">
+                  <FontAwesomeIcon icon={getIcon(activityOption.type)} className="fa-3x h-8 w-12"/>
+                </div>
+                <div className="flex flex-col w-9/12 p-4">
+                  <h2 className="card-title">{activityOption.name}</h2>
+                  <p className="card-subtitle">{activityOption.description}</p>
+                </div>
+              </div>
             </div>
-          </div>
-        </Dialog>
-      </Transition>
+          ))
+          }
+        </div>
+
+        <form method="dialog" className="modal-backdrop">
+          <button>close</button>
+        </form>
+      </dialog>
     </>
   )
 }
