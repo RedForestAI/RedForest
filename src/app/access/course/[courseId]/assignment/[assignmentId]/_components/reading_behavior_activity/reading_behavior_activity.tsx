@@ -12,6 +12,7 @@ import EyeTrackingController from "~/eyetracking/eye-tracking-controller";
 import PDFViewer from '../reading_activity/pdf-viewer';
 import { AOIEncoding } from "~/eyetracking/aoi-encoding";
 import { triggerActionLog } from "~/loggers/actions-logger";
+import InstructionsModal from "./instructions-modal";
 import { Linear, Skimming } from "./behaviors";
 
 import GazeLogger from "~/loggers/gaze-logger";
@@ -48,7 +49,8 @@ export default function BehaviorReadingActivity(props: ReadingActivityProps) {
   const [ activeDocument, setActiveDocument ] = useState<IDocument>();
   const [ docs, setDocs ] = useState<{ uri: string }[]>([{ uri: "/pdfs/behavior_mummy.pdf"}]);
   const [ isSubmitting, setIsSubmitting ] = useState<boolean>(false)
-  const [ behaviorIndex, setBehaviorIndex ] = useState<number>(0)
+  const [ inInstructions, setInInstructions ] = useState<boolean>(false)
+  const [ behaviorIndex, setBehaviorIndex ] = useState<number>(1)
   
   const createTracelogFile = api.traceLogFile.create.useMutation()
   const supabase = createClientComponentClient();
@@ -195,12 +197,16 @@ export default function BehaviorReadingActivity(props: ReadingActivityProps) {
     <>
       <div className="w-full flex justify-center items-center">
         <EyeTrackingController complete={complete}/>
+
+        {inInstructions &&
+          <InstructionsModal setInInstructions={setInInstructions}/>
+        }
         
         <PDFViewer 
           docs={docs}
           files={readingFiles}
           config={{
-            btnLayer: true,
+            btnLayer: !inInstructions,
             component: config[behaviorIndex]!.component,
           }}
           activityDataId={props.activityData.id}
