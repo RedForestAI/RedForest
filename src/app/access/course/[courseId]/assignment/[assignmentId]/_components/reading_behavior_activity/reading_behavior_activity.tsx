@@ -12,6 +12,7 @@ import EyeTrackingController from "~/eyetracking/eye-tracking-controller";
 import PDFViewer from '../reading_activity/pdf-viewer';
 import { AOIEncoding } from "~/eyetracking/aoi-encoding";
 import { triggerActionLog } from "~/loggers/actions-logger";
+import { rectBtn } from "../reading_activity/rect-btns";
 
 import GazeLogger from "~/loggers/gaze-logger";
 import ScrollLogger from "~/loggers/scroll-logger";
@@ -42,6 +43,7 @@ export default function BehaviorReadingActivity(props: ReadingActivityProps) {
   const [ activeDocument, setActiveDocument ] = useState<IDocument>();
   const [ docs, setDocs ] = useState<{ uri: string }[]>([{ uri: "/pdfs/behavior_mummy.pdf"}]);
   const [ isSubmitting, setIsSubmitting ] = useState<boolean>(false)
+  const [ rectBtns, setRectBtns ] = useState<rectBtn[]>([])
   
   const createTracelogFile = api.traceLogFile.create.useMutation()
   const supabase = createClientComponentClient();
@@ -181,8 +183,8 @@ export default function BehaviorReadingActivity(props: ReadingActivityProps) {
           docs={docs}
           files={readingFiles}
           config={{
-            toolkit: false,
-            blur: false,
+            btnLayer: true,
+            rectBtns: rectBtns,
           }}
           activityDataId={props.activityData.id}
 

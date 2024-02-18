@@ -17,6 +17,7 @@ import { ToolKit } from "./toolkit";
 import { DictionaryEntry } from "./dictionary-entry";
 import { DocumentDrawer } from "./document-drawer";
 import { PageNoteAnnotationLayer } from "./annotation-box";
+import { PageBtnLayer, rectBtn } from "./rect-btns";
 import { parsePrisma } from "~/utils/prisma";
 import { debounce } from "~/utils/functional";
 import "./pdf-viewer.css";
@@ -29,23 +30,32 @@ type PDFViewerProps = {
   setActiveDocument: any;
 
   config?: {
+    // Reading Activity
     blur?: boolean;
     toolkit?: boolean;
     highlights?: Highlight[];
     setHighlights?: any;
     annotations?: Annotation[];
     setAnnotations?: any;
+
+    // Behavior Activity
+    btnLayer?: boolean
+    rectBtns?: rectBtn[];
   }
 };
 
-// Default configs
 const defaultConfig = {
-  toolkit: true,
+  // Reading Activity
   blur: false,
+  toolkit: false,
   highlights: [],
   setHighlights: (prev: any) => {},
   annotations: [],
-  setAnnotations: (prev: any) => {}
+  setAnnotations: (prev: any) => {},
+
+  // Behavior Activity
+  btnLayer: false,
+  rectBtns: []
 }
 
 export default function PDFViewer(props: PDFViewerProps) {
@@ -56,6 +66,7 @@ export default function PDFViewer(props: PDFViewerProps) {
   const [zoomLevel, setZoomLevel] = useState(1); // Starting zoom level
   const [error, setError] = useState<string | null>(null);
   const [viewerKey, setViewerKey] = React.useState(0); //Viewer key state
+  const [pages, setPages] = useState<Element[]>([]);
 
   // Toolkit
   const [toolkitPosition, setToolkitPosition] = useState({
@@ -67,9 +78,6 @@ export default function PDFViewer(props: PDFViewerProps) {
   });
   const [toolkitText, setToolkitText] = useState("");
   const [toolkitRects, setToolkitRects] = useState<DOMRect[]>([]);
-
-  // Highlights
-  const [pages, setPages] = useState<Element[]>([]);
 
   // Dictionary
   const [dictError, setDictError] = useState<string | null>(null);
@@ -607,16 +615,18 @@ export default function PDFViewer(props: PDFViewerProps) {
 
   return (
     <>
-      <ToolKit
-        x={toolkitPosition.x}
-        y={toolkitPosition.y}
-        w={toolkitPosition.w}
-        h={toolkitPosition.h}
-        isVisible={toolkitPosition.isVisible}
-        onHighlight={onHighlight}
-        onAnnotate={onAnnotate}
-        onLookup={onLookup}
-      />
+      {finalConfig.toolkit &&
+        <ToolKit
+          x={toolkitPosition.x}
+          y={toolkitPosition.y}
+          w={toolkitPosition.w}
+          h={toolkitPosition.h}
+          isVisible={toolkitPosition.isVisible}
+          onHighlight={onHighlight}
+          onAnnotate={onAnnotate}
+          onLookup={onLookup}
+        />
+      }
 
       {props.docs.length > 1 &&
         <DocumentDrawer
@@ -637,16 +647,32 @@ export default function PDFViewer(props: PDFViewerProps) {
 
       {pages && (
         <>
-          {pages.map((page, index) => (
-            <PageNoteAnnotationLayer
-              key={index}
-              fileIndex={fileIndex}
-              files={props.files}
-              page={page}
-              annotations={finalConfig.annotations}
-              setAnnotations={finalConfig.setAnnotations}
-            />
-          ))}
+          {finalConfig.toolkit && 
+            <>
+              {pages.map((page, index) => (
+                <PageNoteAnnotationLayer
+                  key={index}
+                  fileIndex={fileIndex}
+                  files={props.files}
+                  page={page}
+                  annotations={finalConfig.annotations}
+                  setAnnotations={finalConfig.setAnnotations}
+                />
+              ))}
+            </>
+          }
+
+          {finalConfig.btnLayer && 
+            <>
+              {pages.map((page, index) => (
+                <PageBtnLayer
+                  key={index}
+                  page={page}
+                  rectBtns={finalConfig.rectBtns}
+                />
+              ))}
+            </>
+          }
         </>
       )}
 
