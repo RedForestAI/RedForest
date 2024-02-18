@@ -4,6 +4,7 @@ import { ActivityType } from "@prisma/client"
 import Slot from "~/utils/slot";
 import ReadingForm from './_components/reading/reading-form';
 import QuestionForm from './_components/questioning/question-form';
+import ReadingBehaviorForm from './_components/reading-behavior/reading-behavior-form';
 
 import NavBar from "~/components/ui/navbar";
 import { api } from '~/trpc/server';
@@ -48,6 +49,16 @@ export default async function Page({params}: {params: { courseId: string, assign
           questions: questions,
         }
         return <QuestionForm {...questionPropData}/>
+
+      case ActivityType.READING_BEHAVIOR:
+        let readingBehaviorPropData = {
+          courseId: params.courseId,
+          assignmentId: params.assignmentId,
+          activity: activity,
+        }
+
+        return <ReadingBehaviorForm {...readingBehaviorPropData}/>
+
       default:
         return <h1 className="text-error">Failed to load activity</h1>
     }

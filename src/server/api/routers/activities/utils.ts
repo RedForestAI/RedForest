@@ -6,8 +6,8 @@ export async function createEmptyReadingActivity(assignmentId: string, index: nu
     const activity = await db.activity.create({
       data: {
         assignmentId: assignmentId,
-        name: "New Activity",
-        description: "New Activity",
+        name: "New Reading Activity",
+        description: "New Reading Activity Description",
         type: ActivityType.READING,
         index: index,
       }
