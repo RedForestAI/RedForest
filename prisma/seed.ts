@@ -172,8 +172,8 @@ const getActivities = (assignments: Assignment[]): Prisma.ActivityCreateInput[] 
     //   {
     //     id: generateUUID(),
     //     index: 1,
-    //     name: `Activity`,
-    //     description: `Activity Description`,
+    //     name: `Reading Activity`,
+    //     description: `Reading Activity Description`,
     //     type: ActivityType.READING,
     //     assignment: { connect: { id: assignments[i]?.id }},
     //   }

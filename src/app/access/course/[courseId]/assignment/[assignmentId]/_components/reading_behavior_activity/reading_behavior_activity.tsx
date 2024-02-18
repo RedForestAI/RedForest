@@ -3,12 +3,15 @@
 import { useEffect, useState } from "react";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import { generateUUID } from "~/utils/uuid";
+import { IDocument } from "@cyntler/react-doc-viewer";
 
-import { Profile, Course, Assignment, Activity, ActivityData, AssignmentData, Question } from '@prisma/client';
+import { Profile, Course, Assignment, Activity, ActivityData, AssignmentData, ReadingFile, Question, Highlight, Annotation } from '@prisma/client';
 import { api } from "~/trpc/react";
 
 import EyeTrackingController from "~/eyetracking/eye-tracking-controller";
+import PDFViewer from '../reading_activity/pdf-viewer';
 import { AOIEncoding } from "~/eyetracking/aoi-encoding";
+import { triggerActionLog } from "~/loggers/actions-logger";
 
 import GazeLogger from "~/loggers/gaze-logger";
 import ScrollLogger from "~/loggers/scroll-logger";
@@ -32,19 +35,24 @@ const gazeLogger = new GazeLogger();
 const scrollLogger = new ScrollLogger();
 const actionsLogger = new ActionsLogger()
 
-export default function ReadingBehaviorActivity(props: ReadingActivityProps) {
+export default function BehaviorReadingActivity(props: ReadingActivityProps) {
 
   const [ complete, setComplete ] = useState<boolean>(false);
-  const supabase = createClientComponentClient();
+  const [ readingFiles, setReadingFiles ] = useState<ReadingFile[]>([]);
+  const [ activeDocument, setActiveDocument ] = useState<IDocument>();
+  const [ docs, setDocs ] = useState<{ uri: string }[]>([]);
+  const [ highlights, setHighlights ] = useState<Highlight[]>([]);
+  const [ annotations, setAnnotations ] = useState<Annotation[]>([]);
+  const [ isSubmitting, setIsSubmitting ] = useState<boolean>(false)
+  
   const createTracelogFile = api.traceLogFile.create.useMutation()
+  const supabase = createClientComponentClient();
 
   useEffect(() => {
-
     // Clear logs
     gazeLogger.clear()
     scrollLogger.clear()
     actionsLogger.clear()
-
   }, []);
 
   // Debugging
@@ -93,6 +101,8 @@ export default function ReadingBehaviorActivity(props: ReadingActivityProps) {
 
   useEffect(() => {
     const uploadLogs = async () => {
+      if (isSubmitting) return;
+      setIsSubmitting(true)
 
       // Generate a session ID
       const session_id = generateUUID()
@@ -140,11 +150,15 @@ export default function ReadingBehaviorActivity(props: ReadingActivityProps) {
           activity_id: props.activity.id, 
           activity_data_id: props.activityData.id,
           profile_id: props.profile.id,
-          activityType: "reading_behavior",
+          activityType: "reading",
+          totalQuestions: props.questions.length,
+          totalFiles: readingFiles.length,
         })], { type: "application/json;charset=utf-8"})
         const meta_filepath = `${session_fp}/meta.json`
         const meta_result = await createTracelogFile.mutateAsync({activityDataId: props.activityData.id, filepath: meta_filepath})
         const meta_storage_result = await supabase.storage.from('tracelogs').upload(meta_filepath, meta_file);
+
+        setIsSubmitting(false)
 
         if (meta_storage_result.error){
           console.error("Failed to upload meta data")
@@ -159,11 +173,28 @@ export default function ReadingBehaviorActivity(props: ReadingActivityProps) {
       uploadLogs()
     }
   }, [complete])
-  
+
   return (
     <>
       <div className="w-full flex justify-center items-center">
         <EyeTrackingController complete={complete}/>
+        
+        <PDFViewer 
+          docs={docs}
+          files={readingFiles}
+          config={{
+            toolkit: false,
+            blur: false
+          }}
+          highlights={highlights} 
+          setHighlights={setHighlights}
+          annotations={annotations}
+          setAnnotations={setAnnotations}
+          activityDataId={props.activityData.id}
+
+          activeDocument={activeDocument!}
+          setActiveDocument={setActiveDocument}
+        />
       </div>
     </>
   )

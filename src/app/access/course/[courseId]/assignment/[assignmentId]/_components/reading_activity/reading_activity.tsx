@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import { generateUUID } from "~/utils/uuid";
+import { IDocument } from "@cyntler/react-doc-viewer";
 
 import { Profile, Course, Assignment, Activity, ActivityData, AssignmentData, ReadingFile, Question, Highlight, Annotation } from '@prisma/client';
 import { api } from "~/trpc/react";
@@ -13,11 +14,12 @@ import TaskDrawer from './task-drawer';
 import Questions from "../question_activity/questions";
 import ActivityCompletion from "../activity-completion";
 import { AOIEncoding } from "~/eyetracking/aoi-encoding";
+import BlurModal from "./blur-modal";
+import { triggerActionLog } from "~/loggers/actions-logger";
 
 import GazeLogger from "~/loggers/gaze-logger";
 import ScrollLogger from "~/loggers/scroll-logger";
 import ActionsLogger from "~/loggers/actions-logger";
-import { set } from "zod";
 
 type ReadingActivityProps = {
   profile: Profile
@@ -39,10 +41,13 @@ const actionsLogger = new ActionsLogger()
 
 export default function ReadingActivity(props: ReadingActivityProps) {
 
-  const [complete, setComplete ] = useState<boolean>(false);
-  const [readingFiles, setReadingFiles] = useState<ReadingFile[]>([]);
-  const [highlights, setHighlights] = useState<Highlight[]>([]);
-  const [annotations, setAnnotations] = useState<Annotation[]>([]);
+  const [ complete, setComplete ] = useState<boolean>(false);
+  const [ readingFiles, setReadingFiles ] = useState<ReadingFile[]>([]);
+  const [ activeDocument, setActiveDocument ] = useState<IDocument>();
+  const [ blur, setBlur ] = useState<boolean>(true);
+  const [ docs, setDocs ] = useState<{ uri: string }[]>([]);
+  const [ highlights, setHighlights ] = useState<Highlight[]>([]);
+  const [ annotations, setAnnotations ] = useState<Annotation[]>([]);
   const [ isSubmitting, setIsSubmitting ] = useState<boolean>(false)
   
   const readingActivityQuery = api.readingFile.getMany.useQuery({activityId: props.activity.id}, {enabled: false});
@@ -89,6 +94,58 @@ export default function ReadingActivity(props: ReadingActivityProps) {
     actionsLogger.clear()
 
   }, []);
+
+  useEffect(() => {
+    async function fetchPDFs() {
+      // If there are no files, return
+      if (readingFiles == undefined || readingFiles.length == 0) {
+        return;
+      }
+
+      // Get the public URLs for the files
+      const filepaths = readingFiles.map((file) => file.filepath);
+
+      // For each file, download the file
+      let files: Blob[] = [];
+
+      for (let i = 0; i < filepaths.length; i++) {
+        const filepath = filepaths[i];
+        if (filepath == null) {
+          return;
+        }
+        const { data, error } = await supabase.storage
+          .from("activity_reading_file")
+          .download(filepath);
+
+        if (error) {
+          console.error(error);
+          return;
+        }
+
+        files.push(data as Blob);
+      }
+
+      // Iterate through the files and add them to the docs array
+      if (files.length == 0) {
+        return;
+      }
+
+      // Create URLs for the files
+      const newDocs = files.map((file: any) => {
+        return {
+          uri: URL.createObjectURL(file),
+          fileType: "pdf",
+        };
+      });
+      setDocs(newDocs);
+      setActiveDocument(newDocs[0]);
+      triggerActionLog({ type: "pdfLoad", value: { index: 0 } });
+    }
+
+    if (docs.length == 0) {
+      fetchPDFs();
+    }
+  }, [readingFiles]);
 
   // Debugging
   useEffect(() => {
@@ -209,18 +266,35 @@ export default function ReadingActivity(props: ReadingActivityProps) {
     }
   }, [complete])
   
+  function onReadingStart() {
+    setBlur(false);
+    triggerActionLog({ type: "readingStart", value: { start: true } });
+  }
+
   return (
     <>
       <div className="w-full flex justify-center items-center">
         <EyeTrackingController complete={complete}/>
+
+        {blur && <BlurModal onContinue={onReadingStart} />}
+        
         <PDFViewer 
-          files={readingFiles} 
+          docs={docs}
+          files={readingFiles}
+          config={{
+            toolkit: true,
+            blur: blur
+          }}
           highlights={highlights} 
           setHighlights={setHighlights}
           annotations={annotations}
           setAnnotations={setAnnotations}
           activityDataId={props.activityData.id}
-        /> 
+
+          activeDocument={activeDocument!}
+          setActiveDocument={setActiveDocument}
+        />
+ 
         <TaskDrawer>
           <div id="QuestionPane" className="mt-20 w-full">
           {!complete  
