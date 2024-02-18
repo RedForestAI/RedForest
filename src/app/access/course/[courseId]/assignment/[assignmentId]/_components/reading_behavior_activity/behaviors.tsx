@@ -115,3 +115,68 @@ export function Skimming(props: BehaviorProps) {
     </>
   );
 }
+
+export function Deep(props: BehaviorProps) {
+  if (props.config?.pageNumber != 2) return null;
+  const [started, setStarted] = useState<boolean>(false);
+
+  useEffect(() => {
+    // @ts-ignore
+    document.getElementById("deep_instructions").showModal();
+  }, []);
+
+  return (
+    <>
+      <div
+        className="absolute left-[14%] top-[13%] h-[0.3%] w-[41%] cursor-pointer bg-black"
+      ></div>
+      <div
+        className="absolute left-[14%] top-[15.5%] h-[0.3%] w-[42%] cursor-pointer bg-black"
+      ></div>
+      <div
+        className="absolute left-[14%] top-[18%] h-[0.3%] w-[14%] cursor-pointer bg-black"
+      ></div>
+      {started ? (
+        <>
+          <div
+            className="absolute left-[19.5%] top-[16%] h-[2.5%] w-[8%] cursor-pointer bg-red-500 opacity-50"
+            onClick={() => {
+              props.setBehaviorIndex(props.behaviorIndex + 1);
+            }}
+          ></div>
+        </>
+      ) : (
+        <>
+          {/* Instructions */}
+          <dialog id="deep_instructions" className="modal">
+            <div className="modal-box">
+              <h3 className="text-lg font-bold">Deep Processing Behavior</h3>
+              <p className="py-4">
+                Read the {" "}
+                <span className="underline">next 2 underlined sentences</span> slowly like {" "} 
+                you are trying to figure them out. Click at the {" "}
+                <span className="bg-red-500 text-white">first word</span> when
+                you start and the {" "} 
+                <span className="bg-red-500 text-white">last word</span> {" "}
+                when you finish.{" "}
+              </p>
+              <div className="modal-action">
+                <form method="dialog">
+                  <button className="btn">Start</button>
+                </form>
+              </div>
+            </div>
+          </dialog>
+
+          {/* Initial highlight */}
+          <div
+            className="absolute left-[14%] top-[11%] h-[2.5%] w-[10%] cursor-pointer bg-red-500 opacity-50"
+            onClick={() => {
+              setStarted(true);
+            }}
+          ></div>
+        </>
+      )}
+    </>
+  );
+}
