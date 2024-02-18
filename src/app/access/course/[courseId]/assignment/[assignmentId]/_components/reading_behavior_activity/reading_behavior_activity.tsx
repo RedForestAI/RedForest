@@ -78,7 +78,8 @@ export default function BehaviorReadingActivity(props: ReadingActivityProps) {
   ]);
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [inInstructions, setInInstructions] = useState<boolean>(true);
-  const [behaviorIndex, setBehaviorIndex] = useState<number>(6);
+  const [behaviorIndex, setBehaviorIndex] = useState<number>(0);
+  const [runningET, setRunningET] = useState<boolean>(false);
 
   const createTracelogFile = api.traceLogFile.create.useMutation();
   const supabase = createClientComponentClient();
@@ -283,7 +284,7 @@ export default function BehaviorReadingActivity(props: ReadingActivityProps) {
               activity_id: props.activity.id,
               activity_data_id: props.activityData.id,
               profile_id: props.profile.id,
-              activityType: "reading",
+              activityType: props.activity.type,
               totalQuestions: props.questions.length,
               totalFiles: readingFiles.length,
             }),
@@ -317,17 +318,29 @@ export default function BehaviorReadingActivity(props: ReadingActivityProps) {
   return (
     <>
       <div className="flex w-full items-center justify-center">
-        <EyeTrackingController complete={complete} />
+        <EyeTrackingController
+          complete={complete}
+          runningET={runningET}
+          setRunningET={setRunningET}
+        />
 
         {inInstructions && (
-          <InstructionsModal setInInstructions={setInInstructions} />
+          <InstructionsModal
+            setInInstructions={setInInstructions}
+            runningET={runningET}
+          />
         )}
 
-        {complete
-          ? <>
-            <ActivityCompletion {...props} complete={complete} isSubmitting={isSubmitting}/>
+        {complete ? (
+          <>
+            <ActivityCompletion
+              {...props}
+              complete={complete}
+              isSubmitting={isSubmitting}
+            />
           </>
-          : <>
+        ) : (
+          <>
             <PDFViewer
               docs={docs}
               files={readingFiles}
@@ -340,7 +353,7 @@ export default function BehaviorReadingActivity(props: ReadingActivityProps) {
               setActiveDocument={setActiveDocument}
             />
           </>
-        }
+        )}
       </div>
     </>
   );
