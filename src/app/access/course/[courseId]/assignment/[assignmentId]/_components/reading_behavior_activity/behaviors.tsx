@@ -292,14 +292,14 @@ export function Regular(props: BehaviorProps) {
 
 export function Skipping(props: BehaviorProps) {
   if (props.config?.pageNumber != 3) return null;
-  const [started, setStarted] = useState<boolean>(true);
+  const [started, setStarted] = useState<boolean>(false);
   const [finished, setFinished] = useState<boolean>(false);
   const [counter, setCounter] = useState<number>(0);
 
-  // useEffect(() => {
-  //   // @ts-ignore
-  //   document.getElementById("skipping_instructions").showModal();
-  // }, []);
+  useEffect(() => {
+    // @ts-ignore
+    document.getElementById("skipping_instructions").showModal();
+  }, []);
 
   function hide(elementString: string) {
     const element = document.getElementById(elementString);
@@ -374,7 +374,8 @@ export function Skipping(props: BehaviorProps) {
             <div className="modal-box">
               <h3 className="text-lg font-bold">Skipping Reading Behavior</h3>
               <p className="py-4">
-                Skip throughout the last page of the text and read only the parts that are red. Click at the {" "}
+                Skip throughout the last page of the text and read only the parts that are {" "}
+                <span className="bg-green-500 text-white">green</span>. Click at the {" "}
                 <span className="bg-red-500 text-white">first word</span> when
                 you start and the {" "} 
                 <span className="bg-red-500 text-white">last word</span> {" "}
