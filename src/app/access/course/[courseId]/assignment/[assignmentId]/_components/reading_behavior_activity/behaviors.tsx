@@ -235,7 +235,6 @@ export function Shallow(props: BehaviorProps) {
   );
 }
 
-
 export function Regular(props: BehaviorProps) {
   if (props.config?.pageNumber != 2) return null;
   const [started, setStarted] = useState<boolean>(false);
@@ -392,6 +391,120 @@ export function Skipping(props: BehaviorProps) {
           {/* Initial highlight */}
           <div
             className="absolute left-[14%] top-[11%] h-[2.5%] w-[8%] cursor-pointer bg-red-500 opacity-50"
+            onClick={() => {
+              setStarted(true);
+            }}
+          ></div>
+        </>
+      )}
+    </>
+  );
+}
+
+export function ReReading(props: BehaviorProps) {
+  if (props.config?.pageNumber != 3) return null;
+  const [started, setStarted] = useState<boolean>(false);
+  const [finishedReading, setFinishedReading] = useState<boolean>(false);
+  const [counter, setCounter] = useState<number>(0);
+  const [complete, setComplete] = useState<boolean>(false);
+
+  useEffect(() => {
+    // @ts-ignore
+    document.getElementById("rereading_instructions").showModal();
+  }, []);
+
+  function hide(elementString: string) {
+    const element = document.getElementById(elementString);
+    if (element) {
+      element.style.display = "none";
+      setCounter(counter + 1);
+      if (counter === 3) {
+        setComplete(true);
+      }
+    }
+  }
+
+  return (
+    <>
+      {started ? (
+        <>
+
+          {finishedReading
+            ? <>
+              <div id="rereading_area_1">
+                <div
+                  className="absolute left-[14%] top-[25%] h-[2.5%] w-[65%] cursor-pointer bg-green-500 opacity-50"
+                  onClick={() => {
+                    hide("rereading_area_1")
+                  }}
+                ></div>
+                <div
+                  className="absolute left-[14%] top-[27.5%] h-[2.5%] w-[13%] cursor-pointer bg-green-500 opacity-50"
+                  onClick={() => {
+                    hide("rereading_area_1")
+                  }}
+                ></div>
+              </div>
+
+              <div
+                id="rereading_area_2"
+                className="absolute left-[14%] top-[36%] h-[3%] w-[22%] cursor-pointer bg-green-500 opacity-50"
+                onClick={() => {
+                  hide("rereading_area_2")
+                }}
+              ></div>
+
+              <div id="rereading_area_3">
+                <div
+                  className="absolute left-[21%] top-[48%] h-[2.5%] w-[57%] cursor-pointer bg-green-500 opacity-50"
+                  onClick={() => {
+                    hide("rereading_area_3")
+                  }}
+                ></div>
+                <div
+                  className="absolute left-[14%] top-[50.5%] h-[2.5%] w-[57%] cursor-pointer bg-green-500 opacity-50"
+                  onClick={() => {
+                    hide("rereading_area_3")
+                  }}
+                ></div>
+              </div>
+            </>
+            : <>
+            <div
+              className="absolute left-[57%] top-[59.5%] h-[2.5%] w-[13%] cursor-pointer bg-red-500 opacity-50"
+              onClick={() => {
+                setFinishedReading(true);
+              }}
+            ></div>
+            </>
+          }
+        </>
+      ) : (
+        <>
+          {/* Instructions */}
+          <dialog id="rereading_instructions" className="modal">
+            <div className="modal-box">
+              <h3 className="text-lg font-bold">Re-Reading Behavior</h3>
+              <p className="py-4">
+                Read the last paragraph as you would regularly read. Click at the {" "}
+                <span className="bg-red-500 text-white">first word</span> when
+                you start and the {" "} 
+                <span className="bg-red-500 text-white">last word</span> {" "}
+                when you finish.{" "}
+                Then re-read the parts of the text in {" "}
+                <span className="bg-green-500 text-white">green</span>.
+              </p>
+              <div className="modal-action">
+                <form method="dialog">
+                  <button className="btn">Start</button>
+                </form>
+              </div>
+            </div>
+          </dialog>
+
+          {/* Initial highlight */}
+          <div
+            className="absolute left-[14%] top-[41%] h-[2.5%] w-[11.5%] cursor-pointer bg-red-500 opacity-50"
             onClick={() => {
               setStarted(true);
             }}
