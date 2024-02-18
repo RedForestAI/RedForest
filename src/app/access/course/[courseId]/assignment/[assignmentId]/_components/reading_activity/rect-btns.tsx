@@ -1,4 +1,5 @@
 import ReactDOM from "react-dom";
+import React from "react";
 import { triggerActionLog } from "~/loggers/actions-logger";
 
 export type rectBtn = {
@@ -10,7 +11,7 @@ export type rectBtn = {
 
 type PageBtnLayerProps = {
   page: Element;
-  rectBtns: rectBtn[];
+  component: React.ReactElement;
 };
 
 export function PageBtnLayer(props: PageBtnLayerProps) {
@@ -19,16 +20,15 @@ export function PageBtnLayer(props: PageBtnLayerProps) {
   const pageNumber = props.page.getAttribute("data-page-number");
   if (pageNumber == null) return null
 
+  // Clone to pass additional props
+  const component = React.cloneElement(props.component, { config: {pageNumber: Number(pageNumber) }});
+
   return ReactDOM.createPortal(
     <div
       id={`btnLayer_${pageNumber}`}
       className="absolute left-0 top-0 h-full w-full z-50"
     >
-      {props.rectBtns
-        .filter((rectBtn) => rectBtn.page == parseInt(pageNumber))
-        .map((rectBtn, index) => (
-          <RectBtn key={index} rectBtn={rectBtn}/>
-        ))}
+      {component}
     </div>,
     props.page,
   );

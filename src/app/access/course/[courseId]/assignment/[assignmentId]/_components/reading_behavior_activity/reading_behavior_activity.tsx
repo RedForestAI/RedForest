@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import { generateUUID } from "~/utils/uuid";
 import { IDocument } from "@cyntler/react-doc-viewer";
@@ -12,7 +12,7 @@ import EyeTrackingController from "~/eyetracking/eye-tracking-controller";
 import PDFViewer from '../reading_activity/pdf-viewer';
 import { AOIEncoding } from "~/eyetracking/aoi-encoding";
 import { triggerActionLog } from "~/loggers/actions-logger";
-import { rectBtn } from "../reading_activity/rect-btns";
+import { Linear, Skimming } from "./behaviors";
 
 import GazeLogger from "~/loggers/gaze-logger";
 import ScrollLogger from "~/loggers/scroll-logger";
@@ -20,7 +20,7 @@ import ActionsLogger from "~/loggers/actions-logger";
 
 type BehaviorConfig = {
   name: "LINEAR" | "SKIMMING" | "DEEP" | "REGULAR" | "SHALLOW" | "SKIPPING" | "REREAD"
-  rectBtns: rectBtn[]
+  component: React.ReactElement
 }
 
 type ReadingActivityProps = {
@@ -57,17 +57,12 @@ export default function BehaviorReadingActivity(props: ReadingActivityProps) {
   const config: BehaviorConfig[] = [
     {
       name: "LINEAR",
-      rectBtns: [
-        {
-          onClick: () => {
-            console.log("Linear")
-          },
-          color: "rgba(255, 0, 0, 0.5)",
-          rect: new DOMRect(0.45, 0.45, 0.1, 0.1),
-          page: 2
-        }
-      ]
-    }
+      component: <Linear behaviorIndex={behaviorIndex} setBehaviorIndex={setBehaviorIndex}/>
+    },
+    {
+      name: "SKIMMING",
+      component: <Skimming behaviorIndex={behaviorIndex} setBehaviorIndex={setBehaviorIndex}/>
+    },
   ]
 
   useEffect(() => {
@@ -206,7 +201,7 @@ export default function BehaviorReadingActivity(props: ReadingActivityProps) {
           files={readingFiles}
           config={{
             btnLayer: true,
-            rectBtns: config[behaviorIndex]!.rectBtns,
+            component: config[behaviorIndex]!.component,
           }}
           activityDataId={props.activityData.id}
 

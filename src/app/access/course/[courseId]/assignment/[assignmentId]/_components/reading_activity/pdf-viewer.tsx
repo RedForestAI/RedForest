@@ -40,7 +40,7 @@ type PDFViewerProps = {
 
     // Behavior Activity
     btnLayer?: boolean
-    rectBtns?: rectBtn[];
+    component?: React.ReactElement;
   }
 };
 
@@ -55,7 +55,7 @@ const defaultConfig = {
 
   // Behavior Activity
   btnLayer: false,
-  rectBtns: []
+  component: <></>
 }
 
 export default function PDFViewer(props: PDFViewerProps) {
@@ -668,7 +668,7 @@ export default function PDFViewer(props: PDFViewerProps) {
                 <PageBtnLayer
                   key={index}
                   page={page}
-                  rectBtns={finalConfig.rectBtns}
+                  component={finalConfig.component}
                 />
               ))}
             </>
