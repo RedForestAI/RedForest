@@ -234,3 +234,58 @@ export function Shallow(props: BehaviorProps) {
     </>
   );
 }
+
+
+export function Regular(props: BehaviorProps) {
+  if (props.config?.pageNumber != 2) return null;
+  const [started, setStarted] = useState<boolean>(false);
+
+  useEffect(() => {
+    // @ts-ignore
+    document.getElementById("regular_instructions").showModal();
+  }, []);
+
+  return (
+    <>
+      {started ? (
+        <>
+          <div
+            className="absolute left-[43%] top-[85%] h-[2.5%] w-[4.5%] cursor-pointer bg-red-500 opacity-50"
+            onClick={() => {
+              props.setBehaviorIndex(props.behaviorIndex + 1);
+            }}
+          ></div>
+        </>
+      ) : (
+        <>
+          {/* Instructions */}
+          <dialog id="regular_instructions" className="modal">
+            <div className="modal-box">
+              <h3 className="text-lg font-bold">Regular Reading Behavior</h3>
+              <p className="py-4">
+                Read the rest of the paragraph at your regular pace. Click at the {" "}
+                <span className="bg-red-500 text-white">first word</span> when
+                you start and the {" "} 
+                <span className="bg-red-500 text-white">last word</span> {" "}
+                when you finish.{" "}
+              </p>
+              <div className="modal-action">
+                <form method="dialog">
+                  <button className="btn">Start</button>
+                </form>
+              </div>
+            </div>
+          </dialog>
+
+          {/* Initial highlight */}
+          <div
+            className="absolute left-[14%] top-[75%] h-[2.5%] w-[9%] cursor-pointer bg-red-500 opacity-50"
+            onClick={() => {
+              setStarted(true);
+            }}
+          ></div>
+        </>
+      )}
+    </>
+  );
+}
