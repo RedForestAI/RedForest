@@ -13,7 +13,7 @@ import PDFViewer from '../reading_activity/pdf-viewer';
 import { AOIEncoding } from "~/eyetracking/aoi-encoding";
 import { triggerActionLog } from "~/loggers/actions-logger";
 import InstructionsModal from "./instructions-modal";
-import { Linear, Skimming, Deep, Shallow, Regular } from "./behaviors";
+import { Linear, Skimming, Deep, Shallow, Regular, Skipping } from "./behaviors";
 
 import GazeLogger from "~/loggers/gaze-logger";
 import ScrollLogger from "~/loggers/scroll-logger";
@@ -50,7 +50,7 @@ export default function BehaviorReadingActivity(props: ReadingActivityProps) {
   const [ docs, setDocs ] = useState<{ uri: string }[]>([{ uri: "/pdfs/behavior_mummy.pdf"}]);
   const [ isSubmitting, setIsSubmitting ] = useState<boolean>(false)
   const [ inInstructions, setInInstructions ] = useState<boolean>(false)
-  const [ behaviorIndex, setBehaviorIndex ] = useState<number>(4)
+  const [ behaviorIndex, setBehaviorIndex ] = useState<number>(5)
   
   const createTracelogFile = api.traceLogFile.create.useMutation()
   const supabase = createClientComponentClient();
@@ -76,6 +76,10 @@ export default function BehaviorReadingActivity(props: ReadingActivityProps) {
     {
       name: "REGULAR",
       component: <Regular behaviorIndex={behaviorIndex} setBehaviorIndex={setBehaviorIndex}/>
+    },
+    {
+      name: "SKIPPING",
+      component: <Skipping behaviorIndex={behaviorIndex} setBehaviorIndex={setBehaviorIndex}/>
     }
   ]
 

@@ -33,20 +33,3 @@ export function PageBtnLayer(props: PageBtnLayerProps) {
     props.page,
   );
 }
-
-function RectBtn(props: { rectBtn: rectBtn}) {
-  return (
-    <div
-      className="absolute cursor-pointer"
-      style={{
-        top: `${props.rectBtn.rect.top*100}%`,
-        left: `${props.rectBtn.rect.left*100}%`,
-        width: `${props.rectBtn.rect.width*100}%`,
-        height: `${props.rectBtn.rect.height*100}%`,
-        backgroundColor: props.rectBtn.color,
-        zIndex: "45"
-      }}
-      onClick={props.rectBtn.onClick}
-    ></div>
-  );
-}
