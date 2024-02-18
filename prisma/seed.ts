@@ -274,7 +274,7 @@ const getReadingActivities = (activities: Activity[]): Prisma.ReadingActivityCre
 const getQuestions = (activities: Activity[]): Prisma.QuestionCreateInput[] => {
   let questions: Prisma.QuestionCreateInput[] = []
   for (let i = 0; i < activities.length; i++) {
-    if (activities[i]) {
+    if (activities[i] && (activities[i]?.type === ActivityType.QUESTIONING || activities[i]?.type === ActivityType.READING)) {
       questions.push({
         id: generateUUID(),
         content: 'What is the answer to this question?',

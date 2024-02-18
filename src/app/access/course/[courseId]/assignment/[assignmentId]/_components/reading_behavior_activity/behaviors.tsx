@@ -3,6 +3,8 @@ import { useState, useEffect } from "react";
 type BehaviorProps = {
   behaviorIndex: number;
   setBehaviorIndex: (index: number) => void;
+  totalBehaviors: number;
+  setComplete: (complete: boolean) => void;
   config?: {
     pageNumber: number;
   };
@@ -11,6 +13,14 @@ type BehaviorProps = {
 export function Linear(props: BehaviorProps) {
   if (props.config?.pageNumber != 1) return null;
   const [started, setStarted] = useState<boolean>(false);
+
+  function complete() {
+    if (props.behaviorIndex + 1 === props.totalBehaviors) {
+      props.setComplete(true);
+    } else {
+      props.setBehaviorIndex(props.behaviorIndex + 1);
+    }
+  }
 
   useEffect(() => {
     // @ts-ignore
@@ -24,7 +34,7 @@ export function Linear(props: BehaviorProps) {
           <div
             className="absolute left-[22%] top-[58%] h-[2.5%] w-[11%] cursor-pointer bg-red-500 opacity-50"
             onClick={() => {
-              props.setBehaviorIndex(props.behaviorIndex + 1);
+              complete()
             }}
           ></div>
         </>
@@ -66,6 +76,15 @@ export function Skimming(props: BehaviorProps) {
   if (props.config?.pageNumber != 1) return null;
   const [started, setStarted] = useState<boolean>(false);
 
+  function complete() {
+    if (props.behaviorIndex + 1 === props.totalBehaviors) {
+      props.setComplete(true);
+    } else {
+      props.setBehaviorIndex(props.behaviorIndex + 1);
+    }
+  }
+
+
   useEffect(() => {
     // @ts-ignore
     document.getElementById("skimming_instructions").showModal();
@@ -78,7 +97,7 @@ export function Skimming(props: BehaviorProps) {
           <div
             className="absolute left-[54%] top-[87%] h-[2.5%] w-[6%] cursor-pointer bg-red-500 opacity-50"
             onClick={() => {
-              props.setBehaviorIndex(props.behaviorIndex + 1);
+              complete();
             }}
           ></div>
         </>
@@ -120,6 +139,14 @@ export function Deep(props: BehaviorProps) {
   if (props.config?.pageNumber != 2) return null;
   const [started, setStarted] = useState<boolean>(false);
 
+  function complete() {
+    if (props.behaviorIndex + 1 === props.totalBehaviors) {
+      props.setComplete(true);
+    } else {
+      props.setBehaviorIndex(props.behaviorIndex + 1);
+    }
+  }
+
   useEffect(() => {
     // @ts-ignore
     document.getElementById("deep_instructions").showModal();
@@ -141,7 +168,7 @@ export function Deep(props: BehaviorProps) {
           <div
             className="absolute left-[19.5%] top-[16%] h-[2.5%] w-[8%] cursor-pointer bg-red-500 opacity-50"
             onClick={() => {
-              props.setBehaviorIndex(props.behaviorIndex + 1);
+              complete();
             }}
           ></div>
         </>
@@ -185,6 +212,15 @@ export function Shallow(props: BehaviorProps) {
   if (props.config?.pageNumber != 2) return null;
   const [started, setStarted] = useState<boolean>(false);
 
+  function complete() {
+    if (props.behaviorIndex + 1 === props.totalBehaviors) {
+      props.setComplete(true);
+    } else {
+      props.setBehaviorIndex(props.behaviorIndex + 1);
+    }
+  }
+
+
   useEffect(() => {
     // @ts-ignore
     document.getElementById("shallow_instructions").showModal();
@@ -197,7 +233,7 @@ export function Shallow(props: BehaviorProps) {
           <div
             className="absolute left-[28.5%] top-[64%] h-[2.5%] w-[6%] cursor-pointer bg-red-500 opacity-50"
             onClick={() => {
-              props.setBehaviorIndex(props.behaviorIndex + 1);
+              complete();
             }}
           ></div>
         </>
@@ -239,6 +275,14 @@ export function Regular(props: BehaviorProps) {
   if (props.config?.pageNumber != 2) return null;
   const [started, setStarted] = useState<boolean>(false);
 
+  function complete() {
+    if (props.behaviorIndex + 1 === props.totalBehaviors) {
+      props.setComplete(true);
+    } else {
+      props.setBehaviorIndex(props.behaviorIndex + 1);
+    }
+  }
+
   useEffect(() => {
     // @ts-ignore
     document.getElementById("regular_instructions").showModal();
@@ -251,7 +295,7 @@ export function Regular(props: BehaviorProps) {
           <div
             className="absolute left-[43%] top-[85%] h-[2.5%] w-[4.5%] cursor-pointer bg-red-500 opacity-50"
             onClick={() => {
-              props.setBehaviorIndex(props.behaviorIndex + 1);
+              complete();
             }}
           ></div>
         </>
@@ -294,6 +338,14 @@ export function Skipping(props: BehaviorProps) {
   const [started, setStarted] = useState<boolean>(false);
   const [finished, setFinished] = useState<boolean>(false);
   const [counter, setCounter] = useState<number>(0);
+
+  function complete() {
+    if (props.behaviorIndex + 1 === props.totalBehaviors) {
+      props.setComplete(true);
+    } else {
+      props.setBehaviorIndex(props.behaviorIndex + 1);
+    }
+  }
 
   useEffect(() => {
     // @ts-ignore
@@ -361,7 +413,7 @@ export function Skipping(props: BehaviorProps) {
               if (!finished) {
                 alert("You need to finish the activity.");
               } else {
-                props.setBehaviorIndex(props.behaviorIndex + 1);
+                complete();
               }
             }}
           ></div>
@@ -406,7 +458,16 @@ export function ReReading(props: BehaviorProps) {
   const [started, setStarted] = useState<boolean>(false);
   const [finishedReading, setFinishedReading] = useState<boolean>(false);
   const [counter, setCounter] = useState<number>(0);
-  const [complete, setComplete] = useState<boolean>(false);
+
+  function complete() {
+    console.log(props)
+    if (props.behaviorIndex + 1 === props.totalBehaviors) {
+      console.log("COMPLETE")
+      props.setComplete(true);
+    } else {
+      props.setBehaviorIndex(props.behaviorIndex + 1);
+    }
+  }
 
   useEffect(() => {
     // @ts-ignore
@@ -418,8 +479,8 @@ export function ReReading(props: BehaviorProps) {
     if (element) {
       element.style.display = "none";
       setCounter(counter + 1);
-      if (counter === 3) {
-        setComplete(true);
+      if (counter === 2) {
+        complete();
       }
     }
   }

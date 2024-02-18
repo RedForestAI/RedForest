@@ -59,7 +59,7 @@ export const activityDataRouter = createTRPCRouter({
         where: { activityId: activity.id },
       });
 
-      if (questions.length !== activityData.answers.length) {
+      if (questions.length != 0 && questions.length !== activityData.answers.length) {
         throw new Error("Activity is not complete");
       }
 
