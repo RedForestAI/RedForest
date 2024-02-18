@@ -29,20 +29,23 @@ type PDFViewerProps = {
   setActiveDocument: any;
 
   config?: {
-    blur: boolean;
+    blur?: boolean;
     toolkit?: boolean;
+    highlights?: Highlight[];
+    setHighlights?: any;
+    annotations?: Annotation[];
+    setAnnotations?: any;
   }
-
-  highlights: Highlight[];
-  setHighlights: any;
-  annotations: Annotation[];
-  setAnnotations: any;
 };
 
 // Default configs
 const defaultConfig = {
   toolkit: true,
-  blur: false
+  blur: false,
+  highlights: [],
+  setHighlights: (prev: any) => {},
+  annotations: [],
+  setAnnotations: (prev: any) => {}
 }
 
 export default function PDFViewer(props: PDFViewerProps) {
@@ -194,7 +197,7 @@ export default function PDFViewer(props: PDFViewerProps) {
           continue;
         }
 
-        const pageHighlights = props.highlights.filter((highlight) => {
+        const pageHighlights = finalConfig.highlights.filter((highlight) => {
           // Check if the highlight is on the current page via ID,
           // Skip if the highlight already exists
           let existingHighlight = document.getElementById(highlight.id);
@@ -253,7 +256,7 @@ export default function PDFViewer(props: PDFViewerProps) {
     }
 
     // Iterate through each highlight
-    for (const high of props.highlights) {
+    for (const high of finalConfig.highlights) {
       // Only parse the JSON if the file ID matches the active document
       if (high.fileId != file.id) {
         continue;
@@ -265,7 +268,7 @@ export default function PDFViewer(props: PDFViewerProps) {
         rects.push(data);
       }
     }
-  }, [props.highlights, docViewer]);
+  }, [finalConfig.highlights, docViewer]);
 
   const deselect = () => {
     // Deselect text after highlighting
@@ -398,7 +401,7 @@ export default function PDFViewer(props: PDFViewerProps) {
     }
 
     // If colliding with another highlight, delete the highlight
-    for (const highlight of props.highlights) {
+    for (const highlight of finalConfig.highlights) {
       // Only parse the JSON if the file ID matches the active document
       if (highlight.fileId != file.id) {
         continue;
@@ -430,10 +433,10 @@ export default function PDFViewer(props: PDFViewerProps) {
               deselect();
 
               // Remove the highlight from the state
-              const newHighlights = props.highlights.filter(
+              const newHighlights = finalConfig.highlights.filter(
                 (h) => h.id != highlight.id,
               );
-              props.setHighlights(newHighlights);
+              finalConfig.setHighlights(newHighlights);
 
               // Remove the highlight from the DOM
               const highlightElements = document.querySelectorAll(
@@ -490,7 +493,7 @@ export default function PDFViewer(props: PDFViewerProps) {
       fileId: file.id,
       activityDataId: props.activityDataId,
     });
-    props.setHighlights([...props.highlights, highlight]);
+    finalConfig.setHighlights([...finalConfig.highlights, highlight]);
 
     // Log the information
     triggerActionLog({ type: "highlight", value: { ...highlight } });
@@ -557,7 +560,7 @@ export default function PDFViewer(props: PDFViewerProps) {
       fileId: file.id,
       activityDataId: props.activityDataId,
     });
-    props.setAnnotations([...props.annotations, annotation]);
+    finalConfig.setAnnotations([...finalConfig.annotations, annotation]);
 
     triggerActionLog({
       type: "annotate",
@@ -615,12 +618,14 @@ export default function PDFViewer(props: PDFViewerProps) {
         onLookup={onLookup}
       />
 
-      <DocumentDrawer
-        files={props.files}
-        docs={props.docs}
-        activeDocument={props.activeDocument}
-        setActiveDocument={props.setActiveDocument}
-      />
+      {props.docs.length > 1 &&
+        <DocumentDrawer
+          files={props.files}
+          docs={props.docs}
+          activeDocument={props.activeDocument}
+          setActiveDocument={props.setActiveDocument}
+        />
+      }
       {error && <div className="text-red-500">{error}</div>}
 
       <div
@@ -638,8 +643,8 @@ export default function PDFViewer(props: PDFViewerProps) {
               fileIndex={fileIndex}
               files={props.files}
               page={page}
-              annotations={props.annotations}
-              setAnnotations={props.setAnnotations}
+              annotations={finalConfig.annotations}
+              setAnnotations={finalConfig.setAnnotations}
             />
           ))}
         </>

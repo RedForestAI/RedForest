@@ -283,14 +283,13 @@ export default function ReadingActivity(props: ReadingActivityProps) {
           files={readingFiles}
           config={{
             toolkit: true,
-            blur: blur
+            blur: blur,
+            highlights: highlights,
+            setHighlights: setHighlights,
+            annotations: annotations,
+            setAnnotations: setAnnotations
           }}
-          highlights={highlights} 
-          setHighlights={setHighlights}
-          annotations={annotations}
-          setAnnotations={setAnnotations}
           activityDataId={props.activityData.id}
-
           activeDocument={activeDocument!}
           setActiveDocument={setActiveDocument}
         />

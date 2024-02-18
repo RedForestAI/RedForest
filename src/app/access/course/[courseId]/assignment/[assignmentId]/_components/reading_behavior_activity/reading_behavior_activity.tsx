@@ -40,9 +40,7 @@ export default function BehaviorReadingActivity(props: ReadingActivityProps) {
   const [ complete, setComplete ] = useState<boolean>(false);
   const [ readingFiles, setReadingFiles ] = useState<ReadingFile[]>([]);
   const [ activeDocument, setActiveDocument ] = useState<IDocument>();
-  const [ docs, setDocs ] = useState<{ uri: string }[]>([]);
-  const [ highlights, setHighlights ] = useState<Highlight[]>([]);
-  const [ annotations, setAnnotations ] = useState<Annotation[]>([]);
+  const [ docs, setDocs ] = useState<{ uri: string }[]>([{ uri: "/pdfs/behavior_mummy.pdf"}]);
   const [ isSubmitting, setIsSubmitting ] = useState<boolean>(false)
   
   const createTracelogFile = api.traceLogFile.create.useMutation()
@@ -184,12 +182,8 @@ export default function BehaviorReadingActivity(props: ReadingActivityProps) {
           files={readingFiles}
           config={{
             toolkit: false,
-            blur: false
+            blur: false,
           }}
-          highlights={highlights} 
-          setHighlights={setHighlights}
-          annotations={annotations}
-          setAnnotations={setAnnotations}
           activityDataId={props.activityData.id}
 
           activeDocument={activeDocument!}
