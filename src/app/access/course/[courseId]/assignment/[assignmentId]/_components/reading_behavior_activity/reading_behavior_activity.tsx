@@ -18,6 +18,11 @@ import GazeLogger from "~/loggers/gaze-logger";
 import ScrollLogger from "~/loggers/scroll-logger";
 import ActionsLogger from "~/loggers/actions-logger";
 
+type BehaviorConfig = {
+  name: "LINEAR" | "SKIMMING" | "DEEP" | "REGULAR" | "SHALLOW" | "SKIPPING" | "REREAD"
+  rectBtns: rectBtn[]
+}
+
 type ReadingActivityProps = {
   profile: Profile
   course: Course
@@ -43,10 +48,27 @@ export default function BehaviorReadingActivity(props: ReadingActivityProps) {
   const [ activeDocument, setActiveDocument ] = useState<IDocument>();
   const [ docs, setDocs ] = useState<{ uri: string }[]>([{ uri: "/pdfs/behavior_mummy.pdf"}]);
   const [ isSubmitting, setIsSubmitting ] = useState<boolean>(false)
-  const [ rectBtns, setRectBtns ] = useState<rectBtn[]>([])
+  const [ behaviorIndex, setBehaviorIndex ] = useState<number>(0)
   
   const createTracelogFile = api.traceLogFile.create.useMutation()
   const supabase = createClientComponentClient();
+
+  // Configuration
+  const config: BehaviorConfig[] = [
+    {
+      name: "LINEAR",
+      rectBtns: [
+        {
+          onClick: () => {
+            console.log("Linear")
+          },
+          color: "rgba(255, 0, 0, 0.5)",
+          rect: new DOMRect(0.45, 0.45, 0.1, 0.1),
+          page: 2
+        }
+      ]
+    }
+  ]
 
   useEffect(() => {
     // Clear logs
@@ -184,7 +206,7 @@ export default function BehaviorReadingActivity(props: ReadingActivityProps) {
           files={readingFiles}
           config={{
             btnLayer: true,
-            rectBtns: rectBtns,
+            rectBtns: config[behaviorIndex]!.rectBtns,
           }}
           activityDataId={props.activityData.id}
 

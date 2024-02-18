@@ -21,8 +21,8 @@ export function PageBtnLayer(props: PageBtnLayerProps) {
 
   return ReactDOM.createPortal(
     <div
-      id={`noteAnnotationLayer_${pageNumber}`}
-      className="absolute left-0 top-0 h-full w-full"
+      id={`btnLayer_${pageNumber}`}
+      className="absolute left-0 top-0 h-full w-full z-50"
     >
       {props.rectBtns
         .filter((rectBtn) => rectBtn.page == parseInt(pageNumber))
@@ -37,13 +37,14 @@ export function PageBtnLayer(props: PageBtnLayerProps) {
 function RectBtn(props: { rectBtn: rectBtn}) {
   return (
     <div
-      className="absolute"
+      className="absolute cursor-pointer"
       style={{
-        top: props.rectBtn.rect.top,
-        left: props.rectBtn.rect.left,
-        width: props.rectBtn.rect.width,
-        height: props.rectBtn.rect.height,
+        top: `${props.rectBtn.rect.top*100}%`,
+        left: `${props.rectBtn.rect.left*100}%`,
+        width: `${props.rectBtn.rect.width*100}%`,
+        height: `${props.rectBtn.rect.height*100}%`,
         backgroundColor: props.rectBtn.color,
+        zIndex: "45"
       }}
       onClick={props.rectBtn.onClick}
     ></div>
