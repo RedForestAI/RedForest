@@ -168,13 +168,23 @@ const getActivities = (assignments: Assignment[]): Prisma.ActivityCreateInput[] 
     //     assignment: { connect: { id: assignments[i]?.id }},
     //   }
     // )
+    // activities.push(
+    //   {
+    //     id: generateUUID(),
+    //     index: 1,
+    //     name: `Reading Activity`,
+    //     description: `Reading Activity Description`,
+    //     type: ActivityType.READING,
+    //     assignment: { connect: { id: assignments[i]?.id }},
+    //   }
+    // )
     activities.push(
       {
         id: generateUUID(),
         index: 1,
-        name: `Activity`,
-        description: `Activity Description`,
-        type: ActivityType.READING,
+        name: `Reading Behavior`,
+        description: `Reading Behavior Description`,
+        type: ActivityType.READING_BEHAVIOR,
         assignment: { connect: { id: assignments[i]?.id }},
       }
     )
@@ -264,7 +274,7 @@ const getReadingActivities = (activities: Activity[]): Prisma.ReadingActivityCre
 const getQuestions = (activities: Activity[]): Prisma.QuestionCreateInput[] => {
   let questions: Prisma.QuestionCreateInput[] = []
   for (let i = 0; i < activities.length; i++) {
-    if (activities[i]) {
+    if (activities[i] && (activities[i]?.type === ActivityType.QUESTIONING || activities[i]?.type === ActivityType.READING)) {
       questions.push({
         id: generateUUID(),
         content: 'What is the answer to this question?',

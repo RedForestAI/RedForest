@@ -6,11 +6,9 @@ import DocViewer, {
 } from "@cyntler/react-doc-viewer";
 import { faMagnifyingGlass } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import { api } from "~/trpc/react";
 
 import { generateUUID } from "~/utils/uuid";
-import BlurModal from "./blur-modal";
 import {
   useMiddleNavBarContext,
 } from "~/providers/navbar-provider";
@@ -19,27 +17,56 @@ import { ToolKit } from "./toolkit";
 import { DictionaryEntry } from "./dictionary-entry";
 import { DocumentDrawer } from "./document-drawer";
 import { PageNoteAnnotationLayer } from "./annotation-box";
+import { PageBtnLayer, rectBtn } from "./rect-btns";
 import { parsePrisma } from "~/utils/prisma";
 import { debounce } from "~/utils/functional";
 import "./pdf-viewer.css";
 
 type PDFViewerProps = {
+  docs: { uri: string }[];
   files: ReadingFile[];
-  highlights: Highlight[];
-  setHighlights: any;
-  annotations: Annotation[];
-  setAnnotations: any;
   activityDataId: string;
+  activeDocument: IDocument;
+  setActiveDocument: any;
+
+  config?: {
+    // Reading Activity
+    blur?: boolean;
+    toolkit?: boolean;
+    highlights?: Highlight[];
+    setHighlights?: any;
+    annotations?: Annotation[];
+    setAnnotations?: any;
+
+    // Behavior Activity
+    btnLayer?: boolean
+    component?: React.ReactElement;
+  }
 };
 
+const defaultConfig = {
+  // Reading Activity
+  blur: false,
+  toolkit: false,
+  highlights: [],
+  setHighlights: (prev: any) => {},
+  annotations: [],
+  setAnnotations: (prev: any) => {},
+
+  // Behavior Activity
+  btnLayer: false,
+  component: <></>
+}
+
 export default function PDFViewer(props: PDFViewerProps) {
-  const [activeDocument, setActiveDocument] = useState<IDocument>();
+  
+  const finalConfig = {...defaultConfig, ...props.config}
+  
   const [fileIndex, setFileIndex] = useState<number>(0);
-  const [docs, setDocs] = useState<{ uri: string }[]>([]);
   const [zoomLevel, setZoomLevel] = useState(1); // Starting zoom level
   const [error, setError] = useState<string | null>(null);
-  const [readingStart, setReadingStart] = useState<boolean>(true);
   const [viewerKey, setViewerKey] = React.useState(0); //Viewer key state
+  const [pages, setPages] = useState<Element[]>([]);
 
   // Toolkit
   const [toolkitPosition, setToolkitPosition] = useState({
@@ -52,15 +79,11 @@ export default function PDFViewer(props: PDFViewerProps) {
   const [toolkitText, setToolkitText] = useState("");
   const [toolkitRects, setToolkitRects] = useState<DOMRect[]>([]);
 
-  // Highlights
-  const [pages, setPages] = useState<Element[]>([]);
-
   // Dictionary
   const [dictError, setDictError] = useState<string | null>(null);
   const [dictEntry, setDictEntry] = useState<any | null>(null);
 
   // Mutation
-  const supabase = createClientComponentClient();
   const createHighlight = api.highlight.create.useMutation();
   const deleteHighlight = api.highlight.delete.useMutation();
   const createAnnotation = api.annotation.create.useMutation();
@@ -74,11 +97,11 @@ export default function PDFViewer(props: PDFViewerProps) {
 
     return (
       <DocViewer
-        documents={docs}
-        activeDocument={activeDocument}
+        documents={props.docs}
+        activeDocument={props.activeDocument}
         key={viewerKey}
         onDocumentChange={(newDoc) => {
-          setActiveDocument(newDoc);
+          props.setActiveDocument(newDoc);
         }}
         pluginRenderers={DocViewerRenderers}
         style={{
@@ -108,7 +131,7 @@ export default function PDFViewer(props: PDFViewerProps) {
         }}
       />
     );
-  }, [docs, activeDocument, zoomLevel]);
+  }, [props.docs, props.activeDocument, zoomLevel]);
 
   useEffect(() => {
     const container = document.querySelector("#pdf-viewer-container");
@@ -137,7 +160,9 @@ export default function PDFViewer(props: PDFViewerProps) {
     setMiddleNavBarContent(middleNavBarExtras);
 
     // Add toolkits
-    document.addEventListener("mouseup", handleTextSelection);
+    if (finalConfig.toolkit) {
+      document.addEventListener("mouseup", handleTextSelection);
+    }
 
     // Add observer to determine once the document is loaded
     const observer = new MutationObserver((mutationsList) => {
@@ -164,8 +189,10 @@ export default function PDFViewer(props: PDFViewerProps) {
     // Reset the navbar content when the component unmounts
     return () => {
       setMiddleNavBarContent(null);
-      document.removeEventListener("mouseup", handleTextSelection);
       observer.disconnect();
+      if (finalConfig.toolkit) {
+        document.removeEventListener("mouseup", handleTextSelection);
+      }
     };
   }, []);
 
@@ -178,7 +205,7 @@ export default function PDFViewer(props: PDFViewerProps) {
           continue;
         }
 
-        const pageHighlights = props.highlights.filter((highlight) => {
+        const pageHighlights = finalConfig.highlights.filter((highlight) => {
           // Check if the highlight is on the current page via ID,
           // Skip if the highlight already exists
           let existingHighlight = document.getElementById(highlight.id);
@@ -187,7 +214,7 @@ export default function PDFViewer(props: PDFViewerProps) {
           }
 
           // Check the file ID
-          const index = docs.findIndex((doc) => doc.uri == activeDocument?.uri);
+          const index = props.docs.findIndex((doc) => doc.uri == props.activeDocument?.uri);
           const file = props.files[index];
           if (file == undefined) {
             return false;
@@ -225,69 +252,10 @@ export default function PDFViewer(props: PDFViewerProps) {
   }, [pages]);
 
   useEffect(() => {
-    async function fetchPDFs() {
-      // If there are no files, return
-      if (props.files == undefined || props.files.length == 0) {
-        return;
-      }
-
-      // Get the public URLs for the files
-      const filepaths = props.files.map((file) => file.filepath);
-
-      // For each file, download the file
-      let files: Blob[] = [];
-
-      for (let i = 0; i < filepaths.length; i++) {
-        const filepath = filepaths[i];
-        if (filepath == null) {
-          setError(
-            "Failed to fetch URLs for the files. Please logout and try again.",
-          );
-          return;
-        }
-        const { data, error } = await supabase.storage
-          .from("activity_reading_file")
-          .download(filepath);
-
-        if (error) {
-          console.error(error);
-          setError(error.message);
-          return;
-        }
-
-        files.push(data as Blob);
-      }
-
-      // Iterate through the files and add them to the docs array
-      if (files.length == 0) {
-        setError(
-          "Failed to fetch URLs for the files. Please logout and try again.",
-        );
-        return;
-      }
-
-      // Create URLs for the files
-      const newDocs = files.map((file: any) => {
-        return {
-          uri: URL.createObjectURL(file),
-          fileType: "pdf",
-        };
-      });
-      setDocs(newDocs);
-      setActiveDocument(newDocs[0]);
-      triggerActionLog({ type: "pdfLoad", value: { index: 0 } });
-    }
-
-    if (docs.length == 0) {
-      fetchPDFs();
-    }
-  }, [props.files]);
-
-  useEffect(() => {
     let rects = [];
 
     // Determine the index of the active document
-    const index = docs.findIndex((doc) => doc.uri == activeDocument?.uri);
+    const index = props.docs.findIndex((doc) => doc.uri == props.activeDocument?.uri);
     const file = props.files[index];
     setFileIndex(index);
 
@@ -296,7 +264,7 @@ export default function PDFViewer(props: PDFViewerProps) {
     }
 
     // Iterate through each highlight
-    for (const high of props.highlights) {
+    for (const high of finalConfig.highlights) {
       // Only parse the JSON if the file ID matches the active document
       if (high.fileId != file.id) {
         continue;
@@ -308,7 +276,7 @@ export default function PDFViewer(props: PDFViewerProps) {
         rects.push(data);
       }
     }
-  }, [props.highlights, docViewer]);
+  }, [finalConfig.highlights, docViewer]);
 
   const deselect = () => {
     // Deselect text after highlighting
@@ -407,14 +375,9 @@ export default function PDFViewer(props: PDFViewerProps) {
     }
   }, 200);
 
-  function onReadingStart() {
-    setReadingStart(true);
-    triggerActionLog({ type: "readingStart", value: { start: true } });
-  }
-
   async function onHighlight() {
     // Determine the index of the active document
-    const index = docs.findIndex((doc) => doc.uri == activeDocument?.uri);
+    const index = props.docs.findIndex((doc) => doc.uri == props.activeDocument?.uri);
 
     // Get the file ID (matching the index of the file)
     const file = props.files[index];
@@ -446,7 +409,7 @@ export default function PDFViewer(props: PDFViewerProps) {
     }
 
     // If colliding with another highlight, delete the highlight
-    for (const highlight of props.highlights) {
+    for (const highlight of finalConfig.highlights) {
       // Only parse the JSON if the file ID matches the active document
       if (highlight.fileId != file.id) {
         continue;
@@ -478,10 +441,10 @@ export default function PDFViewer(props: PDFViewerProps) {
               deselect();
 
               // Remove the highlight from the state
-              const newHighlights = props.highlights.filter(
+              const newHighlights = finalConfig.highlights.filter(
                 (h) => h.id != highlight.id,
               );
-              props.setHighlights(newHighlights);
+              finalConfig.setHighlights(newHighlights);
 
               // Remove the highlight from the DOM
               const highlightElements = document.querySelectorAll(
@@ -538,7 +501,7 @@ export default function PDFViewer(props: PDFViewerProps) {
       fileId: file.id,
       activityDataId: props.activityDataId,
     });
-    props.setHighlights([...props.highlights, highlight]);
+    finalConfig.setHighlights([...finalConfig.highlights, highlight]);
 
     // Log the information
     triggerActionLog({ type: "highlight", value: { ...highlight } });
@@ -546,7 +509,7 @@ export default function PDFViewer(props: PDFViewerProps) {
 
   async function onAnnotate() {
     // Determine the index of the active document
-    const index = docs.findIndex((doc) => doc.uri == activeDocument?.uri);
+    const index = props.docs.findIndex((doc) => doc.uri == props.activeDocument?.uri);
 
     // Get the file ID (matching the index of the file)
     const file = props.files[index];
@@ -605,7 +568,7 @@ export default function PDFViewer(props: PDFViewerProps) {
       fileId: file.id,
       activityDataId: props.activityDataId,
     });
-    props.setAnnotations([...props.annotations, annotation]);
+    finalConfig.setAnnotations([...finalConfig.annotations, annotation]);
 
     triggerActionLog({
       type: "annotate",
@@ -652,46 +615,64 @@ export default function PDFViewer(props: PDFViewerProps) {
 
   return (
     <>
-      {!readingStart && <BlurModal onContinue={onReadingStart} />}
+      {finalConfig.toolkit &&
+        <ToolKit
+          x={toolkitPosition.x}
+          y={toolkitPosition.y}
+          w={toolkitPosition.w}
+          h={toolkitPosition.h}
+          isVisible={toolkitPosition.isVisible}
+          onHighlight={onHighlight}
+          onAnnotate={onAnnotate}
+          onLookup={onLookup}
+        />
+      }
 
-      <ToolKit
-        x={toolkitPosition.x}
-        y={toolkitPosition.y}
-        w={toolkitPosition.w}
-        h={toolkitPosition.h}
-        isVisible={toolkitPosition.isVisible}
-        onHighlight={onHighlight}
-        onAnnotate={onAnnotate}
-        onLookup={onLookup}
-      />
-
-      <DocumentDrawer
-        files={props.files}
-        docs={docs}
-        activeDocument={activeDocument}
-        setActiveDocument={setActiveDocument}
-      />
+      {props.docs.length > 1 &&
+        <DocumentDrawer
+          files={props.files}
+          docs={props.docs}
+          activeDocument={props.activeDocument}
+          setActiveDocument={props.setActiveDocument}
+        />
+      }
       {error && <div className="text-red-500">{error}</div>}
 
       <div
         id="pdf-viewer-container"
-        className={`flex h-full w-full flex-row items-center justify-center ${readingStart ? "" : "blur-lg"}`}
+        className={`flex h-full w-full flex-row items-center justify-center ${finalConfig.blur ? "blur-lg" : ""}`}
       >
         {docViewer}
       </div>
 
       {pages && (
         <>
-          {pages.map((page, index) => (
-            <PageNoteAnnotationLayer
-              key={index}
-              fileIndex={fileIndex}
-              files={props.files}
-              page={page}
-              annotations={props.annotations}
-              setAnnotations={props.setAnnotations}
-            />
-          ))}
+          {finalConfig.toolkit && 
+            <>
+              {pages.map((page, index) => (
+                <PageNoteAnnotationLayer
+                  key={index}
+                  fileIndex={fileIndex}
+                  files={props.files}
+                  page={page}
+                  annotations={finalConfig.annotations}
+                  setAnnotations={finalConfig.setAnnotations}
+                />
+              ))}
+            </>
+          }
+
+          {finalConfig.btnLayer && 
+            <>
+              {pages.map((page, index) => (
+                <PageBtnLayer
+                  key={index}
+                  page={page}
+                  component={finalConfig.component}
+                />
+              ))}
+            </>
+          }
         </>
       )}
 

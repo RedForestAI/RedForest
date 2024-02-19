@@ -4,6 +4,7 @@ import { Profile, Course, Assignment, Activity, ActivityData, AssignmentData, Ac
 import { useState } from 'react'
 import QuestionActivity from "./question_activity/question_activity"
 import ReadingActivity from "./reading_activity/reading_activity"
+import ReadingBehaviorActivity from "./reading_behavior_activity/reading_behavior_activity"
 
 type AssignmentBaseProps = {
   profile: Profile
@@ -40,8 +41,11 @@ export default function AssignmentBase(props: AssignmentBaseProps) {
       case (ActivityType.QUESTIONING):
         // @ts-ignore
         return <QuestionActivity {...activityData}/>
+      case (ActivityType.READING_BEHAVIOR):
+        // @ts-ignore
+        return <ReadingBehaviorActivity {...activityData}/>
       default:
-        return <p>Failed to load activity</p>
+        return <p className="text-error">Failed to load activity</p>
     }
 
   }

@@ -109,6 +109,7 @@ model AssignmentData {
 enum ActivityType {
   READING
   QUESTIONING
+  READING_BEHAVIOR
 }
 
 model Activity {

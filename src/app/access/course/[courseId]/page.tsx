@@ -38,7 +38,7 @@ export default async function Page({params}: {params: { courseId: string }}) {
 
   return (
     <div className="min-h-screen">
-      <NavBar profile={profile} breadcrumbs={[{name: "\\", url: `/access`}]}/>
+      <NavBar profile={profile} breadcrumbs={[{name: "\\", url: `/access`}, {name: course?.name || "", url: ""}]}/>
       <div className="container mx-auto pl-12 pr-12 bg-base-200 min-h-screen">
         {profile && course
           ? <div>

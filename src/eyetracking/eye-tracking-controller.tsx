@@ -9,11 +9,10 @@ import WGCalibration from './wgcalibration';
 import { AbstractEyeTracker, WebGazeEyeTracker, TobiiProSDKEyeTracker } from './eye-tracker-interface';
 import { triggerActionLog } from '~/loggers/actions-logger';
 
-export default function EyeTrackingController(props: {complete: boolean}) {
+export default function EyeTrackingController(props: {complete: boolean, runningET: boolean, setRunningET: (running: boolean) => void}) {
   const [open, setOpen] = useState<boolean>(false);
   const [option, setOption] = useState<string>("");
   const [options, setOptions] = useState<{ [id: string]: string[]}>({});
-  const [runningET, setRunningET] = useState<boolean>(false);
   const [calibration, setCalibration] = useState<boolean>(false);
   const [eyeTracker, setEyeTracker] = useState<AbstractEyeTracker | null>(null);
   
@@ -27,7 +26,7 @@ export default function EyeTrackingController(props: {complete: boolean}) {
   const [calibrationButton, setCalibrationButton] = useState<React.ReactNode>();
 
   const etProps = {
-    setRunningET,
+    setRunningET: props.setRunningET,
     setCalibration
   }
 
@@ -120,7 +119,7 @@ export default function EyeTrackingController(props: {complete: boolean}) {
 
   useEffect(() => {
     if (props.complete) {
-      if (runningET) {
+      if (props.runningET) {
         eyeTracker?.end();
         triggerActionLog({type: "eyeTracker", value: {action: "end", type: option}});
       }
@@ -128,7 +127,7 @@ export default function EyeTrackingController(props: {complete: boolean}) {
   }, [props.complete])
 
   useEffect(() => {
-    if (runningET) {
+    if (props.runningET) {
       if (calibration) {
         triggerActionLog({type: "eyeTracker", value: {action: "calibrate-start", type: option}});
       } else {
@@ -140,7 +139,7 @@ export default function EyeTrackingController(props: {complete: boolean}) {
   useEffect(() => {
     if (option != "") {
       let value = "stop"
-      if (runningET) {
+      if (props.runningET) {
         value = "start"
       }
       triggerActionLog({type: "eyeTracker", value: {action: value, type: option}});
@@ -148,15 +147,15 @@ export default function EyeTrackingController(props: {complete: boolean}) {
 
     // Reset the gaze point value
     setGaze({x: -100, y: -100});
-  }, [runningET])
+  }, [props.runningET])
 
   useEffect(() => {
     if (eyeTracker) {
-      setStatus(eyeTracker.getStatus(runningET));
-      setButton(eyeTracker.getButton(runningET));
-      setCalibrationButton(eyeTracker.getCalibrationButton(runningET));
+      setStatus(eyeTracker.getStatus(props.runningET));
+      setButton(eyeTracker.getButton(props.runningET));
+      setCalibrationButton(eyeTracker.getCalibrationButton(props.runningET));
     }
-  }, [eyeTracker, runningET])
+  }, [eyeTracker, props.runningET])
 
   return (
     <>
@@ -178,7 +177,7 @@ export default function EyeTrackingController(props: {complete: boolean}) {
 
           <div className="flex flex-col gap-2 mt-4">
             <div className="text-xl">Eye-Tracker</div>
-            <select value={option} onChange={updateOption} disabled={runningET} className="select select-bordered w-full">
+            <select value={option} onChange={updateOption} disabled={props.runningET} className="select select-bordered w-full">
               <option value="" disabled>Select an Eye-Tracker</option>
 
               {Object.keys(options).flatMap((key) =>

@@ -77,6 +77,17 @@ export function EmptyActivityCard(props: {assignmentId: string, activities: Acti
         // @ts-ignore 
         document.getElementById('activity_selection').close()
       }
+    },
+    {
+      type: ActivityType.READING_BEHAVIOR,
+      name: "Reading Behavior",
+      description: "Recording reading behavior",
+      onClick: async () => {
+        await createActivity(ActivityType.READING_BEHAVIOR)
+        setIsOpen(false)
+        // @ts-ignore 
+        document.getElementById('activity_selection').close()
+      }
     }
   ]
 
@@ -93,10 +104,14 @@ export function EmptyActivityCard(props: {assignmentId: string, activities: Acti
   const createActivity = async (type: ActivityType) => {
     try {
       const result = await mutation.mutateAsync({index: props.activities.length, type: type, assignmentId: props.assignmentId});
+      if (result === undefined) {
+        console.error("Failed to create activity")
+        return
+      }
       props.setActivities([...props.activities, result])
       props.setQuestions([...props.questions, []])
     } catch (error) {
-      console.log("Failed to create assignment: ", error)
+      console.log("Failed to create activity: ", error)
     }
   }
 

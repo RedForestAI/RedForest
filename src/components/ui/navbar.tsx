@@ -106,9 +106,16 @@ export default function Navbar(props: NavbarProps) {
           <ul>
             {props.breadcrumbs && props.breadcrumbs.map((breadcrumb, index) => (
               <li key={index}>
-                <Link href={breadcrumb.url} legacyBehavior={true}>
-                  <a>{breadcrumb.name}</a>
-                </Link>
+                {breadcrumb.url != "" 
+                  ? <>
+                    <Link href={breadcrumb.url} legacyBehavior={true}>
+                      <a>{breadcrumb.name}</a>
+                    </Link>
+                  </>
+                  : <>
+                    <span>{breadcrumb.name}</span>
+                  </>
+                }
               </li>
             ))}
           </ul>

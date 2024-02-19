@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import { generateUUID } from "~/utils/uuid";
 import { IDocument } from "@cyntler/react-doc-viewer";
@@ -14,23 +14,39 @@ import {
   AssignmentData,
   ReadingFile,
   Question,
-  Highlight,
-  Annotation,
 } from "@prisma/client";
 import { api } from "~/trpc/react";
 
 import EyeTrackingController from "~/eyetracking/eye-tracking-controller";
-import PDFViewer from "./pdf-viewer";
-import TaskDrawer from "./task-drawer";
-import Questions from "../question_activity/questions";
-import ActivityCompletion from "../activity-completion";
+import PDFViewer from "../reading_activity/pdf-viewer";
 import { AOIEncoding } from "~/eyetracking/aoi-encoding";
-import BlurModal from "./blur-modal";
-import { triggerActionLog } from "~/loggers/actions-logger";
+import InstructionsModal from "./instructions-modal";
+import {
+  Linear,
+  Skimming,
+  Deep,
+  Shallow,
+  Regular,
+  Skipping,
+  ReReading,
+} from "./behaviors";
+import ActivityCompletion from "../activity-completion";
 
 import GazeLogger from "~/loggers/gaze-logger";
 import ScrollLogger from "~/loggers/scroll-logger";
 import ActionsLogger from "~/loggers/actions-logger";
+
+type BehaviorConfig = {
+  name:
+    | "LINEAR"
+    | "SKIMMING"
+    | "DEEP"
+    | "REGULAR"
+    | "SHALLOW"
+    | "SKIPPING"
+    | "REREAD";
+  component: React.ReactElement;
+};
 
 type ReadingActivityProps = {
   profile: Profile;
@@ -50,120 +66,108 @@ const gazeLogger = new GazeLogger();
 const scrollLogger = new ScrollLogger();
 const actionsLogger = new ActionsLogger();
 
-export default function ReadingActivity(props: ReadingActivityProps) {
+export default function BehaviorReadingActivity(props: ReadingActivityProps) {
   const [complete, setComplete] = useState<boolean>(false);
   const [readingFiles, setReadingFiles] = useState<ReadingFile[]>([]);
   const [activeDocument, setActiveDocument] = useState<IDocument>();
-  const [blur, setBlur] = useState<boolean>(true);
-  const [docs, setDocs] = useState<{ uri: string }[]>([]);
-  const [highlights, setHighlights] = useState<Highlight[]>([]);
-  const [annotations, setAnnotations] = useState<Annotation[]>([]);
+  const [docs, setDocs] = useState<{ uri: string }[]>([
+    { uri: "/pdfs/behavior_mummy.pdf" },
+  ]);
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+  const [inInstructions, setInInstructions] = useState<boolean>(true);
+  const [behaviorIndex, setBehaviorIndex] = useState<number>(0);
   const [runningET, setRunningET] = useState<boolean>(false);
 
-  const readingActivityQuery = api.readingFile.getMany.useQuery(
-    { activityId: props.activity.id },
-    { enabled: false },
-  );
-  const highlightQuery = api.highlight.getMany.useQuery(
-    { activityDataId: props.activityData.id },
-    { enabled: false },
-  );
-  const annotationQuery = api.annotation.getMany.useQuery(
-    { activityDataId: props.activityData.id },
-    { enabled: false },
-  );
   const createTracelogFile = api.traceLogFile.create.useMutation();
   const supabase = createClientComponentClient();
 
+  // Configuration
+  const config: BehaviorConfig[] = [
+    {
+      name: "LINEAR",
+      component: (
+        <Linear
+          behaviorIndex={behaviorIndex}
+          setBehaviorIndex={setBehaviorIndex}
+          totalBehaviors={7}
+          setComplete={setComplete}
+        />
+      ),
+    },
+    {
+      name: "SKIMMING",
+      component: (
+        <Skimming
+          behaviorIndex={behaviorIndex}
+          setBehaviorIndex={setBehaviorIndex}
+          totalBehaviors={7}
+          setComplete={setComplete}
+        />
+      ),
+    },
+    {
+      name: "DEEP",
+      component: (
+        <Deep
+          behaviorIndex={behaviorIndex}
+          setBehaviorIndex={setBehaviorIndex}
+          totalBehaviors={7}
+          setComplete={setComplete}
+        />
+      ),
+    },
+    {
+      name: "SHALLOW",
+      component: (
+        <Shallow
+          behaviorIndex={behaviorIndex}
+          setBehaviorIndex={setBehaviorIndex}
+          totalBehaviors={7}
+          setComplete={setComplete}
+        />
+      ),
+    },
+    {
+      name: "REGULAR",
+      component: (
+        <Regular
+          behaviorIndex={behaviorIndex}
+          setBehaviorIndex={setBehaviorIndex}
+          totalBehaviors={7}
+          setComplete={setComplete}
+        />
+      ),
+    },
+    {
+      name: "SKIPPING",
+      component: (
+        <Skipping
+          behaviorIndex={behaviorIndex}
+          setBehaviorIndex={setBehaviorIndex}
+          totalBehaviors={7}
+          setComplete={setComplete}
+        />
+      ),
+    },
+    {
+      name: "REREAD",
+      component: (
+        <ReReading
+          behaviorIndex={behaviorIndex}
+          setBehaviorIndex={setBehaviorIndex}
+          totalBehaviors={7}
+          setComplete={setComplete}
+        />
+      ),
+    },
+  ];
+
   useEffect(() => {
-    const getReadingActivity = async () => {
-      // Get the reading activity data
-      const result = await readingActivityQuery.refetch();
-      if (result.error || !result.data) {
-        console.log(result.error);
-        return;
-      }
-
-      // Get the highlights
-      const highlightsResult = await highlightQuery.refetch();
-      if (highlightsResult.error || !highlightsResult.data) {
-        console.log(highlightsResult.error);
-        return;
-      }
-
-      // Get the annotations
-      const annotationsResult = await annotationQuery.refetch();
-      if (annotationsResult.error || !annotationsResult.data) {
-        console.log(annotationsResult.error);
-        return;
-      }
-
-      // Sort the files by their index
-      result.data.sort((a, b) => a.index - b.index);
-      setReadingFiles(result.data);
-      setHighlights(highlightsResult.data);
-      setAnnotations(annotationsResult.data);
-    };
-    getReadingActivity();
-
     // Clear logs
     gazeLogger.clear();
     scrollLogger.clear();
     actionsLogger.clear();
   }, []);
-
-  useEffect(() => {
-    async function fetchPDFs() {
-      // If there are no files, return
-      if (readingFiles == undefined || readingFiles.length == 0) {
-        return;
-      }
-
-      // Get the public URLs for the files
-      const filepaths = readingFiles.map((file) => file.filepath);
-
-      // For each file, download the file
-      let files: Blob[] = [];
-
-      for (let i = 0; i < filepaths.length; i++) {
-        const filepath = filepaths[i];
-        if (filepath == null) {
-          return;
-        }
-        const { data, error } = await supabase.storage
-          .from("activity_reading_file")
-          .download(filepath);
-
-        if (error) {
-          console.error(error);
-          return;
-        }
-
-        files.push(data as Blob);
-      }
-
-      // Iterate through the files and add them to the docs array
-      if (files.length == 0) {
-        return;
-      }
-
-      // Create URLs for the files
-      const newDocs = files.map((file: any) => {
-        return {
-          uri: URL.createObjectURL(file),
-          fileType: "pdf",
-        };
-      });
-      setDocs(newDocs);
-      setActiveDocument(newDocs[0]);
-      triggerActionLog({ type: "pdfLoad", value: { index: 0 } });
-    }
-
-    if (docs.length == 0) {
-      fetchPDFs();
-    }
-  }, [readingFiles]);
 
   // Debugging
   useEffect(() => {
@@ -307,11 +311,6 @@ export default function ReadingActivity(props: ReadingActivityProps) {
     }
   }, [complete]);
 
-  function onReadingStart() {
-    setBlur(false);
-    triggerActionLog({ type: "readingStart", value: { start: true } });
-  }
-
   return (
     <>
       <div className="flex w-full items-center justify-center">
@@ -321,42 +320,36 @@ export default function ReadingActivity(props: ReadingActivityProps) {
           setRunningET={setRunningET}
         />
 
-        {blur && <BlurModal onContinue={onReadingStart} />}
+        {inInstructions && (
+          <InstructionsModal
+            setInInstructions={setInInstructions}
+            runningET={runningET}
+          />
+        )}
 
-        <PDFViewer
-          docs={docs}
-          files={readingFiles}
-          config={{
-            toolkit: true,
-            blur: blur,
-            highlights: highlights,
-            setHighlights: setHighlights,
-            annotations: annotations,
-            setAnnotations: setAnnotations,
-          }}
-          activityDataId={props.activityData.id}
-          activeDocument={activeDocument!}
-          setActiveDocument={setActiveDocument}
-        />
-
-        <TaskDrawer>
-          <div id="QuestionPane" className="mt-20 w-full">
-            {!complete ? (
-              <Questions
-                {...props}
-                complete={complete}
-                setComplete={setComplete}
-                config={{ beforeStartPrompt: true }}
-              />
-            ) : (
-              <ActivityCompletion
-                {...props}
-                complete={complete}
-                isSubmitting={isSubmitting}
-              />
-            )}
-          </div>
-        </TaskDrawer>
+        {complete ? (
+          <>
+            <ActivityCompletion
+              {...props}
+              complete={complete}
+              isSubmitting={isSubmitting}
+            />
+          </>
+        ) : (
+          <>
+            <PDFViewer
+              docs={docs}
+              files={readingFiles}
+              config={{
+                btnLayer: !inInstructions,
+                component: config[behaviorIndex]!.component,
+              }}
+              activityDataId={props.activityData.id}
+              activeDocument={activeDocument!}
+              setActiveDocument={setActiveDocument}
+            />
+          </>
+        )}
       </div>
     </>
   );
