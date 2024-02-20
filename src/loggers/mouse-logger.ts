@@ -9,7 +9,7 @@ export default class MouseLogger extends BaseLogger {
     super()
     this.init()
     this.log = this.log.bind(this)
-    let debounced_log = debounce(this.log, 100)
+    let debounced_log = debounce(this.log, 50)
     document.addEventListener("mousemove", debounced_log)
     document.addEventListener("click", debounce(this.log, 10))
   }
