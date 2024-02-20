@@ -70,9 +70,9 @@ export default function BehaviorReadingActivity(props: ReadingActivityProps) {
     { uri: "/pdfs/behavior_mummy-1.pdf" },
   ]);
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
-  const [inInstructions, setInInstructions] = useState<boolean>(true);
-  const [behaviorIndex, setBehaviorIndex] = useState<number>(0);
-  const [runningET, setRunningET] = useState<boolean>(false);
+  const [inInstructions, setInInstructions] = useState<boolean>(false);
+  const [behaviorIndex, setBehaviorIndex] = useState<number>(1);
+  const [runningET, setRunningET] = useState<boolean>(true);
 
   const createTracelogFile = api.traceLogFile.create.useMutation();
   const supabase = createClientComponentClient();
