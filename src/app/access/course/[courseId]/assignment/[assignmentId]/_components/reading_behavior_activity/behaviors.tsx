@@ -92,10 +92,10 @@ export function Skimming(props: BehaviorProps) {
     }
   }
 
-  // useEffect(() => {
-  //   // @ts-ignore
-  //   document.getElementById("skimming_instructions").showModal();
-  // }, []);
+  useEffect(() => {
+    // @ts-ignore
+    document.getElementById("skimming_instructions").showModal();
+  }, []);
 
   function hide(elementString: string) {
     triggerActionLog({ type: "behaviorEvent", value: { action: "clickedOn", type: "skimming", id: elementString } });
@@ -222,6 +222,10 @@ export function Deep(props: BehaviorProps) {
   const [started, setStarted] = useState<boolean>(false);
 
   function complete() {
+    if (!started) {
+      alert("You need to start the activity first, by clicking on the first red word.");
+      return;
+    }
     triggerActionLog({ type: "behaviorEvent", value: { action: "end", type: "deep" } });
     if (props.behaviorIndex + 1 === props.totalBehaviors) {
       props.setComplete(true);
@@ -238,56 +242,51 @@ export function Deep(props: BehaviorProps) {
   return (
     <>
       <div
-        className="absolute left-[14%] top-[13%] h-[0.3%] w-[41%] cursor-pointer bg-black"
+        className="absolute left-[14%] top-[64.25%] h-[0.3%] w-[38%] cursor-pointer bg-black"
       ></div>
       <div
-        className="absolute left-[14%] top-[15.5%] h-[0.3%] w-[42%] cursor-pointer bg-black"
+        className="absolute left-[14%] top-[66.75%] h-[0.3%] w-[47%] cursor-pointer bg-black"
       ></div>
       <div
-        className="absolute left-[14%] top-[18%] h-[0.3%] w-[14%] cursor-pointer bg-black"
+        className="absolute left-[14%] top-[69.25%] h-[0.3%] w-[42%] cursor-pointer bg-black"
       ></div>
-      {started ? (
-        <>
-          <div
-            className="absolute left-[19.5%] top-[16%] h-[2.5%] w-[8%] cursor-pointer bg-red-500 opacity-50"
-            onClick={() => {
-              complete();
-            }}
-          ></div>
-        </>
-      ) : (
-        <>
-          {/* Instructions */}
-          <dialog id="deep_instructions" className="modal">
-            <div className="modal-box">
-              <h3 className={modalStyle.header}>Slow Reading Behavior</h3>
-              <p className={modalStyle.paragraph}>
-                Read the {" "}
-                <span className="underline">next 2 underlined sentences</span> slowly like {" "} 
-                you are trying to figure them out. Click at the {" "}
-                <span className="bg-red-500 text-white">first word</span> when
-                you start and the {" "} 
-                <span className="bg-red-500 text-white">last word</span> {" "}
-                when you finish.{" "}
-              </p>
-              <div className="modal-action">
-                <form method="dialog">
-                  <button className="btn">Start</button>
-                </form>
-              </div>
-            </div>
-          </dialog>
+      <div
+        className="absolute left-[14%] top-[71.5%] h-[0.3%] w-[43%] cursor-pointer bg-black"
+      ></div>
+      
+      <dialog id="deep_instructions" className="modal">
+        <div className="modal-box">
+          <h3 className={modalStyle.header}>Slow Reading Behavior</h3>
+          <p className={modalStyle.paragraph}>
+            Read the {" "}
+            <span className="underline">underlined sentences</span> slowly word-per-word. {" "} 
+            Click on the {" "}
+            <span className="bg-red-500 text-white">first word</span> when
+            you start and the {" "} 
+            <span className="bg-red-500 text-white">last word</span> {" "}
+            when you finish.{" "}
+          </p>
+          <div className="modal-action">
+            <form method="dialog">
+              <button className="btn">Start</button>
+            </form>
+          </div>
+        </div>
+      </dialog>
 
-          {/* Initial highlight */}
-          <div
-            className="absolute left-[14%] top-[11%] h-[2.5%] w-[10%] cursor-pointer bg-red-500 opacity-50"
-            onClick={() => {
-              setStarted(true);
-              triggerActionLog({ type: "behaviorEvent", value: { action: "start", type: "deep" } });
-            }}
-          ></div>
-        </>
-      )}
+      <div
+        className="absolute left-[14%] top-[62%] h-[2.5%] w-[11%] cursor-pointer bg-red-500 opacity-50"
+        onClick={() => {
+          setStarted(true);
+          triggerActionLog({ type: "behaviorEvent", value: { action: "start", type: "deep" } });
+        }}
+      ></div>
+      <div
+        className="absolute left-[48%] top-[69.5%] h-[2.5%] w-[10%] cursor-pointer bg-red-500 opacity-50"
+        onClick={() => {
+          complete();
+        }}
+      ></div>
     </>
   );
 }

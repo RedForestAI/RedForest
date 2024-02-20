@@ -71,7 +71,7 @@ export default function BehaviorReadingActivity(props: ReadingActivityProps) {
   ]);
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [inInstructions, setInInstructions] = useState<boolean>(false);
-  const [behaviorIndex, setBehaviorIndex] = useState<number>(1);
+  const [behaviorIndex, setBehaviorIndex] = useState<number>(2);
   const [runningET, setRunningET] = useState<boolean>(true);
 
   const createTracelogFile = api.traceLogFile.create.useMutation();
