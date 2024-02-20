@@ -1,15 +1,5 @@
-#webgazerVideoContainer {
-    display: block !important; 
-    position: fixed !important;
-    top: 0px !important;
-    left: 0px !important;
-    width: 320px !important;
-    height: 240px !important;
-    z-index: 100 !important;
-}
-
 #webgazerGazeDot {
-    display: hidden !important;
-    /* height: 0px !important;
-    width: 0px !important; */
+  display: hidden !important;
+  height: 0px !important;
+  width: 0px !important;
 }
