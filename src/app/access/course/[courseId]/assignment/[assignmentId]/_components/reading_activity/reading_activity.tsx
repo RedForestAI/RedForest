@@ -31,6 +31,7 @@ import { triggerActionLog } from "~/loggers/actions-logger";
 import GazeLogger from "~/loggers/gaze-logger";
 import ScrollLogger from "~/loggers/scroll-logger";
 import ActionsLogger from "~/loggers/actions-logger";
+import MouseLogger from "~/loggers/mouse-logger";
 
 type ReadingActivityProps = {
   profile: Profile;
@@ -49,6 +50,7 @@ type ReadingActivityProps = {
 const gazeLogger = new GazeLogger();
 const scrollLogger = new ScrollLogger();
 const actionsLogger = new ActionsLogger();
+const mouseLogger = new MouseLogger();
 
 export default function ReadingActivity(props: ReadingActivityProps) {
   const [complete, setComplete] = useState<boolean>(false);
@@ -111,6 +113,7 @@ export default function ReadingActivity(props: ReadingActivityProps) {
     gazeLogger.clear();
     scrollLogger.clear();
     actionsLogger.clear();
+    mouseLogger.clear();
   }, []);
 
   useEffect(() => {

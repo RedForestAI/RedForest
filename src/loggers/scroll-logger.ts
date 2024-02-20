@@ -1,19 +1,5 @@
 import BaseLogger from "./base-logger"
-
-// Function to debounce a given function
-function debounce(func: any, delay: number) {
-  let timer: any;
-  return function () {
-    // @ts-ignore
-    const context: any = this;
-    const args = arguments;
-
-    clearTimeout(timer);
-    timer = setTimeout(() => {
-      func.apply(context, args);
-    }, delay);
-  };
-}
+import { debounce } from "~/utils/functional"
 
 export default class ScrollLogger extends BaseLogger {
   loggedData!: [string[]]
