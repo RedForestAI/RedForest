@@ -9,7 +9,7 @@ Two columns:
 HOW TO USE:
 
 ```
-node scripts/createUsers.js -c path/to/csvFile.csv
+node scripts/createUsers.js -e path/to/.env -c path/to/csvFile.csv
 ```
 
 */
@@ -23,22 +23,32 @@ const { PrismaClient, Role } = require('@prisma/client')
 // Create Prisma client
 const client = new PrismaClient()
 
-require('dotenv').config()
-
 // Parse arguments
 const parser = new ArgumentParser({
   description: 'Create users from a CSV file'
 })
 
+parser.add_argument('-e', '--envFilePath', { help: 'Environment', type: "str", required: true })
 parser.add_argument('-c', '--csvFilePath', { help: 'Path to the CSV file', type: "str", required: true })
 let args = parser.parse_args()
+
+envFilePath = path.resolve(args.envFilePath)
+
+// Check if the file exists
+if (!fs.existsSync(envFilePath)) {
+  console.error(`.env File not found: ${envFilePath}`)
+  process.exit(1)
+}
+
+// Load based on the passed environment
+require('dotenv').config(options={path: envFilePath, override: true})
 
 // Convert relative to absolute path
 csvFilePath = path.resolve(args.csvFilePath)
 
 // Check if the file exists
 if (!fs.existsSync(csvFilePath)) {
-  console.error(`File not found: ${csvFilePath}`)
+  console.error(`CSV File not found: ${csvFilePath}`)
   process.exit(1)
 }
 
@@ -97,7 +107,7 @@ const main = async () => {
   
   let total = 0;
   let array = fs.readFileSync(csvFilePath).toString().split("\n");
-  let asyncCalls = []
+  // let asyncCalls = []
 
   for (let i = 0; i < array.length; i++) {
 
@@ -125,20 +135,12 @@ const main = async () => {
     let email = name + '@redforest.app'
 
     // Create user
-    asyncCalls.push(createUser(email, csvrow[1]))
+    let user = await createUser(email, csvrow[1])
+    resultingData.push([user.email, user.id])
     total++;
   }
 
-  const users = await Promise.all(
-    asyncCalls
-  )
-
-  // Push to resulting data
-  users.forEach(user => {
-    resultingData.push([user.email, user.id])
-  })
-
-  console.log('Complete! Total users created: ' + users.length);
+  console.log('Complete! Total users created: ' + (resultingData.length - 1));
 
   // Save resulting data to CSV
   let csvData = arrayToCsv(resultingData)
