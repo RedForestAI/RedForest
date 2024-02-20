@@ -4,11 +4,12 @@ This script to bulk register users to a course. The CSV file should have the fol
 
 Two columns: 
   (1) email: string
+  (2) id: string
 
 HOW TO USE:
 
 ```
-node scripts/registerUsersToCourse.js -c path/to/csvFile.csv
+node scripts/registerUsersToCourse.js -c path/to/csvFile.csv -i course_id
 ```
 
 */
@@ -83,11 +84,15 @@ async function registerStudent(profile_id, course_id) {
   )
 }
 
+function delay(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
 const main = async () => {
 
   // Containers
   let total = 0;
-  let asyncCalls = [];
+  let enrollments = [];
 
   // First check that the course exists
   const course = await client.course.findUniqueOrThrow({
@@ -118,13 +123,14 @@ const main = async () => {
     let course_id = course.id;
 
     // Register student
-    asyncCalls.push(registerStudent(profile_id, course_id))
+    let enrollment = await registerStudent(profile_id, course_id)
+    enrollments.push(enrollment)
+
+    // Delay
+    await delay(100)
 
     total++;
   }
-
-  // Execute all the async calls
-  const enrollments = await Promise.all(asyncCalls)
 
   // Log
   console.log(enrollments)
