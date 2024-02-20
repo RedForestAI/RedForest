@@ -25,9 +25,6 @@ import {
   Linear,
   Skimming,
   Deep,
-  Shallow,
-  Regular,
-  Skipping,
   ReReading,
 } from "./behaviors";
 import ActivityCompletion from "../activity-completion";
@@ -39,12 +36,9 @@ import MouseLogger from "~/loggers/mouse-logger";
 
 type BehaviorConfig = {
   name:
-    | "LINEAR"
-    | "SKIMMING"
-    | "DEEP"
     | "REGULAR"
-    | "SHALLOW"
-    | "SKIPPING"
+    | "SKIMMING"
+    | "SLOW"
     | "REREAD";
   component: React.ReactElement;
 };
@@ -73,7 +67,7 @@ export default function BehaviorReadingActivity(props: ReadingActivityProps) {
   const [readingFiles, setReadingFiles] = useState<ReadingFile[]>([]);
   const [activeDocument, setActiveDocument] = useState<IDocument>();
   const [docs, setDocs] = useState<{ uri: string }[]>([
-    { uri: "/pdfs/behavior_mummy.pdf" },
+    { uri: "/pdfs/behavior_mummy-1.pdf" },
   ]);
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [inInstructions, setInInstructions] = useState<boolean>(true);
@@ -86,12 +80,12 @@ export default function BehaviorReadingActivity(props: ReadingActivityProps) {
   // Configuration
   const config: BehaviorConfig[] = [
     {
-      name: "LINEAR",
+      name: "REGULAR",
       component: (
         <Linear
           behaviorIndex={behaviorIndex}
           setBehaviorIndex={setBehaviorIndex}
-          totalBehaviors={7}
+          totalBehaviors={4}
           setComplete={setComplete}
         />
       ),
@@ -102,51 +96,18 @@ export default function BehaviorReadingActivity(props: ReadingActivityProps) {
         <Skimming
           behaviorIndex={behaviorIndex}
           setBehaviorIndex={setBehaviorIndex}
-          totalBehaviors={7}
+          totalBehaviors={4}
           setComplete={setComplete}
         />
       ),
     },
     {
-      name: "DEEP",
+      name: "SLOW",
       component: (
         <Deep
           behaviorIndex={behaviorIndex}
           setBehaviorIndex={setBehaviorIndex}
-          totalBehaviors={7}
-          setComplete={setComplete}
-        />
-      ),
-    },
-    {
-      name: "SHALLOW",
-      component: (
-        <Shallow
-          behaviorIndex={behaviorIndex}
-          setBehaviorIndex={setBehaviorIndex}
-          totalBehaviors={7}
-          setComplete={setComplete}
-        />
-      ),
-    },
-    {
-      name: "REGULAR",
-      component: (
-        <Regular
-          behaviorIndex={behaviorIndex}
-          setBehaviorIndex={setBehaviorIndex}
-          totalBehaviors={7}
-          setComplete={setComplete}
-        />
-      ),
-    },
-    {
-      name: "SKIPPING",
-      component: (
-        <Skipping
-          behaviorIndex={behaviorIndex}
-          setBehaviorIndex={setBehaviorIndex}
-          totalBehaviors={7}
+          totalBehaviors={4}
           setComplete={setComplete}
         />
       ),
@@ -157,7 +118,7 @@ export default function BehaviorReadingActivity(props: ReadingActivityProps) {
         <ReReading
           behaviorIndex={behaviorIndex}
           setBehaviorIndex={setBehaviorIndex}
-          totalBehaviors={7}
+          totalBehaviors={4}
           setComplete={setComplete}
         />
       ),
