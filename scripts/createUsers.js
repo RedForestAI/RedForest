@@ -122,7 +122,7 @@ const main = async () => {
     if (name == "") {
       continue;
     }
-    let email = name + 'study1@redforest.app'
+    let email = name + '@redforest.app'
 
     // Create user
     asyncCalls.push(createUser(email, csvrow[1]))
