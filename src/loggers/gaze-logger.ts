@@ -1,5 +1,5 @@
 import BaseLogger from "./base-logger"
-
+  
 export default class GazeLogger extends BaseLogger {
   loggedData!: [string[]]
 

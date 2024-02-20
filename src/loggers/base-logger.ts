@@ -1,10 +1,14 @@
 import { arrayToCsv } from "./log_utils"
+import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 
 export default class BaseLogger {
   loggedData: [string[]]
+  supabase: any
+  createTracelogFile: any
 
   constructor() {
     this.loggedData = [[]]
+    this.supabase = createClientComponentClient();
   }
 
   init() {
@@ -22,6 +26,27 @@ export default class BaseLogger {
     let blob = new Blob([content], { type: "text/csv;charset=utf-8"})
     this.init()
     return blob
+  }
+
+  async upload(createTracelogFile: any, activityDataId: string, filepath: string) {
+    const file = this.getBlob();
+    const db_result= await createTracelogFile.mutateAsync({
+      activityDataId: activityDataId,
+      filepath: filepath,
+    });
+    if (db_result.error) {
+      console.error("Failed to create tracelog file");
+      return db_result;
+    }
+
+    const storage_result = await this.supabase.storage
+      .from("tracelogs")
+      .upload(filepath, file);
+
+    if (storage_result.error) {
+      console.error("Failed to upload gaze data");
+    }
+    return storage_result;
   }
 
 }

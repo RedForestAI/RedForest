@@ -223,50 +223,11 @@ export default function ReadingActivity(props: ReadingActivityProps) {
 
       // Create a path
       try {
-        // Gaze
-        const gaze_file = gazeLogger.getBlob();
-        const gaze_filepath = `${session_fp}/gaze.csv`;
-        const gaze_result = await createTracelogFile.mutateAsync({
-          activityDataId: props.activityData.id,
-          filepath: gaze_filepath,
-        });
-        const gaze_storage_result = await supabase.storage
-          .from("tracelogs")
-          .upload(gaze_filepath, gaze_file);
-
-        if (gaze_storage_result.error) {
-          console.error("Failed to upload gaze data");
-        }
-
-        // Scroll
-        const scroll_file = scrollLogger.getBlob();
-        const scroll_filepath = `${session_fp}/scroll.csv`;
-        const scroll_result = await createTracelogFile.mutateAsync({
-          activityDataId: props.activityData.id,
-          filepath: scroll_filepath,
-        });
-        const scroll_storage_result = await supabase.storage
-          .from("tracelogs")
-          .upload(scroll_filepath, scroll_file);
-
-        if (scroll_storage_result.error) {
-          console.error("Failed to upload scroll data");
-        }
-
-        // Actions (QA & PDF)
-        const actions_file = actionsLogger.getBlob();
-        const actions_filepath = `${session_fp}/actions.csv`;
-        const actions_result = await createTracelogFile.mutateAsync({
-          activityDataId: props.activityData.id,
-          filepath: actions_filepath,
-        });
-        const actions_storage_result = await supabase.storage
-          .from("tracelogs")
-          .upload(actions_filepath, actions_file);
-
-        if (actions_storage_result.error) {
-          console.error("Failed to upload actions data");
-        }
+        // Upload
+        gazeLogger.upload(createTracelogFile, props.activityData.id, `${session_fp}/gaze.csv`);
+        scrollLogger.upload(createTracelogFile, props.activityData.id, `${session_fp}/scroll.csv`);
+        actionsLogger.upload(createTracelogFile, props.activityData.id, `${session_fp}/actions.csv`);
+        mouseLogger.upload(createTracelogFile, props.activityData.id, `${session_fp}/mouse.csv`);
 
         // Meta data
         const meta_file = new Blob(
