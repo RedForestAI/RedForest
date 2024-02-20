@@ -9,7 +9,7 @@ Two columns:
 HOW TO USE:
 
 ```
-node scripts/registerUsersToCourse.js -c path/to/csvFile.csv -i course_id
+node scripts/registerUsersToCourse.js -e path/to/.env -c path/to/csvFile.csv -i course_id
 ```
 
 */
@@ -18,7 +18,6 @@ const fs = require('fs')
 const path = require('path')
 const { ArgumentParser } = require('argparse')
 const { PrismaClient } = require('@prisma/client')
-require('dotenv').config()
 
 // Create Prisma client
 const client = new PrismaClient()
@@ -28,9 +27,21 @@ const parser = new ArgumentParser({
   description: 'CSV file of Users to register to the course. The CSV file should have the following format:'
 })
 
+parser.add_argument('-e', '--envFilePath', { help: 'Environment', type: "str", required: true })
 parser.add_argument('-c', '--csvFilePath', { help: 'Path to the CSV file', type: "str", required: true })
 parser.add_argument('-i', '--courseId', { help: 'Course ID', type: "str", required: true })
 let args = parser.parse_args()
+
+envFilePath = path.resolve(args.envFilePath)
+
+// Check if the file exists
+if (!fs.existsSync(envFilePath)) {
+  console.error(`.env File not found: ${envFilePath}`)
+  process.exit(1)
+}
+
+// Load based on the passed environment
+require('dotenv').config(options={path: envFilePath, override: true})
 
 // Convert relative to absolute path
 csvFilePath = path.resolve(args.csvFilePath)
@@ -128,7 +139,6 @@ const main = async () => {
 
     // Delay
     await delay(100)
-
     total++;
   }
 
