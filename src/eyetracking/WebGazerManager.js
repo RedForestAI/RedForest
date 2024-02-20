@@ -1,3 +1,5 @@
+import "./WebGazer.css"
+
 const triggerGazeUpdate = (eventName, detail) => {
   // Create a custom event with a given name and detail object
   const event = new CustomEvent(eventName, { detail });
@@ -30,6 +32,7 @@ export class WebGazerManager {
       })
       .saveDataAcrossSessions(false)
       .begin();
+
     window.webgazer
       .showVideoPreview(true) /* shows all video previews */
       .showPredictionPoints(true) /* shows a square every 100 milliseconds where current prediction is */
