@@ -213,9 +213,9 @@ const uploadFiles = async (activities: Activity[]) => {
   for (let i = 0; i < activities.length; i++) {
     if (activities[i]?.type !== ActivityType.READING) continue
     // Load local PDF file
-    const new_path = `tests/dummy${i}.pdf`
-    const new_path2 = `tests/sample${i}.pdf`
-
+    const new_path = `tests/sample${i}.pdf`
+    const new_path2 = `tests/dummy${i}.pdf`
+  
     // Let's actually upload a file within the seed, to supabase
     const data = await supabase.storage.from("activity_reading_file").upload(new_path, dummy, {
       contentType: "application/pdf",

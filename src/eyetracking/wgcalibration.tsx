@@ -18,7 +18,10 @@ function ClickButton(props: {buttonCounter: number, setButtonCounter: (buttonCou
 
   return (
     <button 
-      className="btn btn-circle btn-error" 
+      className="btn btn-circle btn-error"
+      style={{
+        zIndex: 10000000,
+      }} 
       disabled={!enabled}
       onClick={handleClick}
       >
@@ -34,9 +37,9 @@ export default function WGCalibration(props: {calibration: boolean, setCalibrati
 
   function getMessage() {
     if (complete) {
-      return "Calibration complete, please close this window."
+      return "Calibration complete, please close this modal by click on the X on the top right."
     } else {
-      return ""
+      return "Click on each red button 5 times, until each button turns grey."
     }
   }
 
@@ -84,7 +87,7 @@ export default function WGCalibration(props: {calibration: boolean, setCalibrati
         <div className="flex flex-row justify-between items-center">
           <h3 className="font-bold text-lg">Calibration</h3>
           <form method="dialog">
-            <button className={`btn btn-ghost ${complete ? "animate-ping" : ""}`}>
+            <button className={`btn btn-ghost`}>
               <FontAwesomeIcon icon={faClose} className="fa-2x" onClick={closeModal} />
             </button>
           </form>
@@ -111,7 +114,7 @@ export default function WGCalibration(props: {calibration: boolean, setCalibrati
         </div>
 
         <div className="absolute top-[30vh] left-[30vw] w-[40vw]">
-          <p className="text-center">{getMessage()}</p>
+          <p className="text-center text-xl">{getMessage()}</p>
         </div>
         
       </div>
