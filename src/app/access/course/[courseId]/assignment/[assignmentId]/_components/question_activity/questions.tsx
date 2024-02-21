@@ -141,14 +141,14 @@ export default function Questions(props: QuestionsProps) {
       </>
       : <>
 
-      <div className="bg-neutral self-stretch flex flex-col justify-center items-stretch rounded-2xl max-md:max-w-full mt-5">
+      <div className="bg-neutral self-stretch flex flex-col justify-center items-stretch rounded-2xl max-md:max-w-full mt-2">
         <div className="bg-primary text-xs font-medium text-primary-content text-center p-0.5 leading-none rounded-full" style={{width: `${getProgress()}%`}}> {getProgress()}%</div>
       </div>
 
-      <div className="self-stretch text-4xl mt-2.5 max-md:max-w-full">
+      <div className="self-stretch text-5xl mt-2.5 max-md:max-w-full">
         Question {currentQuestionId + 1}
       </div>
-      <div className="self-stretch text mt-2.5 max-md:max-w-full">
+      <div className="self-stretch text-lg mt-2.5 max-md:max-w-full">
         {props.questions[currentQuestionId]?.content}
       </div>
       <form className="w-full" onSubmit={handleSubmit(onSubmit)}>

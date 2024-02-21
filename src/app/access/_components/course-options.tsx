@@ -62,7 +62,7 @@ export default function CourseOptions( props: CourseOptionsProps) {
 
       <dialog id="course_options_modal" className="modal">
         <div className="modal-box">
-          <h3 className="font-bold text-lg">Course Settings</h3>
+          <h3 className="text-4xl">Course Settings</h3>
 
           <div className="self-stretch text-2xl mt-2.5">Settings</div>
           <div className="w-full justify-center whitespace-nowrap items-stretch self-stretch border mt-2.5 px-2.5 rounded-2xl border-solid border-zinc-300">

@@ -166,7 +166,7 @@ export default function EyeTrackingController(props: {complete: boolean, running
         }
         
         <div className="modal-box">
-          <div className="flex flex-row justify-between items-center">
+          <div className="flex flex-row justify-between items-center text-4xl">
             Eye-Tracking Controller
             <form method="dialog">
               <button className="btn btn-ghost">
@@ -176,7 +176,7 @@ export default function EyeTrackingController(props: {complete: boolean, running
           </div>
 
           <div className="flex flex-col gap-2 mt-4">
-            <div className="text-xl">Eye-Tracker</div>
+            <div className="text-lg">Eye-Tracker</div>
             <select value={option} onChange={updateOption} disabled={props.runningET} className="select select-bordered w-full">
               <option value="" disabled>Select an Eye-Tracker</option>
 

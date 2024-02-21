@@ -81,14 +81,14 @@ export default function Navbar(props: NavbarProps) {
   }
 
   return (
-    <div className="navbar bg-base-100 shadow-xl border-b relative" style={{zIndex: "100"}}>
+    <div className="navbar bg-base-200 border-b border-neutral relative" style={{zIndex: "100"}}>
       <div className="navbar-start">
         {props.profile &&
         <div className="dropdown">
-          <div tabIndex={0} role="button" className="btn">
+          <div tabIndex={0} role="button" className="btn border border-neutral">
             <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h7" /></svg>
           </div>
-          <ul tabIndex={0} className="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-52">
+          <ul tabIndex={0} className="menu menu-sm dropdown-content mt-3 z-[1] p-2 border bg-base-100 border-neutral rounded-box w-52">
             <li onClick={goDashboard}><a>Dashboard</a></li>
           </ul>
         </div>
@@ -102,7 +102,7 @@ export default function Navbar(props: NavbarProps) {
           />
         </Link>
 
-        <div className="text-sm breadcrumbs">
+        <div className="text-sm breadcrumbs overflow-hidden">
           <ul>
             {props.breadcrumbs && props.breadcrumbs.map((breadcrumb, index) => (
               <li key={index}>
@@ -141,12 +141,12 @@ export default function Navbar(props: NavbarProps) {
         </div>
 
         <div className="dropdown dropdown-end">
-          <div tabIndex={0} role="button" className="btn btn-ghost btn-circle avatar">
+          <div tabIndex={0} role="button" className="btn btn-ghost btn-circle border-neutral border avatar">
             <div className="relative w-10 h-10 overflow-hidden bg-gray-100 rounded-full dark:bg-gray-600">
               <svg className="absolute w-12 h-12 text-gray-400 -left-1" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z"></path></svg>
             </div>
           </div>
-          <ul tabIndex={0} className="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-300 rounded-box w-52">
+          <ul tabIndex={0} className="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow border-neutral bg-base-300 rounded-box w-52">
             {props.profile
               ? <>
                 <li onClick={goProfile}><a>Profile</a></li>

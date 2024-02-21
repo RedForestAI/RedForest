@@ -76,12 +76,12 @@ export default function ActivityCompletion(props: ActivityCompletionProps) {
           </div>
           {props.isSubmitting
            ?  <>
-            <div className="self-stretch text-xs mt-2.5 max-md:max-w-full">
-              Please wait while we upload you session files.
+            <div className="self-stretch text-lg mt-2.5 max-md:max-w-full">
+              Please wait while we upload your session files.
             </div>
           </>
            :  <>
-            <div className="self-stretch text-xs mt-2.5 max-md:max-w-full">
+            <div className="self-stretch text-lg mt-2.5 max-md:max-w-full">
               Press continue to return to Dashboard.
             </div>
           </>
@@ -99,12 +99,12 @@ export default function ActivityCompletion(props: ActivityCompletionProps) {
         </div>
         {props.isSubmitting
            ?  <>
-            <div className="self-stretch text-xs mt-2.5 max-md:max-w-full">
-              Please wait while we upload you session files.
+            <div className="self-stretch text-lg mt-2.5 max-md:max-w-full">
+              Please wait while we upload your session files.
             </div>
           </>
            :  <>
-            <div className="self-stretch text-xs mt-2.5 max-md:max-w-full">
+            <div className="self-stretch text-lg mt-2.5 max-md:max-w-full">
               Press continue to the next activity when you are ready.
             </div>
           </>

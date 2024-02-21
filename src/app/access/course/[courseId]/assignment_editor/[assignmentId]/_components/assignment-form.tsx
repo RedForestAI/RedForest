@@ -129,11 +129,11 @@ export default function AssignmentForm(props: FormProps) {
       <AssignmentSettings assignment={assignment} formRegister={forms.settings.register} control={forms.settings.control} errors={forms.settings.formState.errors}/>
       <AssignmentStructure assignment={assignment} activities={activities} questions={questions} setQuestions={setQuestions} setActivities={setActivities}/>
       <div className="justify-between items-stretch flex mt-8 mb-8 pl-10 pr-10 py-3 max-md:max-w-full max-md:flex-wrap max-md:px-5">
-        <button className="btn btn-error" name="action" value="Delete">Delete</button>
+        <button className="btn btn-error text-white" name="action" value="Delete">Delete</button>
         <div className="flex flex-row gap-2.5">
           <button className="btn btn-info" name="action" value="Save">Save</button>
           <button className="btn btn-info" name="action" value="Save&Close">Save & Close</button>
-          <button className="btn btn-success" name="action" value="Publish">Publish</button>
+          <button className="btn btn-success text-white" name="action" value="Publish">Publish</button>
         </div>
       </div>
     </form>
