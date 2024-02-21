@@ -76,7 +76,7 @@ export default function PDFViewer(props: PDFViewerProps) {
     h: 0,
     isVisible: false,
   });
-  const [toolkitText, setToolkitText] = useState("");
+  const [toolkitText, setToolkitText] = useState<string>("");
   const [toolkitRects, setToolkitRects] = useState<DOMRect[]>([]);
 
   // Dictionary
@@ -581,8 +581,11 @@ export default function PDFViewer(props: PDFViewerProps) {
 
     deselect();
 
+    // Firest strip all the whitespaces on the edges
+    const trimmedToolkitText = toolkitText.trim();
+
     // First, check if the text is a word (no whitespaces)
-    if (/\s/g.test(toolkitText) || toolkitText.length <= 1) {
+    if (/\s/g.test(trimmedToolkitText) || trimmedToolkitText.length <= 1) {
       setDictError("Please select a word to lookup");
       triggerActionLog({
         type: "dictionaryLookUP",
@@ -591,7 +594,7 @@ export default function PDFViewer(props: PDFViewerProps) {
       return;
     }
 
-    const response = await fetch(`https://api.dictionaryapi.dev/api/v2/entries/en_US/${toolkitText}`);
+    const response = await fetch(`https://api.dictionaryapi.dev/api/v2/entries/en_US/${trimmedToolkitText}`);
     const data = await response.json();
 
     console.log(data)
@@ -601,14 +604,14 @@ export default function PDFViewer(props: PDFViewerProps) {
       setDictError("The word does not exist in the dictionary");
       triggerActionLog({
         type: "dictionaryLookUP",
-        value: { selection: toolkitText, error: "The word does not exist in the dictionary" },
+        value: { selection: trimmedToolkitText, error: "The word does not exist in the dictionary" },
       });
       return;
     } else {
       setDictEntry(data);
       triggerActionLog({
         type: "dictionaryLookUP",
-        value: { selection: toolkitText, word: data[0].word },
+        value: { selection: trimmedToolkitText, word: data[0].word },
       });
     }
   }
