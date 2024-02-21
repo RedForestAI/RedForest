@@ -225,10 +225,26 @@ export default function ReadingActivity(props: ReadingActivityProps) {
       // Create a path
       try {
         // Upload
-        gazeLogger.upload(createTracelogFile, props.activityData.id, `${session_fp}/gaze.csv`);
-        scrollLogger.upload(createTracelogFile, props.activityData.id, `${session_fp}/scroll.csv`);
-        actionsLogger.upload(createTracelogFile, props.activityData.id, `${session_fp}/actions.csv`);
-        mouseLogger.upload(createTracelogFile, props.activityData.id, `${session_fp}/mouse.csv`);
+        gazeLogger.upload(
+          createTracelogFile,
+          props.activityData.id,
+          `${session_fp}/gaze.csv`,
+        );
+        scrollLogger.upload(
+          createTracelogFile,
+          props.activityData.id,
+          `${session_fp}/scroll.csv`,
+        );
+        actionsLogger.upload(
+          createTracelogFile,
+          props.activityData.id,
+          `${session_fp}/actions.csv`,
+        );
+        mouseLogger.upload(
+          createTracelogFile,
+          props.activityData.id,
+          `${session_fp}/mouse.csv`,
+        );
 
         // Meta data
         const meta_file = new Blob(
@@ -288,7 +304,12 @@ export default function ReadingActivity(props: ReadingActivityProps) {
           setRunningET={setRunningET}
         />
 
-        <ReadingInstrModal onContinue={onReadingStart} open={open} setOpen={setOpen}/>
+        <ReadingInstrModal
+          runningET={runningET}
+          onContinue={onReadingStart}
+          open={open}
+          setOpen={setOpen}
+        />
 
         <PDFViewer
           docs={docs}
@@ -307,7 +328,10 @@ export default function ReadingActivity(props: ReadingActivityProps) {
         />
 
         <TaskDrawer>
-          <div id="QuestionPane" className="mt-20 w-full overflow-y-auto max-h-[90vh]">
+          <div
+            id="QuestionPane"
+            className="mt-20 max-h-[90vh] w-full overflow-y-auto"
+          >
             {!complete ? (
               <Questions
                 {...props}
