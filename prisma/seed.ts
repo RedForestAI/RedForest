@@ -168,26 +168,26 @@ const getActivities = (assignments: Assignment[]): Prisma.ActivityCreateInput[] 
     //     assignment: { connect: { id: assignments[i]?.id }},
     //   }
     // )
-    // activities.push(
-    //   {
-    //     id: generateUUID(),
-    //     index: 1,
-    //     name: `Reading Activity`,
-    //     description: `Reading Activity Description`,
-    //     type: ActivityType.READING,
-    //     assignment: { connect: { id: assignments[i]?.id }},
-    //   }
-    // )
     activities.push(
       {
         id: generateUUID(),
         index: 1,
-        name: `Reading Behavior`,
-        description: `Reading Behavior Description`,
-        type: ActivityType.READING_BEHAVIOR,
+        name: `Reading Activity`,
+        description: `Reading Activity Description`,
+        type: ActivityType.READING,
         assignment: { connect: { id: assignments[i]?.id }},
       }
     )
+    // activities.push(
+    //   {
+    //     id: generateUUID(),
+    //     index: 1,
+    //     name: `Reading Behavior`,
+    //     description: `Reading Behavior Description`,
+    //     type: ActivityType.READING_BEHAVIOR,
+    //     assignment: { connect: { id: assignments[i]?.id }},
+    //   }
+    // )
     // activities.push(
     //   {
     //     id: generateUUID(),

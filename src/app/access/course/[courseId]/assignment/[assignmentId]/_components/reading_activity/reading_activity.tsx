@@ -25,7 +25,7 @@ import TaskDrawer from "./task-drawer";
 import Questions from "../question_activity/questions";
 import ActivityCompletion from "../activity-completion";
 import { AOIEncoding } from "~/eyetracking/aoi-encoding";
-import BlurModal from "./blur-modal";
+import ReadingInstrModal from "./reading-instr-modal";
 import { triggerActionLog } from "~/loggers/actions-logger";
 
 import GazeLogger from "~/loggers/gaze-logger";
@@ -57,6 +57,7 @@ export default function ReadingActivity(props: ReadingActivityProps) {
   const [readingFiles, setReadingFiles] = useState<ReadingFile[]>([]);
   const [activeDocument, setActiveDocument] = useState<IDocument>();
   const [blur, setBlur] = useState<boolean>(true);
+  const [open, setOpen] = useState<boolean>(true);
   const [docs, setDocs] = useState<{ uri: string }[]>([]);
   const [highlights, setHighlights] = useState<Highlight[]>([]);
   const [annotations, setAnnotations] = useState<Annotation[]>([]);
@@ -273,7 +274,9 @@ export default function ReadingActivity(props: ReadingActivityProps) {
 
   function onReadingStart() {
     setBlur(false);
-    triggerActionLog({ type: "readingStart", value: { start: true } });
+    if (blur) {
+      triggerActionLog({ type: "readingStart", value: { start: true } });
+    }
   }
 
   return (
@@ -285,7 +288,7 @@ export default function ReadingActivity(props: ReadingActivityProps) {
           setRunningET={setRunningET}
         />
 
-        {blur && <BlurModal onContinue={onReadingStart} />}
+        <ReadingInstrModal onContinue={onReadingStart} open={open} setOpen={setOpen}/>
 
         <PDFViewer
           docs={docs}
