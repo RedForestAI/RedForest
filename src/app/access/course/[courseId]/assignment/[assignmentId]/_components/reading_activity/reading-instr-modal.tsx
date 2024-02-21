@@ -1,5 +1,5 @@
 import { useContext, useEffect, useState } from "react";
-import YouTube from "react-youtube";
+import ReactPlayer from 'react-player';
 import { faCircleQuestion } from "@fortawesome/free-solid-svg-icons";
 import { useEndNavBarContext } from "~/providers/navbar-provider";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -61,8 +61,8 @@ export default function ReadingInstrModal(props: {
 
   const ratio = 0.5;
   const opts = {
-    width: `${ratio * 1920}`,
-    height: `${ratio * 1080}`,
+    width: `50%`,
+    height: ``,
   };
 
   return (
@@ -76,7 +76,9 @@ export default function ReadingInstrModal(props: {
                   Getting Ready!
                 </h1>
                 {/* YouTube Video */}
-                <YouTube opts={opts} videoId="YR6HecNZg10" />
+                <div className="player-wrapper">
+                  <ReactPlayer className="react-player" width='100%' height='100%' url="https://www.youtube.com/watch?v=YR6HecNZg10&feature=youtu.be"/>
+                </div>
                 <h1 className="text-3xl">
                   Before starting the activity, get comfortable and setup the
                   eye-tracking solution. Once you are ready and all settled, press

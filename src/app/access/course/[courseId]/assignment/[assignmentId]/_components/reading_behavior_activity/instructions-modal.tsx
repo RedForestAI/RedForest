@@ -1,5 +1,5 @@
 import React, { useContext, useEffect } from 'react';
-import YouTube from 'react-youtube';
+import ReactPlayer from 'react-player';
 import { faCircleQuestion } from '@fortawesome/free-solid-svg-icons';
 import { useEndNavBarContext } from '~/providers/navbar-provider';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -70,7 +70,10 @@ export default function InstructionsModal(props: InstructionsModalProps) {
           <div className="flex flex-col h-full items-center bg-base-100 border border-neutral rounded-2xl overflow-hidden p-4">
             <h1 className="pb-4 text-2xl text-5xl font-bold">Getting Ready!</h1>
             
-            <YouTube opts={opts} videoId="YR6HecNZg10" />
+            {/* <YouTube opts={opts} videoId="YR6HecNZg10" /> */}
+            <div className="player-wrapper">
+              <ReactPlayer className="react-player" width='100%' height='100%' url="https://www.youtube.com/watch?v=uIWvigp8OBQ"/>
+            </div>
             
             <h1 className="h-5/6 text-xl pt-4">
               Before starting the activity, get comfortable and setup the
