@@ -15,7 +15,7 @@ const OpenTabIconButton = ( props: IconButtonProps) => {
   };
 
   return (
-    <FontAwesomeIcon icon={props.icon} onClick={() => openInNewTab(props.url)}/>
+    <FontAwesomeIcon className="fa-2x" icon={props.icon} onClick={() => openInNewTab(props.url)}/>
   )
 }
 

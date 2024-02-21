@@ -9,9 +9,9 @@ interface CourseCardProps {
 
 const CourseCard = ( props : CourseCardProps) => {
   return (
-    <div className="bg-base mt-4 shadow-xl rounded-2xl border-[2px]">
+    <div className="bg-base mt-4 rounded-2xl border border-neutral overflow-hidden">
       <Link href={`access/course/${props.course.id}`}>
-        <div className="bg-primary flex shrink-0 h-[104px] flex-col rounded-t-2xl" />
+        <div className="bg-primary flex shrink-0 h-[104px] flex-col" />
       </Link>
       <div className="flex w-full flex-col items-stretch pb-5 rounded-b-2xl">
         <div className="flex items-stretch justify-between gap-5 mt-3 pr-5">

@@ -28,9 +28,9 @@ export default async function Page() {
   }
 
   return (
-    <div>
+    <div className="min-h-screen flex flex-col justify-between">
       <NavBar profile={profile}/>
-      <div className="h-screen flex flex-col justify-center items-center">
+      <div className="flex flex-col justify-center items-center">
         <header className="mt-8 text-center">
           <h1 className="text-4xl font-bold">Welcome to RedForest</h1>
           <p className="mt-4 text-xl">Your AI-Powered Classroom Assistant</p>
@@ -43,15 +43,20 @@ export default async function Page() {
             We help teachers understand how students perform in assignments, making education more effective.
           </p>
         </section>
-
-        <section className="mt-auto text-center pb-16">
-          <h2 className="text-2xl font-semibold">Contact Us</h2>
-          <div className="mt-4 flex justify-center space-x-6">
-            <OpenTabIconButton icon={faEnvelope} url="mailto:contact.redforest.ai@gmail.com" />
-            <OpenTabIconButton icon={faGithub} url="https://github.com/reading-analytics-group/RedForest" />
-          </div>
-        </section>
       </div>
+
+      <footer className="footer p-10 bg-neutral text-neutral-content">
+          <aside>
+            <img src="/imgs/banner.png" width="10%"/>
+          </aside>
+          <nav>
+            <h6 className="footer-title">Social</h6> 
+            <div className="grid grid-flow-col gap-4">
+              <OpenTabIconButton icon={faEnvelope} url="mailto:contact.redforest.ai@gmail.com" />
+              <OpenTabIconButton icon={faGithub} url="https://github.com/reading-analytics-group/RedForest" />
+            </div>
+          </nav>
+        </footer>
     </div>
   );
 };

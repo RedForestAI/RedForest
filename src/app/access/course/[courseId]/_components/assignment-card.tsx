@@ -65,7 +65,7 @@ const AssignmentCard = ( props : AssignmentCardProps) => {
 
   return (
     <Link href={getLink()}>
-      <div className="items-center self-stretch bg-base-100 shadow-xl border-[3px] border-solid flex flex-col px-2 py-3 rounded-2xl mt-4 pl-4 pr-4">
+      <div className="items-center self-stretch bg-base-100 border border-solid border-neutral flex flex-col px-2 py-3 rounded-2xl mt-4 pl-4 pr-4">
         <span className="self-stretch flex justify-between gap-5 items-start max-md:max-w-full max-md:flex-wrap">
           <span className="flex flex-col items-stretch">
             <div className="justify-center text-xl">
