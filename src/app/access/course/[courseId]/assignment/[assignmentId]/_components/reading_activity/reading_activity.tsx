@@ -304,7 +304,7 @@ export default function ReadingActivity(props: ReadingActivityProps) {
         />
 
         <TaskDrawer>
-          <div id="QuestionPane" className="mt-20 w-full">
+          <div id="QuestionPane" className="mt-20 w-full overflow-y-auto max-h-[90vh]">
             {!complete ? (
               <Questions
                 {...props}
