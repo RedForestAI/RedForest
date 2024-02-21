@@ -33,7 +33,7 @@ export function FileCard(props: FileCardProps) {
   }
 
   return (
-    <div key={props.idx} className="m-1 flex flex-row space-x-5 card bg-base w-full border-[2px] shadow-xl p-2 pr-4 pl-4">
+    <div key={props.idx} className="m-1 flex flex-row space-x-5 card bg-base-100 w-full border border-neutral p-2 pr-4 pl-4">
       <span>{formatTitle(props.file.title)}</span>
       <div className="w-full flex justify-end items-center">
         <p className="pr-4">{formatBytes(props.file.size)}</p>

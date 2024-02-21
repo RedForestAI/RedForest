@@ -12,7 +12,7 @@ type StructureProps = {
 
 export default function AssignmentStructure(props: StructureProps) {
   return (
-    <div className="card w-full bg-base-100 shadow-xl border-[2px]">
+    <div className="card w-full bg-base-100 border border-neutral">
       <div className="card-body">
         <h2 className="card-title">Structure</h2>
         <div>

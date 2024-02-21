@@ -26,7 +26,7 @@ export default function AssignmentCreate( props: AssignmentCreateProps) {
   return (
     <>
       <button onClick={createAssignment} className="w-full" type="button">
-        <div className="justify-center items-center bg-base-100 shadow-xl flex flex-col px-16 py-8 rounded-2xl border-[3px] border-solid max-md:px-5 mt-4 h-38">
+        <div className="justify-center items-center bg-base-100 border border-neutral flex flex-col px-16 py-8 rounded-2xl max-md:px-5 mt-4 h-38">
           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-12 h-12">
             <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v6m3-3H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
           </svg>

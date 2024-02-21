@@ -26,7 +26,7 @@ export default {
       "dark",
       {
         "my-light": {
-           "primary": "#f97316",
+           "primary": "#d45628",
            "primary-content": "#ffffff",
            "secondary": "#a3e635",
            "accent": "#b91c1c",

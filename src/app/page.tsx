@@ -47,7 +47,7 @@ export default async function Page() {
 
       <footer className="footer p-10 bg-neutral text-neutral-content">
           <aside>
-            <img src="/imgs/banner.png" width="10%"/>
+            <img src="/imgs/banner.png" width="300px"/>
           </aside>
           <nav>
             <h6 className="footer-title">Social</h6> 

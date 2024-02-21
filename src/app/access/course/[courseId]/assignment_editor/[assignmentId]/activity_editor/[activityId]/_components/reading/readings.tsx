@@ -67,7 +67,6 @@ export default function Readings(props: ReadingProps) {
 
   async function handleChange(e: any) {
     e.preventDefault();
-    console.log("File has been added");
     let total = totalMemory;
     if (e.target.files && e.target.files[0]) {
       console.log(e.target.files);
@@ -168,7 +167,7 @@ export default function Readings(props: ReadingProps) {
       <div className="flex flex-col">
         <div
           className={`${
-            dragActive ? "bg-primary text-primary-content" : "bg-base-300 text-base-content"
+            dragActive ? "bg-primary text-primary-content" : "bg-neutral text-base-content"
           } w-full p-4 rounded-lg  min-h-[10rem] text-center flex flex-col items-center justify-center`}
           onDragEnter={handleDragEnter}
           onSubmit={(e) => e.preventDefault()}
@@ -213,7 +212,7 @@ export default function Readings(props: ReadingProps) {
         </div>
         }
 
-        <div className="mt-4 text-xl border-b">Files & Order</div>
+        <div className="mt-4 text-xl border-b border-neutral">Files & Order</div>
         <Reorder.Group axis="y" values={props.files} onReorder={props.setFiles} className="mt-4">
           {props.files.map((file: any, idx: any) => (
             <Reorder.Item key={file.id} value={file} className="w-full">

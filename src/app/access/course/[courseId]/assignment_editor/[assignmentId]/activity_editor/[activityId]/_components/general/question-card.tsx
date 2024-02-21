@@ -70,7 +70,7 @@ function AnswerCard(props: AnswerCardProps) {
   }
 
   return (
-    <div className="card shadow-xl mb-4 flex flex-row">
+    <div className="card mb-4 flex flex-row">
       <div className="flex justify-between items-center w-full">
         <input type="radio" name={`radio-${props.question_index}-answer`} checked={props.answer == props.index} onChange={setAnswer} className="radio mr-2" />
         <textarea value={props.answerText} onChange={setText} placeholder="Answer" className="textarea textarea-bordered h-18 w-full"></textarea>
@@ -90,7 +90,7 @@ function EmptyAnswerCard(props: {question_index: number, setOptions: any}) {
   }
 
   return (
-    <div className="card border-[2px] border shadow-xl mb-4 cursor-pointer" onClick={createAnswer}>
+    <div className="card border border-neutral mb-4 cursor-pointer" onClick={createAnswer}>
       <div className="justify-center items-center flex flex-col h-12">
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-8 h-8">
           <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v6m3-3H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
@@ -179,7 +179,7 @@ export function QuestionCard(props: QuestionCardProps) {
   }, [props.question.type, props.question, open]);
 
   return (
-    <div className={`collapse bg-base-300 w-full m-4 p-4 ${open ? 'collapse-open' : 'collapse-close'}`}>
+    <div className={`collapse border border-neutral bg-base-300 w-full m-4 p-4 ${open ? 'collapse-open' : 'collapse-close'}`}>
       <div className="text-xl font-medium flex justify-between items-center">
         Question {props.index + 1}
         <div>
@@ -256,7 +256,7 @@ export function EmptyQuestionCard(props: {activityId: string, questions: Questio
   const createQuestion = async () => {
     const result: Question = await createMutation.mutateAsync({
       activityId: props.activityId, 
-      content: "Question Content", 
+      content: "", 
       options: [], 
       answer: 0,
       type: QuestionType.MULTIPLE_CHOICE,
@@ -267,7 +267,7 @@ export function EmptyQuestionCard(props: {activityId: string, questions: Questio
   }
 
   return (
-    <div className="card w-full border-[2px] shadow-xl m-4 cursor-pointer" onClick={createQuestion}>
+    <div className="card w-full border border-neutral m-4 cursor-pointer" onClick={createQuestion}>
       <div className="justify-center items-center flex flex-col h-28">
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-12 h-12">
           <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v6m3-3H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
