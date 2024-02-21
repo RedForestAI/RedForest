@@ -4,7 +4,7 @@ export default function GazeDot(props: {x: number, y: number}){
   
   const style: React.CSSProperties = {
     position: 'fixed',
-    zIndex: 99999,
+    zIndex: 100,
     left: '-5px',
     top: '-5px',
     background: 'red',
