@@ -1,6 +1,6 @@
 import { useContext, useEffect } from 'react';
 import YouTube from 'react-youtube';
-import { faCircleQuestion, faClose } from '@fortawesome/free-solid-svg-icons';
+import { faCircleQuestion } from '@fortawesome/free-solid-svg-icons';
 import { useEndNavBarContext } from '~/providers/navbar-provider';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { triggerActionLog } from "~/loggers/actions-logger";

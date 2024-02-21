@@ -244,12 +244,11 @@ export default function BehaviorReadingActivity(props: ReadingActivityProps) {
           setRunningET={setRunningET}
         />
 
-        {inInstructions && (
-          <InstructionsModal
-            setInInstructions={setInInstructions}
-            runningET={runningET}
-          />
-        )}
+        <InstructionsModal
+          inInstructions={inInstructions}
+          setInInstructions={setInInstructions}
+          runningET={runningET}
+        />
 
         {complete ? (
           <>
