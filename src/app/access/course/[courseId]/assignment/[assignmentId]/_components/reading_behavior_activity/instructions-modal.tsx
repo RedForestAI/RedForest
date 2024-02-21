@@ -7,9 +7,9 @@ type InstructionsModalProps = {
 
 export default function InstructionsModal(props: InstructionsModalProps) {
   return (
-    <div className="fixed left-0 top-0 z-[60] h-full w-full">
-      <div className="m-auto mt-20 h-[35%] w-[50%]">
-        <div className="flex h-full flex-col items-center rounded-lg bg-base-200 p-4">
+    <div className="fixed left-0 top-[30%] z-[60] h-full w-full">
+      <div className="m-auto h-[35%] w-[50%]">
+        <div className="flex flex-col h-full items-center bg-base-100 border border-neutral rounded-2xl overflow-hidden p-4">
           <h1 className="pb-12 text-2xl text-5xl font-bold">Getting Ready!</h1>
           <h1 className="h-5/6 text-xl">
             Before starting the activity, get comfortable and setup the

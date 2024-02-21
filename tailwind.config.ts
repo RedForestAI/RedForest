@@ -22,14 +22,12 @@ export default {
   plugins: [require("tailwindcss-animate"), require("daisyui")],
   daisyui: {
     themes: [
-      "light", 
-      "dark",
       {
-        "my-light": {
+        "light": {
            "primary": "#d45628",
            "primary-content": "#ffffff",
-           "secondary": "#a3e635",
-           "accent": "#b91c1c",
+           "secondary": "#6ea545",
+           "accent": "#941914",
            "neutral": "#c9c9c9",
            "base-100": "#f5f5f4",
            "base-200": "#f0f0ee",
@@ -39,10 +37,10 @@ export default {
            "warning": "#facc15",
            "error": "#ef4444",
         },
-        "my-dark": {
-           "primary": "#f97316",
-           "secondary": "#a3e635",
-           "accent": "#b91c1c",
+        "dark": {
+           "primary": "#d45628",
+           "secondary": "#6ea545",
+           "accent": "#941914",
            "neutral": "#575656",
            "base-100": "#202124",
            "info": "#1e40af",
