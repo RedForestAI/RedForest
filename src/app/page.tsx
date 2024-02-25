@@ -1,13 +1,16 @@
 "use server";
 
+import { faEnvelope } from '@fortawesome/free-solid-svg-icons';
+import { faGithub } from '@fortawesome/free-brands-svg-icons';
+import { cookies } from 'next/headers'
+import { createServerComponentClient } from '@supabase/auth-helpers-nextjs'
+
 import { Profile } from "@prisma/client";
 import NavBar from '@/components/ui/navbar';
 import OpenTabIconButton from '@/components/ui/open-tab-icon-buttons';
-import { faEnvelope } from '@fortawesome/free-solid-svg-icons';
-import { faGithub } from '@fortawesome/free-brands-svg-icons';
 import { api } from '~/trpc/server';
-import { cookies } from 'next/headers'
-import { createServerComponentClient } from '@supabase/auth-helpers-nextjs'
+
+import GreetingPanda from "./_components/GreetingPanda";
 
 export default async function Page() {
 
@@ -28,24 +31,31 @@ export default async function Page() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col justify-between">
-      <NavBar profile={profile}/>
-      <div className="flex flex-col justify-center items-center">
-        <header className="mt-8 text-center">
-          <h1 className="text-4xl font-bold">Welcome to RedForest</h1>
-          <p className="mt-4 text-xl">Your AI-Powered Classroom Assistant</p>
-        </header>
+    <>
+      <div className="min-h-screen flex flex-col justify-between">
+        <NavBar profile={profile}/>
+        <div className="h-full flex-1">
 
-        <section className="mt-64 text-center max-w-lg">
-          <h2 className="text-2xl font-semibold">Our Goal</h2>
-          <p className="mt-4 text-lg">
-            RedForest is dedicated to bringing AI via eye-tracking to the classroom.
-            We help teachers understand how students perform in assignments, making education more effective.
-          </p>
-        </section>
-      </div>
+          <div className="h-96">
+            <GreetingPanda />
+          </div>
+          
+          <div className="mt-8 text-center">
+            <h1 className="text-4xl font-bold">Welcome to RedForest</h1>
+            <p className="mt-4 text-xl">Your AI-Powered Classroom Assistant</p>
+          </div>
 
-      <footer className="footer p-10 bg-neutral text-neutral-content">
+          <section className="mt-64 text-center max-w-lg">
+            <h2 className="text-2xl font-semibold">Our Goal</h2>
+            <p className="mt-4 text-lg">
+              RedForest is dedicated to bringing AI via eye-tracking to the classroom.
+              We help teachers understand how students perform in assignments, making education more effective.
+            </p>
+          </section>
+
+        </div>
+
+        <footer className="footer p-10 bg-neutral text-neutral-content">
           <aside>
             <img src="/imgs/banner.png" width="300px"/>
           </aside>
@@ -56,7 +66,8 @@ export default async function Page() {
               <OpenTabIconButton icon={faGithub} url="https://github.com/reading-analytics-group/RedForest" />
             </div>
           </nav>
-        </footer>
-    </div>
+          </footer>
+      </div>
+    </>
   );
 };
