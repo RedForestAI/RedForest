@@ -40,18 +40,18 @@ export default async function Page() {
             <GreetingPanda />
           </div>
           
-          <div className="mt-8 text-center">
+          <div className="mt-8 text-center w-full flex flex-col items-center justify-center">
             <h1 className="text-4xl font-bold">Welcome to RedForest</h1>
             <p className="mt-4 text-xl">Your AI-Powered Classroom Assistant</p>
-          </div>
 
-          <section className="mt-64 text-center max-w-lg">
-            <h2 className="text-2xl font-semibold">Our Goal</h2>
-            <p className="mt-4 text-lg">
-              RedForest is dedicated to bringing AI via eye-tracking to the classroom.
-              We help teachers understand how students perform in assignments, making education more effective.
-            </p>
-          </section>
+            <div className="mt-64 text-center">
+              <h2 className="text-2xl font-semibold">Our Goal</h2>
+              <p className="mt-4 text-lg max-w-96">
+                RedForest is dedicated to bringing AI via eye-tracking to the classroom.
+                We help teachers understand how students perform in assignments, making education more effective.
+              </p>
+            </div>
+          </div>
 
         </div>
 

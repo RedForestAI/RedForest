@@ -4,7 +4,7 @@ Command: npx gltfjsx@6.2.16 public/models/redpanda.SD.glb
 */
 
 import React, { useRef } from 'react'
-import { useGLTF } from '@react-three/drei'
+import { useGLTF, useFBX, useAnimations } from '@react-three/drei'
 
 export function Panda(props) {
   const { nodes, materials } = useGLTF('models/redpanda.SD.glb')
