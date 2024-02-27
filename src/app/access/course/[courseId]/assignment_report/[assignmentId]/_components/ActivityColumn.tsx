@@ -18,7 +18,7 @@ export default function ActivityColumn(props: StructureProps) {
         <h2 className="card-title">Activity Reports</h2>
         <div>
             {props.activities.map((item, index) => (
-              <ActivityCard assignment={props.assignment} questions={props.questions[index]!} activity={item}/>
+              <ActivityCard key={item.id} assignment={props.assignment} questions={props.questions[index]!} activity={item}/>
             ))}
         </div>
       </div>

@@ -4,6 +4,7 @@ import NavBar from "~/components/ui/navbar";
 import { Question } from "@prisma/client";
 import { api } from "~/trpc/server";
 import ActivityColumn from "./_components/ActivityColumn";
+import PieChart from "./_components/PieChart";
 
 export default async function Page({
   params,
@@ -52,8 +53,13 @@ return (
         { name: assignment.name, url: ""}
       ]}
     />
-    <div className="flex flex-col items-stretch px-5 py-11 pl-12 pr-12 max-md:px-5">
-      {/*Create a pretty coming soon page */}
+    <div className="flex flex-col items-stretch justify-center px-5 py-11 pl-12 pr-12 max-md:px-5">
+
+      <div className="w-full justify-center items-center flex flex-col pb-6">
+        <h1 className="text-3xl text-center">Assignment Completion</h1>
+        <PieChart/>
+      </div>
+
       <div className="flex flex-col items-center justify-center">
         <ActivityColumn {...formData}/>
       </div>
