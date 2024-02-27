@@ -8,6 +8,7 @@ type StructureProps = {
   setActivities: any
   questions: Question[][]
   setQuestions: any
+  saveFunction: any
 }
 
 export default function AssignmentStructure(props: StructureProps) {
@@ -19,7 +20,7 @@ export default function AssignmentStructure(props: StructureProps) {
           <Reorder.Group axis="y" values={props.activities} onReorder={props.setActivities}>
             {props.activities.map((item, index) => (
               <Reorder.Item key={item.id} value={item}>
-                <ActivityCard assignment={props.assignment} questions={props.questions[index]!} activity={item}/>
+                <ActivityCard assignment={props.assignment} questions={props.questions[index]!} activity={item} saveFunction={props.saveFunction}/>
               </Reorder.Item>
             ))}
           </Reorder.Group>

@@ -43,11 +43,10 @@ export default function AssignmentForm(props: FormProps) {
   }, [assignment]);
 
   const settingsSubmit: SubmitHandler<SettingsInputs> = async (data) => {
-    console.log(data);
     try {
       await updateMutation.mutateAsync({id: assignment.id, name: data.name, dueDate: data.dueDate, published: false});
     } catch {
-      console.log("Failed to update assignment")
+      console.error("Failed to update assignment")
     }
   }
 
@@ -58,7 +57,7 @@ export default function AssignmentForm(props: FormProps) {
         try {
           await updateIndexMutation.mutateAsync({id: activities[i]!.id, index: i});
         } catch {
-          console.log("Failed to update activity index")
+          console.error("Failed to update activity index")
         }
       }
     }
@@ -79,17 +78,30 @@ export default function AssignmentForm(props: FormProps) {
     console.log("Submitting all forms")
     await forms.settings.handleSubmit(settingsSubmit)();
     await structureSubmit();
+
+    if (forms.settings.formState.errors?.name) {
+      console.log("Errors in form")
+      console.log(forms.settings.formState.errors)
+      return false;
+    }
+
+    console.log("No errors in form")
+    return true;
   }
 
   const publishFunction = async () => {
-    await saveFunction();
+    const success = await saveFunction();
 
-    // Publish the assignment
-    try {
-      await publishMutation.mutateAsync({id: assignment.id});
-    } catch {
-      console.log("Failed to publish assignment")
+    if (success) {
+      // Publish the assignment
+      try {
+        await publishMutation.mutateAsync({id: assignment.id});
+      } catch {
+        console.log("Failed to publish assignment")
+      }
     }
+
+    return success
   }
 
   const submitAllForms = async (e: any) => {
@@ -99,35 +111,39 @@ export default function AssignmentForm(props: FormProps) {
     const action = e.nativeEvent.submitter.value;
 
     if (action === "Delete") {
-      deleteFunction();
+      await deleteFunction();
       return;
     }
     else if (action === "Save") {
-      saveFunction();
+      await saveFunction();
       return;
     }
     else if (action === "Save&Close") {
-      saveFunction();
-      router.push(`/access/course/${props.courseId}`)
-      router.refresh();
+      const success = await saveFunction();
+      if (success) {
+        router.push(`/access/course/${props.courseId}`)
+        router.refresh();
+      }
       return;
     }
     else if (action === "Publish") {
-      publishFunction()
-      router.push(`/access/course/${props.courseId}`)
-      router.refresh();
+      const success = await publishFunction()
+      if (success) {
+        router.push(`/access/course/${props.courseId}`)
+        router.refresh();
+      }
       return;
     }
     else {
-      console.log("Unknown action")
+      console.warn("Unknown action")
       return;
     }
   }
-  <p>Hello</p>
+
   return (
     <form onSubmit={submitAllForms} className="flex flex-col gap-8">
       <AssignmentSettings assignment={assignment} formRegister={forms.settings.register} control={forms.settings.control} errors={forms.settings.formState.errors}/>
-      <AssignmentStructure assignment={assignment} activities={activities} questions={questions} setQuestions={setQuestions} setActivities={setActivities}/>
+      <AssignmentStructure assignment={assignment} activities={activities} questions={questions} setQuestions={setQuestions} setActivities={setActivities} saveFunction={saveFunction}/>
       <div className="justify-between items-stretch flex mt-8 mb-8 pl-10 pr-10 py-3 max-md:max-w-full max-md:flex-wrap max-md:px-5">
         <button className="btn btn-error text-white" name="action" value="Delete">Delete</button>
         <div className="flex flex-row gap-2.5">

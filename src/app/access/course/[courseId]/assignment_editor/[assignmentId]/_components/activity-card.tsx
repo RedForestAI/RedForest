@@ -10,14 +10,17 @@ type ActivityCardProps = {
   assignment: Assignment
   questions: Question[]
   activity: Activity
+  saveFunction: any
 }
 
 export function ActivityCard(props: ActivityCardProps) {
   const router = useRouter()
-    
 
-  const openActivitySetting = () => {
-    router.push(`${props.assignment.id}/activity_editor/${props.activity.id}`)
+  const openActivitySetting = async () => {
+    const success = await props.saveFunction()
+    if (success) {
+      router.push(`${props.assignment.id}/activity_editor/${props.activity.id}`)
+    }
   }
 
   const getPts = () => {
