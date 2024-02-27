@@ -4,21 +4,25 @@ import { Activity, Assignment, Question, ActivityType } from '@prisma/client';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useRouter } from "next/navigation";
 import { getIcon } from "~/utils/icons"
+import Link from "next/link";
 
-type StructureProps = {
+type ActivityColumnProps = {
+  courseId: string
   assignment: Assignment
   activities: Activity[]
   questions: Question[][]
 }
 
-export default function ActivityColumn(props: StructureProps) {
+export default function ActivityColumn(props: ActivityColumnProps) {
   return (
     <div className="card w-full bg-base-100 border border-neutral">
       <div className="card-body">
         <h2 className="card-title">Activity Reports</h2>
         <div>
             {props.activities.map((item, index) => (
-              <ActivityCard key={item.id} assignment={props.assignment} questions={props.questions[index]!} activity={item}/>
+              <Link href={`/access/course/${props.courseId}/assignment_report/${props.assignment.id}/activity_report/${item.id}`}>
+                <ActivityCard key={item.id} assignment={props.assignment} questions={props.questions[index]!} activity={item}/>
+              </Link>
             ))}
         </div>
       </div>

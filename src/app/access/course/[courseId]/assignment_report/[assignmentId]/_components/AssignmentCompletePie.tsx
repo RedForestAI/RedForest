@@ -26,8 +26,8 @@ export default function AssignmentCompletePie(props: AssignmentCompletePieProps)
   // Accessor
   const valueAccessor = (d: Datum) => d.value;
 
-  const [width, setWidth] = useState<number>(window.innerWidth * RATIO);
-  const [height, setHeight] = useState<number>(window.innerHeight * RATIO);
+  const [width, setWidth] = useState<number>(0);
+  const [height, setHeight] = useState<number>(0);
 
   // Update dimensions on resize
   useEffect(() => {
@@ -35,6 +35,9 @@ export default function AssignmentCompletePie(props: AssignmentCompletePieProps)
       setWidth(window.innerWidth * RATIO);
       setHeight(window.innerHeight * RATIO);
     };
+
+    setWidth(window.innerWidth * RATIO);
+    setHeight(window.innerHeight * RATIO);
 
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
@@ -57,25 +60,29 @@ export default function AssignmentCompletePie(props: AssignmentCompletePieProps)
         >
           {(pie) => {
             return pie.arcs.map((arc: PieArcDatum<Datum>, index: number) => (
-              <g key={`arc-${arc.data.label}-${index}`}>
-                <path
-                  d={pie.path(arc) || ""}
-                  fill={getDataColor(arc.data.label)}
-                ></path>
-                <text
-                  fill="black"
-                  x={pie.path.centroid(arc)[0]}
-                  y={pie.path.centroid(arc)[1]}
-                  dy=".33em"
-                  fontSize={15}
-                  textAnchor="middle"
-                >
-                  {/* Value on one line */}
-                  <tspan x={pie.path.centroid(arc)[0]} dy="-0.6em">{arc.data.value}%</tspan>
-                  {/* Label on the next line */}
-                  <tspan x={pie.path.centroid(arc)[0]} dy="1.2em">{arc.data.label}</tspan>
-                </text>
-              </g>
+              <>
+              {arc.data.value > 0 &&
+                <g key={`arc-${arc.data.label}-${index}`}>
+                  <path
+                    d={pie.path(arc) || ""}
+                    fill={getDataColor(arc.data.label)}
+                  ></path>
+                  <text
+                    fill="black"
+                    x={pie.path.centroid(arc)[0]}
+                    y={pie.path.centroid(arc)[1]}
+                    dy=".33em"
+                    fontSize={15}
+                    textAnchor="middle"
+                  >
+                    {/* Value on one line */}
+                    <tspan x={pie.path.centroid(arc)[0]} dy="-0.6em">{arc.data.value}%</tspan>
+                    {/* Label on the next line */}
+                    <tspan x={pie.path.centroid(arc)[0]} dy="1.2em">{arc.data.label}</tspan>
+                  </text>
+                </g>
+              }
+              </>
             ));
           }}
         </Pie>

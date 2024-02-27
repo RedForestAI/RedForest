@@ -11,6 +11,7 @@ import { activityDataRouter } from "./routers/activityData";
 import { traceLogFileRouter } from "./routers/traceLogFile";
 import { highlightRouter } from "./routers/activities/highlight";
 import { annotationRouter } from "./routers/activities/annotation";
+import { courseEnrollmentRouter } from "./routers/courseEnrollment";
 
 /**
  * This is the primary router for your server.
@@ -30,6 +31,7 @@ export const appRouter = createTRPCRouter({
   traceLogFile: traceLogFileRouter,
   highlight: highlightRouter,
   annotation: annotationRouter,
+  courseEnrollment: courseEnrollmentRouter,
 });
 
 // export type definition of API
