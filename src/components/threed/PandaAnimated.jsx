@@ -5,8 +5,11 @@ import * as THREE from 'three'
 export function PandaAnimated(props) {
   const fbx = useFBX('models/RedPanda_Mesh.fbx')
   const { actions, names } = useAnimations(fbx.animations, fbx)
-  console.log('names:', names)
-  //   console.log('actions:', actions)
+
+  // Available actions are in `names`
+  /*
+    names: [ "Rig|Eat", "Rig|Idle", "Rig|Run", "Rig|Sleep", "Rig|Jump", "Rig|Turn", "Rig|Walk", "Rig|Sit" ]
+  */
 
   const textures = useTexture({
     map: '/models/Tex_RedPanda.jpg',
