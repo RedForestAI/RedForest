@@ -1,5 +1,6 @@
 import React, { useRef, useState } from 'react'
 import { useFBX, useAnimations, useTexture } from '@react-three/drei'
+import * as THREE from 'three'
 
 export function PandaAnimated(props) {
   const fbx = useFBX('models/RedPanda_Mesh.fbx')
@@ -9,6 +10,10 @@ export function PandaAnimated(props) {
 
   const textures = useTexture({
     map: '/models/Tex_RedPanda.jpg',
+  })
+
+  fbx.children.forEach((mesh, i) => {
+    mesh.material = new THREE.MeshStandardMaterial({ map: textures.map })
   })
 
   useState(() => {
@@ -21,7 +26,6 @@ export function PandaAnimated(props) {
   return (
     <group {...props} scale={0.01} dispose={null}>
       <primitive object={fbx} dispose={null} />
-      <meshStandardMaterial map={textures.map} />
     </group>
   )
 }
