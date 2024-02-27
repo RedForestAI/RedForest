@@ -10,23 +10,22 @@ interface Datum {
   value: number;
 }
 
+type AssignmentCompletePieProps = {
+  data: Datum[];
+}
+
 const RATIO = 0.4;
 
-// Dummy data
-const data: Datum[] = [
-  { label: "Completed", value: 10 },
-  { label: "Started", value: 30 },
-  { label: "Yet to Begin", value: 20 },
-];
-const getDataColor = scaleOrdinal({
-  domain: data.map((l) => l.label),
-  range: ["#22c55e", "#facc15", "#ef4444"],
-});
+export default function AssignmentCompletePie(props: AssignmentCompletePieProps) {
 
-// Accessor
-const valueAccessor = (d: Datum) => d.value;
+  const getDataColor = scaleOrdinal({
+    domain: props.data.map((l) => l.label),
+    range: ["#22c55e", "#facc15", "#ef4444"],
+  });
 
-const PieChart: React.FC = () => {
+  // Accessor
+  const valueAccessor = (d: Datum) => d.value;
+
   const [width, setWidth] = useState<number>(window.innerWidth * RATIO);
   const [height, setHeight] = useState<number>(window.innerHeight * RATIO);
 
@@ -50,7 +49,7 @@ const PieChart: React.FC = () => {
     <svg width={width} height={height}>
       <Group top={centerY} left={centerX}>
         <Pie<Datum>
-          data={data}
+          data={props.data}
           pieValue={valueAccessor}
           outerRadius={radius}
           innerRadius={radius / 3}
@@ -84,5 +83,3 @@ const PieChart: React.FC = () => {
     </svg>
   );
 };
-
-export default PieChart;

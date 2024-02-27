@@ -4,7 +4,12 @@ import NavBar from "~/components/ui/navbar";
 import { Question } from "@prisma/client";
 import { api } from "~/trpc/server";
 import ActivityColumn from "./_components/ActivityColumn";
-import PieChart from "./_components/PieChart";
+import AssignmentCompletePieChart from "./_components/AssignmentCompletePie";
+
+interface Datum {
+  label: string;
+  value: number;
+}
 
 export default async function Page({
   params,
@@ -42,6 +47,12 @@ const formData = {
   questions: questions,
 };
 
+// Dummy data
+const data: Datum[] = [
+  { label: "Completed", value: 10 },
+  { label: "Started", value: 30 },
+  { label: "Yet to Begin", value: 20 },
+];
 
 return (
   <>
@@ -57,7 +68,7 @@ return (
 
       <div className="w-full justify-center items-center flex flex-col pb-6">
         <h1 className="text-3xl text-center">Assignment Completion</h1>
-        <PieChart/>
+        <AssignmentCompletePieChart data={data}/>
       </div>
 
       <div className="flex flex-col items-center justify-center">
