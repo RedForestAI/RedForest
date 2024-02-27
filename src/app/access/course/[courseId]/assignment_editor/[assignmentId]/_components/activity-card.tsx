@@ -4,7 +4,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { IconDefinition, faGear } from '@fortawesome/free-solid-svg-icons';
 import { useRouter } from "next/navigation";
 import { api } from "~/trpc/react";
-import { getIcon } from "../_utils/icons"
+import { getIcon } from "../../../../../../../utils/icons"
 
 type ActivityCardProps = {
   assignment: Assignment
