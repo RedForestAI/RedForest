@@ -17,10 +17,11 @@ type ReadingReportProps = {
 
 export default function ReadingReport(props: ReadingReportProps) {
   // console.log(props);
-  const [ docs, setDocs ] = useState<{ uri: string }[]>([]);
-  const [ activeDocument, setActiveDocument ] = useState<IDocument>();
-  const [ columns, setColumns ] = useState<ColumnType[]>([{ title: "ID" }, { title: "Complete" }, { title: "Score" }])
-  const [ tableData, setTableData ] = useState<any[]>([])
+  const [docs, setDocs] = useState<{ uri: string }[]>([]);
+  const [activeDocument, setActiveDocument] = useState<IDocument>();
+  const [columns, setColumns] = useState<ColumnType[]>([{ title: "ID" }, { title: "Complete" }, { title: "Score" }])
+  const [tableData, setTableData] = useState<any[]>([])
+  const [selectedId, setSelectedId] = useState<string[]>([])
   const supabase = createClientComponentClient();
 
   useEffect(() => {
@@ -77,9 +78,9 @@ export default function ReadingReport(props: ReadingReportProps) {
     if (props.activityDatas == undefined || props.activityDatas.length == 0) {
       return;
     }
-    
+
     // Get the column names
-    const columnNames = props.questions.map((question) => ({title: `Q${question.index} (${question.pts})`}));
+    const columnNames = props.questions.map((question) => ({ title: `Q${question.index} (${question.pts})` }));
     setColumns([{ title: "ID" }, { title: "Complete" }, { title: "Score" }, ...columnNames]);
 
     // Get the table data
@@ -95,10 +96,10 @@ export default function ReadingReport(props: ReadingReportProps) {
     setTableData(newTableData);
 
   }, []);
-  
+
   return (
     <div className="w-full flex flex-row">
-      <div className="w-1/2">
+      <div className="w-1/2 max-h-[90vh] overflow-y-auto">
         <PDFViewer
           docs={docs}
           files={props.readingFiles}
@@ -112,7 +113,7 @@ export default function ReadingReport(props: ReadingReportProps) {
       </div>
 
       <div className="w-1/2 mt-[4.5%] max-h-96 overflow-x-auto overflow-y-auto">
-        <Table columns={columns} tableData={tableData}/>
+        <Table columns={columns} tableData={tableData} selectedId={selectedId} setSelectedId={setSelectedId} />
       </div>
     </div>
   )

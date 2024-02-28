@@ -1,13 +1,46 @@
+import { useState } from 'react'
+
 export type ColumnType = {
   title: string
 }
 
 type TableProps = {
   columns: ColumnType[]
-  tableData: any[]
+  tableData: any[],
+  selectedId: string[]
+  setSelectedId: (selected: string[]) => void
 }
 
 export default function Table(props: TableProps) {
+  const [selectAll, setSelectAll] = useState<boolean>(false)
+
+  function changeSelect(e: any, id: string) {
+    const checked = e.target.checked
+    if (checked) {
+      props.setSelectedId([...props.selectedId, id])
+    } else {
+      props.setSelectedId(props.selectedId.filter((selectedId) => selectedId !== id))
+    }
+
+    if (checked && props.selectedId.length+1 === props.tableData.length) {
+      setSelectAll(true)
+    }
+    else {
+      setSelectAll(false)
+    }
+  }
+
+  function changeAll(e: any) {
+    const checked = e.target.checked
+    if (checked) {
+      setSelectAll(true)
+      props.setSelectedId(props.tableData.map((row) => row[0]))
+    } else {
+      setSelectAll(false)
+      props.setSelectedId([])
+    }
+  }
+  
   return (
   <div className="">
     <table className="table table-zebra table-xs table-pin-rows table-pin-cols">
@@ -15,7 +48,7 @@ export default function Table(props: TableProps) {
         <tr>
           <th>
             <label>
-              <input type="checkbox" className="checkbox checkbox-sm" />
+              <input type="checkbox" className="checkbox checkbox-sm" checked={selectAll} onChange={changeAll}/>
             </label>
           </th>
           {props.columns.map((column, index) => {
@@ -39,7 +72,7 @@ export default function Table(props: TableProps) {
             <tr key={index}>
               <th>
                 <label>
-                  <input type="checkbox" className="checkbox checkbox-sm" />
+                  <input type="checkbox" className="checkbox checkbox-sm" checked={props.selectedId.includes(row[0])} onChange={(e) => {changeSelect(e, row[0])}}/>
                 </label>
               </th>
               {row.map((data: any, index: number) => {
