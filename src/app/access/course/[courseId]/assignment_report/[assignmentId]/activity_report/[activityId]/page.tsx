@@ -59,7 +59,7 @@ const getReport = async (activity: any) => {
         activity: activity,
         readingFiles: files,
         questions: questions,
-        tracelogs: []
+        tracelogs: tracelogsFiles
       }
 
       return <ReadingReport {...data}/>;
