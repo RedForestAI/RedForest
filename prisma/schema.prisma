@@ -156,7 +156,7 @@ model TraceLogFile {
   filepath          String
 
   // Helpful information
-  activityId        String      @db.Uuid
+  activityId        String      @db.Uuid @default("00000000-0000-0000-0000-000000000000")
 
   // User Activity
   activityData  ActivityData @relation(fields: [activityDataId], references: [id])
