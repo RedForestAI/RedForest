@@ -1,36 +1,39 @@
 "use client";
 
-import { Activity, ReadingFile } from "@prisma/client";
+import { Activity, ReadingFile, ActivityData } from "@prisma/client";
 import { useEffect, useState } from "react";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import { IDocument } from "@cyntler/react-doc-viewer";
 
-import Table from "./Table";
+import Table, { ColumnType } from "./Table";
 import PDFViewer from "~/components/pdf/pdf-viewer";
 
 type ReadingReportProps = {
   activity: Activity
   readingFiles: ReadingFile[]
+  activityDatas: ActivityData[]
 }
 
-const columns = [
-  { title: "Name" },
-  { title: "Job" },
-  { title: "Company" },
-  { title: "Location" },
-  { title: "Last Login" },
-  { title: "Favorite Color" },
-]
-
-const data = [
-  ["Cy Ganderton", "Quality Control Specialist", "Littel, Schaden and Vandervort", "Canada", "12/16/2020", "Blue"],
-]
-
 export default function ReadingReport(props: ReadingReportProps) {
-  // console.log(props);
-  const [docs, setDocs] = useState<{ uri: string }[]>([]);
-  const [activeDocument, setActiveDocument] = useState<IDocument>();
+  console.log(props);
+  const [ docs, setDocs ] = useState<{ uri: string }[]>([]);
+  const [ activeDocument, setActiveDocument ] = useState<IDocument>();
+  const [ columns, setColumns ] = useState<ColumnType[]>([{ title: "ID" }])
+  const [ tableData, setTableData ] = useState<any[]>([])
   const supabase = createClientComponentClient();
+
+  // const columns = [
+  //   { title: "Name" },
+  //   { title: "Job" },
+  //   { title: "Company" },
+  //   { title: "Location" },
+  //   { title: "Last Login" },
+  //   { title: "Favorite Color" },
+  // ]
+  
+  // const data = [
+  //   ["Cy Ganderton", "Quality Control Specialist", "Littel, Schaden and Vandervort", "Canada", "12/16/2020", "Blue"],
+  // ]
 
   useEffect(() => {
     async function fetchPDFs() {
@@ -81,6 +84,23 @@ export default function ReadingReport(props: ReadingReportProps) {
     if (docs.length == 0) {
       fetchPDFs();
     }
+
+    // Compute the column and table data from the activityDatas
+    if (props.activityDatas == undefined || props.activityDatas.length == 0) {
+      return;
+    }
+    
+    // Get the column names
+    const numOfQuestions = props.activityDatas[0]?.answers.length || 0;
+    const columnNames = Array.from({ length: numOfQuestions }, (_, i) => `Q${i + 1}`);
+    setColumns([{ title: "ID" }, ...columnNames.map((name) => ({ title: name }))]);
+
+    // Get the table data
+    const newTableData = props.activityDatas.map((activityData) => {
+      return [activityData.id.split('-')[0], ...activityData.answers];
+    });
+    setTableData(newTableData);
+
   }, []);
   
   return (
@@ -98,7 +118,7 @@ export default function ReadingReport(props: ReadingReportProps) {
       </div>
 
       <div className="w-1/2 mt-[4.5%] max-h-96 overflow-x-auto overflow-y-auto">
-        <Table columns={columns} data={data}/>
+        <Table columns={columns} tableData={tableData}/>
       </div>
     </div>
   )
