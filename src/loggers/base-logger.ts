@@ -11,6 +11,10 @@ export default class BaseLogger {
     this.supabase = createClientComponentClient();
   }
 
+  name() {
+    return "base"
+  }
+
   init() {}
 
   log(event: any) {}

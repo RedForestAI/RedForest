@@ -50,7 +50,7 @@ const getReport = async (activity: any) => {
       const tracelogsFiles = await api.traceLogFile.getMany.query({
         activityId: params.activityId
       })
-      // console.log("HELLO", tracelogsFiles)
+      
       // Sorts the files by their index
       files.sort((a, b) => a.index - b.index);
 

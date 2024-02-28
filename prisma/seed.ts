@@ -215,7 +215,7 @@ const uploadFiles = async (activities: Activity[]) => {
   const dummy = fs.readFileSync(dummyFilePath)
   const sample = fs.readFileSync(sampleFilePath)
 
-  let filepaths: string[][] = []
+  let filepaths = []
   for (let i = 0; i < activities.length; i++) {
     if (activities[i]?.type !== ActivityType.READING) continue
     // Load local PDF file
@@ -223,35 +223,37 @@ const uploadFiles = async (activities: Activity[]) => {
     const new_path2 = `tests/dummy${i}.pdf`
   
     // Let's actually upload a file within the seed, to supabase
-    const data = await supabase.storage.from("activity_reading_file").upload(new_path, dummy, {
+    const data = await supabase.storage.from("activity_reading_file").upload(new_path, sample, {
       contentType: "application/pdf",
     })
-    const data2 = await supabase.storage.from("activity_reading_file").upload(new_path2, sample, {
+    const data2 = await supabase.storage.from("activity_reading_file").upload(new_path2, dummy, {
       contentType: "application/pdf",
     })
     console.log({data, data2})
 
-    filepaths.push([new_path, new_path2])
+    filepaths.push([{path: new_path, index: 0}, {path: new_path2, index: 1}])
   }
 
   return filepaths
 }
 
-const getReadingFiles = (activities: Activity[], filepaths: string[][]): Prisma.ReadingFileCreateInput[] => {
+const getReadingFiles = (activities: Activity[], filepaths: { path: string; index: number; }[][]): Prisma.ReadingFileCreateInput[] => {
   let readingFiles = []
   let j = 0;
   for (let i = 0; i < activities.length; i++) {
     if (activities[i]?.type !== ActivityType.READING) continue
     
     const filepath = filepaths[j]
+    // Sort by index
+    const sortFilepath = filepath!.sort((a, b) => a.index - b.index)
     j++
 
-    for (let k = 0; k < filepath!.length; k++) {
+    for (let k = 0; k < sortFilepath!.length; k++) {
       readingFiles.push(
         {
           id: generateUUID(),
           title: `Reading File ${k}`,
-          filepath: filepath![k]!,
+          filepath: sortFilepath![k]!.path,
           size: 100,
           index: k,
           activity: { connect: { id: activities[i]?.id }},

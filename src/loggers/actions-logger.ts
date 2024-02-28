@@ -22,6 +22,10 @@ export default class ActionsLogger extends BaseLogger {
     document.addEventListener("actionLog", this.log)
   }
 
+  name() {
+    return "actions"
+  }
+
   init(){
     this.loggedData = [["timestamp", "type", "value"]]
   }

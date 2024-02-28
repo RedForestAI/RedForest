@@ -24,6 +24,7 @@ import InstructionsModal from "./instructions-modal";
 import { Linear, Skimming, Deep, ReReading } from "./behaviors";
 import ActivityCompletion from "../activity-completion";
 
+import BaseLogger from "~/loggers/base-logger";
 import GazeLogger from "~/loggers/gaze-logger";
 import ScrollLogger from "~/loggers/scroll-logger";
 import ActionsLogger from "~/loggers/actions-logger";
@@ -179,15 +180,18 @@ export default function BehaviorReadingActivity(props: ReadingActivityProps) {
       // Create a path
       try {
         // Iterate the loggers and upload the logs
-        const loggers = {'gaze': GazeLogger, 'scroll': ScrollLogger, 'actions': ActionsLogger, 'mouse': MouseLogger}
-        for (const [filename, logger] of Object.entries(loggers)) {
-          // @ts-ignore
-          logger.upload(
-            createTracelogFile,
-            props.activity.id,
-            props.activityData.id,
-            `${session_fp}/${filename}.csv`,
-          );
+        const loggers: BaseLogger[] = [gazeLogger, scrollLogger, actionsLogger, mouseLogger]
+        for (let i = 0; i < loggers.length; i++) {
+          const logger = loggers[i]
+          if (logger) {
+            const result = await logger.upload(
+              createTracelogFile,
+              props.profile.id,
+              props.activity.id,
+              props.activityData.id,
+              `${session_fp}/${logger.name()}.csv`,
+            );
+          }
         }
 
         // Meta data

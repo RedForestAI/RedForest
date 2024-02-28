@@ -28,6 +28,7 @@ import { AOIEncoding } from "~/eyetracking/aoi-encoding";
 import ReadingInstrModal from "./reading-instr-modal";
 import { triggerActionLog } from "~/loggers/actions-logger";
 
+import BaseLogger from "~/loggers/base-logger";
 import GazeLogger from "~/loggers/gaze-logger";
 import ScrollLogger from "~/loggers/scroll-logger";
 import ActionsLogger from "~/loggers/actions-logger";
@@ -139,6 +140,8 @@ export default function ReadingActivity(props: ReadingActivityProps) {
           .from("activity_reading_file")
           .download(filepath);
 
+        // console.log(filepath, data)
+
         if (error) {
           console.error(error);
           return;
@@ -154,11 +157,19 @@ export default function ReadingActivity(props: ReadingActivityProps) {
 
       // Create URLs for the files
       const newDocs = files.map((file: any) => {
+
+        const uri = URL.createObjectURL(file)
+        // console.log(file, uri)
+
         return {
-          uri: URL.createObjectURL(file),
+          uri: uri,
           fileType: "pdf",
         };
       });
+      // console.log(readingFiles)
+      // console.log(files)
+      // console.log(newDocs)
+      // console.log(newDocs[0])
       setDocs(newDocs);
       setActiveDocument(newDocs[0]);
       triggerActionLog({ type: "pdfLoad", value: { index: 0 } });
@@ -225,17 +236,18 @@ export default function ReadingActivity(props: ReadingActivityProps) {
       // Create a path
       try {
         // Upload
-
-        // Iterate the loggers and upload the logs
-        const loggers = {'gaze': GazeLogger, 'scroll': ScrollLogger, 'actions': ActionsLogger, 'mouse': MouseLogger}
-        for (const [filename, logger] of Object.entries(loggers)) {
-          // @ts-ignore
-          logger.upload(
-            createTracelogFile,
-            props.activity.id,
-            props.activityData.id,
-            `${session_fp}/${filename}.csv`,
-          );
+        const loggers: BaseLogger[] = [gazeLogger, scrollLogger, actionsLogger, mouseLogger]
+        for (let i = 0; i < loggers.length; i++) {
+          const logger = loggers[i]
+          if (logger) {
+            const result = await logger.upload(
+              createTracelogFile,
+              props.profile.id,
+              props.activity.id,
+              props.activityData.id,
+              `${session_fp}/${logger.name()}.csv`,
+            );
+          }
         }
 
         // Meta data
@@ -273,7 +285,7 @@ export default function ReadingActivity(props: ReadingActivityProps) {
           console.error("Failed to upload meta data");
         }
       } catch (error) {
-        console.error("Failed to upload tracelogs");
+        console.error("Failed to upload tracelogs", error);
       }
     };
 
