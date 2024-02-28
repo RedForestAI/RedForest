@@ -13,6 +13,14 @@ export const activityDataRouter = createTRPCRouter({
       });
     }),
 
+  getMany: privateProcedure
+    .input(z.object({ activityId: z.string() }))
+    .query(async ({ input, ctx }) => {
+      return await ctx.db.activityData.findMany({
+        where: { activityId: input.activityId },
+      });
+    }),
+
   appendAnswer: privateProcedure
     .input(z.object({ activityDataId: z.string(), activityId: z.string(), index: z.number(), answer: z.number() }))
     .mutation(async ({ input, ctx }) => {

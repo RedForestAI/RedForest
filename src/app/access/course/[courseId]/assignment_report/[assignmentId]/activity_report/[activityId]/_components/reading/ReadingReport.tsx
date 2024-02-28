@@ -13,9 +13,9 @@ type ReadingReportProps = {
 }
 
 export default function ReadingReport(props: ReadingReportProps) {
+  console.log(props);
   const [docs, setDocs] = useState<{ uri: string }[]>([]);
   const [activeDocument, setActiveDocument] = useState<IDocument>();
-
   const supabase = createClientComponentClient();
 
   useEffect(() => {
