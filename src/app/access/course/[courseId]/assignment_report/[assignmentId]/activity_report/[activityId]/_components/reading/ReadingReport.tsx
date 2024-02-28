@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import { IDocument } from "@cyntler/react-doc-viewer";
 
+import Table from "./Table";
 import PDFViewer from "~/components/pdf/pdf-viewer";
 
 type ReadingReportProps = {
@@ -12,8 +13,21 @@ type ReadingReportProps = {
   readingFiles: ReadingFile[]
 }
 
+const columns = [
+  { title: "Name" },
+  { title: "Job" },
+  { title: "Company" },
+  { title: "Location" },
+  { title: "Last Login" },
+  { title: "Favorite Color" },
+]
+
+const data = [
+  ["Cy Ganderton", "Quality Control Specialist", "Littel, Schaden and Vandervort", "Canada", "12/16/2020", "Blue"],
+]
+
 export default function ReadingReport(props: ReadingReportProps) {
-  console.log(props);
+  // console.log(props);
   const [docs, setDocs] = useState<{ uri: string }[]>([]);
   const [activeDocument, setActiveDocument] = useState<IDocument>();
   const supabase = createClientComponentClient();
@@ -81,6 +95,10 @@ export default function ReadingReport(props: ReadingReportProps) {
             defaultWidth: 100
           }}
         />
+      </div>
+
+      <div className="w-1/2 mt-[4.5%] max-h-96 overflow-x-auto overflow-y-auto">
+        <Table columns={columns} data={data}/>
       </div>
     </div>
   )
