@@ -14,12 +14,15 @@ type ActivityColumnProps = {
 }
 
 export default function ActivityColumn(props: ActivityColumnProps) {
+
+  const releventActivities = props.activities.filter((activity) => activity.type !== ActivityType.READING_BEHAVIOR)
+
   return (
     <div className="card w-full bg-base-100 border border-neutral">
       <div className="card-body">
         <h2 className="card-title">Activity Reports</h2>
         <div>
-            {props.activities.map((item, index) => (
+            {releventActivities.map((item, index) => (
               <Link href={`/access/course/${props.courseId}/assignment_report/${props.assignment.id}/activity_report/${item.id}`}>
                 <ActivityCard key={item.id} assignment={props.assignment} questions={props.questions[index]!} activity={item}/>
               </Link>
