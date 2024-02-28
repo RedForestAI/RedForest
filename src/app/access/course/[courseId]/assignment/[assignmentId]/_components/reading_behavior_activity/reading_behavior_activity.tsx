@@ -21,12 +21,7 @@ import EyeTrackingController from "~/eyetracking/eye-tracking-controller";
 import PDFViewer from "~/components/pdf/pdf-viewer";
 import { AOIEncoding } from "~/eyetracking/aoi-encoding";
 import InstructionsModal from "./instructions-modal";
-import {
-  Linear,
-  Skimming,
-  Deep,
-  ReReading,
-} from "./behaviors";
+import { Linear, Skimming, Deep, ReReading } from "./behaviors";
 import ActivityCompletion from "../activity-completion";
 
 import GazeLogger from "~/loggers/gaze-logger";
@@ -35,11 +30,7 @@ import ActionsLogger from "~/loggers/actions-logger";
 import MouseLogger from "~/loggers/mouse-logger";
 
 type BehaviorConfig = {
-  name:
-    | "REGULAR"
-    | "SKIMMING"
-    | "SLOW"
-    | "REREAD";
+  name: "REGULAR" | "SKIMMING" | "SLOW" | "REREAD";
   component: React.ReactElement;
 };
 
@@ -188,10 +179,30 @@ export default function BehaviorReadingActivity(props: ReadingActivityProps) {
       // Create a path
       try {
         // Upload
-        gazeLogger.upload(createTracelogFile, props.activityData.id, `${session_fp}/gaze.csv`);
-        scrollLogger.upload(createTracelogFile, props.activityData.id, `${session_fp}/scroll.csv`);
-        actionsLogger.upload(createTracelogFile, props.activityData.id, `${session_fp}/actions.csv`);
-        mouseLogger.upload(createTracelogFile, props.activityData.id, `${session_fp}/mouse.csv`);
+        gazeLogger.upload(
+          createTracelogFile,
+          props.activity.id,
+          props.activityData.id,
+          `${session_fp}/gaze.csv`,
+        );
+        scrollLogger.upload(
+          createTracelogFile,
+          props.activity.id,
+          props.activityData.id,
+          `${session_fp}/scroll.csv`,
+        );
+        actionsLogger.upload(
+          createTracelogFile,
+          props.activity.id,
+          props.activityData.id,
+          `${session_fp}/actions.csv`,
+        );
+        mouseLogger.upload(
+          createTracelogFile,
+          props.activity.id,
+          props.activityData.id,
+          `${session_fp}/mouse.csv`,
+        );
 
         // Meta data
         const meta_file = new Blob(
@@ -213,6 +224,7 @@ export default function BehaviorReadingActivity(props: ReadingActivityProps) {
         );
         const meta_filepath = `${session_fp}/meta.json`;
         const meta_result = await createTracelogFile.mutateAsync({
+          activityId: props.activity.id,
           activityDataId: props.activityData.id,
           filepath: meta_filepath,
         });
@@ -266,7 +278,7 @@ export default function BehaviorReadingActivity(props: ReadingActivityProps) {
               config={{
                 btnLayer: !inInstructions,
                 component: config[behaviorIndex]!.component,
-                activityDataId: props.activityData.id
+                activityDataId: props.activityData.id,
               }}
               activeDocument={activeDocument!}
               setActiveDocument={setActiveDocument}

@@ -28,9 +28,10 @@ export default class BaseLogger {
     return blob
   }
 
-  async upload(createTracelogFile: any, activityDataId: string, filepath: string) {
+  async upload(createTracelogFile: any, activityId: string, activityDataId: string, filepath: string) {
     const file = this.getBlob();
     const db_result= await createTracelogFile.mutateAsync({
+      activityId: activityId,
       activityDataId: activityDataId,
       filepath: filepath,
     });

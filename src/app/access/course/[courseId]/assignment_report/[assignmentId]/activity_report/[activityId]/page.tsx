@@ -47,7 +47,10 @@ const getReport = async (activity: any) => {
       const files = await api.readingFile.getMany.query({
         activityId: readingActivity!.id,
       });
-
+      // const tracelogsFiles = await api.traceLogFile.getMany.query({
+      //   activityId: params.activityId
+      // })
+      // console.log("HELLO", tracelogsFiles)
       // Sorts the files by their index
       files.sort((a, b) => a.index - b.index);
 
@@ -55,7 +58,8 @@ const getReport = async (activity: any) => {
         activityDatas: activityDatas,
         activity: activity,
         readingFiles: files,
-        questions: questions
+        questions: questions,
+        tracelogs: []
       }
 
       return <ReadingReport {...data}/>;

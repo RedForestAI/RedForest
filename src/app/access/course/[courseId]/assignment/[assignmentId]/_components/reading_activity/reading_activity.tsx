@@ -227,21 +227,25 @@ export default function ReadingActivity(props: ReadingActivityProps) {
         // Upload
         gazeLogger.upload(
           createTracelogFile,
+          props.activity.id,
           props.activityData.id,
           `${session_fp}/gaze.csv`,
         );
         scrollLogger.upload(
           createTracelogFile,
+          props.activity.id,
           props.activityData.id,
           `${session_fp}/scroll.csv`,
         );
         actionsLogger.upload(
           createTracelogFile,
+          props.activity.id,
           props.activityData.id,
           `${session_fp}/actions.csv`,
         );
         mouseLogger.upload(
           createTracelogFile,
+          props.activity.id,
           props.activityData.id,
           `${session_fp}/mouse.csv`,
         );
@@ -266,6 +270,7 @@ export default function ReadingActivity(props: ReadingActivityProps) {
         );
         const meta_filepath = `${session_fp}/meta.json`;
         const meta_result = await createTracelogFile.mutateAsync({
+          activityId: props.activity.id,
           activityDataId: props.activityData.id,
           filepath: meta_filepath,
         });

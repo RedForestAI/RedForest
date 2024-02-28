@@ -155,6 +155,9 @@ model TraceLogFile {
   createdAt         DateTime    @default(now())
   filepath          String
 
+  // Helpful information
+  activityId        String      @db.Uuid
+
   // User Activity
   activityData  ActivityData @relation(fields: [activityDataId], references: [id])
   activityDataId String      @db.Uuid

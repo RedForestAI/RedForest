@@ -6,6 +6,7 @@ export const traceLogFileRouter = createTRPCRouter({
     .input(
       z.object({
         activityDataId: z.string(),
+        activityId: z.string(),
         filepath: z.string()
       })
     )
@@ -13,7 +14,20 @@ export const traceLogFileRouter = createTRPCRouter({
       return await ctx.db.traceLogFile.create({
         data: {
           activityDataId: input.activityDataId,
+          activityId: input.activityId,
           filepath: input.filepath
+        }
+      })
+    }),
+
+  getMany: privateProcedure
+    .input(z.object({
+      activityId: z.string()
+    }))
+    .query(async ({ input, ctx }) => {
+      return await ctx.db.traceLogFile.findMany({
+        where: {
+          activityId: input.activityId
         }
       })
     })

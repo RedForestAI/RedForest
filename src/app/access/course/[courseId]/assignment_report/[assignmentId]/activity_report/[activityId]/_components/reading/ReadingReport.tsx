@@ -1,6 +1,6 @@
 "use client";
 
-import { Activity, ReadingFile, ActivityData, Question } from "@prisma/client";
+import { Activity, ReadingFile, ActivityData, Question, TraceLogFile } from "@prisma/client";
 import { useEffect, useState } from "react";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import { IDocument } from "@cyntler/react-doc-viewer";
@@ -13,10 +13,10 @@ type ReadingReportProps = {
   readingFiles: ReadingFile[]
   activityDatas: ActivityData[]
   questions: Question[]
+  tracelogs: TraceLogFile[]
 }
 
 export default function ReadingReport(props: ReadingReportProps) {
-  // console.log(props);
   const [docs, setDocs] = useState<{ uri: string }[]>([]);
   const [activeDocument, setActiveDocument] = useState<IDocument>();
   const [columns, setColumns] = useState<ColumnType[]>([{ title: "ID" }, { title: "Complete" }, { title: "Score" }])
@@ -70,9 +70,15 @@ export default function ReadingReport(props: ReadingReportProps) {
       setActiveDocument(newDocs[0]);
     }
 
+    async function fetchTraceLogs() {
+     
+    }
+
     if (docs.length == 0) {
       fetchPDFs();
     }
+
+    console.log(props.tracelogs)
 
     // Compute the column and table data from the activityDatas
     if (props.activityDatas == undefined || props.activityDatas.length == 0) {
