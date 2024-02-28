@@ -31,6 +31,7 @@ type PDFViewerProps = {
   config?: {
     // General
     defaultWidth?: number;
+    supportZoom?: boolean;
 
     // Reading Activity
     activityDataId?: string;
@@ -50,6 +51,7 @@ type PDFViewerProps = {
 const defaultConfig = {
   // General
   defaultWidth: 70,
+  supportZoom: true,
   
   // Reading Activity
   activityDataId: "",
@@ -164,7 +166,7 @@ export default function PDFViewer(props: PDFViewerProps) {
     );
 
     // Update the navbar content
-    setMiddleNavBarContent(middleNavBarExtras);
+    if (finalConfig.supportZoom) setMiddleNavBarContent(middleNavBarExtras);
 
     // Add toolkits
     if (finalConfig.toolkit) {
@@ -195,7 +197,7 @@ export default function PDFViewer(props: PDFViewerProps) {
 
     // Reset the navbar content when the component unmounts
     return () => {
-      setMiddleNavBarContent(null);
+      if (finalConfig.supportZoom) setMiddleNavBarContent(null);
       observer.disconnect();
       if (finalConfig.toolkit) {
         document.removeEventListener("mouseup", handleTextSelection);

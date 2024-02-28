@@ -118,7 +118,8 @@ export default function ReadingReport(props: ReadingReportProps) {
           activeDocument={activeDocument!}
           setActiveDocument={setActiveDocument}
           config={{
-            defaultWidth: 100
+            defaultWidth: 100,
+            supportZoom: false
           }}
         />
       </div>
