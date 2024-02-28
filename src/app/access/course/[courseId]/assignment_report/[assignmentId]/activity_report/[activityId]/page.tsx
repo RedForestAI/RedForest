@@ -26,8 +26,10 @@ const activity = await api.activity.getOne.query({
 });
 
 const getReport = async (activity: any) => {
+  
   if (!activity)
     return <h1 className="text-error">Failed to load activity</h1>;
+    
   switch (activity.type) {
     case ActivityType.READING:
       const readingActivity = await api.readingActivity.getOne.query({
