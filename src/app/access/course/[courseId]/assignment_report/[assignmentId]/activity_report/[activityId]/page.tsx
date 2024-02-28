@@ -42,7 +42,12 @@ const getReport = async (activity: any) => {
       // Sorts the files by their index
       files.sort((a, b) => a.index - b.index);
 
-      return <ReadingReport />;
+      const data = {
+        activity: activity,
+        readingFiles: files,
+      }
+
+      return <ReadingReport {...data}/>;
 
     case ActivityType.QUESTIONING:
       return <QuestionReport />;
@@ -63,11 +68,8 @@ return (
         { name: activity?.name || "Activity Report", url: ''}
       ]}
     />
-    <div className="items-stretch flex flex-col px-5 py-11 max-md:px-5 pl-12 pr-12">
-      {/*Create a pretty coming soon page */}
-      <div className="ml-8 mr-8 mt-4">
-        <Slot children={getReport(activity)} />
-      </div>
+    <div className="items-stretch flex flex-col px-4 max-md:px-5 pl-4 pr-4">
+      <Slot children={getReport(activity)} />
     </div>
   </>
 );

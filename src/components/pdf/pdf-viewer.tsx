@@ -25,12 +25,15 @@ import "./pdf-viewer.css";
 type PDFViewerProps = {
   docs: { uri: string }[];
   files: ReadingFile[];
-  activityDataId: string;
   activeDocument: IDocument;
   setActiveDocument: any;
 
   config?: {
+    // General
+    defaultWidth?: number;
+
     // Reading Activity
+    activityDataId?: string;
     blur?: boolean;
     toolkit?: boolean;
     highlights?: Highlight[];
@@ -45,7 +48,11 @@ type PDFViewerProps = {
 };
 
 const defaultConfig = {
+  // General
+  defaultWidth: 70,
+  
   // Reading Activity
+  activityDataId: "",
   blur: false,
   toolkit: false,
   highlights: [],
@@ -105,7 +112,7 @@ export default function PDFViewer(props: PDFViewerProps) {
         }}
         pluginRenderers={DocViewerRenderers}
         style={{
-          width: `${70 * zoomLevel}%`,
+          width: `${finalConfig.defaultWidth * zoomLevel}%`,
           height: `100%`,
           backgroundColor: "transparent",
         }}
@@ -499,7 +506,7 @@ export default function PDFViewer(props: PDFViewerProps) {
       rects: JSON.stringify(relativeRects),
       content: toolkitText,
       fileId: file.id,
-      activityDataId: props.activityDataId,
+      activityDataId: finalConfig.activityDataId,
     });
     finalConfig.setHighlights([...finalConfig.highlights, highlight]);
 
@@ -566,7 +573,7 @@ export default function PDFViewer(props: PDFViewerProps) {
       position: JSON.stringify(rRect),
       content: "",
       fileId: file.id,
-      activityDataId: props.activityDataId,
+      activityDataId: finalConfig.activityDataId,
     });
     finalConfig.setAnnotations([...finalConfig.annotations, annotation]);
 

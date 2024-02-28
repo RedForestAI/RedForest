@@ -317,12 +317,12 @@ export default function ReadingActivity(props: ReadingActivityProps) {
           config={{
             toolkit: true,
             blur: blur,
+            activityDataId: props.activityData.id,
             highlights: highlights,
             setHighlights: setHighlights,
             annotations: annotations,
             setAnnotations: setAnnotations,
           }}
-          activityDataId={props.activityData.id}
           activeDocument={activeDocument!}
           setActiveDocument={setActiveDocument}
         />
