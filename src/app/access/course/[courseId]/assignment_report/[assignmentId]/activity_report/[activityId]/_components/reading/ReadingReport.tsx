@@ -1,6 +1,6 @@
 "use client";
 
-import { Activity, ReadingFile, ActivityData } from "@prisma/client";
+import { Activity, ReadingFile, ActivityData, Question } from "@prisma/client";
 import { useEffect, useState } from "react";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import { IDocument } from "@cyntler/react-doc-viewer";
@@ -12,10 +12,11 @@ type ReadingReportProps = {
   activity: Activity
   readingFiles: ReadingFile[]
   activityDatas: ActivityData[]
+  questions: Question[]
 }
 
 export default function ReadingReport(props: ReadingReportProps) {
-  console.log(props);
+  // console.log(props);
   const [ docs, setDocs ] = useState<{ uri: string }[]>([]);
   const [ activeDocument, setActiveDocument ] = useState<IDocument>();
   const [ columns, setColumns ] = useState<ColumnType[]>([{ title: "ID" }])
@@ -91,13 +92,18 @@ export default function ReadingReport(props: ReadingReportProps) {
     }
     
     // Get the column names
-    const numOfQuestions = props.activityDatas[0]?.answers.length || 0;
-    const columnNames = Array.from({ length: numOfQuestions }, (_, i) => `Q${i + 1}`);
-    setColumns([{ title: "ID" }, ...columnNames.map((name) => ({ title: name }))]);
+    const columnNames = props.questions.map((question) => ({title: `Q${question.index} (${question.pts})`}));
+    setColumns([{ title: "ID" }, { title: "Score" }, ...columnNames]);
 
     // Get the table data
     const newTableData = props.activityDatas.map((activityData) => {
-      return [activityData.id.split('-')[0], ...activityData.answers];
+
+      // Match student answers to the question answers to mark which questions were correct
+      const questionScores = activityData.answers.map((answer, index) => {
+        return Number(answer == props.questions[index]?.answer);
+      });
+
+      return [activityData.id.split('-')[0], activityData.score, ...questionScores];
     });
     setTableData(newTableData);
 

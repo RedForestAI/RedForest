@@ -27,6 +27,12 @@ const activity = await api.activity.getOne.query({
 const activityDatas = await api.activityData.getMany.query({
   activityId: params.activityId,
 });
+const questions = await api.question.getMany.query({
+  activityId: params.activityId,
+});
+
+// Sort questions by index
+questions.sort((a, b) => a.index - b.index);
 
 const getReport = async (activity: any) => {
   
@@ -49,6 +55,7 @@ const getReport = async (activity: any) => {
         activityDatas: activityDatas,
         activity: activity,
         readingFiles: files,
+        questions: questions
       }
 
       return <ReadingReport {...data}/>;

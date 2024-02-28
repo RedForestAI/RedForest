@@ -10,7 +10,7 @@ type TableProps = {
 export default function Table(props: TableProps) {
   return (
   <div className="">
-    <table className="table table-xs table-pin-rows table-pin-cols">
+    <table className="table table-zebra table-xs table-pin-rows table-pin-cols">
       <thead>
         <tr>
           <th>
