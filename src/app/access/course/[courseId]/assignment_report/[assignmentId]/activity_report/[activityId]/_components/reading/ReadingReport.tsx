@@ -93,7 +93,7 @@ export default function ReadingReport(props: ReadingReportProps) {
     
     // Get the column names
     const columnNames = props.questions.map((question) => ({title: `Q${question.index} (${question.pts})`}));
-    setColumns([{ title: "ID" }, { title: "Score" }, ...columnNames]);
+    setColumns([{ title: "ID" }, { title: "Complete" }, { title: "Score" }, ...columnNames]);
 
     // Get the table data
     const newTableData = props.activityDatas.map((activityData) => {
@@ -103,7 +103,7 @@ export default function ReadingReport(props: ReadingReportProps) {
         return Number(answer == props.questions[index]?.answer);
       });
 
-      return [activityData.id.split('-')[0], activityData.score, ...questionScores];
+      return [activityData.id.split('-')[0], Number(activityData.completed), activityData.score, ...questionScores];
     });
     setTableData(newTableData);
 
