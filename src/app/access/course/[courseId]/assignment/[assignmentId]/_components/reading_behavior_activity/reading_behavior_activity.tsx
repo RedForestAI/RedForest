@@ -266,8 +266,8 @@ export default function BehaviorReadingActivity(props: ReadingActivityProps) {
               config={{
                 btnLayer: !inInstructions,
                 component: config[behaviorIndex]!.component,
+                activityDataId: props.activityData.id
               }}
-              activityDataId={props.activityData.id}
               activeDocument={activeDocument!}
               setActiveDocument={setActiveDocument}
             />

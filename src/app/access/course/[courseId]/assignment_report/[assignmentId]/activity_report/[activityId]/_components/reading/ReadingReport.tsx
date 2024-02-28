@@ -19,22 +19,9 @@ export default function ReadingReport(props: ReadingReportProps) {
   // console.log(props);
   const [ docs, setDocs ] = useState<{ uri: string }[]>([]);
   const [ activeDocument, setActiveDocument ] = useState<IDocument>();
-  const [ columns, setColumns ] = useState<ColumnType[]>([{ title: "ID" }])
+  const [ columns, setColumns ] = useState<ColumnType[]>([{ title: "ID" }, { title: "Complete" }, { title: "Score" }])
   const [ tableData, setTableData ] = useState<any[]>([])
   const supabase = createClientComponentClient();
-
-  // const columns = [
-  //   { title: "Name" },
-  //   { title: "Job" },
-  //   { title: "Company" },
-  //   { title: "Location" },
-  //   { title: "Last Login" },
-  //   { title: "Favorite Color" },
-  // ]
-  
-  // const data = [
-  //   ["Cy Ganderton", "Quality Control Specialist", "Littel, Schaden and Vandervort", "Canada", "12/16/2020", "Blue"],
-  // ]
 
   useEffect(() => {
     async function fetchPDFs() {
