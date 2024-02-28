@@ -178,31 +178,17 @@ export default function BehaviorReadingActivity(props: ReadingActivityProps) {
 
       // Create a path
       try {
-        // Upload
-        gazeLogger.upload(
-          createTracelogFile,
-          props.activity.id,
-          props.activityData.id,
-          `${session_fp}/gaze.csv`,
-        );
-        scrollLogger.upload(
-          createTracelogFile,
-          props.activity.id,
-          props.activityData.id,
-          `${session_fp}/scroll.csv`,
-        );
-        actionsLogger.upload(
-          createTracelogFile,
-          props.activity.id,
-          props.activityData.id,
-          `${session_fp}/actions.csv`,
-        );
-        mouseLogger.upload(
-          createTracelogFile,
-          props.activity.id,
-          props.activityData.id,
-          `${session_fp}/mouse.csv`,
-        );
+        // Iterate the loggers and upload the logs
+        const loggers = {'gaze': GazeLogger, 'scroll': ScrollLogger, 'actions': ActionsLogger, 'mouse': MouseLogger}
+        for (const [filename, logger] of Object.entries(loggers)) {
+          // @ts-ignore
+          logger.upload(
+            createTracelogFile,
+            props.activity.id,
+            props.activityData.id,
+            `${session_fp}/${filename}.csv`,
+          );
+        }
 
         // Meta data
         const meta_file = new Blob(
@@ -224,6 +210,7 @@ export default function BehaviorReadingActivity(props: ReadingActivityProps) {
         );
         const meta_filepath = `${session_fp}/meta.json`;
         const meta_result = await createTracelogFile.mutateAsync({
+          profileId: props.profile.id,
           activityId: props.activity.id,
           activityDataId: props.activityData.id,
           filepath: meta_filepath,

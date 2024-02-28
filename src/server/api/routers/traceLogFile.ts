@@ -5,6 +5,7 @@ export const traceLogFileRouter = createTRPCRouter({
   create: privateProcedure
     .input(
       z.object({
+        profileId: z.string(),
         activityDataId: z.string(),
         activityId: z.string(),
         filepath: z.string()
@@ -13,8 +14,9 @@ export const traceLogFileRouter = createTRPCRouter({
     .mutation(async ({ input, ctx }) => {
       return await ctx.db.traceLogFile.create({
         data: {
-          activityDataId: input.activityDataId,
+          profileId: input.profileId,
           activityId: input.activityId,
+          activityDataId: input.activityDataId,
           filepath: input.filepath
         }
       })
