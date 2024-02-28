@@ -20,7 +20,7 @@ import {
 import { api } from "~/trpc/react";
 
 import EyeTrackingController from "~/eyetracking/eye-tracking-controller";
-import PDFViewer from "./pdf-viewer";
+import PDFViewer from "~/components/pdf/pdf-viewer";
 import TaskDrawer from "./task-drawer";
 import Questions from "../question_activity/questions";
 import ActivityCompletion from "../activity-completion";

@@ -43,7 +43,7 @@
     "**/*.cjs",
     "**/*.mjs",
     ".next/types/**/*.ts",
-    "src/app/access/course/[courseId]/assignment/[assignmentId]/_components/reading_activity/pdf-viewer.tsx"
+    "src/components/pdf/pdf-viewer.tsx"
 , "scripts/createUsers.js"  ],
   "exclude": [
     "node_modules"

@@ -18,7 +18,7 @@ import {
 import { api } from "~/trpc/react";
 
 import EyeTrackingController from "~/eyetracking/eye-tracking-controller";
-import PDFViewer from "../reading_activity/pdf-viewer";
+import PDFViewer from "~/components/pdf/pdf-viewer";
 import { AOIEncoding } from "~/eyetracking/aoi-encoding";
 import InstructionsModal from "./instructions-modal";
 import {
