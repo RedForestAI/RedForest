@@ -121,11 +121,13 @@ export default function ReadingReport(props: ReadingReportProps) {
     ]);
 
     // Get the table data
+    let totalQuestionScores: any = []
     const newTableData = props.activityDatas.map((activityData) => {
       // Match student answers to the question answers to mark which questions were correct
       const questionScores = activityData.answers.map((answer, index) => {
         return Number(answer == props.questions[index]?.answer);
       });
+      totalQuestionScores.push(questionScores)
 
       return [
         activityData.id.split("-")[0],
@@ -135,17 +137,18 @@ export default function ReadingReport(props: ReadingReportProps) {
       ];
     });
 
+    // Set data for the trajectory plot
+    console.log(totalQuestionScores);
+
     // Default select all rows
     setSelectedId(newTableData.map((row) => row[0] as string));
     setTableData(newTableData);
   }, []);
 
-  useEffect(() => {
-    if (filesDownloaded) {
-      console.log(props.tracelogs);
-      console.log(traceBlobs);
-    }
-  }, [filesDownloaded]);
+  // useEffect(() => {
+  //   if (filesDownloaded) {
+  //   }
+  // }, [filesDownloaded]);
 
   return (
     <div className="flex w-full flex-row">

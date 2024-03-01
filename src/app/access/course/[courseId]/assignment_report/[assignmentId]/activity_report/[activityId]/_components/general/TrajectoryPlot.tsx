@@ -76,6 +76,7 @@ export default function TrajectoryPlot(props: TrajectoryPlotProps) {
   return (
     <ChartContainer>
       <XYChart
+        width={600}
         height={270}
         margin={{ left: 60, top: 35, bottom: 38, right: 27 }}
         xScale={{ type: "time" }}
