@@ -7,6 +7,7 @@ import { IDocument } from "@cyntler/react-doc-viewer";
 
 import Table, { ColumnType } from "./Table";
 import PDFViewer from "~/components/pdf/pdf-viewer";
+import LoadFilesProgress from "../general/LoadFilesProgress"
 
 type ReadingReportProps = {
   activity: Activity
@@ -121,6 +122,11 @@ export default function ReadingReport(props: ReadingReportProps) {
       <div className="w-1/2 mt-[4.5%] max-h-96 overflow-x-auto overflow-y-auto">
         <Table columns={columns} tableData={tableData} selectedId={selectedId} setSelectedId={setSelectedId} />
       </div>
+
+      <div>
+        <LoadFilesProgress />
+      </div>
+
     </div>
   )
 }
