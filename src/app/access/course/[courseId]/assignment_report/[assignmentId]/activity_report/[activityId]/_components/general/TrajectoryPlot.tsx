@@ -60,7 +60,10 @@ const TooltipContainer = styled.div`
 
 export type Line = {
   color: string;
-  data: any[];
+  data: {
+    x: any[],
+    y: any[]
+  };
 }
 
 type TrajectoryPlotProps = {

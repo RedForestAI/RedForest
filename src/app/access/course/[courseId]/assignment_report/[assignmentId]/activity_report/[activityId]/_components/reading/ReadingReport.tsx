@@ -15,6 +15,7 @@ import Table, { ColumnType } from "./Table";
 import PDFViewer from "~/components/pdf/pdf-viewer";
 import LoadFilesProgress from "../general/LoadFilesProgress";
 import TrajectoryPlot, { Line } from "../general/TrajectoryPlot";
+import { loadCSVData } from "~/utils/log_utils";
 
 type ReadingReportProps = {
   activity: Activity;
@@ -24,7 +25,7 @@ type ReadingReportProps = {
   tracelogs: TraceLogFile[];
 };
 
-const line = {
+const line: Line = {
   color: "#008561",
   data: {
     x: ['2018-03-01', '2018-04-01', '2018-05-01'],
@@ -32,12 +33,23 @@ const line = {
   }
 }
 
-const line2 = {
+const line2: Line = {
   color: "#080561",
   data: {
     x: ['2018-03-01', '2018-04-01', '2018-05-01'],
     y: [60, 66, 67]
   }
+}
+
+type Log = {
+  name: string;
+  contentType: string;
+  data: any;
+}
+
+type PerStudentData = {
+  id: string;
+  logs: {[key: string]: Log};
 }
 
 export default function ReadingReport(props: ReadingReportProps) {
@@ -50,8 +62,9 @@ export default function ReadingReport(props: ReadingReportProps) {
   ]);
   const [tableData, setTableData] = useState<any[]>([]);
   const [selectedId, setSelectedId] = useState<string[]>([]);
-  const [filesDownloaded, setFilesDownloaded] = useState<boolean>(true);
+  const [filesDownloaded, setFilesDownloaded] = useState<boolean>(false);
   const [traceBlobs, setTraceBlobs] = useState<Blob[]>([]);
+  const [perStudentData, setPerStudentData] = useState<PerStudentData[]>([]);
   const supabase = createClientComponentClient();
 
   useEffect(() => {
@@ -121,13 +134,11 @@ export default function ReadingReport(props: ReadingReportProps) {
     ]);
 
     // Get the table data
-    let totalQuestionScores: any = []
     const newTableData = props.activityDatas.map((activityData) => {
       // Match student answers to the question answers to mark which questions were correct
       const questionScores = activityData.answers.map((answer, index) => {
         return Number(answer == props.questions[index]?.answer);
       });
-      totalQuestionScores.push(questionScores)
 
       return [
         activityData.id.split("-")[0],
@@ -137,18 +148,80 @@ export default function ReadingReport(props: ReadingReportProps) {
       ];
     });
 
-    // Set data for the trajectory plot
-    console.log(totalQuestionScores);
-
     // Default select all rows
     setSelectedId(newTableData.map((row) => row[0] as string));
     setTableData(newTableData);
   }, []);
 
-  // useEffect(() => {
-  //   if (filesDownloaded) {
-  //   }
-  // }, [filesDownloaded]);
+  useEffect(() => {
+    if (filesDownloaded) {
+      async function processTraceLogs() {
+        
+        // First, parse the data and create per-student session logs 
+        const perStudentDatas: PerStudentData[] = [];
+        for (let i = 0; i < traceBlobs.length; i++) {
+          const blobMeta = props.tracelogs[i];
+          const blob = traceBlobs[i];
+          if (blobMeta == undefined || blob == undefined) {
+            return;
+          }
+
+          // Handle types of data
+          let perStudentData: PerStudentData | undefined = undefined;
+          switch (blob.type) {
+            case "application/json":
+              const jsonData = await blob.text();
+              const logs = JSON.parse(jsonData);
+              perStudentData = {
+                id: blobMeta.profileId,
+                logs: {
+                  "json": {
+                    name: blobMeta.filepath,
+                    contentType: blob.type,
+                    data: logs,
+                  }
+                },
+              };
+              break;
+
+            case "text/csv":
+              const data = await loadCSVData(blob);
+              perStudentData = {
+                id: blobMeta.profileId,
+                logs: {
+                  "csv": {
+                    name: blobMeta.filepath,
+                    contentType: blob.type,
+                    data: data,
+                  }
+                },
+              };
+              break;
+          }
+
+          // Combine the logs
+          if (perStudentData == undefined) {
+            return;
+          }
+
+          const existingData = perStudentDatas.find((data) => data.id == perStudentData!.id);
+          if (existingData) {
+            existingData.logs = {
+              ...existingData.logs,
+              ...perStudentData.logs,
+            };
+          } else {
+            perStudentDatas.push(perStudentData);
+          }
+        }
+
+        setPerStudentData(perStudentDatas);
+        console.log(perStudentDatas);
+      }
+
+      processTraceLogs();
+    }
+  }, [filesDownloaded]);
 
   return (
     <div className="flex w-full flex-row">

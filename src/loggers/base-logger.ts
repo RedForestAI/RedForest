@@ -1,4 +1,4 @@
-import { arrayToCsv } from "./log_utils";
+import { arrayToCsv } from "~/utils/log_utils";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 
 export default class BaseLogger {
