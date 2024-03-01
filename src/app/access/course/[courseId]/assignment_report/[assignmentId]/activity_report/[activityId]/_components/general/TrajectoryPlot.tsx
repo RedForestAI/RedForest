@@ -8,73 +8,6 @@ import {
   XYChart
 } from "@visx/xychart";
 
-const data1 = [
-  {
-    x: "2018-03-01",
-    y: 30
-  },
-  {
-    x: "2018-04-01",
-    y: 16
-  },
-  {
-    x: "2018-05-01",
-    y: 17
-  },
-  {
-    x: "2018-06-01",
-    y: 24
-  },
-  {
-    x: "2018-07-01",
-    y: 47
-  },
-  {
-    x: "2018-08-01",
-    y: 32
-  },
-  {
-    x: "2018-09-01",
-    y: 8
-  },
-  {
-    x: "2018-10-01",
-    y: 27
-  },
-  {
-    x: "2018-11-01",
-    y: 31
-  },
-  {
-    x: "2018-12-01",
-    y: 105
-  },
-  {
-    x: "2019-01-01",
-    y: 166
-  },
-  {
-    x: "2019-02-01",
-    y: 181
-  },
-  {
-    x: "2019-03-01",
-    y: 232
-  },
-  {
-    x: "2019-04-01",
-    y: 224
-  },
-  {
-    x: "2019-05-01",
-    y: 196
-  },
-  {
-    x: "2019-06-01",
-    y: 211
-  }
-];
-
 const tickLabelOffset = 10;
 
 const accessors = {
@@ -125,7 +58,21 @@ const TooltipContainer = styled.div`
   }
 `;
 
-export default function TrajectoryPlot() {
+export type Line = {
+  color: string;
+  data: any[];
+}
+
+type TrajectoryPlotProps = {
+  lines: any[];
+};
+
+export default function TrajectoryPlot(props: TrajectoryPlotProps) {
+  
+  function formatData(data: {x: any[], y: any[]}) {
+    return data.x.map((x, i) => ({ x, y: data.y[i] }));
+  }
+  
   return (
     <ChartContainer>
       <XYChart
@@ -138,9 +85,9 @@ export default function TrajectoryPlot() {
           columns={false}
           numTicks={4}
           lineStyle={{
-            stroke: "#e1e1e1",
+            stroke: "#c9c9c9",
             strokeLinecap: "round",
-            strokeWidth: 1
+            strokeWidth: 2
           }}
           strokeDasharray="0, 4"
         />
@@ -160,12 +107,18 @@ export default function TrajectoryPlot() {
           tickLabelProps={() => ({ dx: -10 })}
         />
 
-        <AnimatedLineSeries
-          stroke="#008561"
-          dataKey="primary_line"
-          data={data1}
-          {...accessors}
-        />
+        {props.lines.map((line, i) => {
+          return (
+            <AnimatedLineSeries
+              key={i}
+              stroke={line.color}
+              dataKey={i.toString()}
+              data={formatData(line.data)}
+              {...accessors}
+            />
+          );
+        })}
+
         <Tooltip
           snapTooltipToDatumX
           snapTooltipToDatumY
@@ -177,7 +130,7 @@ export default function TrajectoryPlot() {
           renderTooltip={({ tooltipData }) => {
             return (
               <TooltipContainer>
-                {Object.entries(tooltipData.datumByKey).map((lineDataArray) => {
+                {Object.entries(tooltipData?.datumByKey!).map((lineDataArray) => {
                   const [key, value] = lineDataArray;
 
                   return (

@@ -14,7 +14,7 @@ import { IDocument } from "@cyntler/react-doc-viewer";
 import Table, { ColumnType } from "./Table";
 import PDFViewer from "~/components/pdf/pdf-viewer";
 import LoadFilesProgress from "../general/LoadFilesProgress";
-import TrajectoryPlot, {DataPoint, Line} from "../general/TrajectoryPlot";
+import TrajectoryPlot, { Line } from "../general/TrajectoryPlot";
 
 type ReadingReportProps = {
   activity: Activity;
@@ -23,6 +23,22 @@ type ReadingReportProps = {
   questions: Question[];
   tracelogs: TraceLogFile[];
 };
+
+const line = {
+  color: "#008561",
+  data: {
+    x: ['2018-03-01', '2018-04-01', '2018-05-01'],
+    y: [30, 16, 17]
+  }
+}
+
+const line2 = {
+  color: "#080561",
+  data: {
+    x: ['2018-03-01', '2018-04-01', '2018-05-01'],
+    y: [60, 66, 67]
+  }
+}
 
 export default function ReadingReport(props: ReadingReportProps) {
   const [docs, setDocs] = useState<{ uri: string }[]>([]);
@@ -118,7 +134,7 @@ export default function ReadingReport(props: ReadingReportProps) {
         ...questionScores,
       ];
     });
-    
+
     // Default select all rows
     setSelectedId(newTableData.map((row) => row[0] as string));
     setTableData(newTableData);
@@ -129,7 +145,7 @@ export default function ReadingReport(props: ReadingReportProps) {
       console.log(props.tracelogs);
       console.log(traceBlobs);
     }
-  }, [filesDownloaded])
+  }, [filesDownloaded]);
 
   return (
     <div className="flex w-full flex-row">
@@ -146,7 +162,7 @@ export default function ReadingReport(props: ReadingReportProps) {
         />
       </div>
 
-      <div className="mt-[4.5%] flex w-1/2 flex-col gap-24 ml-4 mr-4">
+      <div className="ml-4 mr-4 mt-[4.5%] flex w-1/2 flex-col gap-24">
         <div className="max-h-96 overflow-x-auto overflow-y-auto">
           <Table
             columns={columns}
@@ -156,8 +172,8 @@ export default function ReadingReport(props: ReadingReportProps) {
           />
         </div>
 
-        {!filesDownloaded
-          ? <>
+        {!filesDownloaded ? (
+          <>
             <div>
               <LoadFilesProgress
                 tracelogs={props.tracelogs}
@@ -168,12 +184,13 @@ export default function ReadingReport(props: ReadingReportProps) {
               />
             </div>
           </>
-          : <>
+        ) : (
+          <>
             <div className="w-full">
-              <TrajectoryPlot />
+              <TrajectoryPlot lines={[line, line2]} />
             </div>
           </>
-        }
+        )}
       </div>
     </div>
   );
