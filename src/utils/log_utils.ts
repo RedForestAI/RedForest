@@ -28,3 +28,20 @@ export function loadCSVData(blob: Blob): Promise<string[][]> {
     reader.readAsText(blob);
   });
 }
+
+// Function to get the stem of a file from a filepath
+export function getFileStem(filePath: string): string {
+  // Split the filepath by '/' to get parts and take the last part as the filename
+  const fileName = filePath.split('/').pop() || '';
+  
+  // Split the filename by '.' to separate the extension if any
+  const parts = fileName.split('.');
+  
+  // If there's no extension, return the fileName
+  if(parts.length < 2) {
+    return fileName;
+  }
+
+  // Remove the last part (extension) and rejoin, handles filenames with multiple dots
+  return parts.slice(0, -1).join('.');
+}

@@ -15,7 +15,7 @@ import Table, { ColumnType } from "./Table";
 import PDFViewer from "~/components/pdf/pdf-viewer";
 import LoadFilesProgress from "../general/LoadFilesProgress";
 import TrajectoryPlot, { Line } from "../general/TrajectoryPlot";
-import { loadCSVData } from "~/utils/log_utils";
+import { loadCSVData, getFileStem } from "~/utils/log_utils";
 
 type ReadingReportProps = {
   activity: Activity;
@@ -168,33 +168,28 @@ export default function ReadingReport(props: ReadingReportProps) {
 
           // Handle types of data
           let perStudentData: PerStudentData | undefined = undefined;
+          let stem: string = '';
+          let logData = {};
+
           switch (blob.type) {
             case "application/json":
               const jsonData = await blob.text();
               const logs = JSON.parse(jsonData);
+              stem = getFileStem(blobMeta.filepath)
+              logData = { [stem]: logs }
               perStudentData = {
                 id: blobMeta.profileId,
-                logs: {
-                  "json": {
-                    name: blobMeta.filepath,
-                    contentType: blob.type,
-                    data: logs,
-                  }
-                },
+                logs: logData
               };
               break;
 
             case "text/csv":
               const data = await loadCSVData(blob);
+              stem = getFileStem(blobMeta.filepath)
+              logData = { [stem]: data }
               perStudentData = {
                 id: blobMeta.profileId,
-                logs: {
-                  "csv": {
-                    name: blobMeta.filepath,
-                    contentType: blob.type,
-                    data: data,
-                  }
-                },
+                logs: logData
               };
               break;
           }
