@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 
 export type ColumnType = {
   title: string
@@ -14,6 +14,15 @@ type TableProps = {
 export default function Table(props: TableProps) {
   const [selectAll, setSelectAll] = useState<boolean>(false)
 
+  useEffect(() => {
+    if (props.selectedId.length === props.tableData.length) {
+      setSelectAll(true)
+    }
+    else {
+      setSelectAll(false)
+    }
+  }, [props.selectedId])
+
   function changeSelect(e: any, id: string) {
     const checked = e.target.checked
     if (checked) {
@@ -22,12 +31,6 @@ export default function Table(props: TableProps) {
       props.setSelectedId(props.selectedId.filter((selectedId) => selectedId !== id))
     }
 
-    if (checked && props.selectedId.length+1 === props.tableData.length) {
-      setSelectAll(true)
-    }
-    else {
-      setSelectAll(false)
-    }
   }
 
   function changeAll(e: any) {
