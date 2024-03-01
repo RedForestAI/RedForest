@@ -22,6 +22,9 @@ export default function LoadFilesProgress(props: LoadFilesProgressProps) {
       if (props.tracelogs == undefined || props.tracelogs.length == 0) {
         return;
       }
+      if (props.filesDownloaded) {
+        return;
+      }
 
       for (let i = 0; i < props.tracelogs.length; i++) {
         const filepath = props.tracelogs[i]?.filepath;

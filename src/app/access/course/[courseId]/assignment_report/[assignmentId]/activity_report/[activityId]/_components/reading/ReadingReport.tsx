@@ -14,6 +14,7 @@ import { IDocument } from "@cyntler/react-doc-viewer";
 import Table, { ColumnType } from "./Table";
 import PDFViewer from "~/components/pdf/pdf-viewer";
 import LoadFilesProgress from "../general/LoadFilesProgress";
+import TrajectoryPlot, {DataPoint, Line} from "../general/TrajectoryPlot";
 
 type ReadingReportProps = {
   activity: Activity;
@@ -33,7 +34,7 @@ export default function ReadingReport(props: ReadingReportProps) {
   ]);
   const [tableData, setTableData] = useState<any[]>([]);
   const [selectedId, setSelectedId] = useState<string[]>([]);
-  const [filesDownloaded, setFilesDownloaded] = useState<boolean>(false);
+  const [filesDownloaded, setFilesDownloaded] = useState<boolean>(true);
   const [traceBlobs, setTraceBlobs] = useState<Blob[]>([]);
   const supabase = createClientComponentClient();
 
@@ -123,6 +124,13 @@ export default function ReadingReport(props: ReadingReportProps) {
     setTableData(newTableData);
   }, []);
 
+  useEffect(() => {
+    if (filesDownloaded) {
+      console.log(props.tracelogs);
+      console.log(traceBlobs);
+    }
+  }, [filesDownloaded])
+
   return (
     <div className="flex w-full flex-row">
       <div className="max-h-[90vh] w-1/2 overflow-y-auto">
@@ -138,7 +146,7 @@ export default function ReadingReport(props: ReadingReportProps) {
         />
       </div>
 
-      <div className="mt-[4.5%] flex w-1/2 flex-col gap-24">
+      <div className="mt-[4.5%] flex w-1/2 flex-col gap-24 ml-4 mr-4">
         <div className="max-h-96 overflow-x-auto overflow-y-auto">
           <Table
             columns={columns}
@@ -148,16 +156,23 @@ export default function ReadingReport(props: ReadingReportProps) {
           />
         </div>
 
-        {!filesDownloaded &&
-        <div>
-          <LoadFilesProgress
-            tracelogs={props.tracelogs}
-            traceBlobs={traceBlobs}
-            setTraceBlobs={setTraceBlobs}
-            filesDownloaded={filesDownloaded}
-            setFilesDownloaded={setFilesDownloaded}
-          />
-        </div>
+        {!filesDownloaded
+          ? <>
+            <div>
+              <LoadFilesProgress
+                tracelogs={props.tracelogs}
+                traceBlobs={traceBlobs}
+                setTraceBlobs={setTraceBlobs}
+                filesDownloaded={filesDownloaded}
+                setFilesDownloaded={setFilesDownloaded}
+              />
+            </div>
+          </>
+          : <>
+            <div className="w-full">
+              <TrajectoryPlot />
+            </div>
+          </>
         }
       </div>
     </div>
