@@ -16,6 +16,8 @@ import PDFViewer from "~/components/pdf/pdf-viewer";
 import LoadFilesProgress from "../general/LoadFilesProgress";
 import TrajectoryPlot, { Line } from "../general/TrajectoryPlot";
 import { loadCSVData, getFileStem } from "~/utils/log_utils";
+import { PerStudentData } from "./types";
+import LogProcessing from "./FileProcessing";
 
 type ReadingReportProps = {
   activity: Activity;
@@ -39,17 +41,6 @@ const line2: Line = {
     x: ['2018-03-01', '2018-04-01', '2018-05-01'],
     y: [60, 66, 67]
   }
-}
-
-type Log = {
-  name: string;
-  contentType: string;
-  data: any;
-}
-
-type PerStudentData = {
-  id: string;
-  logs: {[key: string]: Log};
 }
 
 export default function ReadingReport(props: ReadingReportProps) {
@@ -210,13 +201,28 @@ export default function ReadingReport(props: ReadingReportProps) {
           }
         }
 
-        setPerStudentData(perStudentDatas);
-        console.log(perStudentDatas);
+        // Process the data
+        LogProcessing(
+          { 
+            perStudentDatas: perStudentDatas, 
+            setPerStudentData: setPerStudentData 
+          }
+        );
       }
 
       processTraceLogs();
     }
   }, [filesDownloaded]);
+
+  useEffect(() => {
+    // If the perStudentData is not empty, process the data
+    if (perStudentData.length == 0) {
+      return;
+    }
+
+    // Provide data for the plots
+
+  }, [perStudentData])
 
   return (
     <div className="flex w-full flex-row">
