@@ -55,7 +55,7 @@ export default function ReadingReport(props: ReadingReportProps) {
   const [selectedId, setSelectedId] = useState<string[]>([]);
   const [filesDownloaded, setFilesDownloaded] = useState<boolean>(false);
   const [traceBlobs, setTraceBlobs] = useState<Blob[]>([]);
-  const [perStudentData, setPerStudentData] = useState<PerStudentData[]>([]);
+  const [perStudentData, setPerStudentData] = useState<{[key: string]: PerStudentData}>({});
   const supabase = createClientComponentClient();
 
   useEffect(() => {
@@ -149,7 +149,7 @@ export default function ReadingReport(props: ReadingReportProps) {
       async function processTraceLogs() {
         
         // First, parse the data and create per-student session logs 
-        const perStudentDatas: PerStudentData[] = [];
+        const perStudentDatas: { [key: string]: PerStudentData } = {};
         for (let i = 0; i < traceBlobs.length; i++) {
           const blobMeta = props.tracelogs[i];
           const blob = traceBlobs[i];
@@ -190,14 +190,14 @@ export default function ReadingReport(props: ReadingReportProps) {
             return;
           }
 
-          const existingData = perStudentDatas.find((data) => data.id == perStudentData!.id);
+          const existingData = perStudentDatas[perStudentData.id]
           if (existingData) {
             existingData.logs = {
               ...existingData.logs,
               ...perStudentData.logs,
             };
           } else {
-            perStudentDatas.push(perStudentData);
+            perStudentDatas[perStudentData.id] = perStudentData;
           }
         }
 
@@ -216,9 +216,9 @@ export default function ReadingReport(props: ReadingReportProps) {
 
   useEffect(() => {
     // If the perStudentData is not empty, process the data
-    if (perStudentData.length == 0) {
-      return;
-    }
+    // if (perStudentData.length == 0) {
+    //   return;
+    // }
 
     // Provide data for the plots
 
