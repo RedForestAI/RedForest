@@ -14,6 +14,7 @@ import Table, { ColumnType } from "./Table";
 import PDFViewer from "~/components/pdf/pdf-viewer";
 import LoadFilesProgress from "../general/LoadFilesProgress";
 import TrajectoryPlot from "../general/TrajectoryPlot";
+import HeatMapOverlay from "./HeatmapOverlay"
 import { loadCSVData, getFileStem } from "~/utils/log_utils";
 import { PerStudentData } from "../types";
 // import LogProcessing from "./FileProcessing";
@@ -199,16 +200,6 @@ export default function ReadingReport(props: ReadingReportProps) {
     }
   }, [filesDownloaded]);
 
-  useEffect(() => {
-    // If the perStudentData is empty, skip
-    if (Object.keys(perStudentDatas).length == 0) {
-      return;
-    }
-    
-    // Provide data for the plots
-
-  }, [perStudentDatas])
-
   return (
     <div className="flex w-full flex-row">
       <div className="max-h-[90vh] w-1/2 overflow-y-auto">
@@ -221,7 +212,9 @@ export default function ReadingReport(props: ReadingReportProps) {
             defaultWidth: 100,
             supportZoom: false,
           }}
-        />
+        >
+          <HeatMapOverlay />
+        </PDFViewer>
       </div>
 
       <div className="ml-4 mr-4 mt-[4.5%] flex w-1/2 flex-col gap-24">

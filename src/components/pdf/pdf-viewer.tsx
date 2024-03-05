@@ -27,6 +27,7 @@ type PDFViewerProps = {
   files: ReadingFile[];
   activeDocument: IDocument;
   setActiveDocument: any;
+  children?: any;
 
   config?: {
     // General
@@ -99,6 +100,15 @@ export default function PDFViewer(props: PDFViewerProps) {
 
   // Nav
   const setMiddleNavBarContent = useContext(useMiddleNavBarContext);
+
+  function renderChildren(children: any, page: Element, index: number) {
+    return React.Children.map(children, (child: any) => {
+      return React.cloneElement(child, {
+        page: page,
+        index: index,
+      });
+    })
+  }
 
   const docViewer = useMemo(() => {
     // Required to force the viewer to re-render when the active document changes
@@ -685,6 +695,17 @@ export default function PDFViewer(props: PDFViewerProps) {
               ))}
             </>
           }
+
+          {props.children &&
+            <>
+              {pages.map((page, index) => (
+                <>
+                  {renderChildren(props.children, page, index)}
+                </>
+              ))}
+            </>
+          }
+
         </>
       )}
 
