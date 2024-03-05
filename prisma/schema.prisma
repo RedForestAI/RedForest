@@ -130,9 +130,11 @@ model ActivityData {
   id                String      @id @default(uuid()) @db.Uuid
   createdAt         DateTime    @default(now())
   startedAt         DateTime?
+  profileId         String      @db.Uuid @default(uuid())
 
   answers           Int[]
   answersAt         DateTime[]
+  answersTrace      Json[]      // { index: Number, elapsedTime: Number, correct: Boolean, pts: Number, accumulativeScore: Number }[]
   currentQuestionId Int         @default(0)
 
   completed         Boolean     @default(false)
