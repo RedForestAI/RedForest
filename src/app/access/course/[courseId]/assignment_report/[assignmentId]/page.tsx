@@ -4,12 +4,7 @@ import NavBar from "~/components/ui/navbar";
 import { Question, Role } from "@prisma/client";
 import { api } from "~/trpc/server";
 import ActivityColumn from "./_components/ActivityColumn";
-import AssignmentCompletePieChart from "./_components/AssignmentCompletePie";
-
-interface Datum {
-  label: string;
-  value: number;
-}
+import AssignmentCompletePieChart, { Datum } from "./_components/AssignmentCompletePie";
 
 export default async function Page({
   params,
@@ -66,9 +61,9 @@ if (profile.role == Role.TEACHER) {
 
   // Dummy data
   data = [
-    { label: "Completed", value: (completed/total)*100 },
-    { label: "Started", value: (started/total)*100 },
-    { label: "Yet to Begin", value: (yetToBegin/total)*100 },
+    { index: 0, label: "Completed", value: (completed/total)*100 },
+    { index: 1, label: "Started", value: (started/total)*100 },
+    { index: 2, label: "Yet to Begin", value: (yetToBegin/total)*100 },
   ];
 }
 
@@ -85,7 +80,7 @@ return (
     <div className="flex flex-col items-stretch justify-center px-5 py-11 pl-12 pr-12 max-md:px-5">
 
       {profile.role == Role.TEACHER &&
-        <div className="w-full justify-center items-center flex flex-col pb-6">
+        <div className="w-full justify-center items-center flex flex-col pb-6" style={{width: "100vw", height: "40vh"}}>
           <h1 className="text-3xl text-center">Assignment Completion</h1>
           <AssignmentCompletePieChart data={data}/>
         </div>

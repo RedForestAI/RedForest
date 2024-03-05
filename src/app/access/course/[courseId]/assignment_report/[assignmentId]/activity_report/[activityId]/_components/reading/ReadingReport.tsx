@@ -13,7 +13,7 @@ import { IDocument } from "@cyntler/react-doc-viewer";
 import Table, { ColumnType } from "./Table";
 import PDFViewer from "~/components/pdf/pdf-viewer";
 import LoadFilesProgress from "../general/LoadFilesProgress";
-import TrajectoryPlot, { Line } from "../general/TrajectoryPlot";
+import TrajectoryPlot from "../general/TrajectoryPlot";
 import { loadCSVData, getFileStem } from "~/utils/log_utils";
 import { PerStudentData } from "../types";
 // import LogProcessing from "./FileProcessing";
@@ -248,7 +248,7 @@ export default function ReadingReport(props: ReadingReportProps) {
           </>
         ) : (
           <>
-            <div className="w-full">
+            <div style={{width: "100%", height: "30vh"}}>
               <TrajectoryPlot perStudentDatas={perStudentDatas} activityDatas={props.activityDatas} />
             </div>
           </>
