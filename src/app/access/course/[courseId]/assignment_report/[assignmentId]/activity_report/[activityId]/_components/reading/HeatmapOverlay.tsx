@@ -13,6 +13,7 @@ type DataPoint = {
 }
 
 const OPACITY = 0.1;
+const RATIO = 0.05
 
 function generateMockData(numberOfPoints = 10, width = 600, height = 400): DataPoint[] {
   const data = Array.from({ length: numberOfPoints }, () => ({
@@ -58,7 +59,8 @@ export default function HeatmapOverlay(props: HeatmapOverlayProps) {
       .x((d: any) => d.x)
       .y((d: any) => d.y)
       .size([width,height]) // Width x Height
-      .bandwidth(10) // Adjust as needed
+      .bandwidth(width*RATIO) // Adjust as needed
+      // @ts-ignore
       (data);
 
     // Determine max value
@@ -67,6 +69,7 @@ export default function HeatmapOverlay(props: HeatmapOverlayProps) {
     // Create a color scale
     const color = d3.scaleLinear()
       .domain([0,maxValue])
+      // @ts-ignore
       .range([`rgba(0,0,255,${OPACITY})`, `rgba(255,0,0,${OPACITY})`])
 
     // Show the shape
