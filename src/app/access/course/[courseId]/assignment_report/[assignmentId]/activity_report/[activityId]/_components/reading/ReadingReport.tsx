@@ -203,14 +203,15 @@ export default function ReadingReport(props: ReadingReportProps) {
         }
 
         // Process the data
-        LogProcessing(
-          { 
-            questions: props.questions,
-            perStudentDatas: loadingPerStudentDatas,
-            activityDatas: props.activityDatas, 
-            setPerStudentData: setPerStudentDatas 
-          }
-        );
+        console.log(props.activityDatas)
+        // LogProcessing(
+        //   { 
+        //     questions: props.questions,
+        //     perStudentDatas: loadingPerStudentDatas,
+        //     activityDatas: props.activityDatas, 
+        //     setPerStudentData: setPerStudentDatas 
+        //   }
+        // );
       }
 
       processTraceLogs();
