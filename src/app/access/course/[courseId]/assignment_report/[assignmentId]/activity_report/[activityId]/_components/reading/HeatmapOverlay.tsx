@@ -7,7 +7,14 @@ type HeatmapOverlayProps = {
   page?: Element;
 }
 
-function generateMockData(numberOfPoints = 10, width = 600, height = 400) {
+type DataPoint = {
+  x: number;
+  y: number;
+}
+
+const OPACITY = 0.1;
+
+function generateMockData(numberOfPoints = 10, width = 600, height = 400): DataPoint[] {
   const data = Array.from({ length: numberOfPoints }, () => ({
     x: Math.random() * width,
     y: Math.random() * height,
@@ -20,7 +27,7 @@ export default function HeatmapOverlay(props: HeatmapOverlayProps) {
   if (!props.page) return null
 
   const svgRef = useRef(null);
-  const [data, setData] = useState(null);
+  const [data, setData] = useState<DataPoint[]>([]);
 
   useEffect(() => {
     if (!props.page) return
@@ -32,7 +39,7 @@ export default function HeatmapOverlay(props: HeatmapOverlayProps) {
   }, [props.page]);
 
   useEffect(() => {
-    if (!props.page || (data == null)) return
+    if (!props.page || (data.length == 0)) return
     // Get the height and width of the page
     const height = props.page.clientHeight;
     const width = props.page.clientWidth;
@@ -46,18 +53,21 @@ export default function HeatmapOverlay(props: HeatmapOverlayProps) {
     // const colorScale = d3.scaleSequential(d3.interpolateInferno)
     //   .domain(d3.extent(data, (d: any) => d.value));
 
-    // Create a color scale
-    const color = d3.scaleLinear()
-      .domain([0,1])
-      .range(["rgba(0,255,0,1)", "rgba(0,0,255,1)"])
-
     // Compute the density data
     const densityData = d3.contourDensity()
       .x((d: any) => d.x)
       .y((d: any) => d.y)
       .size([width,height]) // Width x Height
-      .bandwidth(5) // Adjust as needed
+      .bandwidth(10) // Adjust as needed
       (data);
+
+    // Determine max value
+    const maxValue = d3.max(densityData, (d: any) => d.value);
+    
+    // Create a color scale
+    const color = d3.scaleLinear()
+      .domain([0,maxValue])
+      .range([`rgba(0,0,255,${OPACITY})`, `rgba(255,0,0,${OPACITY})`])
 
     // Show the shape
     svg.insert("g", "g")
