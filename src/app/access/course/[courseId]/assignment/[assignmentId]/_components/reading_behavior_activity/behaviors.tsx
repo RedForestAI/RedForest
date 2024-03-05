@@ -105,12 +105,6 @@ export function Skimming(props: BehaviorProps) {
         <div className="modal-box">
           <h3 className={modalStyle.header}>Behavior 2: Skimming</h3>
           <div className={modalStyle.paragraph}>
-            {/* In this behavior, you will be skimming a part of the text, you will only be reading the {" "}
-            <span className="bg-green-500 text-white">green</span> sections. To start, click the {" "}
-            <span className="bg-red-500 text-white">first word</span>, then {" "}
-            read and click the {" "}
-            <span className="bg-green-500 text-white">green</span> parts to mark as complete. To finish, click on the {" "}
-            <span className="bg-red-500 text-white">last word</span>. */}
             <p className="underline pb-4" style={{fontWeight: "bold"}}>Read SKIMMING- like you are quickly skimming for important information!</p>
             <p className="pb-4">Just read the <span style={{fontWeight: "bold"}}>black </span>text (not <span className="text-gray-500">grey</span>).</p>
             <p>
@@ -134,7 +128,7 @@ export function Skimming(props: BehaviorProps) {
         className="absolute left-[14%] top-[34%] h-[2.5%] w-[8%] cursor-pointer bg-red-500 opacity-50"
         onClick={() => {
           setStarted(true);
-          triggerActionLog({ type: "behaviorEvent", value: { action: "end", type: "skimming" } });
+          triggerActionLog({ type: "behaviorEvent", value: { action: "start", type: "skimming" } });
         }}
       ></div>
 
@@ -191,16 +185,18 @@ export function Deep(props: BehaviorProps) {
       
       <dialog id="deep_instructions" className="modal">
         <div className="modal-box">
-          <h3 className={modalStyle.header}>Slow Reading Behavior</h3>
-          <p className={modalStyle.paragraph}>
-            For this behavior, read the {" "}
-            <span className="underline">underlined sentences</span> slowly word-per-word. {" "} 
-            Click on the {" "}
-            <span className="bg-red-500 text-white">first word</span> when
-            you start and the {" "} 
-            <span className="bg-red-500 text-white">last word</span> {" "}
-            when you finish.{" "}
-          </p>
+          <h3 className={modalStyle.header}>Behavior 3: Slow Reading</h3>
+          <div className={modalStyle.paragraph}>
+            <p className="underline pb-4" style={{fontWeight: "bold"}}>Read CAREFULLY and SLOWLY– like you are figuring out a hard part of the text that is confusing!</p>
+            <p className="pb-4">Just read the <span style={{fontWeight: "bold"}}>black </span>text (not <span className="text-gray-500">grey</span>) </p>
+            <p>
+              Got it? Click on the {" "}
+              <span className="bg-red-500 text-white">first word</span> {" "}
+              to start and the {" "} 
+              <span className="bg-red-500 text-white">last word</span>{" "}
+              to finish.
+            </p>
+          </div>
           <div className="modal-action">
             <form method="dialog">
               <button className="btn">Start</button>
@@ -226,14 +222,14 @@ export function Deep(props: BehaviorProps) {
   );
 }
 
-export function ReReading(props: BehaviorProps) {
+export function Tracking(props: BehaviorProps) {
   if (props.config?.pageNumber != 1) return null;
   const [started, setStarted] = useState<boolean>(false);
   const [finishedReading, setFinishedReading] = useState<boolean>(false);
   const [counter, setCounter] = useState<number>(0);
 
   function complete() {
-    triggerActionLog({ type: "behaviorEvent", value: { action: "end", type: "rereading" } });
+    triggerActionLog({ type: "behaviorEvent", value: { action: "end", type: "tracking" } });
     if (props.behaviorIndex + 1 === props.totalBehaviors) {
       props.setComplete(true);
     } else {
@@ -243,43 +239,27 @@ export function ReReading(props: BehaviorProps) {
 
   useEffect(() => {
     // @ts-ignore
-    document.getElementById("rereading_instructions").showModal();
+    document.getElementById("tracking_instructions").showModal();
   }, []);
-
-  function hide(elementString: string) {
-    if (!started || !finishedReading) {
-      alert("You need to start the activity first and finish reading the paragraph, by clicking on the first and last red word.");
-      return;  
-    }
-    triggerActionLog({ type: "behaviorEvent", value: { action: "clickedOn", type: "rereading", id: elementString } });
-    const element = document.getElementById(elementString);
-    if (element) {
-      element.style.display = "none";
-      setCounter(counter + 1);
-      if (counter === 2) {
-        complete();
-        triggerActionLog({ type: "behaviorEvent", value: { action: "end", type: "rereading" } });
-      }
-    }
-  }
 
   return (
     <>
       <>
         {/* Instructions */}
-        <dialog id="rereading_instructions" className="modal">
+        <dialog id="tracking_instructions" className="modal">
           <div className="modal-box">
-            <h3 className={modalStyle.header}>Re-Reading Behavior</h3>
-            <p className={modalStyle.paragraph}>
-              For this behavior, you are going to read a section of the text and then re-read {" "}
-              <span className="bg-green-500 text-white">green</span> sections. Click at the {" "}
-              <span className="bg-red-500 text-white">first word</span> when
-              you start and the {" "} 
-              <span className="bg-red-500 text-white">last word</span> {" "}
-              when you finish.{" "}
-              Then re-read and click the parts of the text in {" "}
-              <span className="bg-green-500 text-white">green</span>.
-            </p>
+            <h3 className={modalStyle.header}>Behavior 4: Tracking</h3>
+            <div className={modalStyle.paragraph}>
+              <p className="underline pb-4" style={{fontWeight: "bold"}}>Read TRACKING– like you are showing the computer where you are reading. Use the mouse to point to what word you are reading. You can also read it out loud.</p>
+              <p className="pb-4">Just read the <span style={{fontWeight: "bold"}}>black </span>text (not <span className="text-gray-500">grey</span>).</p>
+              <p>
+                Got it? Click on the {" "}
+                <span className="bg-red-500 text-white">first word</span> {" "}
+                to start and the {" "} 
+                <span className="bg-red-500 text-white">last word</span>{" "}
+                to finish.
+              </p>
+            </div>
             <div className="modal-action">
               <form method="dialog">
                 <button className="btn">Start</button>
@@ -289,46 +269,22 @@ export function ReReading(props: BehaviorProps) {
         </dialog>
 
         <div
-          className="absolute left-[14%] top-[62%] h-[2.5%] w-[10.5%] cursor-pointer bg-red-500 opacity-50"
+          className="absolute left-[14%] top-[72%] h-[2.5%] w-[5%] cursor-pointer bg-red-500 opacity-50"
           onClick={() => {
             setStarted(true);
-            triggerActionLog({ type: "behaviorEvent", value: { action: "start", type: "rereading" } });
+            triggerActionLog({ type: "behaviorEvent", value: { action: "start", type: "tracking" } });
           }}
         ></div>
         
         <div
-          id="rereading_area_1"
-          className="absolute left-[14%] top-[64.5%] h-[3%] w-[10%] cursor-pointer bg-green-500 opacity-50"
-          onClick={() => {
-            hide("rereading_area_1")
-          }}
-        ></div>
-
-        <div
-          id="rereading_area_2"
-          className="absolute left-[34%] top-[72%] h-[3%] w-[22%] cursor-pointer bg-green-500 opacity-50"
-          onClick={() => {
-            hide("rereading_area_2")
-          }}
-        ></div>
-
-        <div
-          id="rereading_area_3"
-          className="absolute left-[14%] top-[81.5%] h-[3%] w-[47%] cursor-pointer bg-green-500 opacity-50"
-          onClick={() => {
-            hide("rereading_area_3")
-          }}
-        ></div>
-          
-        <div
-          className="absolute left-[50%] top-[87%] h-[2.5%] w-[10%] cursor-pointer bg-red-500 opacity-50"
+          className="absolute left-[50%] top-[86.5%] h-[2.5%] w-[11%] cursor-pointer bg-red-500 opacity-50"
           onClick={() => {
             if (!started) {
               alert("You need to start the activity first. Click on the first red word.");
               return;
             }
-            setFinishedReading(true);
-            triggerActionLog({ type: "behaviorEvent", value: { action: "finishedReading", type: "rereading" } });
+            complete()
+            triggerActionLog({ type: "behaviorEvent", value: { action: "finishedReading", type: "tracking" } });
           }}
         ></div>
       </>

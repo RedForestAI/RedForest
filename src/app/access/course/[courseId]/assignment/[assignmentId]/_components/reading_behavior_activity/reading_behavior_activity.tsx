@@ -21,7 +21,7 @@ import EyeTrackingController from "~/eyetracking/eye-tracking-controller";
 import PDFViewer from "~/components/pdf/pdf-viewer";
 import { AOIEncoding } from "~/eyetracking/aoi-encoding";
 import InstructionsModal from "./instructions-modal";
-import { Linear, Skimming, Deep, ReReading } from "./behaviors";
+import { Linear, Skimming, Deep, Tracking} from "./behaviors";
 import ActivityCompletion from "../activity-completion";
 
 import BaseLogger from "~/loggers/base-logger";
@@ -31,7 +31,7 @@ import ActionsLogger from "~/loggers/actions-logger";
 import MouseLogger from "~/loggers/mouse-logger";
 
 type BehaviorConfig = {
-  name: "REGULAR" | "SKIMMING" | "SLOW" | "REREAD";
+  name: "REGULAR" | "SKIMMING" | "SLOW" | "TRACKING";
   component: React.ReactElement;
 };
 
@@ -65,8 +65,8 @@ export default function BehaviorReadingActivity(props: ReadingActivityProps) {
     { uri: "/pdfs/mummy_behavior_4.pdf" },
   ]);
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
-  const [inInstructions, setInInstructions] = useState<boolean>(false);
-  const [behaviorIndex, setBehaviorIndex] = useState<number>(1);
+  const [inInstructions, setInInstructions] = useState<boolean>(true);
+  const [behaviorIndex, setBehaviorIndex] = useState<number>(0);
   const [runningET, setRunningET] = useState<boolean>(false);
 
   const createTracelogFile = api.traceLogFile.create.useMutation();
@@ -108,9 +108,9 @@ export default function BehaviorReadingActivity(props: ReadingActivityProps) {
       ),
     },
     {
-      name: "REREAD",
+      name: "TRACKING",
       component: (
-        <ReReading
+        <Tracking
           behaviorIndex={behaviorIndex}
           setBehaviorIndex={setBehaviorIndex}
           totalBehaviors={4}

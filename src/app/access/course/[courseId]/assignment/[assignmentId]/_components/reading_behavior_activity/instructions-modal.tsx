@@ -68,7 +68,7 @@ export default function InstructionsModal(props: InstructionsModalProps) {
       <div className="fixed left-0 top-[10%] z-[70] h-full w-full">
         <div className="m-auto h-[60%] w-[70%]">
           <div className="flex flex-col h-full items-center bg-base-100 border border-neutral rounded-2xl overflow-hidden p-4">
-            <h1 className="pb-4 text-2xl text-5xl font-bold">Learning to Read</h1>
+            <h1 className="pb-4 text-2xl text-5xl font-bold">Learning How You Read</h1>
             
             {/* <YouTube opts={opts} videoId="YR6HecNZg10" /> */}
             <div className="player-wrapper">
