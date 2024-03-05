@@ -21,7 +21,7 @@ import EyeTrackingController from "~/eyetracking/eye-tracking-controller";
 import PDFViewer from "~/components/pdf/pdf-viewer";
 import { AOIEncoding } from "~/eyetracking/aoi-encoding";
 import InstructionsModal from "./instructions-modal";
-import { Linear, Skimming, Deep, ReReading } from "./behaviors";
+import { Linear, Skimming, Deep, Tracking} from "./behaviors";
 import ActivityCompletion from "../activity-completion";
 
 import BaseLogger from "~/loggers/base-logger";
@@ -31,7 +31,7 @@ import ActionsLogger from "~/loggers/actions-logger";
 import MouseLogger from "~/loggers/mouse-logger";
 
 type BehaviorConfig = {
-  name: "REGULAR" | "SKIMMING" | "SLOW" | "REREAD";
+  name: "REGULAR" | "SKIMMING" | "SLOW" | "TRACKING";
   component: React.ReactElement;
 };
 
@@ -59,7 +59,10 @@ export default function BehaviorReadingActivity(props: ReadingActivityProps) {
   const [readingFiles, setReadingFiles] = useState<ReadingFile[]>([]);
   const [activeDocument, setActiveDocument] = useState<IDocument>();
   const [docs, setDocs] = useState<{ uri: string }[]>([
-    { uri: "/pdfs/behavior_mummy-1.pdf" },
+    { uri: "/pdfs/mummy_behavior_1.pdf" },
+    { uri: "/pdfs/mummy_behavior_2.pdf" },
+    { uri: "/pdfs/mummy_behavior_3.pdf" },
+    { uri: "/pdfs/mummy_behavior_4.pdf" },
   ]);
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [inInstructions, setInInstructions] = useState<boolean>(true);
@@ -105,9 +108,9 @@ export default function BehaviorReadingActivity(props: ReadingActivityProps) {
       ),
     },
     {
-      name: "REREAD",
+      name: "TRACKING",
       component: (
-        <ReReading
+        <Tracking
           behaviorIndex={behaviorIndex}
           setBehaviorIndex={setBehaviorIndex}
           totalBehaviors={4}
@@ -237,6 +240,11 @@ export default function BehaviorReadingActivity(props: ReadingActivityProps) {
       uploadLogs();
     }
   }, [complete]);
+
+  useEffect(() => {
+    // Update the active document
+    setActiveDocument(docs[behaviorIndex]);
+  }, [behaviorIndex])
 
   return (
     <>
