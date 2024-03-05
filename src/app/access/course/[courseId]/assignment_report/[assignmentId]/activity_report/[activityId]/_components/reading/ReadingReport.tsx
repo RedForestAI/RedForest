@@ -15,7 +15,7 @@ import PDFViewer from "~/components/pdf/pdf-viewer";
 import LoadFilesProgress from "../general/LoadFilesProgress";
 import TrajectoryPlot, { Line } from "../general/TrajectoryPlot";
 import { loadCSVData, getFileStem } from "~/utils/log_utils";
-import { PerStudentData } from "./types";
+import { PerStudentData } from "../types";
 import LogProcessing from "./FileProcessing";
 import { parsePrisma } from "~/utils/prisma";
 
@@ -26,30 +26,6 @@ type ReadingReportProps = {
   questions: Question[];
   tracelogs: TraceLogFile[];
 };
-
-type AnswerTrace = {
-  index: Number
-  elapsedTime: Number
-  correct: Boolean
-  pts: Number
-  accumulativeScore: Number
-}
-
-const line: Line = {
-  color: "#008561",
-  data: {
-    x: ['2018-03-01', '2018-04-01', '2018-05-01'],
-    y: [30, 16, 17]
-  }
-}
-
-const line2: Line = {
-  color: "#080561",
-  data: {
-    x: ['2018-03-01', '2018-04-01', '2018-05-01'],
-    y: [60, 66, 67]
-  }
-}
 
 export default function ReadingReport(props: ReadingReportProps) {
   const [docs, setDocs] = useState<{ uri: string }[]>([]);
@@ -274,7 +250,7 @@ export default function ReadingReport(props: ReadingReportProps) {
         ) : (
           <>
             <div className="w-full">
-              <TrajectoryPlot lines={[line, line2]} />
+              <TrajectoryPlot perStudentDatas={perStudentDatas} activityDatas={props.activityDatas} />
             </div>
           </>
         )}

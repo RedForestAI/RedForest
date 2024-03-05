@@ -61,11 +61,15 @@ export const activityDataRouter = createTRPCRouter({
           const answer = activityData.answers[i];
           if (answer === question.answer) {
             accumulativeScore += question.pts;
+          } else {
+            accumulativeScore -= question.pts;
           }
         }
       }
       if (correct) {
         accumulativeScore += question.pts;
+      } else {
+        accumulativeScore -= question.pts;
       }
 
       // { index: Number, elapsedTime: Number, correct: Boolean, pts: Number, accumulativeScore: Number }[]

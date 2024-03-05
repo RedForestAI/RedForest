@@ -7,11 +7,30 @@ import {
   Tooltip,
   XYChart
 } from "@visx/xychart";
+import { useEffect, useState } from "react";
+import { ActivityData } from "@prisma/client";
+import { AnswerTrace } from "../types";
+
+const line: Line = {
+  color: "#008561",
+  data: {
+    x: ['2018-03-01', '2018-04-01', '2018-05-01'],
+    y: [30, 16, 17]
+  }
+}
+
+const line2: Line = {
+  color: "#080561",
+  data: {
+    x: ['2018-03-01', '2018-04-01', '2018-05-01'],
+    y: [60, 66, 67]
+  }
+}
 
 const tickLabelOffset = 10;
 
 const accessors = {
-  xAccessor: (d: any) => new Date(`${d.x}T00:00:00`),
+  xAccessor: (d: any) => d.x,
   yAccessor: (d: any) => d.y
 };
 
@@ -67,22 +86,58 @@ export type Line = {
 }
 
 type TrajectoryPlotProps = {
-  lines: any[];
+  perStudentDatas: {[key: string]: any}
+  activityDatas: ActivityData[]
 };
+  
+function formatData(data: {x: any[], y: any[]}) {
+  return data.x.map((x, i) => ({ x, y: data.y[i] }));
+}
 
 export default function TrajectoryPlot(props: TrajectoryPlotProps) {
-  
-  function formatData(data: {x: any[], y: any[]}) {
-    return data.x.map((x, i) => ({ x, y: data.y[i] }));
-  }
-  
+  const [lines, setLines] = useState<Line[]>([line, line2]);
+
+  useEffect(() => {
+
+    // Create lines
+    const newLines: Line[] = [];
+    props.activityDatas.forEach((activityData) => {
+      let totalTime: number = 0;
+      let priorScore: number = 0;
+      const x: number[] = [0];
+      const y: number[] = [0];
+      
+      for (let i = 0; i < activityData.answersTrace.length; i++) {
+        // @ts-ignore
+        const answerTrace = activityData.answersTrace[i] as AnswerTrace;
+        totalTime += answerTrace.elapsedTime/1000;
+        x.push(totalTime - 0.0001)
+        y.push(priorScore)
+        x.push(totalTime);
+        y.push(answerTrace.accumulativeScore)
+        priorScore = answerTrace.accumulativeScore;
+      }
+      const line: Line = {
+        color: "#008561",
+        data: {
+          x: x,
+          y: y
+        }
+      }
+      newLines.push(line)
+    })
+
+    setLines(newLines);
+
+  }, [props.perStudentDatas])
+ 
   return (
     <ChartContainer>
       <XYChart
         width={600}
         height={270}
         margin={{ left: 60, top: 35, bottom: 38, right: 27 }}
-        xScale={{ type: "time" }}
+        xScale={{ type: "linear" }}
         yScale={{ type: "linear" }}
       >
         <AnimatedGrid
@@ -96,22 +151,23 @@ export default function TrajectoryPlot(props: TrajectoryPlotProps) {
           strokeDasharray="0, 4"
         />
         <AnimatedAxis
-          hideAxisLine
-          hideTicks
+          // hideAxisLine
+          // hideTicks
           orientation="bottom"
           tickLabelProps={() => ({ dy: tickLabelOffset })}
           left={30}
           numTicks={4}
         />
         <AnimatedAxis
-          hideAxisLine
-          hideTicks
+          // hideAxisLine
+          // hideTicks
+          label={'Accumulative Score'}
           orientation="left"
           numTicks={4}
-          tickLabelProps={() => ({ dx: -10 })}
+          tickLabelProps={() => ({ dx: -10, textAnchor: "end" })}
         />
 
-        {props.lines.map((line, i) => {
+        {lines.map((line, i) => {
           return (
             <AnimatedLineSeries
               key={i}

@@ -9,3 +9,11 @@ export type PerStudentData = {
   logs: {[key: string]: Log};
   dataStore?: {[key: string]: any}; // Processed data from logs
 }
+
+export type AnswerTrace = {
+  index: number
+  elapsedTime: number
+  correct: Boolean
+  pts: number
+  accumulativeScore: number
+}
