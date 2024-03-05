@@ -48,14 +48,18 @@ export function Linear(props: BehaviorProps) {
     <>
       <dialog id="linear_instructions" className="modal">
         <div className="modal-box">
-          <h3 className={modalStyle.header}>Regular Reading Behavior</h3>
-          <p className={modalStyle.paragraph}>
-            For this behavior, read the first paragraph at your regular pace. Click on the {" "}
-            <span className="bg-red-500 text-white">first word</span> when
-            you start and the {" "} 
-            <span className="bg-red-500 text-white">last word</span>{" "}
-            when you finish.
-          </p>
+          <h3 className={modalStyle.header}>Behavior 1: Regular Reading Pace</h3>
+          <div className={modalStyle.paragraph}>
+            <p className="underline pb-4" style={{fontWeight: "bold"}}>Read like you NORMALLY do - at your regular speed</p>
+            <p className="pb-4">Just read the <span style={{fontWeight: "bold"}}>black </span>text (not <span className="text-gray-500">grey</span>). This teaches the computer how you regularly read.</p>
+            <p>
+              Got it? Click on the {" "}
+              <span className="bg-red-500 text-white">first word</span> {" "}
+              to start and the {" "} 
+              <span className="bg-red-500 text-white">last word</span>{" "}
+              to finish.
+            </p>
+          </div>
           <div className="modal-action">
             <form method="dialog">
               <button className="btn">Start</button>

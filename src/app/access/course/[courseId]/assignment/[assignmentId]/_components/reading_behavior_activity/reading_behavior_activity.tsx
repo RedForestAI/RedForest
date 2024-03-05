@@ -65,8 +65,8 @@ export default function BehaviorReadingActivity(props: ReadingActivityProps) {
     { uri: "/pdfs/mummy_behavior_4.pdf" },
   ]);
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
-  const [inInstructions, setInInstructions] = useState<boolean>(true);
-  const [behaviorIndex, setBehaviorIndex] = useState<number>(0);
+  const [inInstructions, setInInstructions] = useState<boolean>(false);
+  const [behaviorIndex, setBehaviorIndex] = useState<number>(1);
   const [runningET, setRunningET] = useState<boolean>(false);
 
   const createTracelogFile = api.traceLogFile.create.useMutation();
@@ -240,6 +240,11 @@ export default function BehaviorReadingActivity(props: ReadingActivityProps) {
       uploadLogs();
     }
   }, [complete]);
+
+  useEffect(() => {
+    // Update the active document
+    setActiveDocument(docs[behaviorIndex]);
+  }, [behaviorIndex])
 
   return (
     <>
