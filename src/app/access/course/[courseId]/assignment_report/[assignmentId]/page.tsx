@@ -85,7 +85,7 @@ return (
     <div className="flex flex-col items-stretch justify-center px-5 py-11 pl-12 pr-12 max-md:px-5">
 
       {profile.role == Role.TEACHER &&
-        <div className="w-full justify-center items-center flex flex-col pb-6">
+        <div className="w-full justify-center items-center flex flex-col pb-6" style={{width: "100vw", height: "40vh"}}>
           <h1 className="text-3xl text-center">Assignment Completion</h1>
           <AssignmentCompletePieChart data={data}/>
         </div>
