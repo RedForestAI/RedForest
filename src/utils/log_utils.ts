@@ -1,7 +1,6 @@
 /** Convert a 2D array into a CSV string
  * https://stackoverflow.com/a/68146412/13231446
  */
-import * as dfd from 'danfojs'
 
 export function arrayToCsv(data: any[]): string {
   return data.map(row =>
@@ -29,21 +28,12 @@ function parseCSVData(data: string): string[][] {
   return cells
 }
 
-export function loadCSVData(blob: Blob, as_df: boolean = true): Promise<string[][] | dfd.DataFrame> {
+export function loadCSVData(blob: Blob, as_df: boolean = true): Promise<string[][]> {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
     reader.onload = () => {
       const data = reader.result as string;
-      if (as_df) {
-        const parsedData = parseCSVData(data);
-        const header = parsedData[0];
-        const body = parsedData.slice(1);
-        const danfoData = new dfd.DataFrame(body, { columns: header })
-        resolve(danfoData);
-      }
-      else {
-        resolve(parseCSVData(data));
-      }
+      resolve(parseCSVData(data));
     };
     reader.onerror = reject;
     reader.readAsText(blob);

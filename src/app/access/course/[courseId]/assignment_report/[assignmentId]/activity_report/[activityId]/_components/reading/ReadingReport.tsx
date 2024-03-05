@@ -16,8 +16,7 @@ import LoadFilesProgress from "../general/LoadFilesProgress";
 import TrajectoryPlot, { Line } from "../general/TrajectoryPlot";
 import { loadCSVData, getFileStem } from "~/utils/log_utils";
 import { PerStudentData } from "../types";
-import LogProcessing from "./FileProcessing";
-import { parsePrisma } from "~/utils/prisma";
+// import LogProcessing from "./FileProcessing";
 
 type ReadingReportProps = {
   activity: Activity;
@@ -186,14 +185,14 @@ export default function ReadingReport(props: ReadingReportProps) {
         }
 
         // Process the data
-        LogProcessing(
-          { 
-            questions: props.questions,
-            perStudentDatas: loadingPerStudentDatas,
-            activityDatas: props.activityDatas, 
-            setPerStudentData: setPerStudentDatas 
-          }
-        );
+        // LogProcessing(
+        //   { 
+        //     questions: props.questions,
+        //     perStudentDatas: loadingPerStudentDatas,
+        //     activityDatas: props.activityDatas, 
+        //     setPerStudentData: setPerStudentDatas 
+        //   }
+        // );
       }
 
       processTraceLogs();
