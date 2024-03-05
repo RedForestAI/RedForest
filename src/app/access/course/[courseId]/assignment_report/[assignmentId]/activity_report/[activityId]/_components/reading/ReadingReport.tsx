@@ -54,7 +54,7 @@ export default function ReadingReport(props: ReadingReportProps) {
   const [selectedId, setSelectedId] = useState<string[]>([]);
   const [filesDownloaded, setFilesDownloaded] = useState<boolean>(false);
   const [traceBlobs, setTraceBlobs] = useState<Blob[]>([]);
-  const [perStudentData, setPerStudentData] = useState<{[key: string]: PerStudentData}>({});
+  const [perStudentDatas, setPerStudentDatas] = useState<{[key: string]: PerStudentData}>({});
   const supabase = createClientComponentClient();
 
   useEffect(() => {
@@ -148,7 +148,7 @@ export default function ReadingReport(props: ReadingReportProps) {
       async function processTraceLogs() {
         
         // First, parse the data and create per-student session logs 
-        const perStudentDatas: { [key: string]: PerStudentData } = {};
+        const loadingPerStudentDatas: { [key: string]: PerStudentData } = {};
         for (let i = 0; i < traceBlobs.length; i++) {
           const blobMeta = props.tracelogs[i];
           const blob = traceBlobs[i];
@@ -169,7 +169,8 @@ export default function ReadingReport(props: ReadingReportProps) {
               logData = { [stem]: logs }
               perStudentData = {
                 id: blobMeta.profileId,
-                logs: logData
+                logs: logData,
+                dataStore: {}
               };
               break;
 
@@ -179,7 +180,8 @@ export default function ReadingReport(props: ReadingReportProps) {
               logData = { [stem]: data }
               perStudentData = {
                 id: blobMeta.profileId,
-                logs: logData
+                logs: logData,
+                dataStore: {}
               };
               break;
           }
@@ -189,22 +191,24 @@ export default function ReadingReport(props: ReadingReportProps) {
             return;
           }
 
-          const existingData = perStudentDatas[perStudentData.id]
+          const existingData = loadingPerStudentDatas[perStudentData.id]
           if (existingData) {
             existingData.logs = {
               ...existingData.logs,
               ...perStudentData.logs,
             };
           } else {
-            perStudentDatas[perStudentData.id] = perStudentData;
+            loadingPerStudentDatas[perStudentData.id] = perStudentData;
           }
         }
 
         // Process the data
         LogProcessing(
           { 
-            perStudentDatas: perStudentDatas, 
-            setPerStudentData: setPerStudentData 
+            questions: props.questions,
+            perStudentDatas: loadingPerStudentDatas,
+            activityDatas: props.activityDatas, 
+            setPerStudentData: setPerStudentDatas 
           }
         );
       }
@@ -214,14 +218,14 @@ export default function ReadingReport(props: ReadingReportProps) {
   }, [filesDownloaded]);
 
   useEffect(() => {
-    // If the perStudentData is not empty, process the data
-    // if (perStudentData.length == 0) {
-    //   return;
-    // }
-
+    // If the perStudentData is empty, skip
+    if (Object.keys(perStudentDatas).length == 0) {
+      return;
+    }
+    
     // Provide data for the plots
 
-  }, [perStudentData])
+  }, [perStudentDatas])
 
   return (
     <div className="flex w-full flex-row">
