@@ -58,6 +58,7 @@ export default async function Page({
       activityData = await api.activityData.create.mutate({
         activityId: activity.id,
         assignmentDataId: assignmentData.id,
+        profileId: profile.id,
       });
     }
     activityDatas.push(activityData);

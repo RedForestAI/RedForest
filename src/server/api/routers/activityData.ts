@@ -101,6 +101,7 @@ export const activityDataRouter = createTRPCRouter({
       z.object({
         activityId: z.string(),
         assignmentDataId: z.string(),
+        profileId: z.string()
       })
     )
     .mutation(async ({ input, ctx }) => {
@@ -108,6 +109,7 @@ export const activityDataRouter = createTRPCRouter({
         data: {
           activityId: input.activityId,
           assignmentDataId: input.assignmentDataId,
+          profileId: input.profileId
         },
       });
     }),
