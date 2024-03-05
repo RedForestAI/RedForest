@@ -13,34 +13,86 @@ export const activityDataRouter = createTRPCRouter({
       });
     }),
 
+  getMany: privateProcedure
+    .input(z.object({ activityId: z.string() }))
+    .query(async ({ input, ctx }) => {
+      return await ctx.db.activityData.findMany({
+        where: { activityId: input.activityId },
+      });
+    }),
+
   appendAnswer: privateProcedure
-    .input(z.object({ activityDataId: z.string(), activityId: z.string(), index: z.number(), answer: z.number() }))
+    .input(
+      z.object({
+        activityDataId: z.string(),
+        activityId: z.string(),
+        index: z.number(),
+        answer: z.number(),
+        elapsedTime: z.number(),
+      }),
+    )
     .mutation(async ({ input, ctx }) => {
-      
       // Get the question related to the answer to get a score
       const questions = await ctx.db.question.findMany({
         where: { activityId: input.activityId },
       });
 
       // Get the question that matches the index
-      const question = questions.find((question) => question.index === input.index);
+      const question = questions.find(
+        (question) => question.index === input.index,
+      );
 
       // If the question is not found, throw an error
       if (!question) {
         throw new Error("Question not found");
       }
-      
+
+      // Compute if correct
+      const correct = question.answer === input.answer;
+
+      // Compute the current accumulative score
+      const activityData = await ctx.db.activityData.findUniqueOrThrow({
+        where: { id: input.activityDataId },
+      });
+      let accumulativeScore = 0;
+      for (let i = 0; i < input.index; i++) {
+        const question = questions.find((question) => question.index === i);
+        if (question) {
+          const answer = activityData.answers[i];
+          if (answer === question.answer) {
+            accumulativeScore += question.pts;
+          } else {
+            accumulativeScore -= question.pts;
+          }
+        }
+      }
+      if (correct) {
+        accumulativeScore += question.pts;
+      } else {
+        accumulativeScore -= question.pts;
+      }
+
+      // { index: Number, elapsedTime: Number, correct: Boolean, pts: Number, accumulativeScore: Number }[]
+      const jsonData = {
+        index: input.index,
+        elapsedTime: input.elapsedTime,
+        correct: correct,
+        pts: question.pts,
+        accumulativeScore: accumulativeScore,
+      }
+
       await ctx.db.activityData.update({
         where: { id: input.activityDataId },
-        data: { 
-          answers: { push: input.answer }, 
-          answersAt: { push: new Date()},
-          currentQuestionId: { increment: 1 } 
+        data: {
+          answers: { push: input.answer },
+          answersAt: { push: new Date() },
+          currentQuestionId: { increment: 1 },
+          answersTrace: { push: jsonData }
         },
       });
 
       // Return if correct and how many points
-      return { correct: question?.answer === input.answer, pts: question?.pts };
+      return { correct: correct, pts: question?.pts, accumulativeScore: accumulativeScore };
     }),
 
   markAsComplete: privateProcedure
@@ -59,7 +111,10 @@ export const activityDataRouter = createTRPCRouter({
         where: { activityId: activity.id },
       });
 
-      if (questions.length != 0 && questions.length !== activityData.answers.length) {
+      if (
+        questions.length != 0 &&
+        questions.length !== activityData.answers.length
+      ) {
         throw new Error("Activity is not complete");
       }
 
@@ -83,9 +138,8 @@ export const activityDataRouter = createTRPCRouter({
 
       return await ctx.db.activityData.update({
         where: { id: input.id },
-        data: { completed: true, completedAt: new Date(), score: score},
+        data: { completed: true, completedAt: new Date(), score: score },
       });
-
     }),
 
   create: privateProcedure
@@ -93,13 +147,15 @@ export const activityDataRouter = createTRPCRouter({
       z.object({
         activityId: z.string(),
         assignmentDataId: z.string(),
-      })
+        profileId: z.string(),
+      }),
     )
     .mutation(async ({ input, ctx }) => {
       return await ctx.db.activityData.create({
         data: {
           activityId: input.activityId,
           assignmentDataId: input.assignmentDataId,
+          profileId: input.profileId,
         },
       });
     }),

@@ -12,6 +12,10 @@ export default class ScrollLogger extends BaseLogger {
     document.addEventListener("scroll", debounced_log)
   }
 
+  name() {
+    return "scroll"
+  }
+
   init() {
     this.loggedData = [["timestamp", "scrollYAbsolute", "scrollYPercentage"]]
   }

@@ -1,36 +1,46 @@
-import { arrayToCsv } from "./log_utils"
+import { arrayToCsv } from "~/utils/log_utils";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 
 export default class BaseLogger {
-  loggedData: [string[]]
-  supabase: any
-  createTracelogFile: any
+  loggedData: [string[]];
+  supabase: any;
+  createTracelogFile: any;
 
   constructor() {
-    this.loggedData = [[]]
+    this.loggedData = [[]];
     this.supabase = createClientComponentClient();
   }
 
-  init() {
+  name() {
+    return "base"
   }
 
-  log(event: any) {
-  }
+  init() {}
+
+  log(event: any) {}
 
   clear() {
-    this.init()
+    this.init();
   }
 
   getBlob() {
-    let content = arrayToCsv(this.loggedData)
-    let blob = new Blob([content], { type: "text/csv;charset=utf-8"})
-    this.init()
-    return blob
+    let content = arrayToCsv(this.loggedData);
+    let blob = new Blob([content], { type: "text/csv;charset=utf-8" });
+    this.init();
+    return blob;
   }
 
-  async upload(createTracelogFile: any, activityDataId: string, filepath: string) {
+  async upload(
+    createTracelogFile: any,
+    profileId: string,
+    activityId: string,
+    activityDataId: string,
+    filepath: string,
+  ) {
     const file = this.getBlob();
-    const db_result= await createTracelogFile.mutateAsync({
+    const db_result = await createTracelogFile.mutateAsync({
+      profileId: profileId,
+      activityId: activityId,
       activityDataId: activityDataId,
       filepath: filepath,
     });
@@ -48,5 +58,4 @@ export default class BaseLogger {
     }
     return storage_result;
   }
-
 }

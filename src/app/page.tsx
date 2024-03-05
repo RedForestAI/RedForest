@@ -44,7 +44,7 @@ export default async function Page() {
             <h1 className="text-4xl font-bold">Welcome to RedForest</h1>
             <p className="mt-4 text-xl">Your AI-Powered Classroom Assistant</p>
 
-            <div className="mt-64 text-center">
+            <div className="mt-20 text-center">
               <h2 className="text-2xl font-semibold">Our Goal</h2>
               <p className="mt-4 text-lg max-w-96">
                 RedForest is dedicated to bringing AI via eye-tracking to the classroom.

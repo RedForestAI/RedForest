@@ -10,6 +10,10 @@ export default class GazeLogger extends BaseLogger {
     document.addEventListener("processedGazeUpdate", this.log)
   }
 
+  name() {
+    return "gaze"
+  }
+
   init(){
     this.loggedData = [[
       "timestamp", 

@@ -14,6 +14,11 @@ export default class MouseLogger extends BaseLogger {
     document.addEventListener("click", debounce(this.log, 10))
   }
 
+
+  name() {
+    return "mouse"
+  }
+
   init() {
     this.loggedData = [["timestamp", "type", "x", "y", "aoiType", "aoiInfo", "rx", "ry"]]
   }

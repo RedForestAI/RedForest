@@ -1,9 +1,15 @@
 "use server";
 
 import NavBar from "~/components/ui/navbar";
-import { Question } from "@prisma/client";
+import { Question, Role } from "@prisma/client";
 import { api } from "~/trpc/server";
 import ActivityColumn from "./_components/ActivityColumn";
+import AssignmentCompletePieChart from "./_components/AssignmentCompletePie";
+
+interface Datum {
+  label: string;
+  value: number;
+}
 
 export default async function Page({
   params,
@@ -41,6 +47,30 @@ const formData = {
   questions: questions,
 };
 
+let data: Datum[] = [];
+
+if (profile.role == Role.TEACHER) {
+  // Get the total number of students
+  const courseEnrollments = await api.courseEnrollment.getMany.query({
+    courseId: params.courseId,
+  });
+  const total = courseEnrollments.length;
+
+  // Get the number of students who have completed the assignment
+  const assignmentDatas = await api.assignmentData.getManyByAssignment.query({
+    assignmentId: params.assignmentId,
+  });
+  const completed = assignmentDatas.filter((ad) => ad.completed).length;
+  const started = assignmentDatas.length - completed;
+  const yetToBegin = courseEnrollments.length - assignmentDatas.length;
+
+  // Dummy data
+  data = [
+    { label: "Completed", value: (completed/total)*100 },
+    { label: "Started", value: (started/total)*100 },
+    { label: "Yet to Begin", value: (yetToBegin/total)*100 },
+  ];
+}
 
 return (
   <>
@@ -52,8 +82,15 @@ return (
         { name: assignment.name, url: ""}
       ]}
     />
-    <div className="flex flex-col items-stretch px-5 py-11 pl-12 pr-12 max-md:px-5">
-      {/*Create a pretty coming soon page */}
+    <div className="flex flex-col items-stretch justify-center px-5 py-11 pl-12 pr-12 max-md:px-5">
+
+      {profile.role == Role.TEACHER &&
+        <div className="w-full justify-center items-center flex flex-col pb-6">
+          <h1 className="text-3xl text-center">Assignment Completion</h1>
+          <AssignmentCompletePieChart data={data}/>
+        </div>
+      }
+
       <div className="flex flex-col items-center justify-center">
         <ActivityColumn {...formData}/>
       </div>

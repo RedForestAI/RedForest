@@ -130,9 +130,11 @@ model ActivityData {
   id                String      @id @default(uuid()) @db.Uuid
   createdAt         DateTime    @default(now())
   startedAt         DateTime?
+  profileId         String      @db.Uuid @default(dbgenerated("uuid_generate_v4()"))
 
   answers           Int[]
   answersAt         DateTime[]
+  answersTrace      Json[]      // { index: Number, elapsedTime: Number, correct: Boolean, pts: Number, accumulativeScore: Number }[]
   currentQuestionId Int         @default(0)
 
   completed         Boolean     @default(false)
@@ -154,6 +156,10 @@ model TraceLogFile {
   id                String      @id @default(uuid()) @db.Uuid
   createdAt         DateTime    @default(now())
   filepath          String
+
+  // Helpful information
+  activityId        String      @db.Uuid @default(uuid())
+  profileId         String      @db.Uuid @default(uuid())
 
   // User Activity
   activityData  ActivityData @relation(fields: [activityDataId], references: [id])

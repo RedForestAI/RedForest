@@ -23,6 +23,15 @@ export const assignmentDataRouter = createTRPCRouter({
       });
     }),
 
+  getManyByAssignment: privateProcedure
+    .input(z.object({ assignmentId: z.string() }))
+    .query(async ({ input, ctx }) => {
+      // Find
+      return await ctx.db.assignmentData.findMany({
+        where: { assignmentId: input.assignmentId },
+      });
+    }),
+
   create: privateProcedure
     .input(
       z.object({

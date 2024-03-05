@@ -1,5 +1,4 @@
 import type { Metadata } from 'next'
-import { TailwindIndicator } from "~/components/TailwindIndicator";
 import { Providers } from "~/providers";
 import "~/styles/globals.css";
 import { cn } from "~/utils/cn";
@@ -37,7 +36,6 @@ export default async function RootLayout({ children }: { children: React.ReactNo
                 {children}
               </Providers>
           </TRPCReactProvider>
-          <TailwindIndicator />
         </body>
       </html>
     </>

@@ -18,7 +18,7 @@ export default async function Page({params}: {params: { courseId: string }}) {
     course = await api.course.getOne.query({courseId: params.courseId, profileId: profile.id});
     assignments = await api.assignment.get.query({courseId: params.courseId});
   } catch (e) {
-    console.log(e);
+    console.error(e);
   }
 
   // Sort by due date

@@ -25,12 +25,16 @@ import "./pdf-viewer.css";
 type PDFViewerProps = {
   docs: { uri: string }[];
   files: ReadingFile[];
-  activityDataId: string;
   activeDocument: IDocument;
   setActiveDocument: any;
 
   config?: {
+    // General
+    defaultWidth?: number;
+    supportZoom?: boolean;
+
     // Reading Activity
+    activityDataId?: string;
     blur?: boolean;
     toolkit?: boolean;
     highlights?: Highlight[];
@@ -45,7 +49,12 @@ type PDFViewerProps = {
 };
 
 const defaultConfig = {
+  // General
+  defaultWidth: 70,
+  supportZoom: true,
+  
   // Reading Activity
+  activityDataId: "",
   blur: false,
   toolkit: false,
   highlights: [],
@@ -105,7 +114,7 @@ export default function PDFViewer(props: PDFViewerProps) {
         }}
         pluginRenderers={DocViewerRenderers}
         style={{
-          width: `${70 * zoomLevel}%`,
+          width: `${finalConfig.defaultWidth * zoomLevel}%`,
           height: `100%`,
           backgroundColor: "transparent",
         }}
@@ -157,7 +166,7 @@ export default function PDFViewer(props: PDFViewerProps) {
     );
 
     // Update the navbar content
-    setMiddleNavBarContent(middleNavBarExtras);
+    if (finalConfig.supportZoom) setMiddleNavBarContent(middleNavBarExtras);
 
     // Add toolkits
     if (finalConfig.toolkit) {
@@ -188,7 +197,7 @@ export default function PDFViewer(props: PDFViewerProps) {
 
     // Reset the navbar content when the component unmounts
     return () => {
-      setMiddleNavBarContent(null);
+      if (finalConfig.supportZoom) setMiddleNavBarContent(null);
       observer.disconnect();
       if (finalConfig.toolkit) {
         document.removeEventListener("mouseup", handleTextSelection);
@@ -499,7 +508,7 @@ export default function PDFViewer(props: PDFViewerProps) {
       rects: JSON.stringify(relativeRects),
       content: toolkitText,
       fileId: file.id,
-      activityDataId: props.activityDataId,
+      activityDataId: finalConfig.activityDataId,
     });
     finalConfig.setHighlights([...finalConfig.highlights, highlight]);
 
@@ -566,7 +575,7 @@ export default function PDFViewer(props: PDFViewerProps) {
       position: JSON.stringify(rRect),
       content: "",
       fileId: file.id,
-      activityDataId: props.activityDataId,
+      activityDataId: finalConfig.activityDataId,
     });
     finalConfig.setAnnotations([...finalConfig.annotations, annotation]);
 

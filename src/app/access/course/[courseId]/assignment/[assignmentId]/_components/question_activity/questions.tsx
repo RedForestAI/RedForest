@@ -47,6 +47,8 @@ type ScoreTrack = {
   optionValue: string;
   correct: boolean;
   pts: number;
+  elapsedTime: number;
+  accumulativeScore: number;
 };
 
 export default function Questions(props: QuestionsProps) {
@@ -54,7 +56,6 @@ export default function Questions(props: QuestionsProps) {
   const finalConfig = { ...defaultConfig, ...props.config };
 
   // State
-  const router = useRouter();
   const {
     register,
     handleSubmit,
@@ -65,6 +66,7 @@ export default function Questions(props: QuestionsProps) {
   const [currentQuestionId, setCurrentQuestionId] = useState<number>(
     props.activityData.currentQuestionId,
   );
+  const [priorQuestionSubmitTime, setPriorQuestionSubmitTime] = useState<Date>(new Date())// [ms]
   const [startQuestions, setStartQuestions] = useState<boolean>(false);
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [scores, setScores] = useState<ScoreTrack[]>([]);
@@ -79,6 +81,7 @@ export default function Questions(props: QuestionsProps) {
 
   function startQuestionsAction() {
     setStartQuestions(true);
+    setPriorQuestionSubmitTime(new Date());
     triggerActionLog({ type: "questionStart", value: { start: true } });
   }
 
@@ -86,14 +89,20 @@ export default function Questions(props: QuestionsProps) {
     if (isSubmitting) return;
     setIsSubmitting(true);
 
+    // Compute the elapsed time
+    const currentTime = new Date();
+    const elapsedTime = currentTime.getTime() - priorQuestionSubmitTime.getTime();
+    setPriorQuestionSubmitTime(currentTime);
+
     // Update choice in the database
-    let response = { correct: false, pts: 0 };
+    let response = { correct: false, pts: 0, accumulativeScore: 0 };
     try {
       response = await appendAnswerMutation.mutateAsync({
         activityDataId: props.activityData.id,
         activityId: props.activity.id,
         index: currentQuestionId,
         answer: Number(data.answer),
+        elapsedTime: elapsedTime,
       });
     } catch (error) {
       console.log(error);
@@ -116,6 +125,8 @@ export default function Questions(props: QuestionsProps) {
           props.questions[currentQuestionId]?.options[Number(data.answer)] || "",
         correct: response.correct,
         pts: response.pts,
+        elapsedTime: elapsedTime,
+        accumulativeScore: response.accumulativeScore,
       },
     ]);
 
