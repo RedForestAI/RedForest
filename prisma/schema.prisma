@@ -130,7 +130,7 @@ model ActivityData {
   id                String      @id @default(uuid()) @db.Uuid
   createdAt         DateTime    @default(now())
   startedAt         DateTime?
-  profileId         String      @db.Uuid @default(uuid())
+  profileId         String      @db.Uuid @default(dbgenerated("uuid_generate_v4()"))
 
   answers           Int[]
   answersAt         DateTime[]
