@@ -17,6 +17,7 @@ import TrajectoryPlot, { Line } from "../general/TrajectoryPlot";
 import { loadCSVData, getFileStem } from "~/utils/log_utils";
 import { PerStudentData } from "./types";
 import LogProcessing from "./FileProcessing";
+import { parsePrisma } from "~/utils/prisma";
 
 type ReadingReportProps = {
   activity: Activity;
@@ -25,6 +26,14 @@ type ReadingReportProps = {
   questions: Question[];
   tracelogs: TraceLogFile[];
 };
+
+type AnswerTrace = {
+  index: Number
+  elapsedTime: Number
+  correct: Boolean
+  pts: Number
+  accumulativeScore: Number
+}
 
 const line: Line = {
   color: "#008561",
@@ -123,19 +132,17 @@ export default function ReadingReport(props: ReadingReportProps) {
       ...columnNames,
     ]);
 
-    // Get the table data
     const newTableData = props.activityDatas.map((activityData) => {
-      // Match student answers to the question answers to mark which questions were correct
-      const questionScores = activityData.answers.map((answer, index) => {
-        return Number(answer == props.questions[index]?.answer);
-      });
+      const questionScores = activityData.answersTrace.map((answerTrace: any, index: Number) => {
+        return Number(answerTrace.correct);
+      })
 
       return [
-        activityData.id.split("-")[0],
+        activityData.profileId.split("-")[0],
         Number(activityData.completed),
         activityData.score,
-        ...questionScores,
-      ];
+        ...questionScores
+      ]
     });
 
     // Default select all rows
@@ -203,15 +210,14 @@ export default function ReadingReport(props: ReadingReportProps) {
         }
 
         // Process the data
-        console.log(props.activityDatas)
-        // LogProcessing(
-        //   { 
-        //     questions: props.questions,
-        //     perStudentDatas: loadingPerStudentDatas,
-        //     activityDatas: props.activityDatas, 
-        //     setPerStudentData: setPerStudentDatas 
-        //   }
-        // );
+        LogProcessing(
+          { 
+            questions: props.questions,
+            perStudentDatas: loadingPerStudentDatas,
+            activityDatas: props.activityDatas, 
+            setPerStudentData: setPerStudentDatas 
+          }
+        );
       }
 
       processTraceLogs();

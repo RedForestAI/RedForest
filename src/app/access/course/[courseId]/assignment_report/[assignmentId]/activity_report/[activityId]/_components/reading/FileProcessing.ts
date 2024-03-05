@@ -25,37 +25,6 @@ function getTimelineEvents(logs: {[key: string]: any}, activityData: ActivityDat
   const startQuestion = actions.query(actions['type'].eq('questionStart')).iloc({rows: [0]});
   results['questionStart'] = startQuestion['timestamp'].values[0]
 
-  // Get question submission information
-  const questionLoad = actions.query(actions['type'].eq('questionLoad'));
-  const questionSubmit = actions.query(actions['type'].eq('questionSubmit'));
-  const numQuestions = logs.meta.questions;
-
-  let accumulativeScore = 0;
-  for (let i = 0; i < numQuestions.length; i++) {
-    // console.log(questions[i])
-    // console.log(activityData)
-    let start = -1;
-    let end = -1;
-    let correct = 0;
-    if (i == 0) {
-      start = results['questionStart']
-      end = questionSubmit['timestamp'].values[i]
-      // correct = activityData.answers[i] == questions[i]?.answer ? questions[i]?.pts || 0 : 0
-    }
-    else {
-      start = questionLoad['timestamp'].values[i-1]
-      end = questionSubmit['timestamp'].values[i]
-      // correct = activityData.answers[i] == questions[i]?.answer ? questions[i]?.pts || 0 : 0
-    }
-    accumulativeScore += correct
-    results[`Q${i+1}`] = {
-      start: start, 
-      end: end,
-      // correct: correct,
-      // accumulativeScore: accumulativeScore
-    }
-  }
-
   return results
 }
 
