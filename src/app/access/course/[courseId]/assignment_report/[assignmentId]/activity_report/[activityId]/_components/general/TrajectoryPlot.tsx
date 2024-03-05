@@ -65,6 +65,7 @@ export default function TrajectoryPlot(props: TrajectoryPlotProps) {
   return (
     <ResponsiveContainer width="100%" height="100%">
         <LineChart
+          title="Student Trajectories"
           width={500}
           height={300}
           margin={{

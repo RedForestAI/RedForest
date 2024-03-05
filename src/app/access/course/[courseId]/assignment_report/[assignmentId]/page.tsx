@@ -4,12 +4,7 @@ import NavBar from "~/components/ui/navbar";
 import { Question, Role } from "@prisma/client";
 import { api } from "~/trpc/server";
 import ActivityColumn from "./_components/ActivityColumn";
-import AssignmentCompletePieChart from "./_components/AssignmentCompletePie";
-
-interface Datum {
-  label: string;
-  value: number;
-}
+import AssignmentCompletePieChart, { Datum } from "./_components/AssignmentCompletePie";
 
 export default async function Page({
   params,
@@ -66,9 +61,9 @@ if (profile.role == Role.TEACHER) {
 
   // Dummy data
   data = [
-    { label: "Completed", value: (completed/total)*100 },
-    { label: "Started", value: (started/total)*100 },
-    { label: "Yet to Begin", value: (yetToBegin/total)*100 },
+    { index: 0, label: "Completed", value: (completed/total)*100 },
+    { index: 1, label: "Started", value: (started/total)*100 },
+    { index: 2, label: "Yet to Begin", value: (yetToBegin/total)*100 },
   ];
 }
 
