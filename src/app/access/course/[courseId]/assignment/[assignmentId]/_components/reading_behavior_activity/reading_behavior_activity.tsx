@@ -59,7 +59,10 @@ export default function BehaviorReadingActivity(props: ReadingActivityProps) {
   const [readingFiles, setReadingFiles] = useState<ReadingFile[]>([]);
   const [activeDocument, setActiveDocument] = useState<IDocument>();
   const [docs, setDocs] = useState<{ uri: string }[]>([
-    { uri: "/pdfs/behavior_mummy-1.pdf" },
+    { uri: "/pdfs/mummy_behavior_1.pdf" },
+    { uri: "/pdfs/mummy_behavior_2.pdf" },
+    { uri: "/pdfs/mummy_behavior_3.pdf" },
+    { uri: "/pdfs/mummy_behavior_4.pdf" },
   ]);
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [inInstructions, setInInstructions] = useState<boolean>(true);

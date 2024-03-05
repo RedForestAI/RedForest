@@ -68,20 +68,26 @@ export default function InstructionsModal(props: InstructionsModalProps) {
       <div className="fixed left-0 top-[10%] z-[70] h-full w-full">
         <div className="m-auto h-[60%] w-[70%]">
           <div className="flex flex-col h-full items-center bg-base-100 border border-neutral rounded-2xl overflow-hidden p-4">
-            <h1 className="pb-4 text-2xl text-5xl font-bold">Getting Ready!</h1>
+            <h1 className="pb-4 text-2xl text-5xl font-bold">Learning to Read</h1>
             
             {/* <YouTube opts={opts} videoId="YR6HecNZg10" /> */}
             <div className="player-wrapper">
               <ReactPlayer className="react-player" width='100%' height='100%' url="https://www.youtube.com/watch?v=uIWvigp8OBQ"/>
             </div>
             
-            <h1 className="h-5/6 text-xl pt-4">
-              Before starting the activity, get comfortable and setup the
-              eye-tracking solution. In this activity, you will be performing
-              various types of reading behaviors. This is to calibrate our system
-              to be able to recognize your reading patterns for future readings.
-              Once you are ready and all settled, press Continue.
-            </h1>
+            <div className="h-4/6 text-xl pt-6 pb-4 ml-12 mr-12 flex flex-col gap-4">
+              <p>Can our AI system learn to recognize your reading?</p>
+              <p>Help teach it by training it to recognize how you read!</p>
+              <p>To teach it, you will
+                <ul className="pl-6">
+                  <li style={{listStyle: "square"}}>Read a passage</li>
+                  <li style={{listStyle: "square"}}>Answer questions about the passage</li>
+                  <li style={{listStyle: "square"}}>Complete a short survey</li>
+                </ul>
+              </p>
+              <p>Let's see if the computer can be trained. Let's read.</p>
+              <p>Before starting, start the eye-tracking solution by the top-right eye icon.</p>
+            </div>
             <button
               className="btn btn-primary"
               disabled={!props.runningET}
