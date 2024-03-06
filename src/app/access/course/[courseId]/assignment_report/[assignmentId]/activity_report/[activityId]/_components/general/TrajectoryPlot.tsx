@@ -1,7 +1,7 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { ActivityData } from "@prisma/client";
 import { AnswerTrace } from "../types";
-import { LineChart, Label, Line, ReferenceLine, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import { LineChart, Label, Line, Text, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 
 
 type DataLine = {
@@ -27,6 +27,8 @@ function xTickFormatter(value: number) {
 
 export default function TrajectoryPlot(props: TrajectoryPlotProps) {
   const [dataLine, setDataLine] = useState<DataLine[]>([]);
+  const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
+  const parentRef = useRef(null);
 
   useEffect(() => {
 
@@ -61,43 +63,63 @@ export default function TrajectoryPlot(props: TrajectoryPlotProps) {
     setDataLine(newLines);
 
   }, [props.perStudentDatas])
+
+  useEffect(() => {
+    const resizeObserver = new ResizeObserver(entries => {
+      for (let entry of entries) {
+        setDimensions({
+          width: entry.contentRect.width,
+          height: entry.contentRect.height
+        });
+      }
+    });
+
+    if (parentRef.current) {
+      resizeObserver.observe(parentRef.current);
+    }
+
+    return () => {
+      resizeObserver.disconnect();
+    };
+  }, []);
  
   return (
-    <ResponsiveContainer width="100%" height="100%">
-        <LineChart
-          title="Student Trajectories"
-          width={500}
-          height={300}
-          margin={{
-            top: 5,
-            right: 30,
-            left: 20,
-            bottom: 5,
-          }}
-        >
-          <CartesianGrid strokeDasharray="3 3" />
-          <XAxis dataKey='x' allowDecimals={false} scale='linear' tickFormatter={xTickFormatter}>
-            <Label 
-              position='insideBottom'
-              dy={8}
-            >
-              Time (s)
-            </Label>
-          </XAxis>
-          <YAxis allowDecimals={false}>
-            <Label 
-              position='outside'
-              angle={-90}
-            >
-              Accumulative Score
-            </Label>
-          </YAxis>
-          <Tooltip />
-          {/* <Legend /> */}
-          {dataLine.map((line, i) => (
-            <Line key={i} type="linear" dataKey="y" stroke={line.color} activeDot={{ r: 8 }} data={formatData(line.data)} />
-          ))}
-        </LineChart>
-      </ResponsiveContainer>
+    <div ref={parentRef} style={{ width: '100%', height: '30vh' }}> {/* Adjust the height as necessary */}
+      <LineChart
+        width={dimensions.width}
+        height={dimensions.height}
+        margin={{
+          top: 40,
+          right: 0,
+          left: 0,
+          bottom: 5,
+        }}
+      >
+        <text x={dimensions.width / 2} y={10} fill="black" textAnchor="middle" dominantBaseline="central">
+          <tspan fontSize="20">Student Trajectories</tspan>
+        </text>
+        <CartesianGrid strokeDasharray="3 3" />
+        <XAxis dataKey='x' allowDecimals={false} scale='linear' tickFormatter={xTickFormatter}>
+          <Label 
+            position='insideBottom'
+            dy={8}
+          >
+            Time (s)
+          </Label>
+        </XAxis>
+        <YAxis allowDecimals={false}>
+          <Label 
+            position='outside'
+            angle={-90}
+          >
+            Accumulative Score
+          </Label>
+        </YAxis>
+        <Tooltip />
+        {dataLine.map((line, i) => (
+          <Line key={i} type="linear" dataKey="y" stroke={line.color} activeDot={{ r: 8 }} data={formatData(line.data)} />
+        ))}
+      </LineChart>
+    </div>
   );
 };

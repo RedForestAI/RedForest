@@ -248,12 +248,10 @@ export default function ReadingReport(props: ReadingReportProps) {
           </>
         ) : (
           <>
-            <div style={{ width: "100%", height: "30vh" }}>
-              <TrajectoryPlot
-                perStudentDatas={perStudentDatas}
-                activityDatas={props.activityDatas}
-              />
-            </div>
+            <TrajectoryPlot
+              perStudentDatas={perStudentDatas}
+              activityDatas={props.activityDatas}
+            />
           </>
         )}
       </div>
