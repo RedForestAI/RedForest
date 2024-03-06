@@ -26,9 +26,8 @@ export default function HeatmapOverlay(props: HeatmapOverlayProps) {
   const [data, setData] = useState<DataPoint[]>([]);
 
   useEffect(() => {
+    if (!props.perStudentDatas) return
     if (!props.page) return
-
-    // Determine the active document
     if (!props.activeDocument) return
     
     // Assuming data is an array of { x, y, value } points
@@ -44,6 +43,8 @@ export default function HeatmapOverlay(props: HeatmapOverlayProps) {
     // Iterate over the gaze in the perStudentDatas and add them to the data array
     const newData: DataPoint[] = []; 
     for (const [id, studentId] of Object.entries(props.selectedId)) {
+
+      if (!props.perStudentDatas[studentId]) continue;
 
       const perStudentData = props.perStudentDatas[studentId];
       const gaze = perStudentData.logs.gaze
