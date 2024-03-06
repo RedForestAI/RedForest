@@ -251,6 +251,7 @@ export default function ReadingReport(props: ReadingReportProps) {
             <TrajectoryPlot
               perStudentDatas={perStudentDatas}
               activityDatas={props.activityDatas}
+              selectedId={selectedId}
             />
           </>
         )}

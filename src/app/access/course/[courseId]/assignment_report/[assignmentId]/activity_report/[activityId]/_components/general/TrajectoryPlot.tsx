@@ -15,6 +15,7 @@ type DataLine = {
 type TrajectoryPlotProps = {
   perStudentDatas: {[key: string]: any}
   activityDatas: ActivityData[]
+  selectedId: string[]
 };
   
 function formatData(data: {x: any[], y: any[]}) {
@@ -35,6 +36,12 @@ export default function TrajectoryPlot(props: TrajectoryPlotProps) {
     // Create lines
     const newLines: DataLine[] = [];
     props.activityDatas.forEach((activityData) => {
+
+      // Skip if not selected
+      if (!props.selectedId.includes(activityData.profileId)) {
+        return;
+      }
+
       let totalTime: number = 0;
       let priorScore: number = 0;
       const x: number[] = [0];
@@ -62,7 +69,7 @@ export default function TrajectoryPlot(props: TrajectoryPlotProps) {
 
     setDataLine(newLines);
 
-  }, [props.perStudentDatas])
+  }, [props.perStudentDatas, props.selectedId])
 
   useEffect(() => {
     const resizeObserver = new ResizeObserver(entries => {
