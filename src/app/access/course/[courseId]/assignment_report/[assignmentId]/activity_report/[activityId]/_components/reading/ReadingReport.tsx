@@ -115,7 +115,7 @@ export default function ReadingReport(props: ReadingReportProps) {
       })
 
       return [
-        activityData.profileId.split("-")[0],
+        activityData.profileId.split("-").at(-1),
         Number(activityData.completed),
         activityData.score,
         ...questionScores

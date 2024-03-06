@@ -1,6 +1,6 @@
 "use server";
 
-import { ActivityType } from "@prisma/client";
+import { ActivityData, ActivityType } from "@prisma/client";
 import NavBar from "~/components/ui/navbar";
 import { api } from "~/trpc/server";
 import Slot from "~/utils/slot";
@@ -24,9 +24,25 @@ const assignment = await api.assignment.getOne.query({
 const activity = await api.activity.getOne.query({
   id: params.activityId,
 });
-const activityDatas = await api.activityData.getMany.query({
-  activityId: params.activityId,
-});
+let activityDatas: ActivityData[] = [];
+
+// If student, only get their results
+if (profile.role === "STUDENT") {
+  const activityData = await api.activityData.getOneByProfile.query({
+    activityId: params.activityId,
+    profileId: profile.id,
+  });
+
+  if (!activityData) {
+    return <h1 className="text-error">Failed to load activity</h1>;
+  }
+  activityDatas = [activityData];
+} else {
+  activityDatas = await api.activityData.getMany.query({
+    activityId: params.activityId,
+  });
+}
+
 const questions = await api.question.getMany.query({
   activityId: params.activityId,
 });
