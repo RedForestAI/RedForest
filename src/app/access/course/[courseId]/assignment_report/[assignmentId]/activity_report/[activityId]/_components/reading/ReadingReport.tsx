@@ -17,8 +17,7 @@ import TrajectoryPlot from "../general/TrajectoryPlot";
 import HeatMapOverlay from "./HeatmapOverlay"
 import { loadCSVData, getFileStem } from "~/utils/log_utils";
 import { PerStudentData } from "../types";
-import { set } from "zod";
-// import LogProcessing from "./FileProcessing";
+import LogProcessing from "./FileProcessing";
 
 type ReadingReportProps = {
   activity: Activity;
@@ -41,7 +40,6 @@ export default function ReadingReport(props: ReadingReportProps) {
   const [filesDownloaded, setFilesDownloaded] = useState<boolean>(false);
   const [traceBlobs, setTraceBlobs] = useState<Blob[]>([]);
   const [perStudentDatas, setPerStudentDatas] = useState<{[key: string]: PerStudentData}>({});
-  const [gazeData, setGazeData] = useState();
   
   const supabase = createClientComponentClient();
 
@@ -189,15 +187,14 @@ export default function ReadingReport(props: ReadingReportProps) {
         }
 
         // Process the data
-        // LogProcessing(
-        //   { 
-        //     questions: props.questions,
-        //     perStudentDatas: loadingPerStudentDatas,
-        //     activityDatas: props.activityDatas, 
-        //     setPerStudentData: setPerStudentDatas 
-        //   }
-        // );
-        setPerStudentDatas(loadingPerStudentDatas);
+        LogProcessing(
+          { 
+            questions: props.questions,
+            perStudentDatas: loadingPerStudentDatas,
+            activityDatas: props.activityDatas, 
+            setPerStudentData: setPerStudentDatas 
+          }
+        );
       }
 
       processTraceLogs();
@@ -217,7 +214,7 @@ export default function ReadingReport(props: ReadingReportProps) {
             supportZoom: false,
           }}
         >
-          <HeatMapOverlay perStudentDatas={perStudentDatas}/>
+          <HeatMapOverlay perStudentDatas={perStudentDatas} docs={docs} activeDocument={activeDocument}/>
         </PDFViewer>
       </div>
 
