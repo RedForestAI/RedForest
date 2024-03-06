@@ -216,12 +216,14 @@ export default function ReadingReport(props: ReadingReportProps) {
             supportZoom: false,
           }}
         >
-          <HeatMapOverlay
-            perStudentDatas={perStudentDatas}
-            docs={docs}
-            activeDocument={activeDocument}
-            selectedId={selectedId}
-          />
+          {filesDownloaded &&
+            <HeatMapOverlay
+              perStudentDatas={perStudentDatas}
+              docs={docs}
+              activeDocument={activeDocument}
+              selectedId={selectedId}
+            />
+          }
         </PDFViewer>
       </div>
 

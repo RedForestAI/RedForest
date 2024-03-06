@@ -14,7 +14,6 @@ type TableProps = {
 }
 
 export default function Table(props: TableProps) {
-  console.log(props.colors)
   const [selectAll, setSelectAll] = useState<boolean>(false)
 
   useEffect(() => {

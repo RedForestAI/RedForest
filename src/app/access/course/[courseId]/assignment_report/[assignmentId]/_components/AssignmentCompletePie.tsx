@@ -56,7 +56,7 @@ export default function AssignmentCompletePie(props: AssignmentCompletePieProps)
               textAnchor={"middle"}
               dominantBaseline="central"
             >
-              {props.data[index]!.label} ({value})
+              {props.data[index]!.label} ({value.toFixed(0)})
             </text>
           );
         }}
