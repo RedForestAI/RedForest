@@ -1,14 +1,15 @@
 import { useEffect, useState, useRef } from "react";
 import { ActivityData } from "@prisma/client";
 import { AnswerTrace } from "../types";
-import { LineChart, Label, Line, Text, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import { LineChart, Label, Line, XAxis, YAxis, CartesianGrid, Tooltip } from 'recharts';
 
 
 type DataLine = {
   data: {
     x: any[],
     y: any[]
-  }
+  };
+  id: string;
   color: string;
 }
 
@@ -59,6 +60,7 @@ export default function TrajectoryPlot(props: TrajectoryPlotProps) {
       }
       const line: DataLine = {
         color: "#008561",
+        id: activityData.profileId,
         data: {
           x: x,
           y: y
@@ -124,7 +126,7 @@ export default function TrajectoryPlot(props: TrajectoryPlotProps) {
         </YAxis>
         <Tooltip />
         {dataLine.map((line, i) => (
-          <Line key={i} type="linear" dataKey="y" stroke={line.color} activeDot={{ r: 8 }} data={formatData(line.data)} />
+          <Line id={line.id} key={line.id} type="linear" dataKey="y" stroke={line.color} activeDot={{ r: 8 }} data={formatData(line.data)} />
         ))}
       </LineChart>
     </div>
