@@ -1,10 +1,10 @@
 import ReactDOM from 'react-dom'
 import { useEffect, useRef, useState } from 'react'
 import * as d3 from 'd3'
-import { set } from 'zod';
 
 type HeatmapOverlayProps = {
   page?: Element;
+  perStudentDatas: {[key: string]: any};
 }
 
 type DataPoint = {
@@ -33,11 +33,28 @@ export default function HeatmapOverlay(props: HeatmapOverlayProps) {
   useEffect(() => {
     if (!props.page) return
     // Get the height and width of the page
+    const pageNumber = props.page.getAttribute("data-page-number");
     const height = props.page.clientHeight;
     const width = props.page.clientWidth;
-    const newData = generateMockData(100, width, height);
+    // const newData = generateMockData(100, width, height);
+    // setData(newData);
+    // Iterate over the gaze in the perStudentDatas and add them to the data array
+    const newData: DataPoint[] = []; 
+    for (const [id, perStudentData] of Object.entries(props.perStudentDatas)) {
+      const gaze = perStudentData.logs.gaze
+      for (let i = 1; i < gaze.length; i++) {
+        const point = gaze[i];
+        if ((point[3] == 'PDFPage') && (point[4] == pageNumber)) {
+          newData.push({
+            x: point[5] * width,
+            y: point[6] * height,
+          });
+        }
+      }
+    }
     setData(newData);
-  }, [props.page]);
+
+  }, [props.perStudentDatas, props.page]);
 
   useEffect(() => {
     if (!props.page || (data.length == 0)) return
