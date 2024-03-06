@@ -105,7 +105,7 @@ export default function TrajectoryPlot(props: TrajectoryPlotProps) {
           bottom: 5,
         }}
       >
-        <text x={dimensions.width / 2} y={10} fill="black" textAnchor="middle" dominantBaseline="central">
+        <text x={dimensions.width / 2} y={10} textAnchor="middle" dominantBaseline="central">
           <tspan fontSize="20">Student Trajectories</tspan>
         </text>
         <CartesianGrid strokeDasharray="3 3" />
