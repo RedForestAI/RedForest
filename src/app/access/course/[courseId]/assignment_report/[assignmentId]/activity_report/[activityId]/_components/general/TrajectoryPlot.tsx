@@ -106,7 +106,7 @@ export default function TrajectoryPlot(props: TrajectoryPlotProps) {
           <tspan fontSize="20">Student Trajectories</tspan>
         </text>
         <CartesianGrid strokeDasharray="3 3" />
-        <XAxis dataKey='x' allowDecimals={false} scale='linear' tickFormatter={xTickFormatter}>
+        <XAxis dataKey='x' allowDecimals={false} allowDuplicatedCategory={false} scale='linear' tickFormatter={xTickFormatter}>
           <Label 
             position='insideBottom'
             dy={8}
