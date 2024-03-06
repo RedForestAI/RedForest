@@ -5,9 +5,10 @@ import * as d3 from 'd3'
 
 type HeatmapOverlayProps = {
   page?: Element;
-  docs: { uri: string }[];
   activeDocument?: IDocument;
+  docs: { uri: string }[];
   perStudentDatas: {[key: string]: any};
+  selectedId: string[];
 }
 
 type DataPoint = {
@@ -29,17 +30,22 @@ export default function HeatmapOverlay(props: HeatmapOverlayProps) {
 
     // Determine the active document
     if (!props.activeDocument) return
-    const index = props.docs.findIndex((doc) => doc.uri === props.activeDocument?.uri);
+    
+    // Assuming data is an array of { x, y, value } points
+    const svg = d3.select(svgRef.current);
+    svg.selectAll("*").remove();
     
     // Get the height and width of the page
+    const index = props.docs.findIndex((doc) => doc.uri === props.activeDocument?.uri);
     const pageNumber = props.page.getAttribute("data-page-number");
     const height = props.page.clientHeight;
     const width = props.page.clientWidth;
     
     // Iterate over the gaze in the perStudentDatas and add them to the data array
     const newData: DataPoint[] = []; 
-    for (const [id, perStudentData] of Object.entries(props.perStudentDatas)) {
-      
+    for (const [id, studentId] of Object.entries(props.selectedId)) {
+
+      const perStudentData = props.perStudentDatas[studentId];
       const gaze = perStudentData.logs.gaze
       const currentPdfTimes = perStudentData.dataStore.pdfTimes[index];
       
@@ -69,7 +75,7 @@ export default function HeatmapOverlay(props: HeatmapOverlayProps) {
     }
     setData(newData);
 
-  }, [props.perStudentDatas, props.page, props.activeDocument]);
+  }, [props.perStudentDatas, props.page, props.activeDocument, props.selectedId]);
 
   useEffect(() => {
     if (!props.page || (data.length == 0)) return
