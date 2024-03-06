@@ -17,3 +17,5 @@ export type AnswerTrace = {
   pts: number
   accumulativeScore: number
 }
+
+export type colorMap = {[key: string]: string}

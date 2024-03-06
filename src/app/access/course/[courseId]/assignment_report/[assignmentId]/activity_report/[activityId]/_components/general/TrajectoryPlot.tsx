@@ -1,20 +1,23 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { ActivityData } from "@prisma/client";
-import { AnswerTrace } from "../types";
-import { LineChart, Label, Line, ReferenceLine, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import { AnswerTrace, colorMap } from "../types";
+import { LineChart, Label, Line, XAxis, YAxis, CartesianGrid, Tooltip } from 'recharts';
 
 
 type DataLine = {
   data: {
     x: any[],
     y: any[]
-  }
+  };
+  id: string;
   color: string;
 }
 
 type TrajectoryPlotProps = {
   perStudentDatas: {[key: string]: any}
   activityDatas: ActivityData[]
+  selectedId: string[]
+  colors: colorMap
 };
   
 function formatData(data: {x: any[], y: any[]}) {
@@ -27,12 +30,20 @@ function xTickFormatter(value: number) {
 
 export default function TrajectoryPlot(props: TrajectoryPlotProps) {
   const [dataLine, setDataLine] = useState<DataLine[]>([]);
+  const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
+  const parentRef = useRef(null);
 
   useEffect(() => {
 
     // Create lines
     const newLines: DataLine[] = [];
     props.activityDatas.forEach((activityData) => {
+
+      // Skip if not selected
+      if (!props.selectedId.includes(activityData.profileId)) {
+        return;
+      }
+
       let totalTime: number = 0;
       let priorScore: number = 0;
       const x: number[] = [0];
@@ -49,7 +60,8 @@ export default function TrajectoryPlot(props: TrajectoryPlotProps) {
         priorScore = answerTrace.accumulativeScore;
       }
       const line: DataLine = {
-        color: "#008561",
+        color: props.colors[activityData.profileId] || 'black',
+        id: activityData.profileId,
         data: {
           x: x,
           y: y
@@ -60,44 +72,64 @@ export default function TrajectoryPlot(props: TrajectoryPlotProps) {
 
     setDataLine(newLines);
 
-  }, [props.perStudentDatas])
+  }, [props.perStudentDatas, props.selectedId])
+
+  useEffect(() => {
+    const resizeObserver = new ResizeObserver(entries => {
+      for (let entry of entries) {
+        setDimensions({
+          width: entry.contentRect.width,
+          height: entry.contentRect.height
+        });
+      }
+    });
+
+    if (parentRef.current) {
+      resizeObserver.observe(parentRef.current);
+    }
+
+    return () => {
+      resizeObserver.disconnect();
+    };
+  }, []);
  
   return (
-    <ResponsiveContainer width="100%" height="100%">
-        <LineChart
-          title="Student Trajectories"
-          width={500}
-          height={300}
-          margin={{
-            top: 5,
-            right: 30,
-            left: 20,
-            bottom: 5,
-          }}
-        >
-          <CartesianGrid strokeDasharray="3 3" />
-          <XAxis dataKey='x' allowDecimals={false} scale='linear' tickFormatter={xTickFormatter}>
-            <Label 
-              position='insideBottom'
-              dy={8}
-            >
-              Time (s)
-            </Label>
-          </XAxis>
-          <YAxis allowDecimals={false}>
-            <Label 
-              position='outside'
-              angle={-90}
-            >
-              Accumulative Score
-            </Label>
-          </YAxis>
-          <Tooltip />
-          {/* <Legend /> */}
-          {dataLine.map((line, i) => (
-            <Line key={i} type="linear" dataKey="y" stroke={line.color} activeDot={{ r: 8 }} data={formatData(line.data)} />
-          ))}
-        </LineChart>
-      </ResponsiveContainer>
+    <div ref={parentRef} style={{ width: '100%', height: '30vh' }}> {/* Adjust the height as necessary */}
+      <LineChart
+        width={dimensions.width}
+        height={dimensions.height}
+        margin={{
+          top: 40,
+          right: 0,
+          left: 0,
+          bottom: 5,
+        }}
+      >
+        <text x={dimensions.width / 2} y={10} textAnchor="middle" dominantBaseline="central">
+          <tspan fontSize="20">Student Trajectories</tspan>
+        </text>
+        <CartesianGrid strokeDasharray="3 3" />
+        <XAxis dataKey='x' allowDecimals={false} allowDuplicatedCategory={false} scale='linear' tickFormatter={xTickFormatter}>
+          <Label 
+            position='insideBottom'
+            dy={8}
+          >
+            Time (s)
+          </Label>
+        </XAxis>
+        <YAxis allowDecimals={false}>
+          <Label 
+            position='outside'
+            angle={-90}
+          >
+            Accumulative Score
+          </Label>
+        </YAxis>
+        <Tooltip />
+        {dataLine.map((line, i) => (
+          <Line id={line.id} key={line.id} type="linear" dataKey="y" stroke={line.color} strokeWidth={4} activeDot={{ r: 8 }} data={formatData(line.data)} />
+        ))}
+      </LineChart>
+    </div>
   );
 };

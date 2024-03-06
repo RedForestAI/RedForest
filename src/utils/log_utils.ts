@@ -22,7 +22,19 @@ function parseCSVData(data: string): string[][] {
       // @ts-ignore
       cells[i][j] = cells[i][j].trim();
       // @ts-ignore
-      cells[i][j] = cells[i][j].replaceAll('"', '');
+      cells[i][j] = cells[i][j].replaceAll('""', '"');
+
+      // Remove the first and last character "
+      // @ts-ignore
+      if (cells[i][j][0] === '"') {
+        // @ts-ignore
+        cells[i][j] = cells[i][j].substring(1);
+      }
+      // @ts-ignore
+      if (cells[i][j][cells[i][j].length - 1] === '"') {
+        // @ts-ignore
+        cells[i][j] = cells[i][j].substring(0, cells[i][j].length - 1);
+      }
     }
   }
   return cells

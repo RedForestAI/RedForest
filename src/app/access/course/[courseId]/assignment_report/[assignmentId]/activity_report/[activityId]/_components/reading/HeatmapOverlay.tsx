@@ -1,10 +1,14 @@
 import ReactDOM from 'react-dom'
 import { useEffect, useRef, useState } from 'react'
+import { IDocument } from '@cyntler/react-doc-viewer'
 import * as d3 from 'd3'
-import { set } from 'zod';
 
 type HeatmapOverlayProps = {
   page?: Element;
+  activeDocument?: IDocument;
+  docs: { uri: string }[];
+  perStudentDatas: {[key: string]: any};
+  selectedId: string[];
 }
 
 type DataPoint = {
@@ -15,15 +19,6 @@ type DataPoint = {
 const OPACITY = 0.1;
 const RATIO = 0.05
 
-function generateMockData(numberOfPoints = 10, width = 600, height = 400): DataPoint[] {
-  const data = Array.from({ length: numberOfPoints }, () => ({
-    x: Math.random() * width,
-    y: Math.random() * height,
-  }));
-
-  return data;
-}
-
 export default function HeatmapOverlay(props: HeatmapOverlayProps) {
   if (!props.page) return null
 
@@ -32,12 +27,55 @@ export default function HeatmapOverlay(props: HeatmapOverlayProps) {
 
   useEffect(() => {
     if (!props.page) return
+
+    // Determine the active document
+    if (!props.activeDocument) return
+    
+    // Assuming data is an array of { x, y, value } points
+    const svg = d3.select(svgRef.current);
+    svg.selectAll("*").remove();
+    
     // Get the height and width of the page
+    const index = props.docs.findIndex((doc) => doc.uri === props.activeDocument?.uri);
+    const pageNumber = props.page.getAttribute("data-page-number");
     const height = props.page.clientHeight;
     const width = props.page.clientWidth;
-    const newData = generateMockData(100, width, height);
+    
+    // Iterate over the gaze in the perStudentDatas and add them to the data array
+    const newData: DataPoint[] = []; 
+    for (const [id, studentId] of Object.entries(props.selectedId)) {
+
+      const perStudentData = props.perStudentDatas[studentId];
+      const gaze = perStudentData.logs.gaze
+      const currentPdfTimes = perStudentData.dataStore.pdfTimes[index];
+      
+      for (let i = 1; i < gaze.length; i++) {
+        const point = gaze[i];
+       
+        // Check if the point is in the current pdf
+        const timestamp = new Date(point[0]);
+        let inPdf = false; 
+        for (let j = 0; j < currentPdfTimes.length; j++) {
+          const pdfTime = currentPdfTimes[j];
+          if (timestamp >= pdfTime.start && timestamp <= pdfTime.end) {
+            inPdf = true;
+            break;
+          }
+        }
+        if (!inPdf) continue;
+
+        // Check if the point is in the current page
+        if ((point[3] == 'PDFPage') && (point[4] == pageNumber)) {
+          newData.push({
+            x: point[5] * width,
+            y: point[6] * height,
+          });
+        }
+      }
+    }
     setData(newData);
-  }, [props.page]);
+
+  }, [props.perStudentDatas, props.page, props.activeDocument, props.selectedId]);
 
   useEffect(() => {
     if (!props.page || (data.length == 0)) return

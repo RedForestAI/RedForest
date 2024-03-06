@@ -14,10 +14,10 @@ import Table, { ColumnType } from "./Table";
 import PDFViewer from "~/components/pdf/pdf-viewer";
 import LoadFilesProgress from "../general/LoadFilesProgress";
 import TrajectoryPlot from "../general/TrajectoryPlot";
-import HeatMapOverlay from "./HeatmapOverlay"
+import HeatMapOverlay from "./HeatmapOverlay";
 import { loadCSVData, getFileStem } from "~/utils/log_utils";
-import { PerStudentData } from "../types";
-// import LogProcessing from "./FileProcessing";
+import { PerStudentData, colorMap } from "../types";
+import LogProcessing from "./FileProcessing";
 
 type ReadingReportProps = {
   activity: Activity;
@@ -25,6 +25,7 @@ type ReadingReportProps = {
   activityDatas: ActivityData[];
   questions: Question[];
   tracelogs: TraceLogFile[];
+  colors: colorMap
 };
 
 export default function ReadingReport(props: ReadingReportProps) {
@@ -39,7 +40,10 @@ export default function ReadingReport(props: ReadingReportProps) {
   const [selectedId, setSelectedId] = useState<string[]>([]);
   const [filesDownloaded, setFilesDownloaded] = useState<boolean>(false);
   const [traceBlobs, setTraceBlobs] = useState<Blob[]>([]);
-  const [perStudentDatas, setPerStudentDatas] = useState<{[key: string]: PerStudentData}>({});
+  const [perStudentDatas, setPerStudentDatas] = useState<{
+    [key: string]: PerStudentData;
+  }>({});
+
   const supabase = createClientComponentClient();
 
   useEffect(() => {
@@ -109,16 +113,18 @@ export default function ReadingReport(props: ReadingReportProps) {
     ]);
 
     const newTableData = props.activityDatas.map((activityData) => {
-      const questionScores = activityData.answersTrace.map((answerTrace: any, index: Number) => {
-        return Number(answerTrace.correct);
-      })
+      const questionScores = activityData.answersTrace.map(
+        (answerTrace: any, index: Number) => {
+          return Number(answerTrace.correct);
+        },
+      );
 
       return [
-        activityData.profileId.split("-")[0],
+        activityData.profileId,
         Number(activityData.completed),
         activityData.score,
-        ...questionScores
-      ]
+        ...questionScores,
+      ];
     });
 
     // Default select all rows
@@ -129,8 +135,7 @@ export default function ReadingReport(props: ReadingReportProps) {
   useEffect(() => {
     if (filesDownloaded) {
       async function processTraceLogs() {
-        
-        // First, parse the data and create per-student session logs 
+        // First, parse the data and create per-student session logs
         const loadingPerStudentDatas: { [key: string]: PerStudentData } = {};
         for (let i = 0; i < traceBlobs.length; i++) {
           const blobMeta = props.tracelogs[i];
@@ -141,30 +146,30 @@ export default function ReadingReport(props: ReadingReportProps) {
 
           // Handle types of data
           let perStudentData: PerStudentData | undefined = undefined;
-          let stem: string = '';
+          let stem: string = "";
           let logData = {};
 
           switch (blob.type) {
             case "application/json":
               const jsonData = await blob.text();
               const logs = JSON.parse(jsonData);
-              stem = getFileStem(blobMeta.filepath)
-              logData = { [stem]: logs }
+              stem = getFileStem(blobMeta.filepath);
+              logData = { [stem]: logs };
               perStudentData = {
                 id: blobMeta.profileId,
                 logs: logData,
-                dataStore: {}
+                dataStore: {},
               };
               break;
 
             case "text/csv":
               const data = await loadCSVData(blob);
-              stem = getFileStem(blobMeta.filepath)
-              logData = { [stem]: data }
+              stem = getFileStem(blobMeta.filepath);
+              logData = { [stem]: data };
               perStudentData = {
                 id: blobMeta.profileId,
                 logs: logData,
-                dataStore: {}
+                dataStore: {},
               };
               break;
           }
@@ -174,7 +179,7 @@ export default function ReadingReport(props: ReadingReportProps) {
             return;
           }
 
-          const existingData = loadingPerStudentDatas[perStudentData.id]
+          const existingData = loadingPerStudentDatas[perStudentData.id];
           if (existingData) {
             existingData.logs = {
               ...existingData.logs,
@@ -186,14 +191,12 @@ export default function ReadingReport(props: ReadingReportProps) {
         }
 
         // Process the data
-        // LogProcessing(
-        //   { 
-        //     questions: props.questions,
-        //     perStudentDatas: loadingPerStudentDatas,
-        //     activityDatas: props.activityDatas, 
-        //     setPerStudentData: setPerStudentDatas 
-        //   }
-        // );
+        LogProcessing({
+          questions: props.questions,
+          perStudentDatas: loadingPerStudentDatas,
+          activityDatas: props.activityDatas,
+          setPerStudentData: setPerStudentDatas,
+        });
       }
 
       processTraceLogs();
@@ -213,17 +216,23 @@ export default function ReadingReport(props: ReadingReportProps) {
             supportZoom: false,
           }}
         >
-          <HeatMapOverlay />
+          <HeatMapOverlay
+            perStudentDatas={perStudentDatas}
+            docs={docs}
+            activeDocument={activeDocument}
+            selectedId={selectedId}
+          />
         </PDFViewer>
       </div>
 
-      <div className="ml-4 mr-4 mt-[4.5%] flex w-1/2 flex-col gap-24">
+      <div className="ml-4 mr-4 mt-[4.5%] flex w-1/2 flex-col gap-8">
         <div className="max-h-96 overflow-x-auto overflow-y-auto">
           <Table
             columns={columns}
             tableData={tableData}
             selectedId={selectedId}
             setSelectedId={setSelectedId}
+            colors={props.colors}
           />
         </div>
 
@@ -241,9 +250,12 @@ export default function ReadingReport(props: ReadingReportProps) {
           </>
         ) : (
           <>
-            <div style={{width: "100%", height: "30vh"}}>
-              <TrajectoryPlot perStudentDatas={perStudentDatas} activityDatas={props.activityDatas} />
-            </div>
+            <TrajectoryPlot
+              perStudentDatas={perStudentDatas}
+              activityDatas={props.activityDatas}
+              selectedId={selectedId}
+              colors={props.colors}
+            />
           </>
         )}
       </div>

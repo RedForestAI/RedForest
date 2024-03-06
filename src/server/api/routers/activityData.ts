@@ -13,6 +13,14 @@ export const activityDataRouter = createTRPCRouter({
       });
     }),
 
+  getOneByProfile: privateProcedure
+    .input(z.object({ activityId: z.string(), profileId: z.string() }))
+    .query(async ({ input, ctx }) => {
+      return await ctx.db.activityData.findFirst({
+        where: { activityId: input.activityId, profileId: input.profileId },
+      });
+    }),
+
   getMany: privateProcedure
     .input(z.object({ activityId: z.string() }))
     .query(async ({ input, ctx }) => {
