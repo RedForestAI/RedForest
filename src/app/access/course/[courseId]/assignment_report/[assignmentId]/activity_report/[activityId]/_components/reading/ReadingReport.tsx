@@ -16,7 +16,7 @@ import LoadFilesProgress from "../general/LoadFilesProgress";
 import TrajectoryPlot from "../general/TrajectoryPlot";
 import HeatMapOverlay from "./HeatmapOverlay";
 import { loadCSVData, getFileStem } from "~/utils/log_utils";
-import { PerStudentData } from "../types";
+import { PerStudentData, colorMap } from "../types";
 import LogProcessing from "./FileProcessing";
 
 type ReadingReportProps = {
@@ -25,6 +25,7 @@ type ReadingReportProps = {
   activityDatas: ActivityData[];
   questions: Question[];
   tracelogs: TraceLogFile[];
+  colors: colorMap
 };
 
 export default function ReadingReport(props: ReadingReportProps) {
@@ -224,13 +225,14 @@ export default function ReadingReport(props: ReadingReportProps) {
         </PDFViewer>
       </div>
 
-      <div className="ml-4 mr-4 mt-[4.5%] flex w-1/2 flex-col gap-24">
+      <div className="ml-4 mr-4 mt-[4.5%] flex w-1/2 flex-col gap-8">
         <div className="max-h-96 overflow-x-auto overflow-y-auto">
           <Table
             columns={columns}
             tableData={tableData}
             selectedId={selectedId}
             setSelectedId={setSelectedId}
+            colors={props.colors}
           />
         </div>
 
@@ -252,6 +254,7 @@ export default function ReadingReport(props: ReadingReportProps) {
               perStudentDatas={perStudentDatas}
               activityDatas={props.activityDatas}
               selectedId={selectedId}
+              colors={props.colors}
             />
           </>
         )}

@@ -1,10 +1,12 @@
 import { useState, useEffect } from 'react'
+import { colorMap } from '../types'
 
 export type ColumnType = {
   title: string
 }
 
 type TableProps = {
+  colors: colorMap
   columns: ColumnType[]
   tableData: any[],
   selectedId: string[]
@@ -12,6 +14,7 @@ type TableProps = {
 }
 
 export default function Table(props: TableProps) {
+  console.log(props.colors)
   const [selectAll, setSelectAll] = useState<boolean>(false)
 
   useEffect(() => {
@@ -54,6 +57,8 @@ export default function Table(props: TableProps) {
               <input type="checkbox" className="checkbox checkbox-sm" checked={selectAll} onChange={changeAll}/>
             </label>
           </th>
+          <th>
+          </th>
           {props.columns.map((column, index) => {
             return <th key={index}>{column.title}</th>
           })}
@@ -76,6 +81,12 @@ export default function Table(props: TableProps) {
               <th>
                 <label>
                   <input type="checkbox" className="checkbox checkbox-sm" checked={props.selectedId.includes(row[0])} onChange={(e) => {changeSelect(e, row[0])}}/>
+                </label>
+              </th>
+              <th style={{position: "relative"}}>
+                <label style={{display: "block", height: "100%"}}>
+                  <div className="overflow-hidden rounded-2xl mt-2 mb-2" style={{position: "absolute", top: 0, bottom: 0, left: 0, width: "0.5vw", backgroundColor: `${props.colors[row[0]]}`}}>
+                  </div>
                 </label>
               </th>
               {row.map((data: any, index: number) => {

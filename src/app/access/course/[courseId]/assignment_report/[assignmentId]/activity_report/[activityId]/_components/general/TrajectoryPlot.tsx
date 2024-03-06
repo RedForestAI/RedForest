@@ -1,6 +1,6 @@
 import { useEffect, useState, useRef } from "react";
 import { ActivityData } from "@prisma/client";
-import { AnswerTrace } from "../types";
+import { AnswerTrace, colorMap } from "../types";
 import { LineChart, Label, Line, XAxis, YAxis, CartesianGrid, Tooltip } from 'recharts';
 
 
@@ -17,6 +17,7 @@ type TrajectoryPlotProps = {
   perStudentDatas: {[key: string]: any}
   activityDatas: ActivityData[]
   selectedId: string[]
+  colors: colorMap
 };
   
 function formatData(data: {x: any[], y: any[]}) {
@@ -59,7 +60,7 @@ export default function TrajectoryPlot(props: TrajectoryPlotProps) {
         priorScore = answerTrace.accumulativeScore;
       }
       const line: DataLine = {
-        color: "#008561",
+        color: props.colors[activityData.profileId] || 'black',
         id: activityData.profileId,
         data: {
           x: x,
@@ -126,7 +127,7 @@ export default function TrajectoryPlot(props: TrajectoryPlotProps) {
         </YAxis>
         <Tooltip />
         {dataLine.map((line, i) => (
-          <Line id={line.id} key={line.id} type="linear" dataKey="y" stroke={line.color} activeDot={{ r: 8 }} data={formatData(line.data)} />
+          <Line id={line.id} key={line.id} type="linear" dataKey="y" stroke={line.color} strokeWidth={4} activeDot={{ r: 8 }} data={formatData(line.data)} />
         ))}
       </LineChart>
     </div>
