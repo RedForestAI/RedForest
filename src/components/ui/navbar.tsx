@@ -6,6 +6,7 @@ import { useState, useEffect, useContext } from "react";
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 import { useRouter } from 'next/navigation'
 import { middleNavBarContext, endNavBarContext } from '~/providers/navbar-provider';
+import { InAssignmentContext } from "~/providers/InAssignmentProvider";
 
 type Breadcrum = {
   name: string
@@ -22,6 +23,7 @@ export default function Navbar(props: NavbarProps) {
   const endNavBarContent = useContext(endNavBarContext);
   const router = useRouter();
   const supabase = createClientComponentClient();
+  const {inAssignment, uploadingSession, setUploadingSession, setAfterUploadHref} = useContext(InAssignmentContext)
 
   // use theme from local storage if available or set light theme
   const [theme, setTheme] = useState<string | null>(null);
@@ -65,6 +67,11 @@ export default function Navbar(props: NavbarProps) {
   }
 
   function goDashboard() {
+    if (inAssignment) {
+      setUploadingSession(true)
+      setAfterUploadHref('/access')
+      return
+    }
     router.push('/access')
   }
 

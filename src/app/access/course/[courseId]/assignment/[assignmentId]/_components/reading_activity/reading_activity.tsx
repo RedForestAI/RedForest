@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useContext } from "react";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import { generateUUID } from "~/utils/uuid";
 import { IDocument } from "@cyntler/react-doc-viewer";
@@ -27,6 +27,8 @@ import ActivityCompletion from "../activity-completion";
 import { AOIEncoding } from "~/eyetracking/aoi-encoding";
 import ReadingInstrModal from "./reading-instr-modal";
 import { triggerActionLog } from "~/loggers/actions-logger";
+import { InAssignmentContext } from "~/providers/InAssignmentProvider";
+import UploadingSession from "~/components/ui/UploadingSession";
 
 import BaseLogger from "~/loggers/base-logger";
 import GazeLogger from "~/loggers/gaze-logger";
@@ -64,6 +66,7 @@ export default function ReadingActivity(props: ReadingActivityProps) {
   const [annotations, setAnnotations] = useState<Annotation[]>([]);
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [runningET, setRunningET] = useState<boolean>(false);
+  const {setInAssignment, uploadingSession, setUploadingSession} = useContext(InAssignmentContext)
 
   const readingActivityQuery = api.readingFile.getMany.useQuery(
     { activityId: props.activity.id },
@@ -110,6 +113,9 @@ export default function ReadingActivity(props: ReadingActivityProps) {
       setAnnotations(annotationsResult.data);
     };
     getReadingActivity();
+
+    // Mark that we are in an assignment
+    setInAssignment(true);
 
     // Clear logs
     gazeLogger.clear();
@@ -292,7 +298,11 @@ export default function ReadingActivity(props: ReadingActivityProps) {
     if (complete) {
       uploadLogs();
     }
-  }, [complete]);
+    if (uploadingSession) {
+      uploadLogs()
+      setUploadingSession(false);
+    }
+  }, [complete, uploadingSession]);
 
   function onReadingStart() {
     setBlur(false);
@@ -309,6 +319,8 @@ export default function ReadingActivity(props: ReadingActivityProps) {
           runningET={runningET}
           setRunningET={setRunningET}
         />
+
+        <UploadingSession/>
 
         <ReadingInstrModal
           runningET={runningET}

@@ -32,9 +32,9 @@ export default async function RootLayout({ children }: { children: React.ReactNo
           )}
         >
           <TRPCReactProvider headers={headers()}>
-              <Providers>
-                {children}
-              </Providers>
+            <Providers>
+              {children}
+            </Providers>
           </TRPCReactProvider>
         </body>
       </html>
