@@ -300,6 +300,7 @@ export default function ReadingActivity(props: ReadingActivityProps) {
     }
     if (uploadingSession) {
       uploadLogs()
+      triggerActionLog({ type: "sessionUpload", value: {note: "Session paused"} });
       setUploadingSession(false);
     }
   }, [complete, uploadingSession]);

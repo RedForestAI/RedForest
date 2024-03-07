@@ -1,12 +1,24 @@
 import { useEffect, useContext } from "react";
 import { InAssignmentContext } from "~/providers/InAssignmentProvider";
 import { useRouter } from "next/navigation";
+import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 
 export default function UploadingSession() {
   const {uploadingSession, afterUploadHref, setInAssignment, setUploadingSession, setAfterUploadHref} = useContext(InAssignmentContext)
   const router = useRouter();
+  const supabase = createClientComponentClient();
 
   useEffect(() => {
+
+    async function LogoutButton() {
+      await supabase.auth.signOut();
+      fetch(`${origin}/api/auth/logout`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' }
+      })
+      .then(response => console.log(response))
+    }
+
     if (uploadingSession) {
       // @ts-ignore
       document.getElementById("uploading_session").showModal();
@@ -18,6 +30,12 @@ export default function UploadingSession() {
         setInAssignment(false);
         setUploadingSession(false);
         setAfterUploadHref("");
+        if (afterUploadHref === 'logout') {
+          LogoutButton();
+          router.push('../session/login')
+          router.refresh();
+          return
+        }
         router.push(afterUploadHref);
       }
     }

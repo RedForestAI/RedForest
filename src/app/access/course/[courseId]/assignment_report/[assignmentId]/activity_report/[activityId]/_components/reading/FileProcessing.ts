@@ -94,8 +94,6 @@ export default function LogProcessing(props: LogProcessingProps) {
     }
   }
 
-  console.log(props.perStudentDatas)
-
   // Set the data
   props.setPerStudentData(props.perStudentDatas);
 }

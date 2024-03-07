@@ -145,48 +145,54 @@ export default function ReadingReport(props: ReadingReportProps) {
           }
 
           // Handle types of data
-          let perStudentData: PerStudentData | undefined = undefined;
           let stem: string = "";
-          let logData = {};
+          let data: any = undefined;
 
           switch (blob.type) {
             case "application/json":
               const jsonData = await blob.text();
-              const logs = JSON.parse(jsonData);
+              data = JSON.parse(jsonData);
               stem = getFileStem(blobMeta.filepath);
-              logData = { [stem]: logs };
-              perStudentData = {
-                id: blobMeta.profileId,
-                logs: logData,
-                dataStore: {},
-              };
               break;
 
             case "text/csv":
-              const data = await loadCSVData(blob);
+              data = await loadCSVData(blob);
               stem = getFileStem(blobMeta.filepath);
-              logData = { [stem]: data };
-              perStudentData = {
-                id: blobMeta.profileId,
-                logs: logData,
-                dataStore: {},
-              };
               break;
           }
 
           // Combine the logs
-          if (perStudentData == undefined) {
+          if (data == undefined) {
             return;
           }
 
-          const existingData = loadingPerStudentDatas[perStudentData.id];
-          if (existingData) {
-            existingData.logs = {
-              ...existingData.logs,
-              ...perStudentData.logs,
-            };
+          const existingData = loadingPerStudentDatas[blobMeta.profileId];
+          if (existingData == undefined) {
+            loadingPerStudentDatas[blobMeta.profileId] = {
+              id: blobMeta.profileId,
+              logs: {[stem]: data},
+              dataStore: {}
+            }
           } else {
-            loadingPerStudentDatas[perStudentData.id] = perStudentData;
+            const priorData = existingData.logs[stem];
+            if (priorData == undefined) {
+              existingData.logs[stem] = data;
+            }
+            else {
+              switch (blob.type) {
+                case "application/json":
+                  existingData.logs[stem] = {
+                    ...priorData,
+                    ...data
+                  }
+                  break;
+
+                case "text/csv":
+                  existingData.logs[stem] = priorData.concat(data.slice(1));
+                  break;
+              
+              }
+            }
           }
         }
 
