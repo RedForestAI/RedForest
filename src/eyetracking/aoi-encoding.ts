@@ -35,21 +35,6 @@ export function AOIEncoding(x: number, y: number): AOIInfo | null {
       }
     }
 
-  // Look for PDF Page
-  let pdfPage = elements.find((el) => el.className === 'react-pdf__Page');
-  if (pdfPage) {
-
-    // Convert the absolute XY to relative XY within the PDF Page
-    const [relativeX, relativeY] = relativeCoordinates(x, y, pdfPage);
-
-    return {
-      aoiType: 'PDFPage',
-      aoiInfo: pdfPage.getAttribute('data-page-number')?.toString() || "",
-      rX: relativeX,
-      rY: relativeY
-    }
-  }
-
   // Look for the QuestionPane
   let questionPane = elements.find((el) => el.id === 'QuestionPane');
   if (questionPane) {
@@ -75,6 +60,21 @@ export function AOIEncoding(x: number, y: number): AOIInfo | null {
     return {
       aoiType: 'DocumentPane',
       aoiInfo: "",
+      rX: relativeX,
+      rY: relativeY
+    }
+  }
+  
+  // Look for PDF Page
+  let pdfPage = elements.find((el) => el.className === 'react-pdf__Page');
+  if (pdfPage) {
+
+    // Convert the absolute XY to relative XY within the PDF Page
+    const [relativeX, relativeY] = relativeCoordinates(x, y, pdfPage);
+
+    return {
+      aoiType: 'PDFPage',
+      aoiInfo: pdfPage.getAttribute('data-page-number')?.toString() || "",
       rX: relativeX,
       rY: relativeY
     }
