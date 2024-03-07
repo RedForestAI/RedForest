@@ -29,6 +29,8 @@ export default function CourseCreate( { profile }: CourseCreateProps) {
 
   function closeModal() {
     setIsOpen(false)
+    // @ts-ignore
+    document.getElementById('course_modal').close()
   }
 
   function openModal() {
@@ -42,7 +44,6 @@ export default function CourseCreate( { profile }: CourseCreateProps) {
   const onSubmit: SubmitHandler<Inputs> = async (data) => {
     try {
       await courseMutation.mutateAsync({name: data.courseName, teacherId: profile.id})
-      console.log(data)
       closeModal()
 
       startTransition(() => {
