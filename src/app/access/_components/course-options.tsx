@@ -2,8 +2,6 @@
 
 import { Course } from "@prisma/client";
 import { useState } from 'react'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faGear } from '@fortawesome/free-solid-svg-icons';
 import { useRouter } from "next/navigation";
 import { api } from "~/trpc/react";
 
@@ -13,18 +11,6 @@ type CourseOptionsProps = {
 }
 
 export default function CourseOptions( props: CourseOptionsProps) {
-  let [isOpen, setIsOpen] = useState<boolean>(false)
-
-  function closeModal() {
-    setIsOpen(false)
-  }
-
-  function openModal() {
-    setIsOpen(true)
-    // @ts-ignore
-    document.getElementById('course_options_modal').showModal()
-  }
-
   const router = useRouter();
   const deleteMutation = api.course.delete.useMutation()
   const linkQuery = api.course.getInviteLink.useQuery({passwordId: props.course.passwordId, teacherId: props.teacherId}, {enabled: false})
@@ -32,7 +18,6 @@ export default function CourseOptions( props: CourseOptionsProps) {
   const deleteCourse = async () => {
     try {
       await deleteMutation.mutateAsync({courseId: props.course.id, teacherId: props.teacherId})
-      setIsOpen(false)
       router.refresh();
     } catch (error: any) {
       console.log(error)
@@ -55,12 +40,7 @@ export default function CourseOptions( props: CourseOptionsProps) {
 
   return (
     <>
-      <div className="flex justify-center items-center" onClick={openModal}>
-        <FontAwesomeIcon icon={faGear} className='h-8 fa-2x cursor-pointer'/>
-      </div>
-
-
-      <dialog id="course_options_modal" className="modal">
+      <dialog id={`course_options_modal_${props.course.id}`} className="modal">
         <div className="modal-box">
           <h3 className="text-4xl">Course Settings</h3>
 
