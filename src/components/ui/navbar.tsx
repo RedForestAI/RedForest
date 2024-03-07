@@ -6,6 +6,7 @@ import { useState, useEffect, useContext } from "react";
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 import { useRouter } from 'next/navigation'
 import { middleNavBarContext, endNavBarContext } from '~/providers/navbar-provider';
+import { InAssignmentContext } from "~/providers/InAssignmentProvider";
 
 type Breadcrum = {
   name: string
@@ -22,6 +23,7 @@ export default function Navbar(props: NavbarProps) {
   const endNavBarContent = useContext(endNavBarContext);
   const router = useRouter();
   const supabase = createClientComponentClient();
+  const {inAssignment, uploadingSession, setUploadingSession, setAfterUploadHref} = useContext(InAssignmentContext)
 
   // use theme from local storage if available or set light theme
   const [theme, setTheme] = useState<string | null>(null);
@@ -52,9 +54,14 @@ export default function Navbar(props: NavbarProps) {
   }, [theme]);
 
   async function logOut() {
-    await supabase.auth.signOut();
+    if (inAssignment) {
+      setUploadingSession(true)
+      setAfterUploadHref('logout')
+      return
+    }
 
     // POST request using fetch inside useEffect React hook
+    await supabase.auth.signOut();
     fetch(`${origin}/api/auth/logout`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' }
@@ -65,19 +72,48 @@ export default function Navbar(props: NavbarProps) {
   }
 
   function goDashboard() {
+    if (inAssignment) {
+      setUploadingSession(true)
+      setAfterUploadHref('/access')
+      return
+    }
     router.push('/access')
   }
 
   function goProfile() {
+    if (inAssignment) {
+      setUploadingSession(true)
+      setAfterUploadHref('/access/account')
+      return
+    }
     router.push('/access/account')
   }
 
   function logIn() {
+    if (inAssignment) {
+      setUploadingSession(true)
+      setAfterUploadHref('/session/login')
+      return
+    }
     router.push('/session/login')
   }
 
   function signUp() {
+    if (inAssignment) {
+      setUploadingSession(true)
+      setAfterUploadHref('/session/sign-up')
+      return
+    }
     router.push('/session/sign-up')
+  }
+
+  function pushRoute(url: string) {
+    if (inAssignment) {
+      setUploadingSession(true)
+      setAfterUploadHref(url)
+      return
+    }
+    router.push(url)
   }
 
   return (
@@ -108,9 +144,9 @@ export default function Navbar(props: NavbarProps) {
               <li key={index}>
                 {breadcrumb.url != "" 
                   ? <>
-                    <Link href={breadcrumb.url} legacyBehavior={true}>
+                    <div className="hover:underline cursor-pointer" onClick={() => {pushRoute(breadcrumb.url)}}> 
                       <a>{breadcrumb.name}</a>
-                    </Link>
+                    </div>
                   </>
                   : <>
                     <span>{breadcrumb.name}</span>

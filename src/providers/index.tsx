@@ -1,5 +1,6 @@
 "use client";
 
+import { InAssignmentProvider } from "./InAssignmentProvider";
 import { MiddleNavBarProvider, EndNavBarProvider } from "./navbar-provider";
 import { HighlightProvider } from "./highlight-provider";
 import React, { type PropsWithChildren } from "react";
@@ -9,9 +10,11 @@ export function Providers({ children }: PropsWithChildren) {
     <>
         <MiddleNavBarProvider>
           <EndNavBarProvider>
-            <HighlightProvider>
-              {children}
-            </HighlightProvider>
+            <InAssignmentProvider>
+              <HighlightProvider>
+                {children}
+              </HighlightProvider>
+            </InAssignmentProvider>
           </EndNavBarProvider>
         </MiddleNavBarProvider>
     </>
