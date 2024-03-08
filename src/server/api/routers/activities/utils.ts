@@ -1,7 +1,7 @@
 import { PrismaClient } from "@prisma/client";
 import { ActivityType } from "@prisma/client";
 
-export async function createEmptyReadingActivity(assignmentId: string, index: number, db: PrismaClient) {
+export async function createEmptyReadingActivity(assignmentId: string, index: number, db: PrismaClient | any) {
     // Get assignments pertaining to course
     const activity = await db.activity.create({
       data: {
@@ -23,7 +23,7 @@ export async function createEmptyReadingActivity(assignmentId: string, index: nu
     return activity;
 }
 
-export async function deleteActivity(activityId: string, db: PrismaClient) {
+export async function deleteActivity(activityId: string, db: PrismaClient | any) {
   
   // Depending on the type, delete the subactivity data
   const activity = await db.activity.findUnique({where: {id: activityId}});
