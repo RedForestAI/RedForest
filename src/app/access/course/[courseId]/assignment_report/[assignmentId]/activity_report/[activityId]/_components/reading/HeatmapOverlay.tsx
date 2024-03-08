@@ -49,6 +49,8 @@ export default function HeatmapOverlay(props: HeatmapOverlayProps) {
       const perStudentData = props.perStudentDatas[studentId];
       const gaze = perStudentData.logs.gaze
       const currentPdfTimes = perStudentData.dataStore.pdfTimes[index];
+
+      if (!gaze || !currentPdfTimes) continue;
       
       for (let i = 1; i < gaze.length; i++) {
         const point = gaze[i];
