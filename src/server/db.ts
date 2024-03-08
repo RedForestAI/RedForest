@@ -1,4 +1,5 @@
 import { PrismaClient } from "@prisma/client";
+import { useSupabaseRowLevelSecurity } from "prisma/useSupabaseRowLevelSecurity";
 
 import { env } from "~/env.mjs";
 
@@ -11,6 +12,7 @@ export const db =
   new PrismaClient({
     log:
       env.NODE_ENV === "development" ? ["query", "error", "warn"] : ["error"],
-  });
+  }).$extends(useSupabaseRowLevelSecurity());
 
+// @ts-ignore
 if (env.NODE_ENV !== "production") globalForPrisma.prisma = db;
