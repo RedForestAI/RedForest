@@ -1,8 +1,9 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { faClose } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import GazeDot from "./GazeDot";
-import { set } from "zod";
+
+const precisionArray: number[] = [];
 
 function ClickButton(props: {
   complete: boolean;
@@ -38,24 +39,46 @@ function ClickButton(props: {
 function EvaluationButton(props: {
   complete: boolean;
   buttonCounter: number;
+  evaluating: boolean;
+  setEvaluating: (evaluating: boolean) => void;
+  postEvaluating: boolean;
+  setPostEvaluating: (postEvaluating: boolean) => void;
   setButtonCounter: (buttonCounter: number) => void;
 }) {
   const [enabled, setEnabled] = useState(props.complete!);
-  const [running, setRunning] = useState(false);
   const [listening, setListening] = useState(false);
-  const [finish, setFinish] = useState(false);
+  const buttonRef = useRef(null)
+  const [averagePrecision, setAveragePrecision] = useState(0);
 
   useEffect(() => {
     const handleCustomEvent = (event: any) => {
+      if (!buttonRef.current) return;
+
       // Handle the event
       let newData = { x: event.detail.x, y: event.detail.y };
-      // setGaze(newData)
-      console.log(newData);
+      // console.log(newData);
+
+      // Compute the center of the button
+      // @ts-ignore
+      const rect = buttonRef.current.getBoundingClientRect();
+      const centerX = (rect.left + rect.right) / 2;
+      const centerY = (rect.top + rect.bottom) / 2;
+
+      // Compute the distance
+      const distance = Math.sqrt(Math.pow(event.detail.x - centerX, 2) + Math.pow(event.detail.y - centerY, 2));
+      const normalizedDistance = distance / Math.sqrt(Math.pow(window.innerWidth, 2) + Math.pow(window.innerHeight, 2));
+      const precision = 100 - (normalizedDistance * 100);
+      precisionArray.push(precision);
     };
 
+    // Clear data
+    precisionArray.length = 0;
+
     // Add event listener
-    document.addEventListener("gazeUpdate", handleCustomEvent);
-    setListening(true);
+    if (props.evaluating) {
+      document.addEventListener("gazeUpdate", handleCustomEvent);
+      setListening(true);
+    }
 
     // Cleanup function to remove the event listener
     return () => {
@@ -63,24 +86,35 @@ function EvaluationButton(props: {
         document.removeEventListener("gazeUpdate", handleCustomEvent);
       }
     };
-  }, []); // Empty dependency array means this effect runs once on mount
+  }, [props.evaluating]); // Empty dependency array means this effect runs once on mount
 
   function handleClick() {
-    setRunning(true);
+    props.setEvaluating(true);
     setTimeout(() => {
-      setRunning(false);
+      props.setEvaluating(false);
       setEnabled(false);
-      setFinish(true);
+      props.setPostEvaluating(true);
       props.setButtonCounter(props.buttonCounter + 1);
+
+      // Compute average
+      console.log(precisionArray)
+      let sum = 0;
+      for (let i = 0; i < precisionArray.length; i++) {
+        // @ts-ignore
+        sum += precisionArray[i];
+      }
+      setAveragePrecision(sum / precisionArray.length);
+
     }, 5000);
   }
 
   return (
     <>
-      {!finish ? (
+      {!props.postEvaluating ? (
         <>
           <button
-            className={`btn btn-circle ${running ? "btn-warning" : "btn-error"}`}
+            ref={buttonRef}
+            className={`btn btn-circle ${props.evaluating ? "btn-warning" : "btn-error"}`}
             style={{
               zIndex: 10000000,
             }}
@@ -91,7 +125,7 @@ function EvaluationButton(props: {
       ) : (
         <>
           <text className="w-1/2 text-center text-3xl">
-            The accuracy is %100. 
+            {`The precision is ${averagePrecision.toFixed(0)}.`}
           </text>
           <text className="w-1/2 text-center">
             If the accuracy is too low, you can recalibrate. Otherwise,
@@ -108,19 +142,19 @@ export default function WGCalibration(props: {
   calibration: boolean;
   setCalibration: (calibration: boolean) => void;
 }) {
-  const [complete, setComplete] = useState(false);
-  const [evaluating, setEvaluating] = useState(false);
+  const [complete, setComplete] = useState(true);
   const [buttonCounter, setButtonCounter] = useState(0);
   const [gaze, setGaze] = useState({ x: 0, y: 0 });
   const [listening, setListening] = useState(false);
+  
+  const [evaluating, setEvaluating] = useState(false);
+  const [postEvaluating, setPostEvaluating] = useState(false);
 
   function getMessage() {
     if (complete) {
-      if (evaluating) {
+      if (!postEvaluating) {
         return "Evaluting the calibration. Click on the center red dot and look at it for 5 seconds.";
-      } else {
-        return "Calibration complete, please close this modal by click on the X on the top right.";
-      }
+      } 
     } else {
       return "Click on each red button 5 times, until each button turns grey.";
     }
@@ -136,6 +170,7 @@ export default function WGCalibration(props: {
   useEffect(() => {
     if (buttonCounter == 9) {
       setComplete(true);
+      setEvaluating(true);
     }
   }, [buttonCounter]);
 
@@ -193,6 +228,10 @@ export default function WGCalibration(props: {
                 complete={complete}
                 buttonCounter={buttonCounter}
                 setButtonCounter={setButtonCounter}
+                evaluating={evaluating}
+                setEvaluating={setEvaluating}
+                postEvaluating={postEvaluating}
+                setPostEvaluating={setPostEvaluating}
               />
             </div>
           </>
