@@ -38,12 +38,13 @@ function ClickButton(props: {
 
 function EvaluationButton(props: {
   complete: boolean;
+  setComplete: (complete: boolean) => void;
   buttonCounter: number;
+  setButtonCounter: (buttonCounter: number) => void;
   evaluating: boolean;
   setEvaluating: (evaluating: boolean) => void;
   postEvaluating: boolean;
   setPostEvaluating: (postEvaluating: boolean) => void;
-  setButtonCounter: (buttonCounter: number) => void;
 }) {
   const [enabled, setEnabled] = useState(props.complete!);
   const [listening, setListening] = useState(false);
@@ -67,7 +68,8 @@ function EvaluationButton(props: {
       // Compute the distance
       const distance = Math.sqrt(Math.pow(event.detail.x - centerX, 2) + Math.pow(event.detail.y - centerY, 2));
       const normalizedDistance = distance / Math.sqrt(Math.pow(window.innerWidth, 2) + Math.pow(window.innerHeight, 2));
-      const precision = 100 - (normalizedDistance * 100);
+      let precision = 100 - (2 * normalizedDistance * 100);
+      if (precision < 0) precision = 0;
       precisionArray.push(precision);
     };
 
@@ -108,6 +110,14 @@ function EvaluationButton(props: {
     }, 5000);
   }
 
+  function recalibrate() {
+    props.setComplete(false)
+    props.setButtonCounter(0);
+    props.setPostEvaluating(false);
+    setAveragePrecision(0);
+    precisionArray.length = 0;
+  }
+
   return (
     <>
       {!props.postEvaluating ? (
@@ -131,7 +141,7 @@ function EvaluationButton(props: {
             If the accuracy is too low, you can recalibrate. Otherwise,
             close the modal with the top-right X.
           </text>
-          <button className="btn btn-warning mt-6">Recalibrate</button>
+          <button className="btn btn-warning mt-6" onClick={recalibrate}>Recalibrate</button>
         </>
       )}
     </>
@@ -142,7 +152,7 @@ export default function WGCalibration(props: {
   calibration: boolean;
   setCalibration: (calibration: boolean) => void;
 }) {
-  const [complete, setComplete] = useState(true);
+  const [complete, setComplete] = useState(false);
   const [buttonCounter, setButtonCounter] = useState(0);
   const [gaze, setGaze] = useState({ x: 0, y: 0 });
   const [listening, setListening] = useState(false);
@@ -206,7 +216,7 @@ export default function WGCalibration(props: {
 
   return (
     <dialog id="wgcalibration" className="modal overflow-hidden">
-      <div className="modal-box h-[97vh] max-h-full w-[97vw] max-w-full">
+      <div className="modal-box h-[97vh] max-h-full w-[97vw] max-w-full overflow-hidden">
         <div className="flex flex-row items-center justify-between">
           <h3 className="text-lg font-bold">Calibration</h3>
           <form method="dialog">
@@ -226,6 +236,7 @@ export default function WGCalibration(props: {
             <div className="flex h-full w-full flex-col items-center justify-center">
               <EvaluationButton
                 complete={complete}
+                setComplete={setComplete}
                 buttonCounter={buttonCounter}
                 setButtonCounter={setButtonCounter}
                 evaluating={evaluating}
