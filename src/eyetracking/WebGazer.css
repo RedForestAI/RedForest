@@ -3,3 +3,7 @@
   height: 0px !important;
   width: 0px !important;
 }
+
+#webgazerVideoContainer {
+  z-index: 100 !important;
+}

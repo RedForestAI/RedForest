@@ -1,6 +1,6 @@
 import { useContext, useEffect, useState } from "react";
 import ReactPlayer from 'react-player';
-import { faCircleQuestion } from "@fortawesome/free-solid-svg-icons";
+import { faCircleQuestion, faEye } from "@fortawesome/free-solid-svg-icons";
 import { useEndNavBarContext } from "~/providers/navbar-provider";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { triggerActionLog } from "~/loggers/actions-logger";
@@ -69,22 +69,26 @@ export default function ReadingInstrModal(props: {
     <>
       {props.open && (
         <>
-          <div className="fixed left-0 top-[10%] z-[70] h-full w-full">
-            <div className="m-auto h-[60%] w-[70%]">
+          <div className="fixed left-0 top-[5%] z-[70] h-full w-full">
+            <div className="m-auto h-[90%] w-[90%]">
               <div className="flex h-full flex-col items-center justify-between overflow-hidden rounded-2xl border border-neutral bg-base-100 p-4">
-                <h1 className="pb-2 text-2xl text-5xl font-bold">
+                <h1 className="pb-4 text-2xl text-5xl font-bold">
                   Getting Ready!
                 </h1>
                 {/* YouTube Video */}
                 <div className="player-wrapper">
                   <ReactPlayer className="react-player" width='100%' height='100%' url="https://www.youtube.com/watch?v=YR6HecNZg10&feature=youtu.be"/>
                 </div>
-                <h1 className="text-3xl">
+                <h1 className="text-3xl mt-4 ml-4 mr-4">
                   Before starting the activity, get comfortable and setup the
-                  eye-tracking solution. Once you are ready and all settled, press
+                  eye-tracking solution by clicking on {" "}
+                  <span>
+                    <FontAwesomeIcon icon={faEye} className="fa" />
+                  </span> icon. {" "} 
+                  Once you are ready and all settled, press
                   Continue.
                 </h1>
-                <button className="btn btn-primary" onClick={() => {
+                <button className="btn btn-primary mt-4" onClick={() => {
                   closeModal({ areYouSure: false});
                 }}>
                   Continue
