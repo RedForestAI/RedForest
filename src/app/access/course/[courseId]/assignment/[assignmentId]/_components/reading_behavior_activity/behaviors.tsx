@@ -12,8 +12,8 @@ type BehaviorProps = {
 };
 
 const modalStyle = {
-  header: "text-3xl font-bold",
-  paragraph: "text-lg py-4",
+  header: "text-6xl font-bold pb-6",
+  paragraph: "text-4xl py-4",
 }
 
 export function Linear(props: BehaviorProps) {
@@ -47,7 +47,7 @@ export function Linear(props: BehaviorProps) {
   return (
     <>
       <dialog id="linear_instructions" className="modal">
-        <div className="modal-box">
+        <div className="modal-box max-w-5xl min-h-[40%]">
           <h3 className={modalStyle.header}>Behavior 1: Regular Reading Pace</h3>
           <div className={modalStyle.paragraph}>
             <p className="underline pb-4" style={{fontWeight: "bold"}}>Read like you NORMALLY do - at your regular speed</p>
@@ -62,7 +62,7 @@ export function Linear(props: BehaviorProps) {
           </div>
           <div className="modal-action">
             <form method="dialog">
-              <button className="btn">Start</button>
+              <button className="btn btn-primary">Start</button>
             </form>
           </div>
         </div>
@@ -102,7 +102,7 @@ export function Skimming(props: BehaviorProps) {
   return (
     <>
       <dialog id="skimming_instructions" className="modal">
-        <div className="modal-box">
+        <div className="modal-box max-w-5xl min-h-[40%]">
           <h3 className={modalStyle.header}>Behavior 2: Skimming</h3>
           <div className={modalStyle.paragraph}>
             <p className="underline pb-4" style={{fontWeight: "bold"}}>Read SKIMMING- like you are quickly skimming for important information!</p>
@@ -117,7 +117,7 @@ export function Skimming(props: BehaviorProps) {
           </div>
           <div className="modal-action">
             <form method="dialog">
-              <button className="btn">Start</button>
+              <button className="btn btn-primary">Start</button>
             </form>
           </div>
         </div>
@@ -184,7 +184,7 @@ export function Deep(props: BehaviorProps) {
       ></div>
       
       <dialog id="deep_instructions" className="modal">
-        <div className="modal-box">
+        <div className="modal-box max-w-5xl min-h-[40%]">
           <h3 className={modalStyle.header}>Behavior 3: Slow Reading</h3>
           <div className={modalStyle.paragraph}>
             <p className="underline pb-4" style={{fontWeight: "bold"}}>Read CAREFULLY and SLOWLY– like you are figuring out a hard part of the text that is confusing!</p>
@@ -199,7 +199,7 @@ export function Deep(props: BehaviorProps) {
           </div>
           <div className="modal-action">
             <form method="dialog">
-              <button className="btn">Start</button>
+              <button className="btn btn-primary">Start</button>
             </form>
           </div>
         </div>
@@ -247,7 +247,7 @@ export function Tracking(props: BehaviorProps) {
       <>
         {/* Instructions */}
         <dialog id="tracking_instructions" className="modal">
-          <div className="modal-box">
+          <div className="modal-box max-w-5xl min-h-[40%]">
             <h3 className={modalStyle.header}>Behavior 4: Tracking</h3>
             <div className={modalStyle.paragraph}>
               <p className="underline pb-4" style={{fontWeight: "bold"}}>Read TRACKING– like you are showing the computer where you are reading. Use the mouse to point to what word you are reading. You can also read it out loud.</p>
@@ -262,7 +262,7 @@ export function Tracking(props: BehaviorProps) {
             </div>
             <div className="modal-action">
               <form method="dialog">
-                <button className="btn">Start</button>
+                <button className="btn btn-primary">Start</button>
               </form>
             </div>
           </div>

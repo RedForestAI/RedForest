@@ -1,6 +1,6 @@
 import React, { useContext, useEffect } from 'react';
 import ReactPlayer from 'react-player';
-import { faCircleQuestion } from '@fortawesome/free-solid-svg-icons';
+import { faCircleQuestion, faEye } from '@fortawesome/free-solid-svg-icons';
 import { useEndNavBarContext } from '~/providers/navbar-provider';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { triggerActionLog } from "~/loggers/actions-logger";
@@ -65,17 +65,17 @@ export default function InstructionsModal(props: InstructionsModalProps) {
   return (
     <>
     {props.inInstructions &&
-      <div className="fixed left-0 top-[10%] z-[70] h-full w-full">
-        <div className="m-auto h-[60%] w-[70%]">
+      <div className="fixed left-0 top-[5%] z-[70] h-full w-full">
+        <div className="m-auto h-[90%] w-[90%]">
           <div className="flex flex-col h-full items-center bg-base-100 border border-neutral rounded-2xl overflow-hidden p-4">
             <h1 className="pb-4 text-2xl text-5xl font-bold">Learning How You Read</h1>
             
             {/* <YouTube opts={opts} videoId="YR6HecNZg10" /> */}
             <div className="player-wrapper">
-              <ReactPlayer className="react-player" width='100%' height='100%' url="https://www.youtube.com/watch?v=uIWvigp8OBQ"/>
+              <ReactPlayer controls={true} className="react-player" width='100%' height='100%' url="https://youtu.be/BT5MUkTsDkM"/>
             </div>
             
-            <div className="h-4/6 text-xl pt-6 pb-4 ml-12 mr-12 flex flex-col gap-4">
+            <div className="h-4/6 text-2xl pt-6 pb-4 ml-12 mr-12 flex flex-col gap-4">
               <p>Can our AI system learn to recognize your reading?</p>
               <p>Help teach it by training it to recognize how you read!</p>
               <p>To teach it, you will
@@ -86,7 +86,12 @@ export default function InstructionsModal(props: InstructionsModalProps) {
                 </ul>
               </p>
               <p>Let's see if the computer can be trained. Let's read.</p>
-              <p>Before starting, start the eye-tracking solution by the top-right eye icon.</p>
+              <p>
+                Before starting, start the eye-tracking solution by the top-right {" "}
+                <span>
+                  <FontAwesomeIcon icon={faEye} className="fa" />
+                </span> icon. {" "} 
+              </p>
             </div>
             <button
               className="btn btn-primary"
