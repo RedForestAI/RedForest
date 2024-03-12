@@ -77,7 +77,7 @@ export default function ReadingInstrModal(props: {
                 </h1>
                 {/* YouTube Video */}
                 <div className="player-wrapper">
-                  <ReactPlayer className="react-player" width='100%' height='100%' url="https://www.youtube.com/watch?v=YR6HecNZg10&feature=youtu.be"/>
+                  <ReactPlayer controls={true} className="react-player" width='100%' height='100%' url="https://youtu.be/PZsmN357aNw"/>
                 </div>
                 <h1 className="text-3xl mt-4 ml-4 mr-4">
                   Before starting the activity, get comfortable and setup the
