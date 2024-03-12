@@ -2,8 +2,9 @@ import React, { useEffect, useState, useRef } from "react";
 import { faClose } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import GazeDot from "./GazeDot";
+import { triggerActionLog } from "~/loggers/actions-logger";
 
-const precisionArray: number[] = [];
+const accuracyArray: number[] = [];
 
 function ClickButton(props: {
   complete: boolean;
@@ -49,7 +50,7 @@ function EvaluationButton(props: {
   const [enabled, setEnabled] = useState(props.complete!);
   const [listening, setListening] = useState(false);
   const buttonRef = useRef(null)
-  const [averagePrecision, setAveragePrecision] = useState(0);
+  const [averageAccuracy, setAverageaccuracy] = useState(0);
 
   useEffect(() => {
     const handleCustomEvent = (event: any) => {
@@ -68,13 +69,13 @@ function EvaluationButton(props: {
       // Compute the distance
       const distance = Math.sqrt(Math.pow(event.detail.x - centerX, 2) + Math.pow(event.detail.y - centerY, 2));
       const normalizedDistance = distance / Math.sqrt(Math.pow(window.innerWidth, 2) + Math.pow(window.innerHeight, 2));
-      let precision = 100 - (2 * normalizedDistance * 100);
-      if (precision < 0) precision = 0;
-      precisionArray.push(precision);
+      let accuracy = 100 - (2 * normalizedDistance * 100);
+      if (accuracy < 0) accuracy = 0;
+      accuracyArray.push(accuracy);
     };
 
     // Clear data
-    precisionArray.length = 0;
+    accuracyArray.length = 0;
 
     // Add event listener
     if (props.evaluating) {
@@ -99,13 +100,16 @@ function EvaluationButton(props: {
       props.setButtonCounter(props.buttonCounter + 1);
 
       // Compute average
-      console.log(precisionArray)
+      console.log(accuracyArray)
       let sum = 0;
-      for (let i = 0; i < precisionArray.length; i++) {
+      for (let i = 0; i < accuracyArray.length; i++) {
         // @ts-ignore
-        sum += precisionArray[i];
+        sum += accuracyArray[i];
       }
-      setAveragePrecision(sum / precisionArray.length);
+      const newAverageAccuracy = sum / accuracyArray.length;
+      setAverageaccuracy(newAverageAccuracy);
+
+      triggerActionLog({ type: "eyeTracker", value: { action: "calibrate-accuracy", value: newAverageAccuracy.toFixed(2) } })
 
     }, 5000);
   }
@@ -114,8 +118,8 @@ function EvaluationButton(props: {
     props.setComplete(false)
     props.setButtonCounter(0);
     props.setPostEvaluating(false);
-    setAveragePrecision(0);
-    precisionArray.length = 0;
+    setAverageaccuracy(0);
+    accuracyArray.length = 0;
   }
 
   return (
@@ -135,7 +139,7 @@ function EvaluationButton(props: {
       ) : (
         <>
           <text className="w-1/2 text-center text-3xl">
-            {`The precision is ${averagePrecision.toFixed(0)}.`}
+            {`The accuracy is ${averageAccuracy.toFixed(0)}.`}
           </text>
           <text className="w-1/2 text-center">
             If the accuracy is too low, you can recalibrate. Otherwise,

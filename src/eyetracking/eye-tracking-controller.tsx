@@ -101,7 +101,6 @@ export default function EyeTrackingController(props: {complete: boolean, running
       if (open) {
         document.addEventListener("gazeUpdate", handleCustomEvent);
         setListening(true);
-        console.log("Added listener")
       }
       else {
         document.removeEventListener("gazeUpdate", handleCustomEvent);
