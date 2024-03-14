@@ -2,8 +2,8 @@
 
 import { Profile, Course, Assignment, Activity, ActivityData, AssignmentData, Question } from '@prisma/client'
 import { useState } from 'react'
-import ActivityCompletion from "../activity-completion"
-import Questions from "./questions"
+import ActivityCompletion from "../ActivityCompletion"
+import Questions from "./Questions"
 
 type QuestionActivityProps = {
   profile: Profile

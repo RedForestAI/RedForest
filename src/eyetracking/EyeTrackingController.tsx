@@ -1,13 +1,13 @@
 
 import React, { useContext, useEffect, useState } from 'react';
-import { useEndNavBarContext } from '~/providers/navbar-provider';
+import { useEndNavBarContext } from '~/providers/NavbarProvider';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEye, faClose } from '@fortawesome/free-solid-svg-icons';
 import GazeDot from '~/eyetracking/GazeDot';
 
-import WGCalibration from './wgcalibration';
-import { AbstractEyeTracker, WebGazeEyeTracker, TobiiProSDKEyeTracker } from './eye-tracker-interface';
-import { triggerActionLog } from '~/loggers/actions-logger';
+import WGCalibration from './WGCalibration';
+import { AbstractEyeTracker, WebGazeEyeTracker, TobiiProSDKEyeTracker } from './EyeTrackerInterface';
+import { triggerActionLog } from '~/loggers/ActionsLogger';
 
 export default function EyeTrackingController(props: {complete: boolean, runningET: boolean, setRunningET: (running: boolean) => void}) {
   const [open, setOpen] = useState<boolean>(false);

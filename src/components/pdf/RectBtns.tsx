@@ -1,6 +1,6 @@
 import ReactDOM from "react-dom";
 import React from "react";
-import { triggerActionLog } from "~/loggers/actions-logger";
+import { triggerActionLog } from "~/loggers/ActionsLogger";
 
 export type rectBtn = {
   onClick: () => void;

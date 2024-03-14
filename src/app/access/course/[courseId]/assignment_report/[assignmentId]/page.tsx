@@ -1,6 +1,6 @@
 "use server";
 
-import NavBar from "~/components/ui/navbar";
+import NavBar from "~/components/ui/NavBar";
 import { Profile, Question, Role } from "@prisma/client";
 import { api } from "~/trpc/server";
 import ActivityColumn from "./_components/ActivityColumn";

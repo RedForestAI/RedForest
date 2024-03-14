@@ -1,6 +1,6 @@
 
 import React from 'react';
-import NavBar from '@/components/ui/navbar';
+import NavBar from '~/components/ui/NavBar';
 
 const UpdatePassword = () => {
   return (

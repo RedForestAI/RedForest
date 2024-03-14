@@ -1,8 +1,8 @@
 "use client";
 
 import { Profile, Assignment, Question, Activity } from "@prisma/client";
-import AssignmentSettings from "./assignment-settings";
-import AssignmentStructure from "./assignment-structure";
+import AssignmentSettings from "./AssignmentSettings";
+import AssignmentStructure from "./AssignmentStructure";
 
 import { useForm, SubmitHandler } from "react-hook-form";
 import { useEffect, useState } from "react";

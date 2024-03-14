@@ -1,6 +1,6 @@
 "use server";
 
-import NavBar from '@/components/ui/navbar';
+import NavBar from '~/components/ui/NavBar';
 import { cookies } from 'next/headers'
 import { createServerComponentClient } from '@supabase/auth-helpers-nextjs'
 import LogoutButton from '@/components/FormInput/LogoutButton';

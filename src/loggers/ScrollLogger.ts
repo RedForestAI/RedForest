@@ -1,4 +1,4 @@
-import BaseLogger from "./base-logger"
+import BaseLogger from "./BaseLogger"
 import { debounce } from "~/utils/functional"
 
 export default class ScrollLogger extends BaseLogger {

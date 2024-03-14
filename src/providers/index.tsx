@@ -1,8 +1,8 @@
 "use client";
 
 import { InAssignmentProvider } from "./InAssignmentProvider";
-import { MiddleNavBarProvider, EndNavBarProvider } from "./navbar-provider";
-import { HighlightProvider } from "./highlight-provider";
+import { MiddleNavBarProvider, EndNavBarProvider } from "./NavbarProvider";
+import { HighlightProvider } from "./HighlightProvider";
 import React, { type PropsWithChildren } from "react";
 
 export function Providers({ children }: PropsWithChildren) {

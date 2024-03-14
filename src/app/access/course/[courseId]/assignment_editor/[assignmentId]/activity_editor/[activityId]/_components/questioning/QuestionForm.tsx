@@ -5,8 +5,8 @@ import { useState, useEffect } from 'react';
 import { api } from "~/trpc/react";
 import { useRouter } from 'next/navigation';
 
-import General from "../general/general"
-import Questions from "../general/questions"
+import General from "../general/General"
+import Questions from "../general/Questions"
 
 type QuestionFormProps = {
   courseId: string

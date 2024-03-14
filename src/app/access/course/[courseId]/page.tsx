@@ -1,9 +1,9 @@
 import { Profile, Assignment, Role, Course, AssignmentData } from "@prisma/client";
 
-import NavBar from "~/components/ui/navbar";
+import NavBar from "~/components/ui/NavBar";
 import { api } from '~/trpc/server';
-import AssignmentCard from "./_components/assignment-card";
-import AssignmentCreate from './_components/assignment-create';
+import AssignmentCard from "./_components/AssignmentCard";
+import AssignmentCreate from './_components/AssignmentCreate';
 import { redirect } from "next/navigation";
 
 export default async function Page({params}: {params: { courseId: string }}) {

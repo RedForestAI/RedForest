@@ -2,9 +2,9 @@
 
 import { Profile, Course, Assignment, Activity, ActivityData, AssignmentData, ActivityType, Question } from '@prisma/client'
 import { useState } from 'react'
-import QuestionActivity from "./question_activity/question_activity"
-import ReadingActivity from "./reading_activity/reading_activity"
-import ReadingBehaviorActivity from "./reading_behavior_activity/reading_behavior_activity"
+import QuestionActivity from "./question_activity/QuestionActivity"
+import ReadingActivity from "./reading_activity/ReadingActivity"
+import ReadingBehaviorActivity from "./reading_behavior_activity/ReadingBehaviorActivity"
 
 type AssignmentBaseProps = {
   profile: Profile

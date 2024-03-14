@@ -17,18 +17,18 @@ import {
 } from "@prisma/client";
 import { api } from "~/trpc/react";
 
-import EyeTrackingController from "~/eyetracking/eye-tracking-controller";
-import PDFViewer from "~/components/pdf/pdf-viewer";
-import { AOIEncoding } from "~/eyetracking/aoi-encoding";
-import InstructionsModal from "./instructions-modal";
-import { Linear, Skimming, Deep, Tracking} from "./behaviors";
-import ActivityCompletion from "../activity-completion";
+import EyeTrackingController from "~/eyetracking/EyeTrackingController";
+import PDFViewer from "~/components/pdf/PDFViewer";
+import { AOIEncoding } from "~/eyetracking/AOIEncoding";
+import InstructionsModal from "./InstructionsModal";
+import { Linear, Skimming, Deep, Tracking} from "./Behaviors";
+import ActivityCompletion from "../ActivityCompletion";
 
-import BaseLogger from "~/loggers/base-logger";
-import GazeLogger from "~/loggers/gaze-logger";
-import ScrollLogger from "~/loggers/scroll-logger";
-import ActionsLogger from "~/loggers/actions-logger";
-import MouseLogger from "~/loggers/mouse-logger";
+import BaseLogger from "~/loggers/BaseLogger";
+import GazeLogger from "~/loggers/GazeLogger";
+import ScrollLogger from "~/loggers/ScrollLogger";
+import ActionsLogger from "~/loggers/ActionsLogger";
+import MouseLogger from "~/loggers/MouseLogger";
 
 type BehaviorConfig = {
   name: "REGULAR" | "SKIMMING" | "SLOW" | "TRACKING";

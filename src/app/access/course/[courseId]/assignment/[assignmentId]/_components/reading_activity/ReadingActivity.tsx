@@ -19,22 +19,22 @@ import {
 } from "@prisma/client";
 import { api } from "~/trpc/react";
 
-import EyeTrackingController from "~/eyetracking/eye-tracking-controller";
-import PDFViewer from "~/components/pdf/pdf-viewer";
-import TaskDrawer from "./task-drawer";
-import Questions from "../question_activity/questions";
-import ActivityCompletion from "../activity-completion";
-import { AOIEncoding } from "~/eyetracking/aoi-encoding";
-import ReadingInstrModal from "./reading-instr-modal";
-import { triggerActionLog } from "~/loggers/actions-logger";
+import EyeTrackingController from "~/eyetracking/EyeTrackingController";
+import PDFViewer from "~/components/pdf/PDFViewer";
+import TaskDrawer from "./TaskDrawer";
+import Questions from "../question_activity/Questions";
+import ActivityCompletion from "../ActivityCompletion";
+import { AOIEncoding } from "~/eyetracking/AOIEncoding";
+import ReadingInstrModal from "./ReadingInstrModal";
+import { triggerActionLog } from "~/loggers/ActionsLogger";
 import { InAssignmentContext } from "~/providers/InAssignmentProvider";
 import UploadingSession from "~/components/ui/UploadingSession";
 
-import BaseLogger from "~/loggers/base-logger";
-import GazeLogger from "~/loggers/gaze-logger";
-import ScrollLogger from "~/loggers/scroll-logger";
-import ActionsLogger from "~/loggers/actions-logger";
-import MouseLogger from "~/loggers/mouse-logger";
+import BaseLogger from "~/loggers/BaseLogger";
+import GazeLogger from "~/loggers/GazeLogger";
+import ScrollLogger from "~/loggers/ScrollLogger";
+import ActionsLogger from "~/loggers/ActionsLogger";
+import MouseLogger from "~/loggers/MouseLogger";
 
 type ReadingActivityProps = {
   profile: Profile;

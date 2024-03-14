@@ -1,7 +1,7 @@
 import { Question, QuestionType } from "@prisma/client"
 import { Reorder } from "framer-motion";
 
-import { QuestionCard, EmptyQuestionCard } from "./question-card";
+import { QuestionCard, EmptyQuestionCard } from "./QuestionCard";
 
 type QuestionsProps = {
     activityId: string

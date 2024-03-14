@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
-import NavBar from "@/components/ui/navbar";
+import NavBar from "~/components/ui/NavBar";
 
 const Page = () => {
   const [email, setEmail] = useState<string>('');

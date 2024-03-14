@@ -1,7 +1,7 @@
 import { Profile, Role, Course } from "@prisma/client";
-import NavBar from "~/components/ui/navbar";
-import CourseCard from "./_components/course-card";
-import CourseCreate from "./_components/course-create";
+import NavBar from "~/components/ui/NavBar";
+import CourseCard from "./_components/CourseCard";
+import CourseCreate from "./_components/CourseCreate";
 import { api } from '~/trpc/server';
 import { redirect } from "next/navigation";
 

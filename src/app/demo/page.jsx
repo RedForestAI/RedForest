@@ -1,6 +1,6 @@
 "use server";
 
-import WebGazer from "./_components/webgazer"
+import WebGazer from "./_components/WebGazer"
 
 export default async function HomePage() {
 
