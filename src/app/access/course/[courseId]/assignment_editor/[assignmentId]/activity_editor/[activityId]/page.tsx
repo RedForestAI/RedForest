@@ -1,10 +1,11 @@
 "use server";
 
-import { ActivityType } from "@prisma/client";
+import { Profile, ActivityType } from "@prisma/client";
 import Slot from "~/utils/slot";
 import ReadingForm from "./_components/reading/reading-form";
 import QuestionForm from "./_components/questioning/question-form";
 import ReadingBehaviorForm from "./_components/reading-behavior/reading-behavior-form";
+import { redirect } from "next/navigation";
 
 import NavBar from "~/components/ui/navbar";
 import { api } from "~/trpc/server";
@@ -15,7 +16,10 @@ export default async function Page({
   params: { courseId: string; assignmentId: string; activityId: string };
 }) {
   // Fetch the activity data
-  const profile = await api.auth.getProfile.query();
+  const profile: Profile | null = await api.auth.getProfile.query();
+  if (!profile) {
+    return redirect("/login");
+  }
   const course = await api.course.getOne.query({
     courseId: params.courseId,
     profileId: profile.id,

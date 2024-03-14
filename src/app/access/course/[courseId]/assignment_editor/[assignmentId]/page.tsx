@@ -1,8 +1,9 @@
 "use server";
 
-import { Question } from "@prisma/client";
+import { Profile, Question } from "@prisma/client";
 import NavBar from "~/components/ui/navbar";
 import AssignmentForm from "./_components/assignment-form";
+import { redirect } from "next/navigation";
 
 import { api } from "~/trpc/server";
 
@@ -12,7 +13,10 @@ export default async function Page({
   params: { courseId: string; assignmentId: string };
 }) {
   // Queries
-  const profile = await api.auth.getProfile.query();
+  const profile: Profile | null = await api.auth.getProfile.query();
+  if (!profile) {
+    return redirect("/login");
+  }
   const course = await api.course.getOne.query({
     courseId: params.courseId,
     profileId: profile.id,

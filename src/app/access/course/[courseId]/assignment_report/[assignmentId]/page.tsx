@@ -1,10 +1,11 @@
 "use server";
 
 import NavBar from "~/components/ui/navbar";
-import { Question, Role } from "@prisma/client";
+import { Profile, Question, Role } from "@prisma/client";
 import { api } from "~/trpc/server";
 import ActivityColumn from "./_components/ActivityColumn";
 import AssignmentCompletePieChart, { Datum } from "./_components/AssignmentCompletePie";
+import { redirect } from "next/navigation";
 
 export default async function Page({
   params,
@@ -12,7 +13,10 @@ export default async function Page({
   params: { courseId: string; assignmentId: string };
 }) {
 // Queries
-const profile = await api.auth.getProfile.query();
+const profile: Profile | null = await api.auth.getProfile.query();
+if (!profile) {
+  return redirect("/login");
+}
 const course = await api.course.getOne.query({
   courseId: params.courseId,
   profileId: profile.id,

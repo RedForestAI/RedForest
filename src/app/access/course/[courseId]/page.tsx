@@ -4,6 +4,7 @@ import NavBar from "~/components/ui/navbar";
 import { api } from '~/trpc/server';
 import AssignmentCard from "./_components/assignment-card";
 import AssignmentCreate from './_components/assignment-create';
+import { redirect } from "next/navigation";
 
 export default async function Page({params}: {params: { courseId: string }}) {
 
@@ -13,7 +14,11 @@ export default async function Page({params}: {params: { courseId: string }}) {
   let assignmentsDatas: AssignmentData[] = [];
 
   // Fetch data
-  let profile: Profile = await api.auth.getProfile.query();
+  let profile: Profile | null = await api.auth.getProfile.query();
+  if (!profile) {
+    return redirect('/login');
+  }
+
   try {
     course = await api.course.getOne.query({courseId: params.courseId, profileId: profile.id});
     assignments = await api.assignment.get.query({courseId: params.courseId});
@@ -45,7 +50,7 @@ export default async function Page({params}: {params: { courseId: string }}) {
               <div>
                 {assignments.map((assignment, index) => (
                   <div key={index}>
-                    {profile.role == Role.STUDENT
+                    {profile?.role == Role.STUDENT
                       ? <AssignmentCard assignment={assignment} course={course!} editable={false} assignmentData={getAssignmentData(assignment.id)}/>
                       : <AssignmentCard assignment={assignment} course={course!} editable={true}/>
                     }
