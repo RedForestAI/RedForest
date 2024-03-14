@@ -1,16 +1,16 @@
 import { Role } from "@prisma/client";
 import { z } from "zod";
-import { createTRPCRouter, privateProcedure } from "~/server/api/trpc";
+import { createTRPCRouter, privateProcedure, publicProcedure } from "~/server/api/trpc";
 import { createClient } from '@supabase/supabase-js'
 
 export const authRouter = createTRPCRouter({
-  getProfile: privateProcedure.query(({ ctx }) => {
-    if (!ctx.user.data.user) {
-      throw new Error("User is not authenticated");
+  getProfile: publicProcedure.query(({ ctx }) => {
+    if (!ctx.user) {
+      return null;
     }
     return ctx.db.profile.findFirstOrThrow({
       where: {
-        id: ctx.user.data.user.id,
+        id: ctx.user.id,
       },
     });
   }),
@@ -18,7 +18,7 @@ export const authRouter = createTRPCRouter({
     .input(z.object({ profileId: z.string() }))
     .mutation(async ({ input, ctx }) => {
       // Authenticated user and given profileID
-      if (!ctx.user.data.user || input.profileId !== ctx.user.data.user.id) {
+      if (!ctx.user || input.profileId !== ctx.user.id) {
         throw new Error("User is not authenticated");
       }
 
@@ -45,7 +45,7 @@ export const authRouter = createTRPCRouter({
     .input(z.object({ profileId: z.string() }))
     .mutation(async ({ input, ctx }) => {
       // Authenticated user and given profileID
-      if (!ctx.user.data.user || input.profileId !== ctx.user.data.user.id) {
+      if (!ctx.user || input.profileId !== ctx.user.id) {
         throw new Error("User is not authenticated");
       }
 

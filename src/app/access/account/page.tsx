@@ -7,13 +7,17 @@ import LogoutButton from '@/components/FormInput/LogoutButton';
 import { api } from '~/trpc/server';
 import { Profile } from '@prisma/client';
 import DangerZoneForm from './_components/DangerZoneForm';
+import { redirect } from "next/navigation";
 
 export default async function Account() {
   // Fetch data
   const cookieStore = cookies()
   const supabase = createServerComponentClient({ cookies: () => cookieStore })
   const { data } = await supabase.auth.getUser();
-  let profile: Profile = await api.auth.getProfile.query();
+  let profile: Profile | null = await api.auth.getProfile.query();
+  if (!profile) {
+    return redirect('/login');
+  }
 
   return (
     <div>

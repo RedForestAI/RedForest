@@ -1,6 +1,6 @@
 "use server";
 
-import { ActivityData, ActivityType } from "@prisma/client";
+import { Profile, ActivityData, ActivityType } from "@prisma/client";
 import NavBar from "~/components/ui/navbar";
 import { api } from "~/trpc/server";
 import Slot from "~/utils/slot";
@@ -8,6 +8,7 @@ import ReadingReport from "./_components/reading/ReadingReport";
 import QuestionReport from "./_components/question/QuestionReport";
 import * as d3 from 'd3';
 import { colorMap } from "./_components/types";
+import { redirect } from "next/navigation";
 
 function generateColors(ids: string[]): colorMap {
   const colors = d3.schemeAccent;
@@ -26,7 +27,10 @@ export default async function Page({
 }) {
 
   // Queries
-  const profile = await api.auth.getProfile.query();
+  const profile: Profile | null = await api.auth.getProfile.query();
+  if (!profile) {
+    return redirect("/login");
+  }
   const course = await api.course.getOne.query({
     courseId: params.courseId,
     profileId: profile.id,

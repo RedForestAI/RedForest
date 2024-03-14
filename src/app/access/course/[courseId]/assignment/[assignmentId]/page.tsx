@@ -1,7 +1,8 @@
 "use server";
-import { Role, ActivityData, Question } from "@prisma/client";
+import { Profile, Role, ActivityData, Question } from "@prisma/client";
 import AssignmentBase from "./_components/assignment-base";
 import NavBar from "~/components/ui/navbar";
+import { redirect } from "next/navigation";
 
 import { api } from "~/trpc/server";
 
@@ -11,7 +12,10 @@ export default async function Page({
   params: { courseId: string; assignmentId: string; activityId: string };
 }) {
   // Fetch the activity data
-  const profile = await api.auth.getProfile.query();
+  const profile: Profile | null = await api.auth.getProfile.query();
+  if (!profile) {
+    return redirect('/login');
+  }
 
   // If teacher, redirect to course page
   if (profile.role === Role.TEACHER) {

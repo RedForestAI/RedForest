@@ -3,11 +3,15 @@ import NavBar from "~/components/ui/navbar";
 import CourseCard from "./_components/course-card";
 import CourseCreate from "./_components/course-create";
 import { api } from '~/trpc/server';
+import { redirect } from "next/navigation";
 
 export default async function Dashboard() {
   
   // Fetch data
-  let profile: Profile = await api.auth.getProfile.query();
+  let profile: Profile | null = await api.auth.getProfile.query();
+  if (!profile) {
+    return redirect('/login');
+  }
   let courses: Course[] = await api.course.get.query({profileId: profile.id, role: profile.role});
   
   // Sort by course name

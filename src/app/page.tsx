@@ -2,8 +2,6 @@
 
 import { faEnvelope } from '@fortawesome/free-solid-svg-icons';
 import { faGithub } from '@fortawesome/free-brands-svg-icons';
-import { cookies } from 'next/headers'
-import { createServerComponentClient } from '@supabase/auth-helpers-nextjs'
 
 import { Profile } from "@prisma/client";
 import NavBar from '@/components/ui/navbar';
@@ -14,20 +12,13 @@ import GreetingPanda from "./_components/GreetingPanda";
 
 export default async function Page() {
 
-  // Check if user is authenticated via Supabase Auth
-  const cookieStore = cookies()
-  const supabase = createServerComponentClient({ cookies: () => cookieStore })
-  const { data } = await supabase.auth.getUser();
-
   // Fetch data
   let profile: Profile | null = null;
 
-  if (data.user) {
-    try {
-      profile = await api.auth.getProfile.query();
-    } catch (error) {
-      console.log(error);
-    }
+  try {
+    profile = await api.auth.getProfile.query();
+  } catch (error) {
+    console.log(error);
   }
 
   return (

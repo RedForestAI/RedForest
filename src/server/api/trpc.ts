@@ -11,6 +11,7 @@ import superjson from "superjson";
 import { ZodError } from "zod";
 import { cookies } from 'next/headers'
 import { createServerActionClient } from '@supabase/auth-helpers-nextjs'
+import { createClient } from '@supabase/supabase-js'
 
 import { db } from "~/server/db";
 
@@ -22,11 +23,9 @@ import { db } from "~/server/db";
  */
 
 export const createTRPCContext = async (opts: { headers: Headers }) => {
-  const headers = opts.headers;
   const supabase = createServerActionClient({ cookies })
-
-  const user = await supabase.auth.getUser();
-  console.log(user);
+  const {data: { session }} = await supabase.auth.getSession();
+  const user = session?.user;
 
   return {
     ...opts,
