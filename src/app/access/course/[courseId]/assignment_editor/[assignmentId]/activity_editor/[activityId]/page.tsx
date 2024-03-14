@@ -1,13 +1,13 @@
 "use server";
 
 import { Profile, ActivityType } from "@prisma/client";
-import Slot from "~/utils/slot";
-import ReadingForm from "./_components/reading/reading-form";
-import QuestionForm from "./_components/questioning/question-form";
-import ReadingBehaviorForm from "./_components/reading-behavior/reading-behavior-form";
+import Slot from "~/utils/Slot";
+import ReadingForm from "./_components/reading/ReadingForm";
+import QuestionForm from "./_components/questioning/QuestionForm";
+import ReadingBehaviorForm from "./_components/reading_behavior/ReadingBehaviorForm";
 import { redirect } from "next/navigation";
 
-import NavBar from "~/components/ui/navbar";
+import NavBar from "~/components/ui/NavBar";
 import { api } from "~/trpc/server";
 
 export default async function Page({

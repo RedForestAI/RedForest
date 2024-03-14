@@ -5,7 +5,7 @@ import { Profile } from "@prisma/client";
 import { useState, useEffect, useContext } from "react";
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 import { useRouter } from 'next/navigation'
-import { middleNavBarContext, endNavBarContext } from '~/providers/navbar-provider';
+import { middleNavBarContext, endNavBarContext } from '~/providers/NavbarProvider';
 import { InAssignmentContext } from "~/providers/InAssignmentProvider";
 
 type Breadcrum = {

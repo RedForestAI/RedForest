@@ -1,6 +1,6 @@
-import BaseLogger from "./base-logger"
+import BaseLogger from "./BaseLogger"
 import { debounce } from "~/utils/functional"
-import { AOIEncoding } from "~/eyetracking/aoi-encoding"
+import { AOIEncoding } from "~/eyetracking/AOIEncoding"
 
 export default class MouseLogger extends BaseLogger {
   loggedData!: [string[]]

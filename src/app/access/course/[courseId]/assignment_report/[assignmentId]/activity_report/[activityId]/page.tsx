@@ -1,9 +1,9 @@
 "use server";
 
 import { Profile, ActivityData, ActivityType } from "@prisma/client";
-import NavBar from "~/components/ui/navbar";
+import NavBar from "~/components/ui/NavBar";
 import { api } from "~/trpc/server";
-import Slot from "~/utils/slot";
+import Slot from "~/utils/Slot";
 import ReadingReport from "./_components/reading/ReadingReport";
 import QuestionReport from "./_components/question/QuestionReport";
 import * as d3 from 'd3';

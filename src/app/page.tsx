@@ -4,8 +4,8 @@ import { faEnvelope } from '@fortawesome/free-solid-svg-icons';
 import { faGithub } from '@fortawesome/free-brands-svg-icons';
 
 import { Profile } from "@prisma/client";
-import NavBar from '@/components/ui/navbar';
-import OpenTabIconButton from '@/components/ui/open-tab-icon-buttons';
+import NavBar from '~/components/ui/NavBar';
+import OpenTabIconButton from '@/components/ui/OpenTabIconButtons';
 import { api } from '~/trpc/server';
 
 import GreetingPanda from "./_components/GreetingPanda";

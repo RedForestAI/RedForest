@@ -1,7 +1,7 @@
 "use server";
 import { Profile, Role, ActivityData, Question } from "@prisma/client";
-import AssignmentBase from "./_components/assignment-base";
-import NavBar from "~/components/ui/navbar";
+import AssignmentBase from "./_components/AssignmentBase";
+import NavBar from "~/components/ui/NavBar";
 import { redirect } from "next/navigation";
 
 import { api } from "~/trpc/server";

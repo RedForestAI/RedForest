@@ -11,16 +11,16 @@ import { api } from "~/trpc/react";
 import { generateUUID } from "~/utils/uuid";
 import {
   useMiddleNavBarContext,
-} from "~/providers/navbar-provider";
-import { triggerActionLog } from "~/loggers/actions-logger";
-import { ToolKit } from "./toolkit";
-import { DictionaryEntry } from "./dictionary-entry";
-import { DocumentDrawer } from "./document-drawer";
-import { PageNoteAnnotationLayer } from "./annotation-box";
-import { PageBtnLayer, rectBtn } from "./rect-btns";
+} from "~/providers/NavbarProvider";
+import { triggerActionLog } from "~/loggers/ActionsLogger";
+import { ToolKit } from "./ToolKit";
+import { DictionaryEntry } from "./DictionaryEntry";
+import { DocumentDrawer } from "./DocumentDrawer";
+import { PageNoteAnnotationLayer } from "./AnnotationBox";
+import { PageBtnLayer, rectBtn } from "./RectBtns";
 import { parsePrisma } from "~/utils/prisma";
 import { debounce } from "~/utils/functional";
-import "./pdf-viewer.css";
+import "./PDFViewer.css";
 
 type PDFViewerProps = {
   docs: { uri: string }[];

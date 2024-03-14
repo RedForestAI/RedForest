@@ -1,7 +1,7 @@
 "use client";
 
 import { Course } from '@prisma/client'
-import CourseOptions from './course-options';
+import CourseOptions from './CourseOptions';
 import { useRouter } from 'next/navigation';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faGear } from '@fortawesome/free-solid-svg-icons';

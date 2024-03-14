@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { triggerActionLog } from "~/loggers/actions-logger";
+import { triggerActionLog } from "~/loggers/ActionsLogger";
 
 type BehaviorProps = {
   behaviorIndex: number;

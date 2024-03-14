@@ -2,7 +2,7 @@ import React, { useEffect, useState, useRef } from "react";
 import { faClose } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import GazeDot from "./GazeDot";
-import { triggerActionLog } from "~/loggers/actions-logger";
+import { triggerActionLog } from "~/loggers/ActionsLogger";
 
 const accuracyArray: number[] = [];
 

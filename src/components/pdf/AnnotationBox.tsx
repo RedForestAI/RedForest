@@ -4,13 +4,13 @@ import { useState, useEffect } from "react";
 import { parsePrisma } from "~/utils/prisma";
 import { api } from "~/trpc/react";
 import { generateUUID } from "~/utils/uuid";
-import { useHighlight } from '~/providers/highlight-provider';
-import { triggerActionLog } from "~/loggers/actions-logger";
+import { useHighlight } from '~/providers/HighlightProvider';
+import { triggerActionLog } from "~/loggers/ActionsLogger";
 
 import { faClose, faSave } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
-import "./annotation-box.css";
+import "./AnnotationBox.css";
 
 const dRatio = 0.25;
 const wRatio = 0.95;

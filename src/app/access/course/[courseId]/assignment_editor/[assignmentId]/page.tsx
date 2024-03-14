@@ -1,8 +1,8 @@
 "use server";
 
 import { Profile, Question } from "@prisma/client";
-import NavBar from "~/components/ui/navbar";
-import AssignmentForm from "./_components/assignment-form";
+import NavBar from "~/components/ui/NavBar";
+import AssignmentForm from "./_components/AssignmentForm";
 import { redirect } from "next/navigation";
 
 import { api } from "~/trpc/server";

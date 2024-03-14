@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
-import NavBar from '@/components/ui/navbar';
+import NavBar from '~/components/ui/NavBar';
 
 export default function SignUp() {
   const [email, setEmail] = useState<string>('');

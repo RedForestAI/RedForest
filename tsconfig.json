@@ -43,7 +43,7 @@
     "**/*.cjs",
     "**/*.mjs",
     ".next/types/**/*.ts",
-    "src/components/pdf/pdf-viewer.tsx"
+    "src/components/pdf/PDFViewer.tsx"
 , "scripts/createUsers.js"  ],
   "exclude": [
     "node_modules"

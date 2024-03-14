@@ -11,7 +11,7 @@ import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import { IDocument } from "@cyntler/react-doc-viewer";
 
 import Table, { ColumnType } from "./Table";
-import PDFViewer from "~/components/pdf/pdf-viewer";
+import PDFViewer from "~/components/pdf/PDFViewer";
 import LoadFilesProgress from "../general/LoadFilesProgress";
 import TrajectoryPlot from "../general/TrajectoryPlot";
 import HeatMapOverlay from "./HeatmapOverlay";

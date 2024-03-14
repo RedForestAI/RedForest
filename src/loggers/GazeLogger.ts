@@ -1,4 +1,4 @@
-import BaseLogger from "./base-logger"
+import BaseLogger from "./BaseLogger"
   
 export default class GazeLogger extends BaseLogger {
   loggedData!: [string[]]

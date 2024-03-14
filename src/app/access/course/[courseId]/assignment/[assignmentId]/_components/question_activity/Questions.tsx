@@ -13,7 +13,7 @@ import { api } from "~/trpc/react";
 import { useForm } from "react-hook-form";
 import { useRouter } from "next/navigation";
 
-import { triggerActionLog } from "~/loggers/actions-logger";
+import { triggerActionLog } from "~/loggers/ActionsLogger";
 
 type QuestionConfig = {
   beforeStartPrompt: boolean;

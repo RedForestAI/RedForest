@@ -1,5 +1,5 @@
 import { Activity, Assignment, Question } from '@prisma/client'
-import { ActivityCard, EmptyActivityCard } from "./activity-card"
+import { ActivityCard, EmptyActivityCard } from "./ActivityCard"
 import { Reorder } from 'framer-motion'
 
 type StructureProps = {

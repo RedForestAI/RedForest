@@ -2,7 +2,7 @@
 import { ReadingActivity, ReadingFile } from "@prisma/client";
 import { useRef, useState, useEffect } from "react";
 import { Reorder } from 'framer-motion';
-import { FileCard, formatBytes } from "./file-card"
+import { FileCard, formatBytes } from "./FileCard"
 import { api } from "~/trpc/react";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import { generateUUID } from "~/utils/uuid";

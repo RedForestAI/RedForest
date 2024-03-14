@@ -1,21 +1,16 @@
 "use client";
 
-import { Activity, ReadingActivity, Question, ReadingFile } from '@prisma/client';
-import { useState, useEffect } from 'react';
+import { Activity } from '@prisma/client';
+import { useState } from 'react';
 import { api } from "~/trpc/react";
 import { useRouter } from 'next/navigation';
 
-import General from "../general/general"
-import Readings from "./readings"
-import Questions from "../general/questions"
+import General from "../general/General"
 
-type ReadingFormProps = {
+type ReadingBehaviorFormProps = {
   courseId: string
   assignmentId: string
   activity: Activity
-  questions: Question[]
-  readingActivity: ReadingActivity
-  files: ReadingFile[]
 }
 
 type LabelProps = {
@@ -43,20 +38,16 @@ function Label(props: LabelProps) {
   )
 }
 
-export default function ReadingForm(props: ReadingFormProps) {
+export default function ReadingBehaviorForm(props: ReadingBehaviorFormProps) {
 
   // State
   const router = useRouter();
   const [activity, setActivity] = useState<Activity>(props.activity);
-  const [questions, setQuestions] = useState<Question[]>(props.questions);
   const [selectedTab, setSelectedTab] = useState<number>(0);
-  const [files, setFiles] = useState<ReadingFile[]>(props.files);
 
   // Mutations
   const deleteMutation = api.activity.deleteOne.useMutation();
   const updateMutation = api.activity.update.useMutation();
-  const updateQuestionMutation = api.question.update.useMutation();
-  const updateFiles = api.readingFile.update.useMutation();
 
   const deleteFunction = async () => {
     try {
@@ -76,47 +67,7 @@ export default function ReadingForm(props: ReadingFormProps) {
     } catch (error) {
       console.log("Failed to update activity: ", error)
     }
-
-    // Readings
-    try {
-      // First update their index based on their position in the array
-      files.forEach((file: ReadingFile, index: number) => {
-        file.index = index;
-      })
-
-      await Promise.all(files.map(async (file: ReadingFile) => {
-        await updateFiles.mutateAsync({id: file.id, index: file.index})
-      }))
-    } catch (error) {
-      console.log("Failed to update files: ", error)
-    }
-
-    // Questions
-    try {
-      // First update their index based on their position in the array
-      questions.forEach((question: Question, index: number) => {
-        question.index = index;
-      })
-
-      await Promise.all(questions.map(async (question: Question) => {
-        await updateQuestionMutation.mutateAsync({
-          id: question.id, 
-          content: question.content, 
-          index: question.index,
-          options: question.options,
-          type: question.type,
-          answer: question.answer,
-          pts: question.pts
-        })
-      }))
-    } catch (error) {
-      console.log("Failed to update questions: ", error)
-    }
     
-  }
-
-  const publishFunction = async () => {
-    await saveFunction();
   }
 
   const submitAllForms = async (e: any) => {
@@ -149,16 +100,10 @@ export default function ReadingForm(props: ReadingFormProps) {
       <div role="tablist" className="tabs tabs-lifted tabs-lg">
         <Label index={0} text="General Settings" selectedTab={selectedTab} setSelectedTab={setSelectedTab}/>
         <General activity={activity} setActivity={setActivity}/>
-
-        <Label index={1} text="Readings" selectedTab={selectedTab} setSelectedTab={setSelectedTab}/>
-        <Readings readingActivity={props.readingActivity} files={files} setFiles={setFiles}/>
-
-        <Label index={2} text="Questions" selectedTab={selectedTab} setSelectedTab={setSelectedTab}/>
-        <Questions activityId={activity.id} questions={questions} setQuestions={setQuestions}/>
       
       </div>
       <div className="justify-between items-stretch flex mt-8 mb-8 pl-10 pr-10 py-3 max-md:max-w-full max-md:flex-wrap max-md:px-5">
-        <button className="btn btn-error text-white" name="action" value="Delete">Delete</button>
+        <button className="btn btn-error" name="action" value="Delete">Delete</button>
         <div className="flex flex-row gap-2.5">
           <button className="btn btn-info" name="action" value="Save">Save</button>
           <button className="btn btn-info" name="action" value="Save&Close">Save & Close</button>

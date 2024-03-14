@@ -2,7 +2,7 @@ import { ReadingFile } from '@prisma/client'
 import React, { useState} from 'react';
 import { IDocument } from '@cyntler/react-doc-viewer';
 
-import { triggerActionLog } from "~/loggers/actions-logger";
+import { triggerActionLog } from "~/loggers/ActionsLogger";
 
 export function DocumentDrawer(props: {files: ReadingFile[], docs: {uri: string}[], activeDocument: IDocument | undefined, setActiveDocument: (doc: IDocument) => void}){
   const [open, setOpen] = useState(true)

@@ -1,9 +1,9 @@
 import { useContext, useEffect, useState } from "react";
 import ReactPlayer from 'react-player';
 import { faCircleQuestion, faEye } from "@fortawesome/free-solid-svg-icons";
-import { useEndNavBarContext } from "~/providers/navbar-provider";
+import { useEndNavBarContext } from "~/providers/NavbarProvider";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { triggerActionLog } from "~/loggers/actions-logger";
+import { triggerActionLog } from "~/loggers/ActionsLogger";
 
 // Create a instruction modal for the PDF Viewer
 export default function ReadingInstrModal(props: {
