@@ -69,17 +69,28 @@ export default function ReadingInstrModal(props: {
     <>
       {props.open && (
         <>
-          <div className="fixed left-0 top-[5%] z-[70] h-full w-full">
-            <div className="m-auto h-[90%] w-[90%]">
+          <div className="fixed left-0 top-[25%] z-[70] h-full w-full">
+            <div className="m-auto h-[50%] w-[50%]">
               <div className="flex h-full flex-col items-center justify-between overflow-hidden rounded-2xl border border-neutral bg-base-100 p-4">
-                <h1 className="pb-4 text-2xl text-5xl font-bold">
-                  Getting Ready!
+                <h1 className="text-2xl text-5xl font-bold">
+                  Reading Activity
                 </h1>
-                {/* YouTube Video */}
-                <div className="player-wrapper">
-                  <ReactPlayer controls={true} className="react-player" width='100%' height='100%' url="https://youtu.be/PZsmN357aNw"/>
-                </div>
-                <h1 className="text-3xl mt-4 ml-4 mr-4">
+
+                <p className="text-3xl mt-4 ml-4 mr-4">
+                  In this activity, you will be reading document(s) and answering
+                  questions based on the content.{" "} Make sure to read the
+                  document(s) first before answering the questions.
+                </p>
+
+                <p className="text-3xl mt-4 ml-4 mr-4">
+                  Here is a tutorial to help you get familiar with the activity.
+                </p>
+
+                <button className="btn btn-primary">
+                  Tutorial
+                </button>
+                
+                <p className="text-3xl mt-4 ml-4 mr-4">
                   Before starting the activity, get comfortable and setup the
                   eye-tracking solution by clicking on {" "}
                   <span>
@@ -87,8 +98,9 @@ export default function ReadingInstrModal(props: {
                   </span> icon. {" "} 
                   Once you are ready and all settled, press
                   Continue.
-                </h1>
-                <button className="btn btn-primary mt-4" onClick={() => {
+                </p>
+
+                <button className="btn btn-ghost mt-4 mb-4" onClick={() => {
                   closeModal({ areYouSure: false});
                 }}>
                   Continue
