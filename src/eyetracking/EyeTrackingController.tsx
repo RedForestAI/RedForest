@@ -76,7 +76,7 @@ export default function EyeTrackingController(props: {complete: boolean, running
 
   useEffect(() => {
     const endNavBarExtras = (
-      <div className="pr-2">
+      <div id="eye-tracking-button" className="pr-4">
         <button className="btn btn-ghost" onClick={openModal}>
           <FontAwesomeIcon icon={faEye} className="fa-2x" />
         </button>

@@ -1,9 +1,11 @@
 import { useContext, useEffect, useState } from "react";
-import ReactPlayer from 'react-player';
+import { driver, DriveStep } from "driver.js";
 import { faCircleQuestion, faEye } from "@fortawesome/free-solid-svg-icons";
 import { useEndNavBarContext } from "~/providers/NavbarProvider";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { triggerActionLog } from "~/loggers/ActionsLogger";
+
+import 'driver.js/dist/driver.css'
 
 // Create a instruction modal for the PDF Viewer
 export default function ReadingInstrModal(props: {
@@ -14,9 +16,32 @@ export default function ReadingInstrModal(props: {
 }) {
   const setEndNavBarContent = useContext(useEndNavBarContext);
 
+  // Get element for the document drawer
+  const drawer = document.getElementById("#DocumentPane");
+  console.log(drawer)
+
+  let steps: DriveStep[] = [
+    // { element: "#pdf_viewer", popover: { title: "PDF Viewer", description: "This is the PDF viewer. You can read the document(s) here." } },
+    // { element: "#zoom-controls", popover: { title: "Zoom Control", description: "You can zoom in and out of the document using these buttons." } },
+    // { element: "#instructions-question", popover: { title: "Instructions & Tutorial", description: "If you ever need to revisit this tutorial/instructions, click here." } },
+    // { element: "#eye-tracking-button", popover: { title: "Eye-Tracking", description: "To setup up eye-tracking, click here." } },
+    { element: "#task-tray", popover: { title: "Task Tray", side: "left", align: "center", description: "Click on the TASK TRAY to access the questions after finish reading the passage(s)." } },
+  ]
+  if (drawer) {
+    steps.push({ element: "#DocumentPane", popover: { title: "Document Tray", side: "right", align: "center", description: "Click on the DOC TRAY to access the documents." } });
+  }
+
+  const driverObj = driver({
+    showProgress: true,
+    steps: steps,
+    onDestroyed: () => {
+      props.setOpen(true);
+    }
+  })
+
   useEffect(() => {
     const endNavBarExtras = (
-      <div className="">
+      <div id="instructions-question"> 
         <button className="btn btn-ghost" onClick={openModal}>
           <FontAwesomeIcon icon={faCircleQuestion} className="fa-2x" />
         </button>
@@ -43,6 +68,12 @@ export default function ReadingInstrModal(props: {
   function openModal() {
     props.setOpen(true);
     triggerActionLog({ type: "instructionOpen", value: {} });
+  }
+
+  function runTutorial() {
+    props.setOpen(false);
+    // @ts-ignore
+    driverObj.drive();
   }
 
   function closeModal(funProps: { areYouSure: boolean }) {
@@ -86,7 +117,7 @@ export default function ReadingInstrModal(props: {
                   Here is a tutorial to help you get familiar with the activity.
                 </p>
 
-                <button className="btn btn-primary">
+                <button className="btn btn-primary" onClick={runTutorial}>
                   Tutorial
                 </button>
                 
