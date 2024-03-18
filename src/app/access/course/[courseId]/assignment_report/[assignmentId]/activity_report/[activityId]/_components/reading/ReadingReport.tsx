@@ -32,9 +32,9 @@ export default function ReadingReport(props: ReadingReportProps) {
   const [docs, setDocs] = useState<{ uri: string }[]>([]);
   const [activeDocument, setActiveDocument] = useState<IDocument>();
   const [columns, setColumns] = useState<ColumnType[]>([
-    { title: "ID" },
-    { title: "Complete" },
-    { title: "Score" },
+    { title: "ID", hoverHint: "The student's profile ID"},
+    { title: "Complete", hoverHint: "Whether the student has completed the activity"},
+    { title: "Score", hoverHint: "The student's total score on the activity"},
   ]);
   const [tableData, setTableData] = useState<any[]>([]);
   const [selectedId, setSelectedId] = useState<string[]>([]);
@@ -103,12 +103,12 @@ export default function ReadingReport(props: ReadingReportProps) {
 
     // Get the column names
     const columnNames = props.questions.map((question) => ({
-      title: `Q${question.index} (${question.pts})`,
+      title: `Q${question.index+1} (${question.pts})`, hoverHint: question.content
     }));
     setColumns([
-      { title: "ID" },
-      { title: "Complete" },
-      { title: "Score" },
+      { title: "ID", hoverHint: "The student's profile ID"},
+      { title: "Complete", hoverHint: "Whether the student has completed the activity"},
+      { title: "Score", hoverHint: "The student's total score on the activity"},
       ...columnNames,
     ]);
 

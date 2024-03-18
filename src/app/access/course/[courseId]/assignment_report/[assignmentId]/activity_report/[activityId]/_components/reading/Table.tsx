@@ -1,8 +1,10 @@
 import { useState, useEffect } from 'react'
 import { colorMap } from '../types'
+import Tooltip from './Tooltip'
 
 export type ColumnType = {
-  title: string
+  title: string,
+  hoverHint?: string
 }
 
 type TableProps = {
@@ -47,55 +49,57 @@ export default function Table(props: TableProps) {
   }
   
   return (
-  <div className="">
-    <table className="table table-zebra table-sm table-pin-rows table-pin-cols">
-      <thead>
-        <tr>
-          <th>
-            <label>
-              <input type="checkbox" className="checkbox checkbox-sm" checked={selectAll} onChange={changeAll}/>
-            </label>
-          </th>
-          <th>
-          </th>
-          {props.columns.map((column, index) => {
-            return <th key={index}>{column.title}</th>
+    <div className="">
+      <table className="table table-zebra table-sm table-pin-rows table-pin-cols">
+        <thead>
+          <tr>
+            <th>
+              <label>
+                <input type="checkbox" className="checkbox checkbox-sm" checked={selectAll} onChange={changeAll}/>
+              </label>
+            </th>
+            <th>
+            </th>
+            {props.columns.map((column, index) => {
+              return (
+                <Tooltip text={column.title} content={column.hoverHint} />
+              )
+            })}
+          </tr>
+        </thead>
+
+        {/* Add a divider line */}
+        <tbody>
+          <tr>
+            <td colSpan={props.columns.length + 2}>
+              <hr />
+            </td>
+          </tr>
+        </tbody>
+
+        <tbody>
+          {props.tableData.map((row, index) => {
+            return (
+              <tr key={index}>
+                <th>
+                  <label>
+                    <input type="checkbox" className="checkbox checkbox-sm" checked={props.selectedId.includes(row[0])} onChange={(e) => {changeSelect(e, row[0])}}/>
+                  </label>
+                </th>
+                <th style={{position: "relative"}}>
+                  <label style={{display: "block", height: "100%"}}>
+                    <div className="overflow-hidden rounded-2xl mt-2 mb-2" style={{position: "absolute", top: 0, bottom: 0, left: 0, width: "0.5vw", backgroundColor: `${props.colors[row[0]]}`}}>
+                    </div>
+                  </label>
+                </th>
+                {row.map((data: any, index: number) => {
+                  return <td key={index}>{data}</td>
+                })}
+              </tr>
+            )
           })}
-        </tr>
-      </thead>
-
-      {/* Add a divider line */}
-      <tbody>
-        <tr>
-          <td colSpan={props.columns.length + 1}>
-            <hr />
-          </td>
-        </tr>
-      </tbody>
-
-      <tbody>
-        {props.tableData.map((row, index) => {
-          return (
-            <tr key={index}>
-              <th>
-                <label>
-                  <input type="checkbox" className="checkbox checkbox-sm" checked={props.selectedId.includes(row[0])} onChange={(e) => {changeSelect(e, row[0])}}/>
-                </label>
-              </th>
-              <th style={{position: "relative"}}>
-                <label style={{display: "block", height: "100%"}}>
-                  <div className="overflow-hidden rounded-2xl mt-2 mb-2" style={{position: "absolute", top: 0, bottom: 0, left: 0, width: "0.5vw", backgroundColor: `${props.colors[row[0]]}`}}>
-                  </div>
-                </label>
-              </th>
-              {row.map((data: any, index: number) => {
-                return <td key={index}>{data}</td>
-              })}
-            </tr>
-          )
-        })}
-      </tbody>
-    </table>
-  </div>
+        </tbody>
+      </table>
+    </div>
   )
 }
