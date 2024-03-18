@@ -2,14 +2,19 @@ import { useState, useEffect } from 'react'
 import { colorMap } from '../types'
 import Tooltip from './Tooltip'
 
-export type ColumnType = {
+export type Column = {
   title: string,
   hoverHint?: string
 }
 
+export type Ceil = {
+  data: any
+  type?: string
+}
+
 type TableProps = {
   colors: colorMap
-  columns: ColumnType[]
+  columns: Column[]
   tableData: any[],
   selectedId: string[]
   setSelectedId: (selected: string[]) => void
@@ -83,7 +88,7 @@ export default function Table(props: TableProps) {
               <tr key={index}>
                 <th>
                   <label>
-                    <input type="checkbox" className="checkbox checkbox-sm" checked={props.selectedId.includes(row[0])} onChange={(e) => {changeSelect(e, row[0])}}/>
+                    <input type="checkbox" className="checkbox checkbox-sm" checked={props.selectedId.includes(row[0].data)} onChange={(e) => {changeSelect(e, row[0])}}/>
                   </label>
                 </th>
                 <th style={{position: "relative"}}>
@@ -92,8 +97,11 @@ export default function Table(props: TableProps) {
                     </div>
                   </label>
                 </th>
-                {row.map((data: any, index: number) => {
-                  return <td key={index}>{data}</td>
+                {row.map((ceil: Ceil, index: number) => {
+                  switch(ceil.type) {
+                    case "DEFAULT": return <td key={index}>{ceil.data}</td>
+                    case "BOOLEAN": return <td key={index}>{ceil.data ? "✅" : "❌"}</td>
+                  }
                 })}
               </tr>
             )

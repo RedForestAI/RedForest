@@ -10,7 +10,7 @@ import { useEffect, useState } from "react";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import { IDocument } from "@cyntler/react-doc-viewer";
 
-import Table, { ColumnType } from "./Table";
+import Table, { Column, Ceil } from "./Table";
 import PDFViewer from "~/components/pdf/PDFViewer";
 import LoadFilesProgress from "../general/LoadFilesProgress";
 import TrajectoryPlot from "../general/TrajectoryPlot";
@@ -31,12 +31,12 @@ type ReadingReportProps = {
 export default function ReadingReport(props: ReadingReportProps) {
   const [docs, setDocs] = useState<{ uri: string }[]>([]);
   const [activeDocument, setActiveDocument] = useState<IDocument>();
-  const [columns, setColumns] = useState<ColumnType[]>([
+  const [columns, setColumns] = useState<Column[]>([
     { title: "ID", hoverHint: "The student's profile ID"},
     { title: "Complete", hoverHint: "Whether the student has completed the activity"},
     { title: "Score", hoverHint: "The student's total score on the activity"},
   ]);
-  const [tableData, setTableData] = useState<any[]>([]);
+  const [tableData, setTableData] = useState<Ceil[][]>([]);
   const [selectedId, setSelectedId] = useState<string[]>([]);
   const [filesDownloaded, setFilesDownloaded] = useState<boolean>(false);
   const [traceBlobs, setTraceBlobs] = useState<Blob[]>([]);
@@ -115,20 +115,21 @@ export default function ReadingReport(props: ReadingReportProps) {
     const newTableData = props.activityDatas.map((activityData) => {
       const questionScores = activityData.answersTrace.map(
         (answerTrace: any, index: Number) => {
-          return Number(answerTrace.correct);
+          return {data: Number(answerTrace.correct), type: "BOOLEAN"};
         },
       );
 
-      return [
-        activityData.profileId,
-        Number(activityData.completed),
-        activityData.score,
+      const row: Ceil[] = [
+        {data: activityData.profileId, type: "DEFAULT"},
+        {data: Number(activityData.completed), type: "BOOLEAN"},
+        {data: activityData.score, type: "DEFAULT"},
         ...questionScores,
       ];
+      return row
     });
 
     // Default select all rows
-    setSelectedId(newTableData.map((row) => row[0] as string));
+    setSelectedId(newTableData.map((row) => row[0]!.data as string));
     setTableData(newTableData);
   }, []);
 

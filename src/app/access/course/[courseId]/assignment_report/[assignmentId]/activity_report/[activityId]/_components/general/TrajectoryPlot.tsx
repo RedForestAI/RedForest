@@ -52,8 +52,8 @@ export default function TrajectoryPlot(props: TrajectoryPlotProps) {
       for (let i = 0; i < activityData.answersTrace.length; i++) {
         // @ts-ignore
         const answerTrace = activityData.answersTrace[i] as AnswerTrace;
-        totalTime += answerTrace.elapsedTime/1000;
-        x.push(totalTime - 0.0001)
+        totalTime += parseFloat((answerTrace.elapsedTime/1000).toFixed(2));
+        x.push(parseFloat((totalTime - 0.01).toFixed(2)))
         y.push(priorScore)
         x.push(totalTime);
         y.push(answerTrace.accumulativeScore)
