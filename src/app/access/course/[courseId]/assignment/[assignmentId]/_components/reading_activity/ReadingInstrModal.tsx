@@ -6,6 +6,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { triggerActionLog } from "~/loggers/ActionsLogger";
 
 import 'driver.js/dist/driver.css'
+import './driverjs_theme.css'
 
 // Create a instruction modal for the PDF Viewer
 export default function ReadingInstrModal(props: {
@@ -15,29 +16,6 @@ export default function ReadingInstrModal(props: {
   runningET: boolean;
 }) {
   const setEndNavBarContent = useContext(useEndNavBarContext);
-
-  // Get element for the document drawer
-  const drawer = document.getElementById("#DocumentPane");
-  console.log(drawer)
-
-  let steps: DriveStep[] = [
-    // { element: "#pdf_viewer", popover: { title: "PDF Viewer", description: "This is the PDF viewer. You can read the document(s) here." } },
-    // { element: "#zoom-controls", popover: { title: "Zoom Control", description: "You can zoom in and out of the document using these buttons." } },
-    // { element: "#instructions-question", popover: { title: "Instructions & Tutorial", description: "If you ever need to revisit this tutorial/instructions, click here." } },
-    // { element: "#eye-tracking-button", popover: { title: "Eye-Tracking", description: "To setup up eye-tracking, click here." } },
-    { element: "#task-tray", popover: { title: "Task Tray", side: "left", align: "center", description: "Click on the TASK TRAY to access the questions after finish reading the passage(s)." } },
-  ]
-  if (drawer) {
-    steps.push({ element: "#DocumentPane", popover: { title: "Document Tray", side: "right", align: "center", description: "Click on the DOC TRAY to access the documents." } });
-  }
-
-  const driverObj = driver({
-    showProgress: true,
-    steps: steps,
-    onDestroyed: () => {
-      props.setOpen(true);
-    }
-  })
 
   useEffect(() => {
     const endNavBarExtras = (
@@ -72,6 +50,31 @@ export default function ReadingInstrModal(props: {
 
   function runTutorial() {
     props.setOpen(false);
+    let steps: DriveStep[] = [
+      { element: "#zoom-controls", popover: { title: "Zoom Control", description: "You can zoom in and out of the document using these buttons." } },
+      { element: "#task-tray", popover: { title: "Task Tray", side: "left", align: "center", description: "Click on the TASK TRAY to access the questions after finish reading the passage(s)." } },
+    ]
+
+    // Get element for the document drawer
+    const drawer = document.getElementById("DocumentPane");
+    if (drawer) {
+      steps.push({ element: "#DocumentPane", popover: { title: "Document Tray", side: "right", align: "center", description: "Click on the DOC TRAY to access the documents." } });
+    }
+
+    steps.push({ popover: { title: "Highlighting", description: "<div class='gif-popover' style='width: 40vw'><img style='max-width: 100%' src='/gifs/highlight.gif' /><p style='font-size: x-large'>You can highlight text. To remove a highlight, re-highlighting the same text selection.</p></div>" } });
+    steps.push({ popover: { title: "Annotate", description: "<div class='gif-popover' style='width: 40vw'><img style='max-width: 100%' src='/gifs/annotate.gif' /><p style='font-size: x-large'>You can annotate (make notes) while you read. Make sure to save your notes by pressing the `Save` button.</p></div>" }});
+    steps.push({ popover: { title: "Dictionary", description: "<div class='gif-popover' style='width: 40vw'><img style='max-width: 100%' src='/gifs/dictionary.gif' /><p style='font-size: x-large'>To look up words, select a word and press the `LookUp` button. A dictionary entry should popup in the bottom right.</p></div>" }});
+    steps.push({ element: "#eye-tracking-button", popover: { title: "Eye-Tracking", description: "To setup up eye-tracking, click here." } });
+    steps.push({ element: "#instructions-question", popover: { title: "Instructions & Tutorial", description: "If you ever need to revisit this tutorial/instructions, click here." } })
+
+    const driverObj = driver({
+      showProgress: true,
+      steps: steps,
+      onDestroyed: () => {
+        props.setOpen(true);
+      }
+    })
+    
     // @ts-ignore
     driverObj.drive();
   }
