@@ -191,6 +191,7 @@ export default function ReadingActivity(props: ReadingActivityProps) {
     // Define the click event handler function
     const aoiEncoding = (e: any) => {
       const aoi = AOIEncoding(e.detail.x, e.detail.y);
+      // console.log(aoi);
 
       // Create the event data
       let data = {};
