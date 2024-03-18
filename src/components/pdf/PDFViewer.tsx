@@ -158,7 +158,7 @@ export default function PDFViewer(props: PDFViewerProps) {
 
     // Define the content you want to add to the navbar
     const middleNavBarExtras = (
-      <div className="flex flex-row items-center gap-2 ">
+      <div id="zoom-controls" className="flex flex-row items-center gap-2 ">
         <button
           className="btn btn-ghost"
           onClick={() => setZoomLevel((prev) => prev - 0.1)}

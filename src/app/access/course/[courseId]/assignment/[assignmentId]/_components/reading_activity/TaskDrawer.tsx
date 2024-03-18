@@ -8,7 +8,7 @@ export default function TaskDrawer(props: {children?: React.ReactNode}) {
   }
 
   return (
-    <div className={`min-h-screen bg-base-100 border-neutral w-1/4 fixed top-0 right-0 border-l z-50 transition ease-in-out duration-300 ${open ? "translate-x-[23vw]" : ""}`}>
+    <div id="task-tray" className={`min-h-screen bg-base-100 border-neutral w-1/4 fixed top-0 right-0 border-l z-50 transition ease-in-out duration-300 ${open ? "translate-x-[23vw]" : ""}`}>
         <div className="flex flex-row w-full">
           <button className="bg-base-200 min-h-screen border-r border-neutral w-6 cursor-pointer w-[2vw]" onClick={openDrawer}>
             <div className="w-full -rotate-90 whitespace-nowrap text-primary">

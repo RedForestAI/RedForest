@@ -1,9 +1,12 @@
 import { useContext, useEffect, useState } from "react";
-import ReactPlayer from 'react-player';
+import { driver, DriveStep } from "driver.js";
 import { faCircleQuestion, faEye } from "@fortawesome/free-solid-svg-icons";
 import { useEndNavBarContext } from "~/providers/NavbarProvider";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { triggerActionLog } from "~/loggers/ActionsLogger";
+
+import 'driver.js/dist/driver.css'
+import './driverjs_theme.css'
 
 // Create a instruction modal for the PDF Viewer
 export default function ReadingInstrModal(props: {
@@ -16,7 +19,7 @@ export default function ReadingInstrModal(props: {
 
   useEffect(() => {
     const endNavBarExtras = (
-      <div className="">
+      <div id="instructions-question"> 
         <button className="btn btn-ghost" onClick={openModal}>
           <FontAwesomeIcon icon={faCircleQuestion} className="fa-2x" />
         </button>
@@ -45,6 +48,37 @@ export default function ReadingInstrModal(props: {
     triggerActionLog({ type: "instructionOpen", value: {} });
   }
 
+  function runTutorial() {
+    props.setOpen(false);
+    let steps: DriveStep[] = [
+      { element: "#zoom-controls", popover: { title: "Zoom Control", description: "You can zoom in and out of the document using these buttons." } },
+      { element: "#task-tray", popover: { title: "Task Tray", side: "left", align: "center", description: "Click on the TASK TRAY to access the questions after finish reading the passage(s)." } },
+    ]
+
+    // Get element for the document drawer
+    const drawer = document.getElementById("DocumentPane");
+    if (drawer) {
+      steps.push({ element: "#DocumentPane", popover: { title: "Document Tray", side: "right", align: "center", description: "Click on the DOC TRAY to access the documents." } });
+    }
+
+    steps.push({ popover: { title: "Highlighting", description: "<div class='gif-popover' style='width: 40vw'><img style='max-width: 100%' src='/gifs/highlight.gif' /><p style='font-size: x-large'>You can highlight text. To remove a highlight, re-highlighting the same text selection.</p></div>" } });
+    steps.push({ popover: { title: "Annotate", description: "<div class='gif-popover' style='width: 40vw'><img style='max-width: 100%' src='/gifs/annotate.gif' /><p style='font-size: x-large'>You can annotate (make notes) while you read. Make sure to save your notes by pressing the `Save` button.</p></div>" }});
+    steps.push({ popover: { title: "Dictionary", description: "<div class='gif-popover' style='width: 40vw'><img style='max-width: 100%' src='/gifs/dictionary.gif' /><p style='font-size: x-large'>To look up words, select a word and press the `LookUp` button. A dictionary entry should popup in the bottom right.</p></div>" }});
+    steps.push({ element: "#eye-tracking-button", popover: { title: "Eye-Tracking", description: "To setup up eye-tracking, click here." } });
+    steps.push({ element: "#instructions-question", popover: { title: "Instructions & Tutorial", description: "If you ever need to revisit this tutorial/instructions, click here." } })
+
+    const driverObj = driver({
+      showProgress: true,
+      steps: steps,
+      onDestroyed: () => {
+        props.setOpen(true);
+      }
+    })
+    
+    // @ts-ignore
+    driverObj.drive();
+  }
+
   function closeModal(funProps: { areYouSure: boolean }) {
 
     // Make sure the eye-tracking is running
@@ -69,17 +103,28 @@ export default function ReadingInstrModal(props: {
     <>
       {props.open && (
         <>
-          <div className="fixed left-0 top-[5%] z-[70] h-full w-full">
-            <div className="m-auto h-[90%] w-[90%]">
+          <div className="fixed left-0 top-[25%] z-[70] h-full w-full">
+            <div className="m-auto h-[50%] w-[50%]">
               <div className="flex h-full flex-col items-center justify-between overflow-hidden rounded-2xl border border-neutral bg-base-100 p-4">
-                <h1 className="pb-4 text-2xl text-5xl font-bold">
-                  Getting Ready!
+                <h1 className="text-2xl text-5xl font-bold">
+                  Reading Activity
                 </h1>
-                {/* YouTube Video */}
-                <div className="player-wrapper">
-                  <ReactPlayer controls={true} className="react-player" width='100%' height='100%' url="https://youtu.be/PZsmN357aNw"/>
-                </div>
-                <h1 className="text-3xl mt-4 ml-4 mr-4">
+
+                <p className="text-3xl mt-4 ml-4 mr-4">
+                  In this activity, you will be reading document(s) and answering
+                  questions based on the content.{" "} Make sure to read the
+                  document(s) first before answering the questions.
+                </p>
+
+                <p className="text-3xl mt-4 ml-4 mr-4">
+                  Here is a tutorial to help you get familiar with the activity.
+                </p>
+
+                <button className="btn btn-primary" onClick={runTutorial}>
+                  Tutorial
+                </button>
+                
+                <p className="text-3xl mt-4 ml-4 mr-4">
                   Before starting the activity, get comfortable and setup the
                   eye-tracking solution by clicking on {" "}
                   <span>
@@ -87,8 +132,9 @@ export default function ReadingInstrModal(props: {
                   </span> icon. {" "} 
                   Once you are ready and all settled, press
                   Continue.
-                </h1>
-                <button className="btn btn-primary mt-4" onClick={() => {
+                </p>
+
+                <button className="btn btn-ghost mt-4 mb-4" onClick={() => {
                   closeModal({ areYouSure: false});
                 }}>
                   Continue
