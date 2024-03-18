@@ -103,7 +103,7 @@ export default function ReadingInstrModal(props: {
     <>
       {props.open && (
         <>
-          <div className="fixed left-0 top-[25%] z-[70] h-full w-full">
+          <div id="reading-instr-modal" className="fixed left-0 top-[25%] z-[70] h-full w-full">
             <div className="m-auto h-[50%] w-[50%]">
               <div className="flex h-full flex-col items-center justify-between overflow-hidden rounded-2xl border border-neutral bg-base-100 p-4">
                 <h1 className="text-2xl text-5xl font-bold">
