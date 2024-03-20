@@ -14,7 +14,7 @@ export default function Panda(props: PandaProps) {
   return (
     <>
       <Canvas shadows camera={{ position: [0, 2, 5], fov: 30}} dpr={[1, 2]} gl={{ preserveDrawingBuffer: true}}>
-        <OrbitControls />
+        {/* <OrbitControls /> */}
         <group scale={0.5} position={[0,-0.75,0]} rotation={[0,-Math.PI * 0.2,0]}>
           <PandaAnimated action={props.action}/>
         </group>

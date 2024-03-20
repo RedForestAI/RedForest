@@ -81,10 +81,10 @@ return (
         { name: assignment.name, url: ""}
       ]}
     />
-    <div className="flex flex-col items-stretch justify-center px-5 py-11 pl-12 pr-12 max-md:px-5">
+    <div className="container flex flex-col items-stretch justify-center sm:max-w-[90vw] md:max-w-[60vw] pt-[5vh]">
 
       {profile.role == Role.TEACHER &&
-        <div className="w-full justify-center items-center flex flex-col pb-6" style={{width: "100vw", height: "40vh"}}>
+        <div className="justify-center items-center flex flex-col pb-6" style={{height: "50vh"}}>
           <h1 className="text-3xl text-center">Assignment Completion</h1>
           <AssignmentCompletePieChart data={data}/>
         </div>

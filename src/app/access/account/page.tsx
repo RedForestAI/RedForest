@@ -22,7 +22,7 @@ export default async function Account() {
   return (
     <div>
       <NavBar profile={profile}/>
-      <div className="container mx-auto pl-12 pr-12">
+      <div className="container mx-auto sm:max-w-[90vw] md:max-w-[60vw]">
         {data && data.user
           ? <>
             <h1 className="text-xl font-bold mb-4 mt-4">Account</h1>

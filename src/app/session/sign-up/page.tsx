@@ -34,7 +34,7 @@ export default function SignUp() {
   return (
     <div>
       <NavBar />
-      <div className="flex justify-center items-center h-screen">
+      <div className="flex justify-center items-center h-[90vh]">
         <div className="p-6 max-w-sm w-full rounded-2xl border border-neutral">
           <h2 className="mb-4 text-xl font-bold">Sign Up</h2>
             <form>

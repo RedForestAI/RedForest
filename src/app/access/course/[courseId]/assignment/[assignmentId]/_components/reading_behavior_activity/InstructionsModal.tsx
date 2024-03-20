@@ -67,30 +67,33 @@ export default function InstructionsModal(props: InstructionsModalProps) {
   return (
     <>
     {props.inInstructions &&
-      <div className="fixed left-0 top-[20%] z-[70] h-full w-full">
-        <div className="m-auto h-[60%] w-[60%]">
-          <div className="flex flex-col h-full items-center bg-base-100 border border-neutral rounded-2xl overflow-hidden p-4">
+      <div className="fixed left-0 top-[10%] z-[70] h-full w-full">
+        <div className="m-auto h-[85%] w-[85%]">
+          <div className="flex flex-col h-full items-center bg-base-100 border border-neutral rounded-2xl overflow-y-auto p-4">
             <h1 className="pb-4 text-2xl text-5xl font-bold">Learning How You Read</h1>
 
-            <Panda action={"Rig|Idle"}/>
-            
-            <div className="h-4/6 text-2xl pt-6 pb-4 ml-12 mr-12 flex flex-col gap-4">
-              <p>Can our AI system learn to recognize your reading?</p>
-              <p>Help teach it by training it to recognize how you read!</p>
-              <p>To teach it, you will
-                <ul className="pl-6">
-                  <li style={{listStyle: "square"}}>Read a passage</li>
-                  <li style={{listStyle: "square"}}>Answer questions about the passage</li>
-                  <li style={{listStyle: "square"}}>Complete a short survey</li>
-                </ul>
-              </p>
-              <p>Let's see if the computer can be trained. Let's read.</p>
-              <p>
-                Before starting, start the eye-tracking solution by the top-right {" "}
-                <span>
-                  <FontAwesomeIcon icon={faEye} className="fa" />
-                </span> icon. {" "} 
-              </p>
+            <div className="flex flex-row">
+              <div className="h-4/6 text-xl pt-6 pb-4 ml-12 mr-12 flex flex-col gap-4">
+                <p>Can our AI system learn to recognize your reading?</p>
+                <p>Help teach it by training it to recognize how you read!</p>
+                <p>To teach it, you will
+                  <ul className="pl-6">
+                    <li style={{listStyle: "square"}}>Read a passage</li>
+                    <li style={{listStyle: "square"}}>Answer questions about the passage</li>
+                    <li style={{listStyle: "square"}}>Complete a short survey</li>
+                  </ul>
+                </p>
+                <p>Let's see if the computer can be trained. Let's read.</p>
+                <p>
+                  Before starting, start the eye-tracking solution by the top-right {" "}
+                  <span>
+                    <FontAwesomeIcon icon={faEye} className="fa" />
+                  </span> icon. {" "} 
+                </p>
+              </div>
+
+              <Panda action={"Rig|Idle"}/>
+
             </div>
             <button
               className="btn btn-primary"
