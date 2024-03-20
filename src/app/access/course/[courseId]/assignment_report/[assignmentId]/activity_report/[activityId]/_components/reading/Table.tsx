@@ -68,7 +68,7 @@ export default function Table(props: TableProps) {
     const checked = e.target.checked;
     if (checked) {
       setSelectAll(true);
-      props.setSelectedId(props.tableData.map((row) => row[0]));
+      props.setSelectedId(props.tableData.map((row) => row[0].data));
     } else {
       setSelectAll(false);
       props.setSelectedId([]);
