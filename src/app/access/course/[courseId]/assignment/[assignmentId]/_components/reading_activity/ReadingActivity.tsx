@@ -122,6 +122,10 @@ export default function ReadingActivity(props: ReadingActivityProps) {
     scrollLogger.clear();
     actionsLogger.clear();
     mouseLogger.clear();
+
+    return () => {
+      setInAssignment(false);
+    }
   }, []);
 
   useEffect(() => {
@@ -172,10 +176,6 @@ export default function ReadingActivity(props: ReadingActivityProps) {
           fileType: "pdf",
         };
       });
-      // console.log(readingFiles)
-      // console.log(files)
-      // console.log(newDocs)
-      // console.log(newDocs[0])
       setDocs(newDocs);
       setActiveDocument(newDocs[0]);
       triggerActionLog({ type: "pdfLoad", value: { index: 0 } });
@@ -287,6 +287,7 @@ export default function ReadingActivity(props: ReadingActivityProps) {
           .upload(meta_filepath, meta_file);
 
         setIsSubmitting(false);
+        setInAssignment(false);
 
         if (meta_storage_result.error) {
           console.error("Failed to upload meta data");
