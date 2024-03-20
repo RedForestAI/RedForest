@@ -65,7 +65,7 @@ export default function ReadingInstrModal(props: {
     steps.push({ popover: { title: "Annotate", description: "<div class='gif-popover' style='width: 40vw'><img style='max-width: 100%' src='/gifs/annotate.gif' /><p style='font-size: x-large'>You can annotate (make notes) while you read. Make sure to save your notes by pressing the `Save` button.</p></div>" }});
     steps.push({ popover: { title: "Dictionary", description: "<div class='gif-popover' style='width: 40vw'><img style='max-width: 100%' src='/gifs/dictionary.gif' /><p style='font-size: x-large'>To look up words, select a word and press the `LookUp` button. A dictionary entry should popup in the bottom right.</p></div>" }});
     steps.push({ element: "#eye-tracking-button", popover: { title: "Eye-Tracking", description: "To setup up eye-tracking, click here." } });
-    steps.push({ element: "#instructions-question", popover: { title: "Instructions & Tutorial", description: "If you ever need to revisit this tutorial/instructions, click here." } })
+    steps.push({ element: "#instructions-question", popover: { title: "Instructions & Tutorial", description: "If you ever need to revisit these tutorial/instructions, click here." } })
 
     const driverObj = driver({
       showProgress: true,

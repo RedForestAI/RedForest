@@ -1,101 +1,160 @@
-import { useState, useEffect } from 'react'
-import { colorMap } from '../types'
+import { useState, useEffect } from "react";
+import { colorMap } from "../types";
+import Tooltip from "./Tooltip";
 
-export type ColumnType = {
-  title: string
-}
+export type Column = {
+  title: string;
+  hoverHint?: string;
+};
+
+export type Ceil = {
+  data: any;
+  type?: string;
+};
 
 type TableProps = {
-  colors: colorMap
-  columns: ColumnType[]
-  tableData: any[],
-  selectedId: string[]
-  setSelectedId: (selected: string[]) => void
-}
+  colors: colorMap;
+  columns: Column[];
+  tableData: any[];
+  setTableData: (data: any[]) => void;
+  selectedId: string[];
+  setSelectedId: (selected: string[]) => void;
+};
 
 export default function Table(props: TableProps) {
-  const [selectAll, setSelectAll] = useState<boolean>(false)
+  const [selectAll, setSelectAll] = useState<boolean>(false);
+  const [sortDirection, setSortDirection] = useState<string>("asc"); // or 'desc'
+  const [sortedColumn, setSortedColumn] = useState<number>(0);
 
   useEffect(() => {
     if (props.selectedId.length === props.tableData.length) {
-      setSelectAll(true)
+      setSelectAll(true);
+    } else {
+      setSelectAll(false);
     }
-    else {
-      setSelectAll(false)
-    }
-  }, [props.selectedId])
+  }, [props.selectedId]);
+
+  function sortTable(columnIndex: number) {
+    const sortedData = [...props.tableData].sort((a, b) => {
+      const valueA = a[columnIndex].data; // Adjust based on your data structure
+      const valueB = b[columnIndex].data;
+
+      if (valueA < valueB) {
+        return sortDirection === "asc" ? -1 : 1;
+      }
+      if (valueA > valueB) {
+        return sortDirection === "asc" ? 1 : -1;
+      }
+      return 0;
+    });
+
+    props.setTableData(sortedData); // Assuming you have a method to update the original data
+    setSortDirection(sortDirection === "asc" ? "desc" : "asc"); // Toggle the direction
+    setSortedColumn(columnIndex);
+  }
 
   function changeSelect(e: any, id: string) {
-    const checked = e.target.checked
+    const checked = e.target.checked;
     if (checked) {
-      props.setSelectedId([...props.selectedId, id])
+      props.setSelectedId([...props.selectedId, id]);
     } else {
-      props.setSelectedId(props.selectedId.filter((selectedId) => selectedId !== id))
+      props.setSelectedId(
+        props.selectedId.filter((selectedId) => selectedId !== id),
+      );
     }
-
   }
 
   function changeAll(e: any) {
-    const checked = e.target.checked
+    const checked = e.target.checked;
     if (checked) {
-      setSelectAll(true)
-      props.setSelectedId(props.tableData.map((row) => row[0]))
+      setSelectAll(true);
+      props.setSelectedId(props.tableData.map((row) => row[0]));
     } else {
-      setSelectAll(false)
-      props.setSelectedId([])
+      setSelectAll(false);
+      props.setSelectedId([]);
     }
   }
-  
+
   return (
-  <div className="">
-    <table className="table table-zebra table-sm table-pin-rows table-pin-cols">
-      <thead>
-        <tr>
-          <th>
-            <label>
-              <input type="checkbox" className="checkbox checkbox-sm" checked={selectAll} onChange={changeAll}/>
-            </label>
-          </th>
-          <th>
-          </th>
-          {props.columns.map((column, index) => {
-            return <th key={index}>{column.title}</th>
+    <div className="">
+      <table className="table table-zebra table-pin-rows table-pin-cols table-sm">
+        <thead>
+          <tr>
+            <th>
+              <label>
+                <input
+                  type="checkbox"
+                  className="checkbox checkbox-sm"
+                  checked={selectAll}
+                  onChange={changeAll}
+                />
+              </label>
+            </th>
+            <th></th>
+            {props.columns.map((column, index) => {
+              return (
+                <Tooltip
+                  key={index}
+                  index={index}
+                  onClickHandler={(e: any, index: number) => sortTable(index)}
+                  text={column.title}
+                  content={column.hoverHint}
+                  sortedColumn={sortedColumn}
+                  sortDirection={sortDirection}
+                />
+              );
+            })}
+          </tr>
+        </thead>
+
+        <tbody>
+          <tr>
+            <td colSpan={props.columns.length + 2}>
+              <hr />
+            </td>
+          </tr>
+        </tbody>
+
+        <tbody>
+          {props.tableData.map((row, index) => {
+            return (
+              <tr key={index}>
+                <th>
+                  <label>
+                    <input
+                      type="checkbox"
+                      className="checkbox checkbox-sm"
+                      checked={props.selectedId.includes(row[0].data)}
+                      onChange={(e) => {
+                        changeSelect(e, row[0].data);
+                      }}
+                    />
+                  </label>
+                </th>
+                <th>
+                  <label>
+                    <div
+                      className="w-[1vw] pt-[1.5vh] pb-[1.5vh] overflow-hidden rounded-2xl"
+                      style={{
+                        textAlign: "center",
+                        backgroundColor: `${props.colors[row[0].data]}`,
+                      }}
+                    ></div>
+                  </label>
+                </th>
+                {row.map((ceil: Ceil, index: number) => {
+                  switch (ceil.type) {
+                    case "DEFAULT":
+                      return <td key={index}>{ceil.data}</td>;
+                    case "BOOLEAN":
+                      return <td key={index}>{ceil.data ? "✅" : "❌"}</td>;
+                  }
+                })}
+              </tr>
+            );
           })}
-        </tr>
-      </thead>
-
-      {/* Add a divider line */}
-      <tbody>
-        <tr>
-          <td colSpan={props.columns.length + 1}>
-            <hr />
-          </td>
-        </tr>
-      </tbody>
-
-      <tbody>
-        {props.tableData.map((row, index) => {
-          return (
-            <tr key={index}>
-              <th>
-                <label>
-                  <input type="checkbox" className="checkbox checkbox-sm" checked={props.selectedId.includes(row[0])} onChange={(e) => {changeSelect(e, row[0])}}/>
-                </label>
-              </th>
-              <th style={{position: "relative"}}>
-                <label style={{display: "block", height: "100%"}}>
-                  <div className="overflow-hidden rounded-2xl mt-2 mb-2" style={{position: "absolute", top: 0, bottom: 0, left: 0, width: "0.5vw", backgroundColor: `${props.colors[row[0]]}`}}>
-                  </div>
-                </label>
-              </th>
-              {row.map((data: any, index: number) => {
-                return <td key={index}>{data}</td>
-              })}
-            </tr>
-          )
-        })}
-      </tbody>
-    </table>
-  </div>
-  )
+        </tbody>
+      </table>
+    </div>
+  );
 }

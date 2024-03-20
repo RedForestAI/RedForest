@@ -52,8 +52,8 @@ export default function TrajectoryPlot(props: TrajectoryPlotProps) {
       for (let i = 0; i < activityData.answersTrace.length; i++) {
         // @ts-ignore
         const answerTrace = activityData.answersTrace[i] as AnswerTrace;
-        totalTime += answerTrace.elapsedTime/1000;
-        x.push(totalTime - 0.0001)
+        totalTime += parseFloat((answerTrace.elapsedTime/1000).toFixed(2));
+        x.push(parseFloat((totalTime - 0.01).toFixed(2)))
         y.push(priorScore)
         x.push(totalTime);
         y.push(answerTrace.accumulativeScore)
@@ -106,10 +106,10 @@ export default function TrajectoryPlot(props: TrajectoryPlotProps) {
         }}
       >
         <text x={dimensions.width / 2} y={10} textAnchor="middle" dominantBaseline="central">
-          <tspan fontSize="20">Student Trajectories</tspan>
+          <tspan fontSize="20" fill="#6F6F6E">Student Trajectories</tspan>
         </text>
         <CartesianGrid strokeDasharray="3 3" />
-        <XAxis dataKey='x' allowDecimals={false} allowDuplicatedCategory={false} scale='linear' tickFormatter={xTickFormatter}>
+        <XAxis dataKey='x' allowDecimals={false} allowDuplicatedCategory={false} type="number" domain={[0, (dataMax: number) => (dataMax*1.05)]} scale='linear' tickFormatter={xTickFormatter}>
           <Label 
             position='insideBottom'
             dy={8}
