@@ -8,7 +8,7 @@ import NavBar from '~/components/ui/NavBar';
 import OpenTabIconButton from '@/components/ui/OpenTabIconButtons';
 import { api } from '~/trpc/server';
 
-import GreetingPanda from "./_components/GreetingPanda";
+import Panda from "~/components/avatar/Panda";
 
 export default async function Page() {
 
@@ -28,7 +28,7 @@ export default async function Page() {
         <div className="h-full flex-1">
 
           <div className="h-96">
-            <GreetingPanda />
+            <Panda action={"Rig|Sit"}/>
           </div>
           
           <div className="mt-8 text-center w-full flex flex-col items-center justify-center">
