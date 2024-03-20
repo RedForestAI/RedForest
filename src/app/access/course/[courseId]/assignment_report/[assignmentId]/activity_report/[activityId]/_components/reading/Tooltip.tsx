@@ -1,6 +1,13 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect } from "react";
 
-export default function Tooltip(props: { text: any, content: any }) {
+export default function Tooltip(props: {
+  onClickHandler: (e: any, index: number) => void;
+  index: number;
+  text: any;
+  content: any;
+  sortedColumn: number;
+  sortDirection: string;
+}) {
   const [showTooltip, setShowTooltip] = useState(false);
   const [tooltipPosition, setTooltipPosition] = useState({ top: 0, left: 0 });
   const thRef = useRef(null);
@@ -26,7 +33,7 @@ export default function Tooltip(props: { text: any, content: any }) {
 
       setTooltipPosition({
         top: rect.top + window.scrollY - 30, // Adjust Y-position above the <th>
-        left: left
+        left: left,
       });
     }
   };
@@ -37,26 +44,29 @@ export default function Tooltip(props: { text: any, content: any }) {
     }
 
     // Optionally, reposition on window resize to handle dynamic layout changes
-    window.addEventListener('resize', updateTooltipPosition);
-    return () => window.removeEventListener('resize', updateTooltipPosition);
+    window.addEventListener("resize", updateTooltipPosition);
+    return () => window.removeEventListener("resize", updateTooltipPosition);
   }, [showTooltip]);
 
   return (
     <th
       ref={thRef}
+      onClick={(e: any) => props.onClickHandler(e, props.index)}
       onMouseEnter={() => setShowTooltip(true)}
       onMouseLeave={() => setShowTooltip(false)}
-      className="cursor-pointer group relative"
+      className="group relative cursor-pointer"
     >
       {props.text}
+      {props.sortedColumn === props.index &&
+        (props.sortDirection === "asc" ? " 🔼" : " 🔽")}
       {showTooltip && (
         <div
           ref={tooltipRef}
-          className="fixed px-3 py-1 bg-black text-white text-sm rounded-lg z-10"
+          className="fixed z-10 rounded-lg bg-black px-3 py-1 text-sm text-white"
           style={{
             top: `${tooltipPosition.top}px`,
             left: `${tooltipPosition.left}px`,
-            transform: 'translateX(-50%)'
+            transform: "translateX(-50%)",
           }}
         >
           {props.content}
@@ -64,4 +74,4 @@ export default function Tooltip(props: { text: any, content: any }) {
       )}
     </th>
   );
-};
+}

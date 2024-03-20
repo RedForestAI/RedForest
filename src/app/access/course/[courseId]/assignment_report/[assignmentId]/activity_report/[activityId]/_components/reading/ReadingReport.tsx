@@ -239,6 +239,7 @@ export default function ReadingReport(props: ReadingReportProps) {
           <Table
             columns={columns}
             tableData={tableData}
+            setTableData={setTableData}
             selectedId={selectedId}
             setSelectedId={setSelectedId}
             colors={props.colors}
