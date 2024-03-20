@@ -54,6 +54,7 @@ export class WebGazerManager {
   restart() {
     // Clear the data
     window.webgazer.clearData();
+    window.webgazer.stopVideo();
     window.webgazer.end()
   }
 

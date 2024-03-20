@@ -33,7 +33,7 @@ export default function ActivityCompletion(props: ActivityCompletionProps) {
       try {
         await markAsCompleteMutation.mutateAsync({id: props.activityData.id})
       } catch (error) {
-        console.log(error)
+        console.error(error)
         return
       }
 
@@ -51,8 +51,6 @@ export default function ActivityCompletion(props: ActivityCompletionProps) {
   }, [props.complete])
 
   function nextActivity() {
-
-    console.log(props.currentActId, props.ammountOfActivities)
 
     // Next activity
     if (props.currentActId < props.ammountOfActivities - 1){
