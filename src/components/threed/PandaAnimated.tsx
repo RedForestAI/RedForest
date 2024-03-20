@@ -2,8 +2,12 @@ import React, { useRef, useState } from 'react'
 import { useFBX, useAnimations, useTexture } from '@react-three/drei'
 import * as THREE from 'three'
 
-export function PandaAnimated(props) {
-  const fbx = useFBX('models/RedPanda_Mesh.fbx')
+type PandaAnimatedProps = {
+  action: string
+}
+
+export function PandaAnimated(props: PandaAnimatedProps) {
+  const fbx = useFBX(`${window.location.origin}/models/RedPanda_Mesh.fbx`)
   const { actions, names } = useAnimations(fbx.animations, fbx)
 
   // Available actions are in `names`
@@ -16,18 +20,24 @@ export function PandaAnimated(props) {
   })
 
   fbx.children.forEach((mesh, i) => {
+    // @ts-ignore
     mesh.material = new THREE.MeshStandardMaterial({ map: textures.map })
   })
 
   useState(() => {
-    actions['Rig|Sit'].reset().fadeIn(0.5).play()
-    return () => {
-      actions['Rig|Sit'].reset().fadeOut(0.5)
+    if (props.action && names.includes(props.action)) {
+      // @ts-ignore
+      actions[props.action].reset().fadeIn(0.5).play()
+      return () => {
+      // @ts-ignore
+        actions[props.action].reset().fadeOut(0.5)
+      }
     }
-  }, [])
+    // @ts-ignore
+  }, [props.action])
 
   return (
-    <group {...props} scale={0.01} dispose={null}>
+    <group scale={0.01} dispose={null}>
       <primitive object={fbx} dispose={null} />
     </group>
   )
