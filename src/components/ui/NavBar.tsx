@@ -121,8 +121,8 @@ export default function Navbar(props: NavbarProps) {
       <div className="navbar-start">
         {props.profile &&
         <div className="dropdown">
-          <div tabIndex={0} role="button" className="btn border border-neutral">
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h7" /></svg>
+          <div tabIndex={0} role="button" className="btn-sm btn-ghost border border-neutral rounded h-10 w-10">
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-full w-full" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h7" /></svg>
           </div>
           <ul tabIndex={0} className="menu menu-sm dropdown-content mt-3 z-[1] p-2 border bg-base-100 border-neutral rounded-box w-52">
             <li onClick={goDashboard}><a>Dashboard</a></li>
@@ -134,7 +134,7 @@ export default function Navbar(props: NavbarProps) {
           <img
             loading="lazy"
             src="/imgs/logo-192x192.png"
-            className="ml-4 mr-4 object-contain object-center w-[40px] overflow-hidden self-center shrink-0 max-w-full my-auto"
+            className="object-contain object-center ml-4 mr-4 w-10 h-10 overflow-hidden self-center shrink-0 max-w-full my-auto"
           />
         </Link>
 
@@ -166,7 +166,7 @@ export default function Navbar(props: NavbarProps) {
 
         {endNavBarContent}
 
-        <div className="flex justify-center items-center pr-4">
+        <div className="flex justify-center items-center pr-[1vw]">
           {theme && 
           <label className="swap swap-rotate">
             <input type="checkbox" onChange={handleToggle} checked={theme === "light" ? false : true}/>

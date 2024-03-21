@@ -348,6 +348,9 @@ export default function ReadingActivity(props: ReadingActivityProps) {
           setActiveDocument={setActiveDocument}
         />
 
+        <div id="tour-anchor" className="fixed left-[30vw] top-[25vh] z-[-1000]">
+        </div>
+
         <TaskDrawer>
           <div
             id="QuestionPane"

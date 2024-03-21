@@ -51,19 +51,19 @@ export default function ReadingInstrModal(props: {
   function runTutorial() {
     props.setOpen(false);
     let steps: DriveStep[] = [
-      { element: "#zoom-controls", popover: { title: "Zoom Control", description: "You can zoom in and out of the document using these buttons." } },
-      { element: "#task-tray", popover: { title: "Task Tray", side: "left", align: "center", description: "Click on the TASK TRAY to access the questions after finish reading the passage(s)." } },
+      { element: "#zoom-controls", popover: { title: "Zoom Control", description: "You can zoom in and out of the text using these buttons." } },
+      { element: "#task-tray", popover: { title: "Task Tray", side: "left", align: "center", description: "Click on the TASK TRAY to access the questions after finish reading the text." } },
     ]
 
     // Get element for the document drawer
     const drawer = document.getElementById("DocumentPane");
     if (drawer) {
-      steps.push({ element: "#DocumentPane", popover: { title: "Document Tray", side: "right", align: "center", description: "Click on the DOC TRAY to access the documents." } });
+      steps.push({ element: "#DocumentPane", popover: { title: "Document Tray", side: "right", align: "center", description: "Click on the DOC TRAY to access the text." } });
     }
 
-    steps.push({ popover: { title: "Highlighting", description: "<div class='gif-popover' style='width: 40vw'><img style='max-width: 100%' src='/gifs/highlight.gif' /><p style='font-size: x-large'>You can highlight text. To remove a highlight, re-highlighting the same text selection.</p></div>" } });
-    steps.push({ popover: { title: "Annotate", description: "<div class='gif-popover' style='width: 40vw'><img style='max-width: 100%' src='/gifs/annotate.gif' /><p style='font-size: x-large'>You can annotate (make notes) while you read. Make sure to save your notes by pressing the `Save` button.</p></div>" }});
-    steps.push({ popover: { title: "Dictionary", description: "<div class='gif-popover' style='width: 40vw'><img style='max-width: 100%' src='/gifs/dictionary.gif' /><p style='font-size: x-large'>To look up words, select a word and press the `LookUp` button. A dictionary entry should popup in the bottom right.</p></div>" }});
+    steps.push({ element: "#tour-anchor", popover: { side: "right", align: "center", title: "Highlighting", description: "<div class='gif-popover' style='width: 40vw'><img style='max-width: 100%' src='/gifs/highlight.gif' /><p style='font-size: x-large'>You can highlight text. To remove a highlight, re-highlight the same text.</p></div>" } });
+    steps.push({ element: "#tour-anchor", popover: { side: "right", align: "center", title: "Annotate", description: "<div class='gif-popover' style='width: 40vw'><img style='max-width: 100%' src='/gifs/annotate.gif' /><p style='font-size: x-large'>You can annotate (make notes) while you read. Make sure to save your notes by pressing the `Save` button.</p></div>" }});
+    steps.push({ element: "#tour-anchor", popover: { side: "right", align: "center", title: "Dictionary", description: "<div class='gif-popover' style='width: 40vw'><img style='max-width: 100%' src='/gifs/dictionary.gif' /><p style='font-size: x-large'>To look up words, select a word and press the `LookUp` button. A dictionary entry should popup in the bottom right.</p></div>" }});
     steps.push({ element: "#eye-tracking-button", popover: { title: "Eye-Tracking", description: "To setup up eye-tracking, click here." } });
     steps.push({ element: "#instructions-question", popover: { title: "Instructions & Tutorial", description: "If you ever need to revisit these tutorial/instructions, click here." } })
 
@@ -103,28 +103,28 @@ export default function ReadingInstrModal(props: {
     <>
       {props.open && (
         <>
-          <div id="reading-instr-modal" className="fixed left-0 top-[25%] z-[70] h-full w-full">
-            <div className="m-auto h-[50%] w-[50%]">
-              <div className="flex h-full flex-col items-center justify-between overflow-hidden rounded-2xl border border-neutral bg-base-100 p-4">
+          <div id="reading-instr-modal" className="fixed left-0 top-[15%] z-[70] h-full w-full">
+            <div className="m-auto h-[70%] w-[70%]">
+              <div className="flex h-full flex-col items-center justify-between overflow-y-auto rounded-2xl border border-neutral bg-base-100 p-4">
                 <h1 className="text-2xl text-5xl font-bold">
                   Reading Activity
                 </h1>
 
-                <p className="text-3xl mt-4 ml-4 mr-4">
-                  In this activity, you will be reading document(s) and answering
+                <p className="text-2xl mt-4 ml-4 mr-4">
+                  In this activity, you will be reading text and answering
                   questions based on the content.{" "} Make sure to read the
-                  document(s) first before answering the questions.
+                  text first before answering the questions.
                 </p>
 
-                <p className="text-3xl mt-4 ml-4 mr-4">
+                <p className="text-2xl mt-4 ml-4 mr-4">
                   Here is a tutorial to help you get familiar with the activity.
                 </p>
 
-                <button className="btn btn-primary" onClick={runTutorial}>
+                <button className="btn btn-lg btn-primary" onClick={runTutorial}>
                   Tutorial
                 </button>
                 
-                <p className="text-3xl mt-4 ml-4 mr-4">
+                <p className="text-2xl mt-4 ml-4 mr-4">
                   Before starting the activity, get comfortable and setup the
                   eye-tracking solution by clicking on {" "}
                   <span>
@@ -134,7 +134,7 @@ export default function ReadingInstrModal(props: {
                   Continue.
                 </p>
 
-                <button className="btn btn-ghost mt-4 mb-4" onClick={() => {
+                <button className="btn btn-secondary btn-lg mt-4 mb-4" onClick={() => {
                   closeModal({ areYouSure: false});
                 }}>
                   Continue
