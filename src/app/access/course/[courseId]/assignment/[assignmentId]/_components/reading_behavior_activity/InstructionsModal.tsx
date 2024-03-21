@@ -73,7 +73,7 @@ export default function InstructionsModal(props: InstructionsModalProps) {
             <h1 className="pb-4 text-2xl text-5xl font-bold">Learning How You Read</h1>
 
             <div className="flex sm:flex-col md:flex-row w-full">
-              <div className="sm:text-lg md:text-xl lg:text-2xl xl:text-3xl 2xl:text-4xl md:w-1/2 sm:w-full pt-6 pb-4 ml-12 mr-12 flex flex-col gap-4">
+              <div className="sm:text-md md:text-lg lg:text-xl xl:text-2xl 2xl:text-3xl md:w-1/2 sm:w-full pt-6 pb-4 ml-12 mr-12 flex flex-col gap-4">
                 <p>Can our AI system learn to recognize your reading?</p>
                 <p>Help teach it by training it to recognize how you read!</p>
                 <p>To teach it, you will
