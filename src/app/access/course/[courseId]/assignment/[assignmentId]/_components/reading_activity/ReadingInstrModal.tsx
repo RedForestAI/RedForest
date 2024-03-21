@@ -51,14 +51,14 @@ export default function ReadingInstrModal(props: {
   function runTutorial() {
     props.setOpen(false);
     let steps: DriveStep[] = [
-      { element: "#zoom-controls", popover: { title: "Zoom Control", description: "You can zoom in and out of the document using these buttons." } },
-      { element: "#task-tray", popover: { title: "Task Tray", side: "left", align: "center", description: "Click on the TASK TRAY to access the questions after finish reading the passage(s)." } },
+      { element: "#zoom-controls", popover: { title: "Zoom Control", description: "You can zoom in and out of the text using these buttons." } },
+      { element: "#task-tray", popover: { title: "Task Tray", side: "left", align: "center", description: "Click on the TASK TRAY to access the questions after finish reading the text." } },
     ]
 
     // Get element for the document drawer
     const drawer = document.getElementById("DocumentPane");
     if (drawer) {
-      steps.push({ element: "#DocumentPane", popover: { title: "Document Tray", side: "right", align: "center", description: "Click on the DOC TRAY to access the documents." } });
+      steps.push({ element: "#DocumentPane", popover: { title: "Document Tray", side: "right", align: "center", description: "Click on the DOC TRAY to access the text." } });
     }
 
     steps.push({ element: "#tour-anchor", popover: { side: "right", align: "center", title: "Highlighting", description: "<div class='gif-popover' style='width: 40vw'><img style='max-width: 100%' src='/gifs/highlight.gif' /><p style='font-size: x-large'>You can highlight text. To remove a highlight, re-highlight the same text.</p></div>" } });
