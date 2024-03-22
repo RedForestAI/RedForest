@@ -168,9 +168,13 @@ export default function ReadingReport(props: ReadingReportProps) {
           }
 
           const existingData = loadingPerStudentDatas[blobMeta.profileId];
+          const activityData = props.activityDatas.find(
+            (activityData) => activityData.profileId == blobMeta.profileId
+          );
           if (existingData == undefined) {
             loadingPerStudentDatas[blobMeta.profileId] = {
               id: blobMeta.profileId,
+              complete: activityData?.completed ?? false,
               logs: {[stem]: data},
               dataStore: {}
             }

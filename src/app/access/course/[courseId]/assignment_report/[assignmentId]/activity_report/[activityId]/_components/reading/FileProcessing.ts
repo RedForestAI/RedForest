@@ -81,6 +81,12 @@ export default function LogProcessing(props: LogProcessingProps) {
   // Iterate through each student's data
   for (const studentId in props.perStudentDatas) {
     const studentData = props.perStudentDatas[studentId];
+
+    // If the student hasn't completed the activity, skip
+    if (!studentData?.complete) {
+      continue;
+    }
+
     const logs = studentData!.logs;
     const results = getTimelineEvents(logs);
 

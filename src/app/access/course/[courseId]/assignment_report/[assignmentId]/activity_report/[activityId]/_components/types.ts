@@ -1,5 +1,6 @@
 export type PerStudentData = {
   id: string;
+  complete: boolean;
   logs: {[key: string]: any};
   dataStore?: {[key: string]: any}; // Processed data from logs
 }

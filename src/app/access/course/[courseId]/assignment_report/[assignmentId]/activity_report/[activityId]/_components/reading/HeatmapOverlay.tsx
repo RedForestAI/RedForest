@@ -46,7 +46,12 @@ export default function HeatmapOverlay(props: HeatmapOverlayProps) {
 
       if (!props.perStudentDatas[studentId]) continue;
 
+      // Get the data
       const perStudentData = props.perStudentDatas[studentId];
+
+      // Skip if the student hasn't completed the activity
+      if (!perStudentData.complete) continue;
+
       const gaze = perStudentData.logs.gaze
       const currentPdfTimes = perStudentData.dataStore.pdfTimes[index];
 
