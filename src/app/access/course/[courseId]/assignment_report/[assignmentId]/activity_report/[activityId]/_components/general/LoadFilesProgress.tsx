@@ -11,7 +11,7 @@ type LoadFilesProgressProps = {
 }
 
 export default function LoadFilesProgress(props: LoadFilesProgressProps) {
-  const [progress, setProgress] = useState(10);
+  const [progress, setProgress] = useState(0);
   const supabase = createClientComponentClient();
 
   useEffect(() => {

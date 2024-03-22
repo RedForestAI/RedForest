@@ -87,9 +87,14 @@ export default async function Page({
         const files = await api.readingFile.getMany.query({
           activityId: readingActivity!.id,
         });
-        const tracelogsFiles = await api.traceLogFile.getMany.query({
+        let tracelogsFiles = await api.traceLogFile.getMany.query({
           activityId: params.activityId
         })
+        
+        // If student, filter the tracelogs to only show their own
+        if (profile.role === "STUDENT") {
+          tracelogsFiles = tracelogsFiles.filter((tracelog) => tracelog.profileId === profile.id);
+        }
         
         // Sorts the files by their index
         files.sort((a, b) => a.index - b.index);
