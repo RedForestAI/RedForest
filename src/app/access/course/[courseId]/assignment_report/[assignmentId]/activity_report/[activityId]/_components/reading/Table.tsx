@@ -78,6 +78,23 @@ export default function Table(props: TableProps) {
   return (
     <div className="">
       <table className="table table-zebra table-pin-rows table-pin-cols table-sm">
+
+        {/* Selection Buttons */}
+        <thead>
+          <tr>
+            <th></th>
+            <th></th>
+            {props.columns.map((column, index) => {
+              if (column.title[0] == "Q" || column.title == "Coldread") {
+                return <th><input type="radio" name="time-selection-radio" className="radio"/></th>
+              } else {
+                return <th></th>;
+              }
+            })}
+          </tr>
+        </thead>
+
+        {/* Table header */}
         <thead>
           <tr>
             <th>

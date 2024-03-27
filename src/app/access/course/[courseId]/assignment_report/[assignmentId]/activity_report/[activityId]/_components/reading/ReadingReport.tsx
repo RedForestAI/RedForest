@@ -109,6 +109,7 @@ export default function ReadingReport(props: ReadingReportProps) {
       { title: "ID", hoverHint: "The student's profile ID"},
       { title: "Complete", hoverHint: "Whether the student has completed the activity"},
       { title: "Score", hoverHint: "The student's total score on the activity"},
+      { title: "Coldread", hoverHint: "Duration of cold read in seconds"},
       ...columnNames,
     ]);
 
@@ -119,10 +120,18 @@ export default function ReadingReport(props: ReadingReportProps) {
         },
       );
 
+      let coldreadTime = 0;
+      if (activityData.createdAt && activityData.answersAt.length > 0){
+        const started = new Date(activityData.createdAt);
+        const firstAnswerTime = new Date(activityData.answersAt[0]!)
+        coldreadTime = (firstAnswerTime.getTime() - started.getTime()) / 1000;
+      }
+
       const row: Ceil[] = [
         {data: activityData.profileId, type: "DEFAULT"},
         {data: Number(activityData.completed), type: "BOOLEAN"},
         {data: activityData.score, type: "DEFAULT"},
+        {data: coldreadTime.toFixed(1), type: "DEFAULT"},
         ...questionScores,
       ];
       return row
