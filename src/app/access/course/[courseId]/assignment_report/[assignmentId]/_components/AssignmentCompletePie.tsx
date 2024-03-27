@@ -18,9 +18,12 @@ const RADIAN = Math.PI / 180;
 const COLORS = ["#22c55e", "#facc15", "#ef4444"];
 
 export default function AssignmentCompletePie(props: AssignmentCompletePieProps) {
+  console.log(props)
 
   const validData = props.data.filter((d) => d.value > 0);
-  const colors = validData.map((d, i) => COLORS[i % COLORS.length]);
+  const colors = validData.map((d, i) => COLORS[d.index % COLORS.length]);
+  console.log(validData)
+  console.log(colors)
 
   return (
     <ResponsiveContainer width="100%" height="100%">
@@ -31,7 +34,7 @@ export default function AssignmentCompletePie(props: AssignmentCompletePieProps)
           data={validData}
           cx="50%"
           cy="50%"
-          outerRadius={140}
+          outerRadius={200}
           fill="#8884d8"
           labelLine={false}
           label={({
@@ -56,7 +59,7 @@ export default function AssignmentCompletePie(props: AssignmentCompletePieProps)
               textAnchor={"middle"}
               dominantBaseline="central"
             >
-              {props.data[index]!.label} ({value.toFixed(0)})
+              {validData[index]!.label} ({value.toFixed(0)}%)
             </text>
           );
         }}

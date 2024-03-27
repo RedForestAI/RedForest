@@ -40,28 +40,17 @@ type ActivityCardProps = {
 }
 
 export function ActivityCard(props: ActivityCardProps) {
-  const router = useRouter()
-
-  const getPts = () => {
-    // Compute total points
-    let totalPts = 0;
-    for (let i = 0; i < props.questions.length; i++) {
-      totalPts += props.questions[i]!.pts
-    }
-    return totalPts
-  }
 
   return (
-    <div className="card w-full bg-base border border-neutral m-4">
+    <div className="card bg-base border border-neutral m-4">
         <div className="flex flex-row h-full">
           <div className="flex justify-center items-center border-r border-neutral p-6">
             <FontAwesomeIcon icon={getIcon(props.activity.type)} className="fa-3x h-8 w-12"/>
           </div>
-          <div className="flex flex-col w-9/12 p-4">
+          <div className="flex flex-col p-4">
             <h2 className="card-title">{props.activity.name}</h2>
             <p className="card-subtitle">{props.activity.description}</p>
           </div>
-          <h2 className="card-title w-24">{getPts()} pts</h2>
         </div>
     </div>
   )
